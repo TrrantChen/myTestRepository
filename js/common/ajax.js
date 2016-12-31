@@ -13,7 +13,7 @@ define(["common"], function(common) {
             async: true,
             contentType: "",
             data: null,
-            dataType: ""
+            dataType: "text"
         };
 
         if (option.url === void 0) {
@@ -22,27 +22,29 @@ define(["common"], function(common) {
         }
         option = Object.assign(defaultOption, option)
         var xhr = new XMLHttpRequest();
-        xhr.open(option.httpmethod, option.url, option.async);
-        if (xhr.onload !== void 0) {
-            xhr.onload = function() {
-                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-                    option.success(xhr.responseText);
-                }                
-            }
-        } else {
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-                    option.success(xhr.responseText);
-                }
-            }            
-        }
+
 
         if (option.contentType !== "") {
             xhr.setRequestHeader("Content-type", option.contentType);
         }
 
         if (option.dataType !== "") {
-            XMLHttpRequest.responseType = option.dataType;
+            xhr.responseType = option.dataType;
+        }        
+
+        xhr.open(option.httpmethod, option.url, option.async);
+        if (xhr.onload !== void 0) {
+            xhr.onload = function() {
+                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+                    option.success(xhr.response);
+                }                
+            }
+        } else {
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+                    option.success(xhr.response);
+                }
+            }            
         }
 
         if (option.onloadstart !== void 0) {
@@ -57,7 +59,12 @@ define(["common"], function(common) {
             xhr.onerror = option.onerror;
         }
 
-        xhr.send(option.data);
+        if (option.httpmethod.toLowerCase() == "post") {
+            xhr.send(option.data);
+        } else {
+             xhr.send(null);
+        }
+        
     }
 
     return {

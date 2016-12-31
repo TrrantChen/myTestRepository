@@ -181,9 +181,9 @@
         require(["common", "othertestmodule", "filemodule", "constant", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant){
             var path = common.getHost();
             $(function(){
-                // fileDownUseBase64();
+                fileDownUseBase64();
                 // fileDownUseCreateObjectURL();
-                fileUpload("upLoadFileByBusboy");
+                // fileUpload("upLoadFileByBusboy");
             })
 
             // 
@@ -240,22 +240,7 @@
             function fileDownUseBase64() {
                 var downloadlabel = document.querySelector("#downloadlabel");
                 downloadlabel.onclick = function() {
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("get", path + "downLoadFileWithBuffer", true);
-                    xhr.responseType = "blob"
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-                            var reader = new FileReader();
-                            var blob = xhr.response;
-                            reader.addEventListener("loadend", function(){
-                                var a = document.querySelector("#testC");
-                                a.href = reader.result;
-                                a.download = "test1.jpg"; 
-                            })                        
-                            reader.readAsDataURL(blob)                   
-                        }
-                    }
-                    xhr.send(null); 
+                    filemodule.downloadFile(path + "downLoadFileWithBuffer?path=./output/test.txt");
                 }
             }
 

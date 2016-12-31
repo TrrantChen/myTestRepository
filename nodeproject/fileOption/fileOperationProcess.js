@@ -247,21 +247,38 @@
  };
 
  exports.downloadWidthBuffer = function(req, res) {
-     var path = './output/Adobe Photoshop.zip';
-     var readerStream = fs.createReadStream(path);
-     bufferHelper.clear();
-     readerStream.on('data', function(chunk) {
-         bufferHelper.concat(chunk);
-     })
-     readerStream.on('error', function(err) {
-         console.log(err.stack);
-     })
-     readerStream.on('end', function() {
-         var result = bufferHelper.toString();
-         console.log("start writting " + result.length);
-         res.send(result);
-         bufferHelper.clear();
-     })
+    var path = req.query.path;
+    fileExistPromise(path).then(function(){
+        var readerStream = fs.createReadStream(path);
+        bufferHelper.clear();
+        readerStream.on('data', function(chunk) {
+            bufferHelper.concat(chunk);
+        })
+        readerStream.on('error', function(err) {
+            console.log(err.stack);
+        })
+        readerStream.on('end', function() {
+            var result = bufferHelper.toString();
+            console.log("start writting " + result.length);
+            res.send(result);
+            bufferHelper.clear();
+        })
+    }).catch(function(err){
+        res.send(err);
+    })
+ }
+
+ var fileExistPromise = function(path) {
+    var promise = new Promise(function(resolve, reject){
+        fs.stat(path, function(err, stats) {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(stats)
+            }
+        })
+    })
+    return promise;
  }
 
  exports.downloadWidthStream = function(req, res) {

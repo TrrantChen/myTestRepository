@@ -58,8 +58,28 @@ define(["common", "ajax", "domoperation"], function(common, ajax, domoperation){
         ajax.generalAjax(option);
     }
 
+    function downloadFile(url) {
+        var option = {
+            httpmethod: "get",
+            async: true,
+            url:url,
+            dataType:"blob",
+            success:function(result) {
+                var reader = new FileReader();
+                reader.addEventListener("loadend", function(){
+                    var a = document.querySelector("#testC");
+                    a.href = reader.result;
+                    a.download = "test1.txt"; 
+                })                        
+                reader.readAsDataURL(result)   
+            }
+        }
+        ajax.generalAjax(option);        
+    }
+
     return {
         chineseCopy:chineseCopy,
-        uploadFile:uploadFile
+        uploadFile:uploadFile,
+        downloadFile:downloadFile
     }  
 })
