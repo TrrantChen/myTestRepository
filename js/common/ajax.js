@@ -59,6 +59,10 @@ define(["common"], function(common) {
             xhr.onerror = option.onerror;
         }
 
+        if (option.onloadend !== void 0) {
+            xhr.loadend = option.onloadend;
+        }
+
         if (option.httpmethod.toLowerCase() == "post") {
             xhr.send(option.data);
         } else {

@@ -66,11 +66,25 @@ define(["common"], function(common){
         parentDom.appendChild(dom);
     }
 
+    function createAndGetProgress() {
+        if (document.querySelector(".progressContainer") != void 0) {
+            var htmlStr =  '<div class="progressContainer">'
+                          +'    <div class="progressStyle">'
+                          +'        <div class="progressBar"></div>'
+                          +'    </div>'
+                          +'    <div class="progressNum">0%</div>'
+                          +'</div>';
+            insertStr2Dom(htmlStr);            
+        } 
+        return document.querySelector(".progressContainer")        
+    }
+
     return {
        ctreateImg:ctreateImg,
        getImgCanvas:getImgCanvas,
        getBackgroundImageUrl:getBackgroundImageUrl,
        // createLinerAnimationSnippt:createLinerAnimationSnippt,
-       insertStr2Dom:insertStr2Dom
+       insertStr2Dom:insertStr2Dom,
+       createAndGetProgress:createAndGetProgress
     }  
 })
