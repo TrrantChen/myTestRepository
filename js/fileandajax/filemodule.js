@@ -14,16 +14,7 @@ define(["common", "ajax", "domoperation"], function(common, ajax, domoperation){
     }
 
     function uploadFile(files, url, successCallback) {
-        if (document.querySelector(".progressContainer") != void 0) {
-            var htmlStr =  '<div class="progressContainer">'
-                          +'    <div class="progressStyle">'
-                          +'        <div class="progressBar"></div>'
-                          +'    </div>'
-                          +'    <div class="progressNum">0%</div>'
-                          +'</div>';
-            domoperation.insertStr2Dom(htmlStr);            
-        } 
-        var progressContainer =  document.querySelector(".progressContainer"); 
+        var progressContainer =  domoperation.createAndGetProgress();
         progressContainer.style.display = "flex"                                   
         var formData = new FormData();
         for (var i = 0; i < files.length; i++) {
@@ -58,21 +49,10 @@ define(["common", "ajax", "domoperation"], function(common, ajax, domoperation){
         ajax.generalAjax(option);
     }
 
-    function downloadFile(url) {
-        var option = {
-            httpmethod: "get",
-            async: true,
-            url:url,
-            dataType:"blob",
-            success:function(result) {
-                var reader = new FileReader();
-                reader.addEventListener("loadend", function(){
-                    var a = document.querySelector("#testC");
-                    a.href = reader.result;
-                    a.download = "test1.txt"; 
-                })                        
-                reader.readAsDataURL(result)   
-            }
+    function downloadFile(option, isWithProcess) {
+        isWithProcess = isWithProcess || false;
+        if (isWithProcess) {
+
         }
         ajax.generalAjax(option);        
     }
