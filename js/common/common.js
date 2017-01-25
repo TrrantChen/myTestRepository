@@ -187,6 +187,48 @@ define([], function(){
         });
     }
 
+    function myThrottle(func, time, delayApply) {
+        delayApply = delayApply || false;
+        var startTime = 0;
+        var isFirstDelayClick = true;
+        return function() {
+            var now = new Date().getTime();
+            if (now - startTime > time || startTime == 0) {
+                startTime = new Date().getTime();
+                func.apply(null, arguments);
+                isFirstDelayClick = true;
+            } else {
+                if (isFirstDelayClick && delayApply) {
+                    isFirstDelayClick = false;
+                    setTimeout(function() {
+                        func.apply(null, arguments);
+                    }, time + startTime - now);
+                }
+            }
+        }
+    }
+
+    function myDebounce(func, time) {
+        var startTime = 0;
+        var timeOut = null;
+        return function() {
+            var para = arguments;
+            var now = new Date().getTime();
+            if (now - startTime > time || startTime == 0) {
+                startTime = new Date().getTime();
+                timeOut = setTimeout(function() {
+                    func.apply(null, para);
+                }, time);
+            } else {
+                startTime = new Date().getTime();
+                clearTimeout(timeOut);
+                timeOut = setTimeout(function() {
+                    func.apply(null, para);
+                }, time);
+            }
+        }
+    }
+
     return {
         ab2string8:ab2string8,
         ab2string16:ab2string16,
@@ -209,6 +251,8 @@ define([], function(){
         sleepBad:sleepBad,
         onRead:onRead,
         asyncOnReady:asyncOnReady,
-        onReadyPromise:onReadyPromise
+        onReadyPromise:onReadyPromise,
+        myDebounce:myDebounce,
+        myThrottle:myThrottle
     }  
 })
