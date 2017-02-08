@@ -198,6 +198,8 @@ define([], function(){
                 func.apply(null, arguments);
                 isFirstDelayClick = true;
             } else {
+                // 模拟的场景为在time时间内再一次点击
+                // delayApply决定是否在time结束后去执行time内的一次点击事件
                 if (isFirstDelayClick && delayApply) {
                     isFirstDelayClick = false;
                     setTimeout(function() {
@@ -208,6 +210,8 @@ define([], function(){
         }
     }
 
+    // func会在time结束后调用，如果time时间内又发生调用，就把定时器清空，重启一个time时间
+    // 的定时器去调用func
     function myDebounce(func, time) {
         var startTime = 0;
         var timeOut = null;
