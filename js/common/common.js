@@ -135,15 +135,16 @@ define([], function(){
         }
     }; 
 
-    function calculateSpanTime(func, funcName) {
-        var fixedArgs = [].slice.call(arguments, 2)
-        console.time(funcName);
-        var result  = func.apply(null, fixedArgs);
-        if (result != void 0) {
-            console.log(result);
+    function calculateSpanTime(func, funcName, isShowTheResult) {
+        return function() {
+            console.time(funcName);
+            var result = func.apply(null, arguments);
+            if (isShowTheResult && result != void 0) {
+                console.log(result);
+            }
+            console.timeEnd(funcName);
         }
-        console.timeEnd(funcName);
-    }   
+    } 
 
     function str2dom(str) {
     　　 var objE = document.createElement("div");

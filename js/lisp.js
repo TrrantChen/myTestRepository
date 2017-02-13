@@ -62,20 +62,64 @@
     )
 /*------------sqrt------------*/
 
+/*------------1.2.2树形递归动态规划------------*/
+    (define (count-change amount)
+        (cc amount 5))
 
-// (define (sqrt-iter guess x)
-//     (if (good-enough? guess (improve guess x))
-//         (improve guess x)
-//         (sqrt-iter (improve guess x) x)
-//     )
-// )
-/*------------substrip------------*/
+    (define (cc amount kinds-of-coins)
+        (cond ((= amount 0) 1)
+            ((or (< amount 0) (= kinds-of-coins 0)) 0)
+            (else (+ (cc amount
+                            (- kinds-of-coins 1))
+                     (cc (- amount
+                            (first-denomination kinds-of-coins))
+                     kinds-of-coins)))))
 
-    (define (improve guess x)
-        (/ (+ (/ x (square guess)) (* 2 guess)) 3)
+    (define (first-denomination kinds-of-coins)
+        (cond ((= kinds-of-coins 1) 1)
+              ((= kinds-of-coins 2) 5)
+              ((= kinds-of-coins 3) 10)
+              ((= kinds-of-coins 4) 25)
+              ((= kinds-of-coins 5) 50)))
+/*------------1.2.2树形递归动态规划------------*/
+
+/*------------树形递归------------*/
+    (define (fib n)
+        (cond ((= n 0) 0)
+              ((= n 1) 1)
+              (else (+ (fib (- n 1)) (fib (- n 2))))
+        )
     )
 
-/*------------substrip------------*/
+    (define (fib n)
+        (fib-iter 1 0 n))
+
+    (define (fib-iter a b count)
+        (if (= count 0)
+            b
+            (fib-iter (+ a b) a (- count 1))))
+/*------------树形递归------------*/
+
+/*------------1.11------------*/
+    (define (func n)
+        (if (< n 3)
+            n
+            (+ (func (- n 1)) (* 2 (func (- n 2))) (* 3 (func (- n 3))))
+        )
+    )
+
+    (define (func produce iter counter)
+        (cond ((iter == counter) produce)
+            (else func((cond ((< iter 3) ) (else )) (+ iter 1) counter))
+        )
+    )
+
+    (func 1 1 3)
+/*------------1.11------------*/
+
+
+
+
 
 
 
