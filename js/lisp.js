@@ -83,6 +83,24 @@
               ((= kinds-of-coins 5) 50)))
 /*------------1.2.2树形递归动态规划------------*/
 
+/*------------线性递归------------*/
+    (define (factorial n)
+        (if (= n 1)
+            1
+            (* n (factorial (- n 1)))))
+
+
+    (define (factorial n)
+        (fact-iter 1 1 n))
+
+    (define (fact-iter product counter max-count)
+        (if (> counter max-count)
+            product
+            (fact-iter (* counter product)
+                       (+ counter 1)
+                       max-count)))
+/*------------线性递归------------*/
+
 /*------------树形递归------------*/
     (define (fib n)
         (cond ((= n 0) 0)
@@ -100,6 +118,7 @@
             (fib-iter (+ a b) a (- count 1))))
 /*------------树形递归------------*/
 
+
 /*------------1.11------------*/
     (define (func n)
         (if (< n 3)
@@ -109,10 +128,16 @@
     )
 
     (define (func produce iter counter)
-        (cond ((iter == counter) produce)
-            (else func((cond ((< iter 3) ) (else )) (+ iter 1) counter))
-        )
+        (cond ((iter > counter) produce)
+              (else (if (< iter 3)
+                        (func (iter (+ iter 1) counter))
+                        (func ((+ (- produce 1) (* 2 (- produce 2)) (* 3 (- produce 3))) (+ iter 1) counter))
+                    )
+              )
+        )            
     )
+
+
 
     (func 1 1 3)
 /*------------1.11------------*/
