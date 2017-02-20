@@ -127,14 +127,12 @@
         )
     )
 
-    (define (func produce iter counter)
-        (cond ((iter > counter) produce)
-              (else (if (< iter 3)
-                        (func (iter (+ iter 1) counter))
-                        (func ((+ (- produce 1) (* 2 (- produce 2)) (* 3 (- produce 3))) (+ iter 1) counter))
-                    )
-              )
-        )            
+    (define (func r1 r2 r3 iter n)
+        (
+            if (= iter n) 
+                r3
+                (func (+ r1 (* 2 r2) (* 3 r3)) r1 r2 (+ iter 1) n)
+        )
     )
 
 
@@ -142,12 +140,55 @@
     (func 1 1 3)
 /*------------1.11------------*/
 
+/*------------1.12------------*/
+    (define (pascal row col)
+        (cond ((> col row) (error "unvalid col value"))
+              ((or (= col 0) (= row col)) 1)
+              (else (+ (pascal (- row 1) (- col 1)) (pascal (- row 1) col)))
+        )
+    )
+/*------------1.12------------*/
 
+/*------------1.15------------*/
+    (define (cubic num)( *
+            num  num  num
+        )
+    )
 
+    (define (pTest x)
+        (- (* 3.0 x) (* 4.0 (cubic x)))
+    )
 
+    (define (sin x)(
+        if (not (> (abs x) 0.1)) x
+            (pTest (sin (/ x 3.0)))
+    ))
 
+    (define (cube x) (* x x x))
+    (define (p x)(- (* 3 x) (* 4 (cube x))))
+    (define (sine angle)(
+        if (not (> (abs angle) 0.1)) angle
+            (p (sine (/ angle 3.0)))
+        ))
+/*------------1.15------------*/
 
+/*------------exponentiation ------------*/
+    (define (expt b n)
+        (cond ((= n 0) 1)
+              (else (* b (expt b (- n 1))))
+        )
+    )
 
+    (define (expt result count b)
+        (
+            if (= count 0) result
+                (expt (* result b) (- count 1) b)
+        )
+    )
 
+    (define (event? n)
+        (= (remainder n 2) 0)
+    )
 
+/*------------exponentiation ------------*/
 

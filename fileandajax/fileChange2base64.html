@@ -120,9 +120,7 @@
         require(["common", "jquery"], function(common){
             var path = common.getHost();
 
-            $(function(){
-                fileTest()
-            })
+            fileTest()
 
             function fileTest() {
                 $("#inputFile").on("change", function(event) {

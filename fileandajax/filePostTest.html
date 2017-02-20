@@ -239,33 +239,55 @@
             //     }   
             // }
 
+            // function fileDownUseCreateObjectURL() {
+            //     var downloadlabel = document.querySelector("#downloadlabel");
+            //     downloadlabel.onclick = function() {
+            //         var progressContainer = document.querySelector(".progressContainer");
+            //         var option = {
+            //             httpmethod: "get",
+            //             url:path + "downLoadFileWithStream?path=./output/Adobe Photoshop.zip",
+            //             dataType:"blob",
+            //             onloadstart:function() {
+            //                 console.time("下载 ")
+            //                 progressContainer.style.display = "flex"              
+            //             },
+            //             onprogress:function(event) {
+            //                 var lengthComputable = event.lengthComputable;
+            //                 var total = event.total;
+            //                 var progressStyle = document.querySelector(".progressStyle");
+            //                 var progressBar = document.querySelector(".progressBar");
+            //                 var progressNum = document.querySelector(".progressNum");
+            //                 var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
+            //                 var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
+            //                 progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
+            //                 progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%" 
+            //             },
+            //             onloadend:function(){
+            //                 console.timeEnd("下载 ")
+            //                 progressContainer.style.display = "none"            
+            //             },
+            //             success:function(result) {
+            //                 var a = document.createElement('a');
+            //                 var evt = document.createEvent("HTMLEvents");      
+            //                 evt.initEvent("click", false, false);      
+            //                 a.download = "Adobe Photoshop.zip";
+            //                 a.href = window.URL.createObjectURL(result); 
+            //                 a.dispatchEvent(evt);
+            //                 a.click();                             
+            //             }
+            //         }
+            //         filemodule.downloadFile(option);
+            //     }   
+            // }
+
             function fileDownUseCreateObjectURL() {
                 var downloadlabel = document.querySelector("#downloadlabel");
                 downloadlabel.onclick = function() {
-                    var progressContainer = document.querySelector(".progressContainer");
                     var option = {
                         httpmethod: "get",
-                        url:path + "downLoadFileWithStream?path=./output/Adobe Photoshop.zip",
+                        url:path + "downLoadFileWithStream",
+                        data:{"path":"./output/Adobe Photoshop.zip"},
                         dataType:"blob",
-                        onloadstart:function() {
-                            console.time("下载 ")
-                            progressContainer.style.display = "flex"              
-                        },
-                        onprogress:function(event) {
-                            var lengthComputable = event.lengthComputable;
-                            var total = event.total;
-                            var progressStyle = document.querySelector(".progressStyle");
-                            var progressBar = document.querySelector(".progressBar");
-                            var progressNum = document.querySelector(".progressNum");
-                            var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
-                            var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
-                            progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
-                            progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%" 
-                        },
-                        onloadend:function(){
-                            console.timeEnd("下载 ")
-                            progressContainer.style.display = "none"            
-                        },
                         success:function(result) {
                             var a = document.createElement('a');
                             var evt = document.createEvent("HTMLEvents");      
@@ -274,19 +296,21 @@
                             a.href = window.URL.createObjectURL(result); 
                             a.dispatchEvent(evt);
                             a.click();                             
-                        }
+                        }                        
                     }
-                    filemodule.downloadFile(option);
+                    filemodule.downloadFile(option, true);
                 }   
             }
+
 
             function fileDownUseBase64() {
                 var downloadlabel = document.querySelector("#downloadlabel");
                 downloadlabel.onclick = function() {
                     var option = {
                         httpmethod: "get",
-                        url:path + "downLoadFileWithBuffer?path=./output/test.txt",
+                        url:path + "downLoadFileWithBuffer",
                         dataType:"blob",
+                        data:{path:"./output/test.txt"},
                         success:function(result) {
                             var reader = new FileReader();
                             reader.addEventListener("loadend", function(){
@@ -297,7 +321,7 @@
                             reader.readAsDataURL(result)                              
                         }
                     }                    
-                    filemodule.downloadFile(option);
+                    filemodule.downloadFile(option, true);
                 }
             }
 

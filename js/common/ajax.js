@@ -6,6 +6,7 @@
  */
 
 define(["common"], function(common) {
+    // option httpmethod async contentType data dataType url
     function generalAjax(option) {
         option = option || {};
         var defaultOption = {
@@ -23,6 +24,10 @@ define(["common"], function(common) {
         option = Object.assign(defaultOption, option)
         var xhr = new XMLHttpRequest();
 
+        if (option.httpmethod.toLowerCase() == "get" && option.data !== null && !common.isEmptyObject(option.data)) {
+            option.url += ("?" + common.obj2keyValueString(option.data))
+        }
+
 
         if (option.contentType !== "") {
             xhr.setRequestHeader("Content-type", option.contentType);
@@ -35,13 +40,13 @@ define(["common"], function(common) {
         xhr.open(option.httpmethod, option.url, option.async);
         if (xhr.onload !== void 0) {
             xhr.onload = function() {
-                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200" && option.success != void 0) {
                     option.success(xhr.response);
                 }                
             }
         } else {
             xhr.onreadystatechange = function() {
-                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+                if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200" && option.success != void 0) {
                     option.success(xhr.response);
                 }
             }            

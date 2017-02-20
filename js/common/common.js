@@ -11,6 +11,28 @@ define([], function(){
         return Object.prototype.toString.call(obj) === "[object Object]";
     }
 
+    function isEmptyObject(obj) {
+        if (isObject(obj) && Object.keys(obj).length != 0)  {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function obj2keyValueString(obj) {
+        if (isEmptyObject(obj)) {
+            return null;
+        } else {
+            var keyArray = Object.keys(obj),
+                length = keyArray.length,
+                result = "";
+            for(var i = 0; i < length; i ++) {
+                result += (keyArray[i] + "=" + obj[keyArray[i]] + ";");
+            }
+            return result;
+        }
+    }
+
     function ab2string8(arrayBuffer) {
         return String.fromCharCode.apply(null, new Uint8Array(arrayBuffer))
     }
@@ -136,6 +158,7 @@ define([], function(){
     }; 
 
     function calculateSpanTime(func, funcName, isShowTheResult) {
+        isShowTheResult = isShowTheResult || false;
         return function() {
             console.time(funcName);
             var result = func.apply(null, arguments);
@@ -234,6 +257,10 @@ define([], function(){
         }
     }
 
+    // function() {
+
+    // }
+
     return {
         ab2string8:ab2string8,
         ab2string16:ab2string16,
@@ -258,6 +285,8 @@ define([], function(){
         asyncOnReady:asyncOnReady,
         onReadyPromise:onReadyPromise,
         myDebounce:myDebounce,
-        myThrottle:myThrottle
+        myThrottle:myThrottle,
+        isEmptyObject:isEmptyObject,
+        obj2keyValueString:obj2keyValueString
     }  
 })
