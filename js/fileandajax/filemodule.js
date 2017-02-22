@@ -7,9 +7,10 @@
 define(["common", "ajax", "domoperation"], function(common, ajax, domoperation){
     var path = common.getHost();
 
-    function uploadFile(files, url, successCallback) {
-        var progressContainer =  domoperation.createAndGetProgress();
-        progressContainer.style.display = "flex"                                   
+    function uploadFile(files, url, successCallback, isWithProcess) {
+        isWithProcess = isWithProcess || false;
+        successCallback = successCallback || function(){ console.log("upload file success;")};
+                              
         var formData = new FormData();
 
         for (var i = 0; i < files.length; i++) {
@@ -21,56 +22,37 @@ define(["common", "ajax", "domoperation"], function(common, ajax, domoperation){
             async: true,
             data: formData,
             url:url,
-            success:function(result) {
-                if (successCallback !== void 0) {
-                    successCallback(result);
-                } else {
-                    console.log(result);
-                }
-                progressContainer.style.display = "none" 
-            },  
-            onloadstart:function() {
-                progressContainer.style.display = "flex" 
-            },
-            onprogress:function(event) {
-                var progressStyle = document.querySelector(".progressStyle");
-                var progressBar = document.querySelector(".progressBar");
-                var progressNum = document.querySelector(".progressNum");
-                var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
-                var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
-                progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
-                progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%" 
-            }
+            isUpload:true,
+            success:successCallback
         }
+
+        domoperation.setAjaxWithProcess(option, isWithProcess); 
+
         ajax.generalAjax(option);
     }
 
-    function downloadFile(option, isWithProcess) {
+    function downloadFile(filePaths, url, successCallback, isWithProcess) {
         isWithProcess = isWithProcess || false;
-        if (isWithProcess) {
-            var progressContainer =  domoperation.createAndGetProgress();
-            option.onloadstart = function() {
-                console.time("下载 ")
-                progressContainer.style.display = "flex"              
-            };
-            option.onprogress = function(event) {
-                var lengthComputable = event.lengthComputable;
-                var total = event.total;
-                var progressStyle = document.querySelector(".progressStyle");
-                var progressBar = document.querySelector(".progressBar");
-                var progressNum = document.querySelector(".progressNum");
-                var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
-                var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
-                progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
-                progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%" 
-            };  
-            option.onloadend = function(){
-                console.timeEnd("下载 ")
-                progressContainer.style.display = "none"            
-            };                              
-        }
+        successCallback = successCallback || function(){ console.log("download file success;")};
+        var option = {
+            httpmethod: "get",
+            url:url,
+            dataType:"blob",
+            success:successCallback
+        };  
 
-        ajax.generalAjax(option);        
+        domoperation.setAjaxWithProcess(option, isWithProcess);                                  
+
+        if (common.isArray(filePaths)) {
+            for (var i = 0; i < filePaths.length; i++) {
+                option.data = {path:filePaths[i]};
+                ajax.generalAjax(option);                
+            }
+
+        } else {
+            option.data = {path:filePaths}
+            ajax.generalAjax(option);              
+        }
     }
 
     return {

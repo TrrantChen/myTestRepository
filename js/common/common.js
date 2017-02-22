@@ -27,7 +27,12 @@ define([], function(){
                 length = keyArray.length,
                 result = "";
             for(var i = 0; i < length; i ++) {
-                result += (keyArray[i] + "=" + obj[keyArray[i]] + ";");
+                if (i == 0) {
+                    result += (keyArray[i] + "=" + obj[keyArray[i]]);
+                } else {
+                    result += (";" + keyArray[i] + "=" + obj[keyArray[i]]);
+                }
+                
             }
             return result;
         }
@@ -257,9 +262,27 @@ define([], function(){
         }
     }
 
-    // function() {
+    function autoDownloadUrl(downloadName, downloadContent){
+        var a = document.createElement('a');
+        var evt = document.createEvent("HTMLEvents");      
+        evt.initEvent("click", false, false);      
+        a.download = downloadName;
+        a.href = window.URL.createObjectURL(downloadContent); 
+        a.dispatchEvent(evt);
+        a.click();          
+    }
+    
+    function isString(obj) {
+        return Object.prototype.toString.call(obj) == "[object String]"
+    }
 
-    // }
+    function isArray(obj) {
+        if (Array.isArray !== void 0) {
+            return Array.isArray(obj);
+        } else {
+            return Object.prototype.toString.call(obj) == "[object Array]"; 
+        }
+    }
 
     return {
         ab2string8:ab2string8,
@@ -287,6 +310,9 @@ define([], function(){
         myDebounce:myDebounce,
         myThrottle:myThrottle,
         isEmptyObject:isEmptyObject,
-        obj2keyValueString:obj2keyValueString
+        obj2keyValueString:obj2keyValueString,
+        autoDownloadUrl:autoDownloadUrl,
+        isArray:isArray,
+        isString:isString
     }  
 })

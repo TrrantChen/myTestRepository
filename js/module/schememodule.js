@@ -112,7 +112,7 @@ define(["common"], function(common){
         }
     /*------------fibonacc------------*/
 
-    /*------------50,2510,5,1换算100------------*/
+    /*------------50,25,10,5,1换算100------------*/
         function countChangeWithRecursive(amount) {
             return cc(amount, 5);
         }

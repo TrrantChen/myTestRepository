@@ -67,7 +67,8 @@ define(["common"], function(common){
     }
 
     function createAndGetProgress() {
-        if (document.querySelector(".progressContainer") != void 0) {
+        var progressContainer = document.querySelector(".progressContainer");
+        if (progressContainer == void 0 || progressContainer == null) {
             var htmlStr =  '<div class="progressContainer">'
                           +'    <div class="progressStyle">'
                           +'        <div class="progressBar"></div>'
@@ -79,12 +80,41 @@ define(["common"], function(common){
         return document.querySelector(".progressContainer")        
     }
 
+    function setAjaxWithProcess(option, isWithProcess) {
+        var progressContainer = createAndGetProgress();
+        option.onloadend = function(){
+            console.log("end")
+            if (isWithProcess) {
+                progressContainer.style.display = "none"      
+            }         
+        };
+        option.onloadstart = function() {
+            console.log("start")
+            if (isWithProcess) { 
+                progressContainer.style.display = "flex"
+            }
+             
+        };
+        option.onprogress = function(event) {
+            if (isWithProcess) {
+                var progressStyle = document.querySelector(".progressStyle");
+                var progressBar = document.querySelector(".progressBar");
+                var progressNum = document.querySelector(".progressNum");
+                var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
+                var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
+                progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
+                progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%"  
+            }               
+        }       
+    }    
+
     return {
        ctreateImg:ctreateImg,
        getImgCanvas:getImgCanvas,
        getBackgroundImageUrl:getBackgroundImageUrl,
        // createLinerAnimationSnippt:createLinerAnimationSnippt,
        insertStr2Dom:insertStr2Dom,
-       createAndGetProgress:createAndGetProgress
+       createAndGetProgress:createAndGetProgress,
+       setAjaxWithProcess:setAjaxWithProcess
     }  
 })

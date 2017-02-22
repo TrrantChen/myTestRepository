@@ -6,7 +6,7 @@
  */
 
 define(["common"], function(common) {
-    // option httpmethod async contentType data dataType url
+    // option httpmethod async contentType data dataType url isUpload 
     function generalAjax(option) {
         option = option || {};
         var defaultOption = {
@@ -14,7 +14,8 @@ define(["common"], function(common) {
             async: true,
             contentType: "",
             data: null,
-            dataType: "text"
+            dataType: "text",
+            isUpload:false
         };
 
         if (option.url === void 0) {
@@ -52,21 +53,7 @@ define(["common"], function(common) {
             }            
         }
 
-        if (option.onloadstart !== void 0) {
-            xhr.upload.onloadstart = option.onloadstart;
-        }
-
-        if (option.onprogress !== void 0) {
-            xhr.upload.onprogress = option.onprogress;
-        }
-
-        if (option.onerror !== void 0) {
-            xhr.onerror = option.onerror;
-        }
-
-        if (option.onloadend !== void 0) {
-            xhr.loadend = option.onloadend;
-        }
+        registerEvent(xhr, option)
 
         if (option.httpmethod.toLowerCase() == "post") {
             xhr.send(option.data);
@@ -74,6 +61,23 @@ define(["common"], function(common) {
              xhr.send(null);
         }
         
+    }
+
+    function registerEvent(xhr, option) {
+        var eventArray = ["onabort","onerror","onloadend","onloadstart","onprogress","ontimeout"];  
+        if (option.isUpload == true) {
+            for (var i = 0; i < eventArray.length; i++) {
+                if (option[eventArray[i]] !== void 0) {
+                    xhr.upload[eventArray[i]] = option[eventArray[i]];
+                }
+            }                
+        } else {
+            for (var i = 0; i < eventArray.length; i++) {
+                if (option[eventArray[i]] !== void 0) {
+                    xhr[eventArray[i]] = option[eventArray[i]];
+                }
+            }             
+        }
     }
 
     return {

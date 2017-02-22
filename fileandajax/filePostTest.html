@@ -159,16 +159,9 @@
         </div>
         <div class="downloadContainer">
             <label id="downloadlabel" class="inputLabelStyle borderStyle">下载</label>
-<!--             <a id="testA" href="/frontDemo/nodeproject/fileOption/output/Adobe Photoshop.zip" download="Adobe Photoshop.zip">URLDownload</a> -->
             <a id="testA" href="./proce.txt" download="proce.txt">Download By Url</a>
             <a id="testC">fileDownload Use Base64</a>
         </div>
-<!--         <div class="progressContainer">
-            <div class="progressStyle">
-                <div class="progressBar"></div>
-            </div>
-            <div class="progressNum">0%</div>
-        </div> -->
     </div>
 </body>
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
@@ -177,153 +170,65 @@
         require.config({
             paths: {
                 "othertestmodule":'../js/fileandajax/othertestmodule',
-                "filemodule":"../js/fileandajax/filemodule"
+                "filemodule":"../js/fileandajax/filemodule",
+                "domoperation":"../js/common/domoperation",
+                "ajax":"../js/common/ajax"
             }
         })  
 
-        require(["common", "othertestmodule", "filemodule", "constant", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant){
+        require(["common", "othertestmodule", "filemodule", "constant", "domoperation", "ajax", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, domoperation, ajax){
             var path = common.getHost();
             $(function(){
                 // fileDownUseBase64();
-                fileDownUseCreateObjectURL();
+                // fileDownUseCreateObjectURL();
                 // fileUpload("upLoadFileByBusboy");
+                fileDownUseWindowOpen();
             })
 
-            // function fileDownUseCreateObjectURL() {
-            //     var downloadlabel = document.querySelector("#downloadlabel");
-            //     downloadlabel.onclick = function() {
-            //         var progressContainer = document.querySelector(".progressContainer");
-            //         var xhr = new XMLHttpRequest();
-            //         xhr.open("get", path + "downLoadFileWithStream", true);
-            //         // xhr.open("get", path + "downLoadFileWithBuffer", true);
-            //         xhr.responseType = "blob"
-
-            //         xhr.onloadstart = function() {
-            //             console.time("下载 ")
-            //             progressContainer.style.display = "flex"              
-            //         }
-
-            //         xhr.onprogress = function(event) {
-            //             var lengthComputable = event.lengthComputable;
-            //             var total = event.total;
-            //             var progressStyle = document.querySelector(".progressStyle");
-            //             var progressBar = document.querySelector(".progressBar");
-            //             var progressNum = document.querySelector(".progressNum");
-            //             var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
-            //             var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
-            //             progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
-            //             progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%" 
-            //         }
-
-            //         xhr.onload = function() {
-            //         }
-
-            //         xhr.onloadend = function() {
-            //             console.timeEnd("下载 ")
-            //             progressContainer.style.display = "none"                                    
-            //         }
-
-            //         xhr.onreadystatechange = function() {
-            //             if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            //                 var blob = xhr.response;
-            //                 var a = document.createElement('a');
-            //                 var evt = document.createEvent("HTMLEvents");      
-            //                 evt.initEvent("click", false, false);      
-            //                 a.download = "Adobe Photoshop.zip";
-            //                 a.href = window.URL.createObjectURL(blob); 
-            //                 a.dispatchEvent(evt);
-            //                 a.click();                       
-            //             }
-            //         }
-            //         xhr.send(null);   
-            //     }   
-            // }
-
-            // function fileDownUseCreateObjectURL() {
-            //     var downloadlabel = document.querySelector("#downloadlabel");
-            //     downloadlabel.onclick = function() {
-            //         var progressContainer = document.querySelector(".progressContainer");
-            //         var option = {
-            //             httpmethod: "get",
-            //             url:path + "downLoadFileWithStream?path=./output/Adobe Photoshop.zip",
-            //             dataType:"blob",
-            //             onloadstart:function() {
-            //                 console.time("下载 ")
-            //                 progressContainer.style.display = "flex"              
-            //             },
-            //             onprogress:function(event) {
-            //                 var lengthComputable = event.lengthComputable;
-            //                 var total = event.total;
-            //                 var progressStyle = document.querySelector(".progressStyle");
-            //                 var progressBar = document.querySelector(".progressBar");
-            //                 var progressNum = document.querySelector(".progressNum");
-            //                 var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
-            //                 var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
-            //                 progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
-            //                 progressNum.innerText =  Math.round(event.loaded / event.total * 100) + "%" 
-            //             },
-            //             onloadend:function(){
-            //                 console.timeEnd("下载 ")
-            //                 progressContainer.style.display = "none"            
-            //             },
-            //             success:function(result) {
-            //                 var a = document.createElement('a');
-            //                 var evt = document.createEvent("HTMLEvents");      
-            //                 evt.initEvent("click", false, false);      
-            //                 a.download = "Adobe Photoshop.zip";
-            //                 a.href = window.URL.createObjectURL(result); 
-            //                 a.dispatchEvent(evt);
-            //                 a.click();                             
-            //             }
-            //         }
-            //         filemodule.downloadFile(option);
-            //     }   
-            // }
-
+        /*------------download------------*/
             function fileDownUseCreateObjectURL() {
                 var downloadlabel = document.querySelector("#downloadlabel");
-                downloadlabel.onclick = function() {
-                    var option = {
-                        httpmethod: "get",
-                        url:path + "downLoadFileWithStream",
-                        data:{"path":"./output/Adobe Photoshop.zip"},
-                        dataType:"blob",
-                        success:function(result) {
-                            var a = document.createElement('a');
-                            var evt = document.createEvent("HTMLEvents");      
-                            evt.initEvent("click", false, false);      
-                            a.download = "Adobe Photoshop.zip";
-                            a.href = window.URL.createObjectURL(result); 
-                            a.dispatchEvent(evt);
-                            a.click();                             
-                        }                        
-                    }
-                    filemodule.downloadFile(option, true);
+                downloadlabel.onclick = function() { 
+                    filemodule.downloadFile(
+                            "./output/test1.txt", 
+                            path + "downLoadFileWithStream", 
+                            function(result) {
+                                console.log("onload")
+                                common.autoDownloadUrl("output.zip", result);
+                            },
+                            false      
+                    );                                       
                 }   
             }
-
 
             function fileDownUseBase64() {
                 var downloadlabel = document.querySelector("#downloadlabel");
                 downloadlabel.onclick = function() {
-                    var option = {
-                        httpmethod: "get",
-                        url:path + "downLoadFileWithBuffer",
-                        dataType:"blob",
-                        data:{path:"./output/test.txt"},
-                        success:function(result) {
-                            var reader = new FileReader();
-                            reader.addEventListener("loadend", function(){
-                                var a = document.querySelector("#testC");
-                                a.href = reader.result;
-                                a.download = "test1.txt"; 
-                            })                        
-                            reader.readAsDataURL(result)                              
-                        }
-                    }                    
-                    filemodule.downloadFile(option, true);
+                    filemodule.downloadFile(
+                            "./output/test1.txt", 
+                            path + "downLoadFileWithBuffer", 
+                            function(result) {
+                                var reader = new FileReader();
+                                reader.addEventListener("loadend", function(){
+                                    var a = document.querySelector("#testC");
+                                    a.href = reader.result;
+                                    a.download = "test1.txt"; 
+                                })                        
+                                reader.readAsDataURL(result)                              
+                            }    
+                    );                       
                 }
             }
+
+            function fileDownUseWindowOpen() {
+                var downloadlabel = document.querySelector("#downloadlabel");
+                downloadlabel.onclick = function() {
+                    var win = window.open(path + "myTestRepository/fileandajax/proce.txt", "new Window", "width=0,height=0");
+                    win.document.execCommand("SaveAs", true, "test.txt") ? console.log("yes") :console.log("save as is not support");
+                    win.close();                    
+                }
+            }
+        /*------------download------------*/
 
         /*------------fileUpload------------*/
             function fileUpload(url) {
