@@ -27,7 +27,6 @@ define(["common", "ajax", "domoperation"], function(common, ajax, domoperation){
         }
 
         domoperation.setAjaxWithProcess(option, isWithProcess); 
-
         ajax.generalAjax(option);
     }
 

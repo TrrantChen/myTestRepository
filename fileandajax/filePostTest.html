@@ -179,10 +179,9 @@
         require(["common", "othertestmodule", "filemodule", "constant", "domoperation", "ajax", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, domoperation, ajax){
             var path = common.getHost();
             $(function(){
-                // fileDownUseBase64();
-                // fileDownUseCreateObjectURL();
-                // fileUpload("upLoadFileByBusboy");
-                fileDownUseWindowOpen();
+                fileDownUseBase64();
+                fileDownUseCreateObjectURL();
+                fileUpload("upLoadFileByBusboy");
             })
 
         /*------------download------------*/
@@ -202,31 +201,19 @@
             }
 
             function fileDownUseBase64() {
-                var downloadlabel = document.querySelector("#downloadlabel");
-                downloadlabel.onclick = function() {
-                    filemodule.downloadFile(
-                            "./output/test1.txt", 
-                            path + "downLoadFileWithBuffer", 
-                            function(result) {
-                                var reader = new FileReader();
-                                reader.addEventListener("loadend", function(){
-                                    var a = document.querySelector("#testC");
-                                    a.href = reader.result;
-                                    a.download = "test1.txt"; 
-                                })                        
-                                reader.readAsDataURL(result)                              
-                            }    
-                    );                       
-                }
-            }
-
-            function fileDownUseWindowOpen() {
-                var downloadlabel = document.querySelector("#downloadlabel");
-                downloadlabel.onclick = function() {
-                    var win = window.open(path + "myTestRepository/fileandajax/proce.txt", "new Window", "width=0,height=0");
-                    win.document.execCommand("SaveAs", true, "test.txt") ? console.log("yes") :console.log("save as is not support");
-                    win.close();                    
-                }
+                filemodule.downloadFile(
+                        "./output/test1.txt", 
+                        path + "downLoadFileWithBuffer", 
+                        function(result) {
+                            var reader = new FileReader();
+                            reader.addEventListener("loadend", function(){
+                                var a = document.querySelector("#testC");
+                                a.href = reader.result;
+                                a.download = "test1.txt"; 
+                            })                        
+                            reader.readAsDataURL(result)                              
+                        }    
+                );                       
             }
         /*------------download------------*/
 
