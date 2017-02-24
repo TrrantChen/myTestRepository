@@ -290,22 +290,32 @@
     }).catch(function(err){
         res.send(err);
     })
-     // var path = './output/Adobe Photoshop.zip';
-     // fs.stat('./output/Adobe Photoshop.zip', function(err, stats) {
-     //     if (err) {
-     //         console.log('读取文件信息失败')
-     //     }
-     //     console.log(stats);
-     //     console.log('是否为文件：', stats.isFile);
-     //     console.log('是否为目录：', stats.isDictionary);
-     //     console.log('读写权限是：', stats.mode);
-     //     console.log('文件大小是：', stats.size);
-     //     console.log('访问时间是：', stats.atime);
-     //     console.log('修改时间是：', stats.mtime);
-     //     console.log('创建时间是：', stats.ctime);
-     //     // res._contentLength = stats.size;
-     //     res.header("Content-Length", stats.size.toString());
-     //     var readerStream = fs.createReadStream(path);
-     //     readerStream.pipe(res);
-     // })
  }
+
+    // var path = './output/Adobe Photoshop.zip';
+    // fs.stat('./output/Adobe Photoshop.zip', function(err, stats) {
+    //     if (err) {
+    //         console.log('读取文件信息失败')
+    //     }
+    //     console.log(stats);
+    //     console.log('是否为文件：', stats.isFile);
+    //     console.log('是否为目录：', stats.isDictionary);
+    //     console.log('读写权限是：', stats.mode);
+    //     console.log('文件大小是：', stats.size);
+    //     console.log('访问时间是：', stats.atime);
+    //     console.log('修改时间是：', stats.mtime);
+    //     console.log('创建时间是：', stats.ctime);
+    //     // res._contentLength = stats.size;
+    //     res.header("Content-Length", stats.size.toString());
+    //     var readerStream = fs.createReadStream(path);
+    //     readerStream.pipe(res);
+    // })
+
+
+ exports.readFile = function(filePath, option) {
+    fileExistPromise(filePath).then(function(stats){
+         var readerStream = fs.createReadStream(path);
+    }).catch(function(err){
+        
+    })    
+ } 

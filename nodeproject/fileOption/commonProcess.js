@@ -10,7 +10,7 @@ var arrayProcess = require("./arrayProcess");
 var converProcess = require("./converProcess");
 var app =  null;  
 
-var accessPath = "http://" +  ((process.platform == "win32") ? os.networkInterfaces()["本地连接"][1].address : "") + ":8099";
+// var accessPath = "http://" +  ((process.platform == "win32") ? os.networkInterfaces()["本地连接"][1].address : "") + ":8099";
 exports.setAccess = function(res) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-type,Content-Length, Authorization, Accept,X-Requested-With, X-PINGOTHER");
@@ -105,6 +105,28 @@ exports.asserts = function(funcRight) {
             return false;
         }
     }
+}
+
+exports.dateFormate = function(dateTime, format) {
+    var date = {
+        "M+": dateTime.getMonth() + 1,
+        "d+": dateTime.getDate(),
+        "h+": dateTime.getHours(),
+        "m+": dateTime.getMinutes(),
+        "s+": dateTime.getSeconds(),
+        "q+": Math.floor((dateTime.getMonth() + 3) / 3),
+        "S+": dateTime.getMilliseconds()
+    };
+    if (/(y+)/i.test(format)) {
+        format = format.replace(RegExp.$1, (dateTime.getFullYear() + '').substr(4 - RegExp.$1.length));
+    }
+    for (var k in date) {
+        if (new RegExp("(" + k + ")").test(format)) {
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ?
+                date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+        }
+    }
+    return format;
 }
 
 

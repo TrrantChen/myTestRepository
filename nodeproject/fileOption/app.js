@@ -10,21 +10,11 @@ var log4js = require('log4js')
 
 log4js.configure({
     appenders:[{
-        type:'logLevelFilter',
-        level:'info',
-        category:'test1',
-        appender:{
-            type:'console'
-        }
+        type:'file',
+        maxLogSize: (20 * 1000 * 1000).toString(),
+        filename:(commomProcess.dateFormate("./logs/" + new Date(), "yyyyMMdd").toString() + ".log")
     }]    
 })
-var logger1 =  log4js.getLogger("test1");
-logger1.debug("Time", new Date());
-logger1.info("Time", new Date());
-var logger2 = log4js.getLogger("test2");
-logger2.debug("Time", new Date());
-
-
 
 app.use('/static', express.static('public'));
 
