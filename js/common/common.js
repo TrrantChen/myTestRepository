@@ -1,10 +1,10 @@
 define([], function(){
     function isServerDebug() {
-        return false;
+        return true;
     }
 
     function isByNginx() {
-        return false;
+        return true;
     }
 
     function isObject(obj) {

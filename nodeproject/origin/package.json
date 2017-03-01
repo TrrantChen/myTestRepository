@@ -1,0 +1,22 @@
+{
+  "name": "file-option",
+  "version": "1.0.0",
+  "description": "the test for file option of nodeks",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "bufferhelper": "^0.2.1",
+    "busboy": "^0.2.13",
+    "connect-multiparty": "^2.0.0",
+    "express": "^4.14.0",
+    "formidable": "^1.0.17",
+    "iconv-lite": "^0.4.13",
+    "log4js": "^0.6.38",
+    "multiparty": "^4.1.2"
+  }
+}

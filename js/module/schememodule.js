@@ -7,6 +7,10 @@
 
 define(["common"], function(common){
 
+    function isEven(num) {
+        return num % 2 == 0;
+    }
+
     /*------------利用决策树取3个值中的最大的两个------------*/
         function getTop2ByDecisionTree(func) {
             return function() {
@@ -109,6 +113,18 @@ define(["common"], function(common){
                     break;
             }      
             return result;
+        }
+
+        // 减少了循环次数，理应是速度提高了，但实际并没有，理由不明，估计是底层做了优化。
+        // a = 1 b = 0 p = 0 q = 1
+        function fibonaccFuncWithIterationFast(a, b, p, q, counter) {
+            if (counter == 0) {
+                return b;
+            } else if (isEven(counter)) {
+                return fibonaccFuncWithIterationFast(a, b, p*p+q*q, 2*p*q+q*q, (counter / 2));
+            } else {
+                return fibonaccFuncWithIterationFast(a*(p+q)+b*q, b*p+a*q, p, q, counter - 1);
+            } 
         }
     /*------------fibonacc------------*/
 
@@ -365,7 +381,8 @@ define(["common"], function(common){
        exptWithRecursive:exptWithRecursive,
        exptWithIteration:exptWithIteration,
        exercise117Recursive:exercise117Recursive,
-       fibonaccFuncFastWithRecursive:fibonaccFuncFastWithRecursive
+       fibonaccFuncFastWithRecursive:fibonaccFuncFastWithRecursive,
+       fibonaccFuncWithIterationFast:fibonaccFuncWithIterationFast
     }  
 })
 

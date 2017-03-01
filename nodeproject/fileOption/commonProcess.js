@@ -26,11 +26,7 @@ exports.optionsProcess = function(req, res) {
     res.send(" ");    
 }
 
-exports.setApp = function(expressApp) {
-    (app != null) || (app = expressApp) 
-}
-
-exports.preProcessHttpMethods = function(httpMethods, url,callback, middleParse) {
+exports.preProcessHttpMethods = function(app, httpMethods, url, callback, middleParse) {
     switch (httpMethods) {
         case "get":
             if (middleParse != void 0) {

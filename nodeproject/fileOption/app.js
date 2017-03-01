@@ -1,34 +1,37 @@
-var express = require('express');
-var app = express();
-var bodyPostServer = require('./bodyPostServer');
-var httpServer = require('./httpServer');
-var fileOperationServer = require('./fileOperationServer');
-var connectServer = require('./connectServer');
-var commomProcess = require('./commonProcess');
-
-var log4js = require('log4js')
+const express = require('express');
+const app = express();
+const bodyPostRoute = require('./bodyPostRoute');
+const httpRoute = require('./httpRoute');
+const fileOperationRoute = require('./fileOperationRoute');
+const connectRoute = require('./connectRoute');
+const commomProcess = require('./commonProcess');
+const log4js = require('log4js')
 
 log4js.configure({
-    appenders:[{
-        type:'file',
+    appenders: [{
+        type: 'file',
         maxLogSize: (20 * 1000 * 1000).toString(),
-        filename:(commomProcess.dateFormate("./logs/" + new Date(), "yyyyMMdd").toString() + ".log")
-    }]    
+        filename: ("./logs/" + commomProcess.dateFormate(new Date(), "yyyyMMdd").toString() + ".log")
+    }, {
+        type: 'console'
+    }]
 })
+
+var logger = log4js.getLogger("app");
+
+process.on('uncaughtException', (err) => {
+    logger.err("error", err);
+});
 
 app.use('/static', express.static('public'));
 
-var server = app.listen(8088, function() {
-    var host = server.address().address;
+const server = app.listen(8088, function() {
+    const host = server.address().address;
     console.log("server is " + server.address());
-    var port = server.address().port;
+    const port = server.address().port;
     console.log('Example app listening at http://%s:%s', host, port);
 });
 
-commomProcess.setApp(app);
-bodyPostServer.functionRoute(app);
-fileOperationServer.functionRoute(app); 
-connectServer.functionRoute(app);
-
-
-
+bodyPostRoute.functionRoute(app);
+fileOperationRoute.functionRoute(app);
+connectRoute.functionRoute(app);

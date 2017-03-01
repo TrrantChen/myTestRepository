@@ -4,67 +4,150 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <style type="text/css">
-            * {
-                margin:0px;
-                padding:0px;
-                box-sizing: border-box;
-            }
-    
-            body, input, select, button, textarea {
-                font-size: 14px;
-                font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
-            }
-            
-            button {
-                border-width: 0px;
-                outline: none;
-            }            
-            
-            body, html {
-                width:100%;
-                height:100%;
-            } 
+        * {
+            margin:0px;
+            padding:0px;
+            box-sizing: border-box;
+        }
 
-            .container {
-                width:100%;
-                height:100%;
-                background: #EFF3CD;
-                overflow:hidden
-            }
+        body, input, select, button, textarea {
+            font-size: 14px;
+            font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
+        }
+        
+        button, input {
+            border-width: 0px;
+            outline: none;
+        }  
 
-            :root {
-              --main-bg-color: green;
-            }
 
-            .one {
-              width:100px;
-              height:100px;
-              background-color: var(--main-bg-color);
-            }
+        
+        body, html {
+            width:100%;
+            height:100%;
+        } 
 
-            .two {
-              width:100px;
-              height:100px;                
-              background-color:var(--main-bg-color);
-            }
+        .container {
+            width:100%;
+            height:100%;
+            background: #EFF3CD;
+            overflow:hidden
+        }
 
-        </style>
+        :root {
+          --main-bg-color: green;
+        }
+
+        .one {
+          width:100px;
+          height:100px;
+          background-color: var(--main-bg-color);
+        }
+
+        .two {
+          width:100px;
+          height:100px;                
+          background-color:var(--main-bg-color);
+        }
+
+        .readonly-input {
+          -webkit-appearance: textfield;
+          background-color: white;
+          -webkit-rtl-ordering: logical;
+          user-select: text;
+          cursor: auto;
+          padding: 1px;
+          border-width: 2px;
+          border-style: inset;
+          border-color: initial;
+          border-image: initial;
+          text-rendering: auto;
+          color: initial;
+          letter-spacing: normal;
+          word-spacing: normal;
+          text-transform: none;
+          text-indent: 0px;
+          text-shadow: none;
+          display: inline-block;
+          text-align: start;
+          margin: 0em 0em 0em 0em;
+          font: 11px BlinkMacSystemFont;
+          -webkit-writing-mode: horizontal-tb;
+          width:100px;
+          height:30px;
+          vertical-align: middle;
+        }
+
+        .readonly-input:focus {
+          outline-offset: -2px;
+          outline: -webkit-focus-ring-color auto 5px;
+        }
+
+        .btnStyle {
+          background-color: #CDECCC;
+          padding: 5px;
+          border:solid 2px #321D2E;
+        }
+
+        .btnStyle:hover {
+          background-color: #FAD089;
+          border:solid 2px #FF9C5B;
+          cursor: pointer;
+        }
+
+        .inputStyle {
+          width:200px;
+          height:35px;
+          line-height:35px;
+        }
+
+        .subContainer {
+          margin:5px 5px 0px 5px;
+        }
+    </style>
     <link rel="stylesheet" href="./test.css"></head>
 <body>
     <div class="container">
-        <div id="testDiv" class="defaultStyle"></div>
-    </div>
-    <div id="test">
-        <div>
-            test
-        </div>
-    </div>
-</body>
+      <div class="subContainer" id="btnContainer">
+        <button id="myThrottleBtnTest" class="btnStyle">myThrottleBtnTest</button>
+        <button id="underscoreThrottleBtnTest" class="btnStyle">scoreThrottleBtnTest</button>
+        <button id="myDebounceBtnTest" class="btnStyle">myDebounceBtnTest</button>
+        <button id="underscoreDebounceBtnTest" class="btnStyle">underscoreDebounceBtnTest</button>          
+      </div>
+      <div class="subContainer" id="inputContainer">
+        <input id="myThrottleInputTest" class="inputStyle" type="text">
+        <input id="underscoreThrottleInputTest" class="inputStyle" type="text">
+        <input id="myDebounceInputTest" class="inputStyle" type="text">
+        <input id="underscoreDebounceInputTest" class="inputStyle" type="text">            
+      </div>
+      <div>
+        <a href="testShell://test">test</a>
+      </div>
+    </div> 
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
     <script src="../js/common/requireconfig.js" type="text/javascript"></script>
     <script type="text/javascript">
-        require(["common","ajax", "jquery"], function(common, ajax){
-            
+        require.config({
+            paths: {
+                "othertestmodule":'../js/fileandajax/othertestmodule',
+                "filemodule":"../js/fileandajax/filemodule",
+                "peity":'../lib/peity-master/jquery.peity',
+                "schememodule":'../js/module/schememodule',
+            },
+            shim:{
+              "peity":{
+                deps:["jquery"],
+                exports:"peity"
+              }
+            }
+        })  
+
+        require(["common", "othertestmodule", "filemodule", "constant","schememodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule){
+          // var fibonaccFuncWithIterationFast = common.calculateSpanTime(schememodule.fibonaccFuncWithIterationFast, "fibonaccFuncWithIterationFast", true);
+          // fibonaccFuncWithIterationFast(1, 0, 0, 1, 1000);          
+          var fibonaccFuncWithIteration = common.calculateSpanTime(schememodule.fibonaccFuncWithIteration, "fibonaccFuncWithIteration", true);
+          fibonaccFuncWithIteration(1, 0, 1000);
         })
-    </script>
-           
+    </script>     
+</body>
+
