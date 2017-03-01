@@ -107,7 +107,7 @@
     </style>
     <link rel="stylesheet" href="./test.css"></head>
 <body>
-    <div class="container">
+    <div class="container">p
       <div class="subContainer" id="btnContainer">
         <button id="myThrottleBtnTest" class="btnStyle">myThrottleBtnTest</button>
         <button id="underscoreThrottleBtnTest" class="btnStyle">scoreThrottleBtnTest</button>
@@ -145,8 +145,25 @@
         require(["common", "othertestmodule", "filemodule", "constant","schememodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule){
           // var fibonaccFuncWithIterationFast = common.calculateSpanTime(schememodule.fibonaccFuncWithIterationFast, "fibonaccFuncWithIterationFast", true);
           // fibonaccFuncWithIterationFast(1, 0, 0, 1, 1000);          
-          var fibonaccFuncWithIteration = common.calculateSpanTime(schememodule.fibonaccFuncWithIteration, "fibonaccFuncWithIteration", true);
-          fibonaccFuncWithIteration(1, 0, 1000);
+          // var fibonaccFuncWithIteration = common.calculateSpanTime(schememodule.fibonaccFuncWithIteration, "fibonaccFuncWithIteration", true);
+          // fibonaccFuncWithIteration(1, 0, 1000);
+            function timePromise(func) {
+                var promise = new Promise(function(resolve, reject){
+                    func(resolve, 0)
+                })
+                return promise
+            };
+
+            timePromise(setTimeout).then(function(){
+                return timePromise(setTimeout);
+            }).then(function(){
+                var err = new Error("test");
+                throw err;
+            }).catch(function(err){
+                console.log(err)
+            })
+          
+
         })
     </script>     
 </body>
