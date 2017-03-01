@@ -1,6 +1,7 @@
 const http = require("http");
 const events = require('events');
 const url = require("url");
+const fs = require("fs");
 
 // class MyEmitter extends events {};
 
@@ -9,9 +10,9 @@ const url = require("url");
 var EventEmitter = events.EventEmitter;
 var myEmitter = new EventEmitter();
 
-process.on('uncaughtException', (err) => {
-    console.log(err);
-});
+// process.on('uncaughtException', (err) => {
+//     console.log("uncaughtException " + err);
+// });
 
 
 myEmitter.on("eventTest", (a) => {
@@ -25,6 +26,26 @@ http.createServer((request, response) => {
     response.writeHead(200, {
         "Content-Type": "text/plain"
     });
+
     response.write("hello");
     response.end();
 }).listen(8888)
+
+
+function test() {
+    try {
+        setTimeout(() => {
+            var err = new Error("test");
+            throw err;
+        }, 0)
+    } catch(err) {
+        // 这不会捕获到抛出！
+        console.log("time catch " + err);
+    }
+}
+
+test();
+
+
+
+
