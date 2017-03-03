@@ -2,6 +2,8 @@ const http = require("http");
 const events = require('events');
 const url = require("url");
 const fs = require("fs");
+const express = require("express");
+const app = express();
 
 // class MyEmitter extends events {};
 
@@ -15,11 +17,10 @@ var myEmitter = new EventEmitter();
 // });
 
 
-myEmitter.on("eventTest", (a) => {
-    console.log(a);
-})
+// myEmitter.on("error", (a) => {
+//     console.log(a);
+// })
 
-myEmitter.emit("eventTest", "para")
 
 http.createServer((request, response) => {
     console.log("this is work")
@@ -32,19 +33,44 @@ http.createServer((request, response) => {
 }).listen(8888)
 
 
-function test() {
+app.get('/', function (req, res) {
     try {
-        setTimeout(() => {
-            var err = new Error("test");
-            throw err;
-        }, 0)
-    } catch(err) {
-        // 这不会捕获到抛出！
-        console.log("time catch " + err);
+        var error = new Error("test");
+        throw error;
+        res.send('Hello World!');        
     }
-}
+    catch(err) {
+        console.log(err);
+        res.send('err'); 
+    }
+});
 
-test();
+// try {
+//     app.get('/', function(req, res) {
+//         var error = new Error("test");
+//         throw error;
+//         res.send('Hello World!');
+//     });
+// } catch (err) {
+//     console.log(err);
+// }
+
+
+
+var server = app.listen(3000, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+}); 
+
+
+
+
+
+
+
+
+
 
 
 
