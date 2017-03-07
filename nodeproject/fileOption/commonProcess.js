@@ -125,4 +125,9 @@ exports.dateFormate = function(dateTime, format) {
     return format;
 }
 
+exports.throwErr = () => {
+    let error = new Error();
+    throw error;
+}
+
 

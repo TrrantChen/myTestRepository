@@ -5,6 +5,9 @@
  * @version $Id$
  */
 
+const fs = require("fs");
+const common = require("./commonProcess");
+
  /*
  最简单的demo，gen定义的时候helloGenerator内部是不会执行的，函数每次执行到yield处，都会停住，
  除非下次next调用
@@ -64,17 +67,25 @@ function demo3() {
 }
 
 /*
-奇怪的思维
+奇怪的思维，使用generator使异步变为同步, 需要将gen的控制逻辑放到业务逻辑里面，非常混乱
  */
 function demo4() {
+    
     function* test1() {
-        console.log(yield);
+        function setTimeoutFunc() {
+            setTimeout(function(){
+                console.log(2);
+                gen.next();
+            }, 0)
+        }
+        console.log(1);
+        setTimeoutFunc();
+        yield;
+        console.log(3);
     }
+
     var gen = test1();
-    console.log(1);
-    setTimeout(test1, 500);
-    gen.next(2);
-    console.log(3);
+    gen.next();
 }
 
 /*
@@ -135,29 +146,193 @@ function demo6() {
     a.next();
 }
 
-function demo7() {
-    var pending = function() {
-        var count = 0;
-        return function(callback) {
-            count++;
-            return function() {
-                count--;
-                console.log(count);
-                if (count === 0) {
-                    callback();
-                }
-            };
+/*
+    模拟回调，回调并不等于异步，回调只是异步的一种实现方式之一。
+ */
+function asyncAndCallback(){
+    function AsyncTest() {
+        let eventNameObj = {};
+        this.addListener = (eventName, callback) => {
+            eventNameObj[eventName] = callback;
         };
-    };
-    var done = pending();
-    done(function() {
-        console.log('all is over');
-    })();
-    done(function() {
-        console.log('all is over');
-    })();
+        this.on = (evenName, para) => {
+            if (eventNameObj[evenName] === void 0) {
+                console.log("there is no this event " + evenName)
+            } else {
+                let func = eventNameObj[evenName];
+                func.apply(this, [para]);
+            }
+        };       
+    } 
+          
+    var asyncTest = new AsyncTest();
+    asyncTest.addListener("test", (para) => {
+        common.throwErr();
+        console.log(para);
+    })
+
+    try {
+        asyncTest.on("test", "haha");       
+    }
+    catch(err) {
+        console.log(err);
+    } 
 }
 
-demo7();
+/*
+    第一次执行next会到yield自动停止，而且会把yield右边的表达式执行
+ */
+function yieldExecuteExpression() {
+    function test() {
+        console.log("test")
+    }
 
+    function* gener() {
+        var a = yield test();
+        console.log("next") 
+    }
+
+    var gen = gener();
+    gen.next();
+}
+
+/*
+    使用generator将异步模拟为同步 真的很难看
+ */
+function demo7() {
+    var gen = fileGenerator();
+    function* fileGenerator() {
+        fs.readFile("./output/test1.txt", 'utf8',(err, txt)=>{
+            gen.next(txt);
+        })
+
+        // let data = null;
+        // (function test(a) {
+        //     data  = a;
+        // })(yield)
+        // 等价的
+        let data = yield;
+        
+        fs.readFile("./output/" + data + ".txt", 'utf8', (err, txt)=>{
+            console.log(txt);            
+        })
+    }
+    gen.next();
+}
+
+/*
+ 有缺陷， 未解决, 想法是把gen和yield提取出来，放到某个方法中执行,但这个暂时还没实现
+ */
+function improveDemo7() {
+    function fileGeneratorCaller(func) {
+        const gen = fileGenerator();
+        function* fileGenerator() {
+            func(yield);
+        } 
+        gen.next();
+    }
+
+    fileGeneratorCaller((yield)=>{
+        fs.readFile("./output/test1.txt", 'utf8',(err, txt)=>{
+            gen.next(txt);
+        })
+        const data = yield;
+        fs.readFile("./output/" + data + ".txt", 'utf8', (err, txt)=>{
+            console.log(txt);            
+        })        
+    })
+}
+
+function demo8() { 
+    /*
+    helper函数的主要作用是柯理化，让异步函数的参数和函数调用分开
+    再使用generator的分步作用是实现。
+     */
+    // function helper(fn) {
+    //     return function() {
+    //         var args = [].slice.call(arguments);
+    //         var pass;
+    //         args.push(function() { // 在回调函数中植入收集逻辑
+    //             if (pass) {
+    //                 pass.apply(null, arguments);
+    //             }
+    //         });
+    //         fn.apply(null, args);
+    //         return function(fn) { // 传入一个收集函数
+    //             pass = fn;
+    //         };
+    //     };
+    // };
+    // var flow = function*() {
+    //     var txt = yield readFile('./output/test1.txt', 'utf8');
+    //     console.log(txt);
+    // };
+    // var readFile = helper(fs.readFile);
+    // var generator = flow();
+    // var ret = generator.next();  
+    // ret.value(function (err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   generator.next(data);
+    // });
+
+    
+    function helper() {
+        var args = [].slice.call(arguments);
+        var pass;
+        args.push(() => {
+            if (pass) {
+                console.log(arguments);
+                pass.apply(null, arguments);
+            }
+        });
+        fs.readFile.apply(null, args);
+        return function(fn) {
+            pass = fn;
+        }
+    }
+    
+    
+    helper('./output/test1.txt', 'utf8')((err, data) => {
+        if (err) {
+            console.log("this is error " + err);
+        } else {
+            console.log(data);
+        }
+    })
+
+    
+
+    // function helper() {
+    //     var args = [].slice.call(arguments);
+    //     var pass;
+    //     args.push(()=>{
+    //         if (pass) {
+    //             pass.apply(null, arguments);
+    //         }
+    //     });
+    //     // myThrottleInputTest.addEventListener.apply(null, args);
+    //     setTimeout.apply(null, args);
+    //     return function(fn) {
+    //         pass = fn;
+    //     }
+    // }
+
+    // helper()(() => {
+    //     console.log("this is one");
+    // })
+    
+    // var pass;
+    // fs.readFile('./output/test1.txt', 'utf8', function() {
+    //     if (pass) {
+    //         pass.apply(null, arguments);
+    //     }
+    // })
+    // pass = function(err, data) {
+    //     console.log(data);
+    // }
+}
+
+demo8()
 
