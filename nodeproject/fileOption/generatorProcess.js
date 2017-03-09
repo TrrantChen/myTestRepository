@@ -212,8 +212,7 @@ function demo7() {
         // })(yield)
         // 等价的
         let data = yield;
-        
-        fs.readFile("./output/" + data + ".txt", 'utf8', (err, txt)=>{
+        fs.readFile(data, 'utf8', (err, txt)=>{
             console.log(txt);            
         })
     }
@@ -223,7 +222,7 @@ function demo7() {
 /*
  有缺陷， 未解决, 想法是把gen和yield提取出来，放到某个方法中执行,但这个暂时还没实现
  */
-function improveDemo7() {
+function improve4Demo7bymyself() {
     function fileGeneratorCaller(func) {
         const gen = fileGenerator();
         function* fileGenerator() {
@@ -243,96 +242,154 @@ function improveDemo7() {
     })
 }
 
-function demo8() { 
-    /*
+/*
     helper函数的主要作用是柯理化，让异步函数的参数和函数调用分开
-    再使用generator的分步作用是实现。
-     */
-    // function helper(fn) {
-    //     return function() {
-    //         var args = [].slice.call(arguments);
-    //         var pass;
-    //         args.push(function() { // 在回调函数中植入收集逻辑
-    //             if (pass) {
-    //                 pass.apply(null, arguments);
-    //             }
-    //         });
-    //         fn.apply(null, args);
-    //         return function(fn) { // 传入一个收集函数
-    //             pass = fn;
-    //         };
-    //     };
-    // };
-    // var flow = function*() {
-    //     var txt = yield readFile('./output/test1.txt', 'utf8');
-    //     console.log(txt);
-    // };
-    // var readFile = helper(fs.readFile);
-    // var generator = flow();
-    // var ret = generator.next();  
-    // ret.value(function (err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   generator.next(data);
-    // });
-
-    
-    function helper() {
+    再使用generator的分步作用去实现。
+ */
+function helper(fn) {
+    return function() {
         var args = [].slice.call(arguments);
-        var pass;
-        args.push(() => {
+        var pass = void 0;
+        args.push(function() {
             if (pass) {
-                console.log(arguments);
                 pass.apply(null, arguments);
             }
-        });
-        fs.readFile.apply(null, args);
+        })
+
+        fn.apply(null, args);
         return function(fn) {
             pass = fn;
-        }
+        } 
     }
-    
-    
-    helper('./output/test1.txt', 'utf8')((err, data) => {
-        if (err) {
-            console.log("this is error " + err);
-        } else {
-            console.log(data);
-        }
-    })
-
-    
-
-    // function helper() {
-    //     var args = [].slice.call(arguments);
-    //     var pass;
-    //     args.push(()=>{
-    //         if (pass) {
-    //             pass.apply(null, arguments);
-    //         }
-    //     });
-    //     // myThrottleInputTest.addEventListener.apply(null, args);
-    //     setTimeout.apply(null, args);
-    //     return function(fn) {
-    //         pass = fn;
-    //     }
-    // }
-
-    // helper()(() => {
-    //     console.log("this is one");
-    // })
-    
-    // var pass;
-    // fs.readFile('./output/test1.txt', 'utf8', function() {
-    //     if (pass) {
-    //         pass.apply(null, arguments);
-    //     }
-    // })
-    // pass = function(err, data) {
-    //     console.log(data);
-    // }
 }
 
-demo8()
+/*
+    网上看到的针对demo7的一个优化，将gen和yield抽取到一块
+ */
+function improve4Demo7Fromweb() {  
+    var flow = function*() {
+        var txt = yield readFile('./output/test1.txt', 'utf8');
+        console.log(txt);
+    };
+    var readFile = helper(fs.readFile);
+    var generator = flow();
+    var ret = generator.next();  
+    ret.value(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      generator.next(data);
+    });
 
+    /*
+        helper函数的最原始模型，原理来源于异步代码的执行在主js代码执行之后
+        所以可以在异步函数定义之后执行之前修改异步代码的函数实现。
+        这也是异步代码的一个不好的地方，可以将代码的实现放到其他地方
+        造成代码阅读的困难。
+     */
+    function originHelper() {
+        var pass;
+        fs.readFile('./output/test1.txt', 'utf8', function() {
+            if (pass) {
+                pass.apply(null, arguments);
+            }
+        })
+        pass = function(err, data) {
+            console.log(data);
+        }
+    }
+
+    /*
+        改进的helper，利用异步代码执行的特点将，异步的回调作为函数参数返回出来
+        实现柯理化，其实这部分也可以使用thunk来实现。
+        最后再做进一步的抽取，将fs.readFile也抽取出来，再加多一层，就变成三层柯理化
+        为最终的方案。
+     */
+    function proveHelper() {
+        function helper() {
+            var args = [].slice.call(arguments);
+            var pass;
+            args.push(() => {
+                if (pass) {
+                    console.log(arguments);
+                    pass.apply(null, arguments);
+                }
+            });
+            fs.readFile.apply(null, args);
+            return function(fn) {
+                pass = fn;
+            }
+        }
+        
+        
+        helper('./output/test1.txt', 'utf8')((err, data) => {
+            if (err) {
+                console.log("this is error " + err);
+            } else {
+                console.log(data);
+            }
+        })        
+    }
+}
+
+/*
+    一种尝试，但是觉得并不好
+ */
+function furtherAbstractor() {
+    var fileReader = helper(fs.readFile);
+
+    var flow = function*(rightFn, processFn) {
+        var result = yield rightFn();
+        processFn(result);
+    }
+
+    function getValue() {
+        return "test";
+    } 
+
+    function printValue(result) {
+        console.log(result);
+    }
+
+    var gen = flow(getValue, printValue);
+    gen.next(gen.next().value);
+}
+
+function simulatinCo() {
+    function co(gen) {
+        // next();
+        // function next(para) {
+        //     let result = gen.next(para);
+        //     if (!result.done) {
+        //         result.value(function(err, data) {
+        //             if(err) {
+        //                 throw err;
+        //             }
+        //             next(data);
+        //         })
+        //     }
+        // }
+
+        let result = gen.next();
+        while(!result.done) {
+            result.value(function(err, data){
+                if(err) {
+                    throw err;
+                }
+                gen.next(data)
+            })
+        }
+    }
+
+    var readFile = helper(fs.readFile);
+    var flow = function* () {
+        var txt = yield readFile('./output/test1.txt', 'utf8');
+        console.log(txt);
+        var txt2 = yield readFile(txt, 'utf8');
+        console.log(txt2);
+    }
+
+    co(flow());
+}
+
+simulatinCo();
