@@ -370,8 +370,9 @@ function simulatinCo() {
         //     }
         // }
 
-        let result = gen.next();
-        while(!result.done) {
+        let result = null;
+        while(result == null || !result.done ) {
+            result = gen.next();
             result.value(function(err, data){
                 if(err) {
                     throw err;

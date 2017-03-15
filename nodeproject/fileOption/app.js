@@ -21,7 +21,7 @@ log4js.configure({
 var logger = log4js.getLogger("app");
 
 process.on('uncaughtException', (err) => {
-    logger.err("error", err);
+    logger.error("error", err);
 });
 
 app.use('/static', express.static('public'));
@@ -36,4 +36,11 @@ const server = app.listen(8088, function() {
 bodyPostRoute.functionRoute(app);
 fileOperationRoute.functionRoute(app);
 connectRoute.functionRoute(app);
+
+var str = [];
+for (var i = 1; i < 32; i++) {
+    str.push(i);
+}
+console.log(str);
+
 

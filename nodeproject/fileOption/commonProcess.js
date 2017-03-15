@@ -5,9 +5,6 @@
  * @version $Id$
  */
 var os = require('os');
-var randomProcess = require("./randomProcess");
-var arrayProcess = require("./arrayProcess");
-var converProcess = require("./converProcess");
 var app =  null;  
 
 // var accessPath = "http://" +  ((process.platform == "win32") ? os.networkInterfaces()["本地连接"][1].address : "") + ":8099";
@@ -50,34 +47,16 @@ exports.preProcessHttpMethods = function(app, httpMethods, url, callback, middle
     }
 }
 
-exports.createRandomArray = function(length, min, max, isSort) {
-    length = length || 10;
-    min = min || 0,
-    max = max || 1000
-    var array = new Array(length);
-    for (var i = 0; i < length; i++) {
-        array[i] = randomProcess.getRandomInt(min, max);
+exports.calculateSpanTime = function(func, funcName, isShowTheResult) {
+    isShowTheResult = isShowTheResult || false;
+    return function() {
+        console.time(funcName);
+        var result = func.apply(null, arguments);
+        if (isShowTheResult && result != void 0) {
+            console.log(result);
+        }
+        console.timeEnd(funcName);
     }
-    return  isSort ? arrayProcess.arraySort(array) : array;
-}
-
-exports.createRandomString = function(length) {
-    length = length || 10;
-    var str = "";
-    for (var i = 0; i < length; i++) {
-        str +=  converProcess.num2char(randomProcess.getRandomIntInclusive(97, 122));
-    }
-    return str;
-}
-
-exports.calculateSpanTime = function(func, funcName) {
-    var fixedArgs = [].slice.call(arguments, 2)
-    console.time(funcName);
-    var result  = func.apply(null, fixedArgs);
-    if (result != void 0) {
-         console.log(result);
-    }
-    console.timeEnd(funcName);
 }
 
 function preProcessCallback(callback) {
@@ -130,4 +109,5 @@ exports.throwErr = () => {
     throw error;
 }
 
+exports.noop= () => {};
 

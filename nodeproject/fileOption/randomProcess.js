@@ -5,6 +5,9 @@
  * @version $Id$
  */
 
+var arrayProcess = require("./arrayProcess");
+var converProcess = require("./converProcess");
+
 // Returns a random number between 0 (inclusive) and 1 (exclusive)
 exports.getRandom = function() {
     return Math.random();
@@ -40,4 +43,24 @@ exports.getRandomIntInclusive = function(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     } 
     
+}
+
+exports.createRandomArray = function(length, min, max, isSort) {
+    length = length || 10;
+    min = min || 0,
+    max = max || 1000
+    var array = new Array(length);
+    for (var i = 0; i < length; i++) {
+        array[i] = exports.getRandomInt(min, max);
+    }
+    return  isSort ? arrayProcess.arraySort(array) : array;
+}
+
+exports.createRandomString = function(length) {
+    length = length || 10;
+    var str = "";
+    for (var i = 0; i < length; i++) {
+        str +=  converProcess.num2char(exports.getRandomIntInclusive(97, 122));
+    }
+    return str;
 }

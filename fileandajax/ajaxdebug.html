@@ -51,22 +51,78 @@
         
       </div>
     </body>
-    <script src="../lib/jquery/jquery-2.1.4.js" type="text/javascript"></script>
-    <script src="../lib/angular/angular.js" type="text/javascript"></script>
-    <script src="../lib/bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    <script src="../js/vmax-loading.js"></script>
+
+    <script src="../lib/requirejs/require.js" type="text/javascript"></script>
+    <script src="../js/common/requireconfig.js" type="text/javascript"></script>
+    <script src="../js/common/xmlHttpRequestRemould.js" type="text/javascript"></script>
     <script type="text/javascript">
-        $.ajax({
-            url: "http://" + document.domain  + ":8088/delayloadtest",
-            type: 'post',
-            async : true,
-            datatype: "json",
-            contentType:"application/json",
-            data:JSON.stringify({para0:1000})
-        }).then(function(data){
-            console.log(data);
-        }, function(data){
-            console.log(data);
-        })    
+    require.config({
+        paths: {
+            "othertestmodule": '../js/fileandajax/othertestmodule',
+            "filemodule": "../js/fileandajax/filemodule",
+            "peity": '../lib/peity-master/jquery.peity',
+            "schememodule": '../js/module/schememodule',
+        },
+        shim: {
+            "peity": {
+                deps: ["jquery"],
+                exports: "peity"
+            }
+        }
+    })
+
+    require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax) {
+
+        // $.ajax({
+        //     url: "http://" + document.domain  + ":8088/delayloadtest",
+        //     type: 'post',
+        //     async : true,
+        //     datatype: "json",
+        //     contentType:"application/json",
+        //     data:JSON.stringify({para0:1000})
+        // }).then(function(data){
+        //     console.log("ajax " + data);
+        // }, function(data){
+        //     console.log(data);
+        // }) 
+
+        // var option = {
+        //     url:"http://" + document.domain  + ":8088/delayloadtest",
+        //     data:{para0:1000},
+        //     success:function(result) {
+        //         console.log("self ajax " + result);
+        //     }
+        // }   
+
+        // ajax.generalAjax(option);
+        // 
+        
+        var oldThen = Promise.prototype.then;
+
+        function action() {
+            console.log("thnis is apply before then");
+        }
+
+        function newThen() {
+            action();
+            return oldThen.apply(this, arguments);
+        }
+
+        Promise.prototype.then = newThen;
+
+        fetch("http://" + document.domain  + ":8088/delayloadtest?para0=1000", { method: 'get' })
+        .then(function(response) {
+            console.log("this is response");
+            return response.text()
+         })
+        .then(function(result) {
+            console.log("this is result");
+            console.log(result);
+        })
+        .catch(function(err) {
+            console.log(err);
+         });
+
+    })
     </script>
 </html>

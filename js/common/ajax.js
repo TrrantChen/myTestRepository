@@ -5,9 +5,10 @@
  * @version $Id$
  */
 
-define(["common"], function(common) {
+define(["common", "underscore"], function(common) {
     // option httpmethod async contentType data dataType url isUpload 
     function generalAjax(option) {
+        var xhr = new XMLHttpRequest();
         option = option || {};
         var defaultOption = {
             httpmethod: "get",
@@ -22,23 +23,24 @@ define(["common"], function(common) {
             console.log("ajax url must not undefine");
             return 
         }
-        option = Object.assign(defaultOption, option)
-        var xhr = new XMLHttpRequest();
 
+        if (Object.assign != void 0) {
+            option = Object.assign(defaultOption, option)
+        } else {
+            option = _.assign(defaultOption, option)
+        }
+            
+        
         if (option.httpmethod.toLowerCase() == "get" && option.data !== null && !common.isEmptyObject(option.data)) {
             option.url += ("?" + common.obj2keyValueString(option.data))
-        }
+        }      
 
+        xhr.open(option.httpmethod, option.url, option.async);
 
         if (option.contentType !== "") {
             xhr.setRequestHeader("Content-type", option.contentType);
         }
 
-        if (option.dataType !== "") {
-            xhr.responseType = option.dataType;
-        }        
-
-        xhr.open(option.httpmethod, option.url, option.async);
         if (xhr.onload !== void 0) {
             xhr.onload = function() {
                 if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200" && option.success != void 0) {
@@ -58,9 +60,12 @@ define(["common"], function(common) {
         if (option.httpmethod.toLowerCase() == "post") {
             xhr.send(option.data);
         } else {
-             xhr.send(null);
+            xhr.send(null);
         }
-        
+
+        if (option.dataType !== "") {
+            xhr.responseType = option.dataType;
+        }      
     }
 
     function registerEvent(xhr, option) {

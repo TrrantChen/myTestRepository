@@ -150,70 +150,39 @@
     })
 
     require(["common", "othertestmodule", "filemodule", "constant", "schememodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule) {
-        const myThrottleInputTest = document.querySelector("#myThrottleInputTest"); 
-        // var fun = myThrottleInputTest.addEventListener;
-        // function helper(fn) {
-        //     return function() {
-        //         var args = [].slice.call(arguments);
-        //         var pass;
-        //         args.push(function() { // 在回调函数中植入收集逻辑
-        //             if (pass) {
-        //                 pass.apply(null, arguments);
-        //             }
-        //         });
-        //         fn.apply(null, args);
-        //         return function(fn) { // 传入一个收集函数
-        //             pass = fn;
-        //         };
-        //     };
-        // };
+        const myThrottleBtnTest = document.querySelector("#myThrottleBtnTest");
+        const myThrottleBtnTestQuery = $(myThrottleBtnTest);
 
-        // function print1() {
-        //     console.log("this is one");
-        // }
-
-        // helper(fun)("click")(print1);
-        
-        // function helper() {
-        //     var args = [].slice.call(arguments);
-        //     var pass;
-        //     args.push(()=>{
-        //         if (pass) {
-        //             pass.apply(null, arguments);
-        //         }
-        //     });
-        //     // myThrottleInputTest.addEventListener.apply(null, args);
-        //     setTimeout.apply(null, args);
-        //     return function(fn) {
-        //         pass = fn;
-        //     }
-        // }
-
-        // helper()(() => {
-        //     console.log("this is one");
+        // myThrottleInputTestQuery.on("click", function(){
+        //     console.log("test");
         // })
-
-        // helper("click")(()=>{
-        //     console.log("this is one");
-        // });
-        // 
-
-        var test = function(func) {
-            console.log("this is the test ");
-            console.log(arguments);
-            func("haha");
-        }        
-
-        test(() => {
-            console.log("this is the arrow function ");
-            console.log(arguments);
-        })
-        console.log("---------------------")
-        test(function(){
-            console.log("this is the function ");
-            console.log(arguments);
-        })
+    
+        // myThrottleBtnTest.addEventListener("click", function(){
+        //     $.ajax({
+        //         url: "http://127.0.0.1:8088/delayloadtest",
+        //         type: 'post',
+        //         async : true,
+        //         datatype: "json",
+        //         contentType:"application/json",
+        //         data:JSON.stringify({para0:1000})
+        //     }).then(function(data){
+        //         console.log(data);
+        //     }, function(data){
+        //         console.log(data);
+        //     })             
+        // })
         
+
+        function getTwo(func1, func2) {
+            return function() {
+                func1.apply(this, arguments);
+                return function() {
+                    return func2.apply(this, arguments);
+                }
+            }
+        }
+
+
     })
     </script>
 </body>
