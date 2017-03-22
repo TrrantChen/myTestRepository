@@ -37,10 +37,6 @@ bodyPostRoute.functionRoute(app);
 fileOperationRoute.functionRoute(app);
 connectRoute.functionRoute(app);
 
-var str = [];
-for (var i = 1; i < 32; i++) {
-    str.push(i);
-}
-console.log(str);
+
 
 

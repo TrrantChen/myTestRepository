@@ -172,17 +172,7 @@
         //     })             
         // })
         
-
-        function getTwo(func1, func2) {
-            return function() {
-                func1.apply(this, arguments);
-                return function() {
-                    return func2.apply(this, arguments);
-                }
-            }
-        }
-
-
+        
     })
     </script>
 </body>

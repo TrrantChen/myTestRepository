@@ -8,49 +8,46 @@
     global.xmlHttpRequestRemould = factory();
 })(this, function() {
     function XmlHttpRequestRemould() {
-        var fnBeforeAjaxSend = void 0,
-        fnAfterAjaxSend = void 0,
-        fnBeforeDone = void 0,
-        fnAfterDone = void 0;
+        var that = this;
+        var fnBeforeOpen = void 0,
+        fnAfterOpen = void 0,
+        fnBeforeDataReturn = void 0,
+        fnAfterDataReturn = void 0;
 
-        this.setFnBeforeAjaxSend = function(fn) {
-            fnBeforeAjaxSend = fn;
+        this.tmpObj = {};
+
+        this.setFnBeforeOpen = function(fn) {
+            fnBeforeOpen = fn;
         };
 
-        this.setFnAfterAjaxSend = function(fn) {
-            fnAfterAjaxSend = fn;
+        this.setFnAfterOpen = function(fn) {
+            fnAfterOpen = fn;
         };
 
-        this.setFnBeforeDone = function(fn) {
-            fnBeforeDone = fn;
+        this.setFnBeforeDataReturn = function(fn) {
+            fnBeforeDataReturn = fn;
         };
 
-        this.setFnAfterDone = function(fn) {
-            fnAfterDone = fn
+        this.setFnAfterDataReturn = function(fn) {
+            fnAfterDataReturn = fn
         };
 
         var open = XMLHttpRequest.prototype.open;
         var send = XMLHttpRequest.prototype.send;
 
+        var onreadystatechangeDescriptor = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "onreadystatechange");
+
         function replaceOpen() {
-            console.log("selfOpen");
             var paras = Array.prototype.slice.call(arguments, 0);
-            if (paras[1] != void 0) {
-                console.log(paras[1] + " open");
+
+            if (fnBeforeOpen != void 0) {
+                fnBeforeOpen(paras, this);
             }
 
-            /*
-                self function here
-             */
             open.apply(this, arguments);
         }
 
         function replaceSend() {
-            console.log("selfSend");
-            /*
-                self function here
-             */
-
             if (this.onload) {
                 this.tmponload = this.onload;
                 this.onload = replaceOnLoad;
@@ -59,6 +56,30 @@
             if (this.onreadystatechange) {
                 this.tmponreadystatechange = this.onreadystatechange;
                 this.onreadystatechange = replaceOnReadyChange;
+            } else {
+                Object.defineProperty(this, "onreadystatechange", {
+                    set:function(value) {
+                            function closure() {
+                                if (this.readyState == 4 && this.status.toString() == "200") {
+                                    if (fnBeforeDataReturn != void 0) {
+                                        fnBeforeDataReturn(this);
+                                    }  
+                                    value();                           
+                                    if (fnAfterDataReturn != void 0) {
+                                        fnAfterDataReturn(this);
+                                    } 
+                                }                                                     
+                            }
+                            onreadystatechangeDescriptor.set.call(this, closure);           
+                    }
+                    /*
+                    似乎可以不加
+                     */
+                    // ,
+                    // get:function() {
+                    //     return onreadystatechangeDescriptor.get.call(this);
+                    // }
+                }) 
             }
 
             if (this.onerror) {
@@ -66,42 +87,48 @@
                 this.onerror = replaceOnError;
             }
 
+            if (fnAfterOpen != void 0) {
+                fnAfterOpen(paras, this);
+            }
+
             return send.apply(this, arguments);
         }
 
-        function replaceOnReadyChange() {
-            console.log("onreadychange " + this.readyState);
-            if (this.readyState == 4) {
-                /*
-                    self function here
-                 */
+        function replaceOnReadyChange() {;
+            if (this.readyState == 4 && this.status.toString() == "200") {
+                if (fnBeforeDataReturn != void 0) {
+                    fnBeforeDataReturn(this);
+                }  
                 console.log("onreadychange when readyState is 4");
             }
 
             var tmponreadystatechange = this.tmponreadystatechange.apply(this, arguments);
 
-            console.log("after onraedyChange");
+            if (this.readyState == 4 && this.status.toString() == "200") { 
+                if (fnAfterDataReturn != void 0) {
+                    fnAfterDataReturn(this);
+                }                
+            }
+
             return tmponreadystatechange;
         }
 
         function replaceOnLoad() {
-            console.log("onload ")
-                /*
-                    self function here
-                 */
+            if (fnBeforeDataReturn != void 0) {
+                fnBeforeDataReturn(this);
+            }  
+
             var tmponload = this.tmponload.apply(this, arguments);
 
-            console.log("after on load");
+            if (fnAfterDataReturn != void 0) {
+                fnAfterDataReturn(this);
+            }      
+
             return tmponload
         }
 
         function replaceOnError() {
-            console.log("onError");
-            /*
-                self function here
-             */
             var tmponerror = this.tmponerror.apply(this, arguments);
-            console.log("after onError");
             return tmponerror
         }
         XMLHttpRequest.prototype.open = replaceOpen;
@@ -109,3 +136,62 @@
     }
     return new XmlHttpRequestRemould();
 })
+
+
+// /**
+//  * 
+//  * @authors Your Name (you@example.org)
+//  * @date    2017-03-14 11:17:06
+//  * @version $Id$
+//  */
+// (function(global, factory) {
+//     global.xmlHttpRequestRemould = factory();
+// })(this, function() {
+//     function XmlHttpRequestRemould() {
+//         var open = XMLHttpRequest.prototype.open;
+//         var send = XMLHttpRequest.prototype.send;
+
+//         function replaceOpen() {
+//             var paras = Array.prototype.slice.call(arguments, 0);
+//             /*
+//                 before action here
+//              */  
+//             open.apply(this, arguments);
+//             /*
+//                 after action here
+//              */
+//         }
+
+//         function replaceSend() {
+//             /*
+//                 before action here
+//              */
+//             if (this.onreadystatechange) {
+//                 this.tmponreadystatechange = this.onreadystatechange;
+//                 this.onreadystatechange = replaceOnReadyChange;
+//             }
+
+//             return send.apply(this, arguments);
+//         }
+
+//         function replaceOnReadyChange() {
+//             console.log("onreadychange " + this.readyState);
+//             if (this.readyState == 4) {
+//                 /*
+//                     before action here
+//                  */
+//                 console.log("onreadychange when readyState is 4");
+//             }
+
+//             var tmponreadystatechange = this.tmponreadystatechange.apply(this, arguments);
+//             /*
+//                 after action here
+//              */
+//             return tmponreadystatechange;
+//         }
+
+//         XMLHttpRequest.prototype.open = replaceOpen;
+//         XMLHttpRequest.prototype.send = replaceSend;
+//     }
+//     return new XmlHttpRequestRemould();
+// })

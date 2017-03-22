@@ -45,12 +45,20 @@ define(["common", "underscore"], function(common) {
             xhr.onload = function() {
                 if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200" && option.success != void 0) {
                     option.success(xhr.response);
-                }                
+                } else {
+                    if (option.error != void 0) {
+                        option.error(xhr.readyState, xhr.status);
+                    }
+                }              
             }
         } else {
             xhr.onreadystatechange = function() {
                 if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200" && option.success != void 0) {
                     option.success(xhr.response);
+                } else {
+                    if (option.error != void 0) {
+                        option.error(xhr.readyState, xhr.status);
+                    }
                 }
             }            
         }
