@@ -29,8 +29,8 @@ define(["common", "ajax", "jquery"], function(common, ajax){
     }
 
     function fetchTest() {
-        fetch("http://" + document.domain  + ":8088/delayloadtest?para0=1000", { method: 'get' })
-        .then(function(response) {
+        var fetchThen = fetch("http://" + document.domain  + ":8088/delayloadtest?para0=1000", { method: 'get' })
+        fetchThen.then(function(response) {
             console.log("this is response");
             return response.text()
          })

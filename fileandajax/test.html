@@ -115,7 +115,7 @@
 
 <body>
     <div class="container">
-        <div class="subContainer" id="btnContainer">
+<!--         <div class="subContainer" id="btnContainer">
             <button id="myThrottleBtnTest" class="btnStyle">myThrottleBtnTest</button>
             <button id="underscoreThrottleBtnTest" class="btnStyle">scoreThrottleBtnTest</button>
             <button id="myDebounceBtnTest" class="btnStyle">myDebounceBtnTest</button>
@@ -126,10 +126,7 @@
             <input id="underscoreThrottleInputTest" class="inputStyle" type="text">
             <input id="myDebounceInputTest" class="inputStyle" type="text">
             <input id="underscoreDebounceInputTest" class="inputStyle" type="text">
-        </div>
-        <div>
-            <a href="testShell://test">test</a>
-        </div>
+        </div> -->
     </div>
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
     <script src="../js/common/requireconfig.js" type="text/javascript"></script>
@@ -150,29 +147,32 @@
     })
 
     require(["common", "othertestmodule", "filemodule", "constant", "schememodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule) {
-        const myThrottleBtnTest = document.querySelector("#myThrottleBtnTest");
-        const myThrottleBtnTestQuery = $(myThrottleBtnTest);
+        function Test() {
+            this.print = () => {
+                console.log("something");
+            }
+        }
+        Test.testFunc= function() {
+            console.log("this is testFunc");
+        }
 
-        // myThrottleInputTestQuery.on("click", function(){
-        //     console.log("test");
-        // })
-    
-        // myThrottleBtnTest.addEventListener("click", function(){
-        //     $.ajax({
-        //         url: "http://127.0.0.1:8088/delayloadtest",
-        //         type: 'post',
-        //         async : true,
-        //         datatype: "json",
-        //         contentType:"application/json",
-        //         data:JSON.stringify({para0:1000})
-        //     }).then(function(data){
-        //         console.log(data);
-        //     }, function(data){
-        //         console.log(data);
-        //     })             
-        // })
+        var oldTest = Test;
+        Test = function() {
+            console.log("this is new test");
+            return new oldTest();
+        }
+
+        for (var obj in oldTest) {
+            Test[obj] = oldTest[obj];
+            console.log(obj);
+        }
+
+        debugger;
         
-        
+
+        // var test = new Test();
+        // debugger;
+        // test.print();
     })
     </script>
 </body>

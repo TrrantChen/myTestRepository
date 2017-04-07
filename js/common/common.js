@@ -284,6 +284,73 @@ define([], function(){
         }
     }
 
+    function initGetUid() {
+        let uid = 0;
+        function incrementUid() {
+            return uid++;
+        }
+        return function() {
+            return incrementUid();
+        }    
+    }    
+
+    function promiseAop(func) {
+        func = func || function() {
+            console.log("test")
+        }
+
+        var origin = Promise;
+        Promise = function() {
+            var args = [].slice.call(arguments);
+            arguments[0] = function(reslove, reject){
+                func();
+                args[0](reslove, reject);                        
+            }
+            return new origin(arguments[0]);
+        };
+
+        var arrProperties = Object.getOwnPropertyNames(origin);
+
+        for (var i = 0; i < arrProperties.length; i++) {
+            Promise[arrProperties[i]] = origin[arrProperties[i]];
+        }      
+    }
+
+    /*
+        返回所有实例属性，不管是可枚举的还是不可枚举
+     */
+    function getAllProperties(obj) {
+        if (obj === void 0) {
+            return [];
+        } else {
+            return Object.getOwnPropertyNames(obj);
+        }
+    }
+
+    /*
+        获取所有可枚举属性
+     */
+    function getAllEnumerableProperties(obj) {
+        if (obj === void 0) {
+            return [];
+        } else {
+            return Object.keys(obj);
+        }
+    }
+
+    /*
+        获取所有不可枚举属性
+     */
+    function getAllUnEnumerableProperties(obj) {
+        if (obj === void 0) {
+            return [];
+        } else {
+            return Object.getOwnPropertyNames(obj).filter((str) => {
+                return !obj.propertyIsEnumerable(str);
+            })
+        }
+    }
+
     return {
         ab2string8:ab2string8,
         ab2string16:ab2string16,
@@ -313,6 +380,11 @@ define([], function(){
         obj2keyValueString:obj2keyValueString,
         autoDownloadUrl:autoDownloadUrl,
         isArray:isArray,
-        isString:isString
+        isString:isString,
+        initGetUid:initGetUid,
+        promiseAop:promiseAop,
+        getAllProperties:getAllProperties,
+        getAllEnumerableProperties:getAllEnumerableProperties,
+        getAllUnEnumerableProperties:getAllUnEnumerableProperties
     }  
 })

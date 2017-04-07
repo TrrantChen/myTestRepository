@@ -6,6 +6,7 @@
             "underscore":'../lib/underscore/underscore',
             "ajax":'./common/ajax',
             "domoperation":"./common/domoperation",
-            "constant":"./common/constant"
+            "constant":"./common/constant",
+            "ajaxtestmodule":"./module/ajaxtestmodule"
         }
     })

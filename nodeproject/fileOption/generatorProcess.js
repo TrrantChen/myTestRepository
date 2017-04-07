@@ -88,6 +88,18 @@ function demo4() {
     gen.next();
 }
 
+function generatorValueSetGet() {
+    function*test() {
+        var a = yield function(value) {
+            return value + " test";
+        }
+    }
+
+    var gen = test();
+    var returnValue = gen.next().value("hehe");
+    console.log(returnValue);
+}
+
 /*
 执行顺序会随着yield中断并随着next而继续，所以generator这个等于是说会对
 函数的流程做一个控制，而且这个控制是掌握在程序员手里的。
@@ -197,66 +209,51 @@ function yieldExecuteExpression() {
 }
 
 /*
-    使用generator将异步模拟为同步 真的很难看
+    yield无法夸作用域调用，思路其实是错的，yield无法当参数传递
  */
-function demo7() {
-    var gen = fileGenerator();
-    function* fileGenerator() {
-        fs.readFile("./output/test1.txt", 'utf8',(err, txt)=>{
-            gen.next(txt);
-        })
 
-        // let data = null;
-        // (function test(a) {
-        //     data  = a;
-        // })(yield)
-        // 等价的
-        let data = yield;
-        fs.readFile(data, 'utf8', (err, txt)=>{
-            console.log(txt);            
-        })
-    }
-    gen.next();
-}
-
-/*
- 有缺陷， 未解决, 想法是把gen和yield提取出来，放到某个方法中执行,但这个暂时还没实现
- */
 function improve4Demo7bymyself() {
     function fileGeneratorCaller(func) {
+        console.log("1")
         const gen = fileGenerator();
         function* fileGenerator() {
-            func(yield);
+            console.log("2");
+            var data = yield;
+            func(data);
         } 
         gen.next();
     }
 
-    fileGeneratorCaller((yield)=>{
-        fs.readFile("./output/test1.txt", 'utf8',(err, txt)=>{
+    function callback(yield) {
+        fs.readFile("./output/test1.txt", 'utf8',function(err, txt){
+            console.log(txt);
             gen.next(txt);
         })
         const data = yield;
-        fs.readFile("./output/" + data + ".txt", 'utf8', (err, txt)=>{
-            console.log(txt);            
-        })        
-    })
+        fs.readFile("./output/" + data + ".txt", 'utf8', function(err, txt){
+            console.log(txt);
+        })
+    }
+
+    fileGeneratorCaller(callback);
 }
 
 /*
-    helper函数的主要作用是柯理化，让异步函数的参数和函数调用分开
-    再使用generator的分步作用去实现。
+    thunk函数的主要作用是柯理化，让异步函数的参数和函数调用分开
+    再使用generator的分步作用去实现。就是个thunk
  */
-function helper(fn) {
+function thunk(fn) {
     return function() {
         var args = [].slice.call(arguments);
         var pass = void 0;
+        var context = this;
         args.push(function() {
             if (pass) {
                 pass.apply(null, arguments);
             }
         })
 
-        fn.apply(null, args);
+        fn.apply(context, args);
         return function(fn) {
             pass = fn;
         } 
@@ -264,30 +261,16 @@ function helper(fn) {
 }
 
 /*
-    网上看到的针对demo7的一个优化，将gen和yield抽取到一块
+    thunk函数的改进过程
  */
-function improve4Demo7Fromweb() {  
-    var flow = function*() {
-        var txt = yield readFile('./output/test1.txt', 'utf8');
-        console.log(txt);
-    };
-    var readFile = helper(fs.readFile);
-    var generator = flow();
-    var ret = generator.next();  
-    ret.value(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      generator.next(data);
-    });
-
+function theProveProcessOfthunk(){
     /*
-        helper函数的最原始模型，原理来源于异步代码的执行在主js代码执行之后
+        thunk函数的最原始模型，原理来源于异步代码的执行在主js代码执行之后
         所以可以在异步函数定义之后执行之前修改异步代码的函数实现。
         这也是异步代码的一个不好的地方，可以将代码的实现放到其他地方
         造成代码阅读的困难。
      */
-    function originHelper() {
+    function originthunk() {
         var pass;
         fs.readFile('./output/test1.txt', 'utf8', function() {
             if (pass) {
@@ -300,13 +283,28 @@ function improve4Demo7Fromweb() {
     }
 
     /*
-        改进的helper，利用异步代码执行的特点将，异步的回调作为函数参数返回出来
+        比较正常的写法。异同步都可以
+     */
+    function normalThunk() {
+        function thunk() {
+            var paras = [].slice(arguments);
+            return function(cb) {
+                paras.push(cb);
+                fs.readFile.apply(this, paras);
+            }
+        }
+
+    }
+
+    /*
+        改进的thunk，利用异步代码执行的特点将，异步的回调作为函数参数返回出来
         实现柯理化，其实这部分也可以使用thunk来实现。
         最后再做进一步的抽取，将fs.readFile也抽取出来，再加多一层，就变成三层柯理化
         为最终的方案。
+        ps:这种thunk化写法只适合异步执行的代码，不适合同步执行的。
      */
-    function proveHelper() {
-        function helper() {
+    function provethunk() {
+        function thunk() {
             var args = [].slice.call(arguments);
             var pass;
             args.push(() => {
@@ -320,23 +318,22 @@ function improve4Demo7Fromweb() {
                 pass = fn;
             }
         }
-        
-        
-        helper('./output/test1.txt', 'utf8')((err, data) => {
+              
+        thunk('./output/test1.txt', 'utf8')((err, data) => {
             if (err) {
                 console.log("this is error " + err);
             } else {
                 console.log(data);
             }
         })        
-    }
+    }    
 }
 
 /*
     一种尝试，但是觉得并不好
  */
 function furtherAbstractor() {
-    var fileReader = helper(fs.readFile);
+    var fileReader = thunk(fs.readFile);
 
     var flow = function*(rightFn, processFn) {
         var result = yield rightFn();
@@ -355,42 +352,188 @@ function furtherAbstractor() {
     gen.next(gen.next().value);
 }
 
-function simulatinCo() {
-    function co(gen) {
-        // next();
-        // function next(para) {
-        //     let result = gen.next(para);
-        //     if (!result.done) {
-        //         result.value(function(err, data) {
-        //             if(err) {
-        //                 throw err;
-        //             }
-        //             next(data);
-        //         })
-        //     }
-        // }
 
-        let result = null;
-        while(result == null || !result.done ) {
-            result = gen.next();
-            result.value(function(err, data){
-                if(err) {
-                    throw err;
-                }
-                gen.next(data)
+function demoImproveProcess4FileGenerator() {
+    /*
+        使用generator将异步模拟为同步 真的很难看,将next放在callback中。
+     */
+    function origin() {
+        var gen = fileGenerator();
+        function* fileGenerator() {
+            fs.readFile("./output/test1.txt", 'utf8',(err, txt)=>{
+                gen.next(txt);
+            })
+            let data = yield;
+            fs.readFile(data, 'utf8', (err, txt)=>{
+                console.log(txt);            
             })
         }
+        gen.next();
     }
 
-    var readFile = helper(fs.readFile);
-    var flow = function* () {
-        var txt = yield readFile('./output/test1.txt', 'utf8');
-        console.log(txt);
-        var txt2 = yield readFile(txt, 'utf8');
-        console.log(txt2);
+    /* 
+        相比最原始的版本，通过thunk化将所有的yield集中放到一个地方管理。
+        但是相对的，generator会产生很长的调用链。
+     */
+    function firstImprove() {  
+        var flow = function*() {
+            var txt1 = yield readFile('./output/test1.txt', 'utf8');
+            console.log(txt1);
+            var txt2 = yield readFile('./output/test2.txt', 'utf8');
+            console.log(txt2);
+        };
+
+        var readFile = thunk(fs.readFile);
+        var generator = flow();
+        var ret = generator.next(); 
+        ret.value(function (err, data) {
+          if (err) {
+            throw err;
+          }
+          generator.next(data).value(function(err, data){
+            if (err) {
+                throw err;
+            }
+            generator.next(data);
+          })
+        });
     }
 
-    co(flow());
+    /*
+        想方法将generator给统一管理起来，思路是采用递归的形式来解决
+     */
+    function secondImprove() {
+        var readFile = thunk(fs.readFile);
+        var flow = function*() {
+            var txt1 = yield readFile('./output/test1.txt', 'utf8');
+            console.log(txt1);
+            var txt2 = yield readFile('./output/test2.txt', 'utf8');
+            console.log(txt2);
+        };
+
+        function co(gen) {
+            genRecursion();
+            function genRecursion(para) {
+                let result = gen.next(para);
+                if (!result.done) {
+                    result.value(function(err, data) {
+                        if(err) {
+                            throw err;
+                        }
+                        genRecursion(data);
+                    })
+                }
+            }
+
+            // let result = null;
+            // while(result == null || !result.done ) {
+            //     result = gen.next();
+            //     result.value(function(err, data){
+            //         if(err) {
+            //             throw err;
+            //         }
+            //         gen.next(data)
+            //     })
+            // }            
+        };     
+
+        co(flow());
+        
+    }
+
+    /*
+        对数组执行并行处理
+     */
+    function parallelImprove() {
+        var co = function (flow) {
+          var generator = flow();
+          var next = function (data) {
+            var ret = generator.next(data);
+            if (!ret.done) {
+              if (Array.isArray(ret.value)) {
+                var count = 0;
+                var results = [];
+                ret.value.forEach(function (item, index) {
+                  count++;
+                  item(function (err, data) {
+                    count--;
+                    if (err) {
+                      throw err;
+                    }
+                    results[index] = data;
+                    if (count === 0) {
+                      next(results);
+                    }
+                  });
+                });
+              } else {
+                ret.value(function (err, data) {
+                  if (err) {
+                    throw err;
+                  }
+                  next(data);
+                });
+              }
+            }
+          };
+          next();
+        };
+
+        // var _sleep = function (ms, fn) {
+        //   setTimeout(fn, ms);
+        // };
+
+        // var sleep = thunk(_sleep);
+
+        // co(function* () {
+        //   console.time('sleep1');
+        //   yield sleep(1000);
+        //   yield sleep(1000);
+        //   console.timeEnd('sleep1');
+        //   console.time('sleep2');
+        //   yield [sleep(1000), sleep(1000)];
+        //   console.timeEnd('sleep2');
+        // });
+        
+        var readFile = thunk(fs.readFile);
+        co(function*(){
+            var results = yield [readFile('./output/test1.txt', 'utf8'), readFile('./output/test2.txt', 'utf8')]
+            console.log(results[0]);
+            console.log(results[1]);
+        })
+    }
+
+    secondImprove();
 }
 
-simulatinCo();
+
+function stateMachineByGenerator() {
+    function *clock() {
+        while (true) {
+            yield true;
+            yield false;
+        }
+    }  
+
+    var gen = clock();
+    console.log(gen.next().value);
+    console.log(gen.next().value);
+
+}
+
+/*
+    想利用generator来实现map，但还没想好
+ */
+(function mapreduceuseGenerator() {
+    var arr = [1, 3, 4, 5, 6];
+    arr.map((num) => {
+        return num + 1;
+    }).filter((num) => {
+        return  num < 6;
+    }).forEach((num) => {
+        console.log(num);
+    });
+})()
+
+
+

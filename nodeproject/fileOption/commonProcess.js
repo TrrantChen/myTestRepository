@@ -111,3 +111,15 @@ exports.throwErr = () => {
 
 exports.noop= () => {};
 
+exports.initGetUid = function() {
+    let uid = 0;
+    function incrementUid() {
+        return uid++;
+    }
+    return function() {
+        return incrementUid();
+    }    
+}
+
+
+
