@@ -146,33 +146,69 @@
         }
     })
 
-    require(["common", "othertestmodule", "filemodule", "constant", "schememodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule) {
+    require(["common", "othertestmodule", "filemodule", "constant", "schememodule", "testmodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, testmodule) {
         function Test() {
             this.print = () => {
                 console.log("something");
             }
         }
+
         Test.testFunc= function() {
             console.log("this is testFunc");
         }
 
-        var oldTest = Test;
-        Test = function() {
-            console.log("this is new test");
-            return new oldTest();
-        }
+        Test.prototype = {
+            protoValue:1,
+            protoFunc:function() {
+                console.log("this is protoFunc");
+            }
+        };
+        var test = new Test();
 
-        for (var obj in oldTest) {
-            Test[obj] = oldTest[obj];
-            console.log(obj);
-        }
+        var deepCpyObj = {
+            num:1,
+            func:function() {
+                console.log("this is obj func");
+            },
+            str:"str",
+            arr:[2, "arr", {
+                arrObjNum:4,
+                arrObjFunc:function() {
+                    console.log("this is arr obj func");
+                },
+                arrObjObj:{
+                    arrObjObjNum:5
+                }  
+            }],
+            innerObj:{
+                innernum:2,
+                innerstr:"innerstr",
+                innerFunc:function() {
+                    console.log("this is inner obj func");
+                },
+                deepObj:{
+                    deepnum:3,
+                    deepstr:"deepstr",
+                    deepFunc:function() {
+                        console.log("this is deep obj func");
+                    }
+                }
+            }
+        };
 
-        debugger;
+        var jqueryExtendObj = {};
+        // console.time("cpy");
+        $.extend(true,jqueryExtendObj, deepCpyObj);
+        // common.copyPropertiesFromObj2Obj(jqueryExtendObj, deepCpyObj, true);
+        // console.timeEnd("cpy");
         
+        // function test() {}
 
-        // var test = new Test();
-        // debugger;
-        // test.print();
+        // var targetEqualCpy = test;
+        // var sourceCpy = {
+        //     a:test
+        // }
+        // $.extend(targetEqualCpy, sourceCpy);
     })
     </script>
 </body>

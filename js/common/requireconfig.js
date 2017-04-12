@@ -7,6 +7,7 @@
             "ajax":'./common/ajax',
             "domoperation":"./common/domoperation",
             "constant":"./common/constant",
-            "ajaxtestmodule":"./module/ajaxtestmodule"
+            "ajaxtestmodule":"./module/ajaxtestmodule",
+            "testmodule":"./module/testmodule"
         }
     })

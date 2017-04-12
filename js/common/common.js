@@ -1,4 +1,4 @@
-define([], function(){
+define([], function() {
     function isServerDebug() {
         return false;
     }
@@ -12,7 +12,7 @@ define([], function(){
     }
 
     function isEmptyObject(obj) {
-        if (isObject(obj) && Object.keys(obj).length != 0)  {
+        if (isObject(obj) && Object.keys(obj).length != 0) {
             return false;
         } else {
             return true;
@@ -26,13 +26,13 @@ define([], function(){
             var keyArray = Object.keys(obj),
                 length = keyArray.length,
                 result = "";
-            for(var i = 0; i < length; i ++) {
+            for (var i = 0; i < length; i++) {
                 if (i == 0) {
                     result += (keyArray[i] + "=" + obj[keyArray[i]]);
                 } else {
-                    result += (";" + keyArray[i] + "=" + obj[keyArray[i]]);
+                    result += ("&" + keyArray[i] + "=" + obj[keyArray[i]]);
                 }
-                
+
             }
             return result;
         }
@@ -44,35 +44,35 @@ define([], function(){
 
     function ab2string16(arrayBuffer) {
         return String.fromCharCode.apply(null, new Uint16Array(arrayBuffer))
-    }    
+    }
 
     function string2ab16(str) {
         var arrayBuffer = new ArrayBuffer(str.length * 2)
         var charBuf = new Uint16Array(arrayBuffer);
         for (var i = 0; i < str.length; i++) {
-            charBuf[i] = str.charCodeAt(i) 
+            charBuf[i] = str.charCodeAt(i)
         }
         return arrayBuffer;
-    } 
+    }
 
     function string2ab8(str) {
         var arrayBuffer = new ArrayBuffer(str.length)
         var charBuf = new Uint8Array(arrayBuffer);
         for (var i = 0; i < str.length; i++) {
-            charBuf[i] = str.charCodeAt(i) 
+            charBuf[i] = str.charCodeAt(i)
         }
         return arrayBuffer;
-    }       
+    }
 
     function getHost() {
-        return isServerDebug() ? "http://10.9.233.35:" + (isByNginx() ? 12306 : 8088) + "/" : "http://" + document.domain  + ":8088/";
+        return isServerDebug() ? "http://10.9.233.35:" + (isByNginx() ? 12306 : 8088) + "/" : "http://" + document.domain + ":8088/";
     }
 
     function blob2arrayBuffer(blob) {
         var result = null;
         var fileReader = new FileReader()
         fileReader.readAsArrayBuffer(blob);
-        fileReader.addEventListener("loadend", function(){
+        fileReader.addEventListener("loadend", function() {
             result = fileReader.result;
             return result;
         })
@@ -94,7 +94,7 @@ define([], function(){
 
     function typedArray2Array(int8) {
         var array = [];
-        for (var i = 0; i < int8.length; i++ ) {
+        for (var i = 0; i < int8.length; i++) {
             array[i] = int8[i];
         }
         return array;
@@ -112,9 +112,9 @@ define([], function(){
             func(length)
         } else {
             func(process, length)
-        } 
-        console.timeEnd(timString)    
-    } 
+        }
+        console.timeEnd(timString)
+    }
 
     function curryFunc(func) {
         var fixedArgs = [].slice.call(arguments, 1);
@@ -122,7 +122,7 @@ define([], function(){
             var args = fixedArgs.concat([].slice.call(arguments));
             return func.apply(null, args);
         }
-    }   
+    }
 
     function objDeepCopy(obj) {
         if (isObject(obj)) {
@@ -157,10 +157,10 @@ define([], function(){
             }
         }
 
-        if(!isLinkExist) {
+        if (!isLinkExist) {
             head.appendChild(style);
         }
-    }; 
+    };
 
     function calculateSpanTime(func, funcName, isShowTheResult) {
         isShowTheResult = isShowTheResult || false;
@@ -172,20 +172,20 @@ define([], function(){
             }
             console.timeEnd(funcName);
         }
-    } 
+    }
 
-    function str2dom(str) {
-    　　 var objE = document.createElement("div");
-    　　 objE.innerHTML = str;
-    　　 return objE.children[0];       
+    function str2dom(str) {　　
+        var objE = document.createElement("div");　　
+        objE.innerHTML = str;　　
+        return objE.children[0];
     }
 
     function sleepBad(millisecond) {
         var time = parseInt(millisecond) + new Date().getTime();
-        while(new Date().getTime() < time) {
+        while (new Date().getTime() < time) {
 
         }
-    }   
+    }
 
     function onRead(fn) {
         var ready = document.readyState;
@@ -206,7 +206,7 @@ define([], function(){
     }
 
     function onReadyPromise() {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             var readyState = document.readyState;
             if (readyState === 'interactive' || readyState === 'complete') {
                 resolve();
@@ -262,16 +262,16 @@ define([], function(){
         }
     }
 
-    function autoDownloadUrl(downloadName, downloadContent){
+    function autoDownloadUrl(downloadName, downloadContent) {
         var a = document.createElement('a');
-        var evt = document.createEvent("HTMLEvents");      
-        evt.initEvent("click", false, false);      
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("click", false, false);
         a.download = downloadName;
-        a.href = window.URL.createObjectURL(downloadContent); 
+        a.href = window.URL.createObjectURL(downloadContent);
         a.dispatchEvent(evt);
-        a.click();          
+        a.click();
     }
-    
+
     function isString(obj) {
         return Object.prototype.toString.call(obj) == "[object String]"
     }
@@ -280,7 +280,7 @@ define([], function(){
         if (Array.isArray !== void 0) {
             return Array.isArray(obj);
         } else {
-            return Object.prototype.toString.call(obj) == "[object Array]"; 
+            return Object.prototype.toString.call(obj) == "[object Array]";
         }
     }
 
@@ -291,8 +291,8 @@ define([], function(){
         }
         return function() {
             return incrementUid();
-        }    
-    }    
+        }
+    }
 
     function promiseAop(func) {
         func = func || function() {
@@ -302,24 +302,24 @@ define([], function(){
         var origin = Promise;
         Promise = function() {
             var args = [].slice.call(arguments);
-            arguments[0] = function(reslove, reject){
+            arguments[0] = function(reslove, reject) {
                 func();
-                args[0](reslove, reject);                        
+                args[0](reslove, reject);
             }
             return new origin(arguments[0]);
         };
 
-        var arrProperties = Object.getOwnPropertyNames(origin);
+        var arrProperties = getAllInstanceProperties(origin);
 
         for (var i = 0; i < arrProperties.length; i++) {
             Promise[arrProperties[i]] = origin[arrProperties[i]];
-        }      
+        }
     }
 
     /*
         返回所有实例属性，不管是可枚举的还是不可枚举
      */
-    function getAllProperties(obj) {
+    function getAllInstanceProperties(obj) {
         if (obj === void 0) {
             return [];
         } else {
@@ -351,40 +351,130 @@ define([], function(){
         }
     }
 
+    /*
+        返回对象原型链上属性
+     */
+    function getAllPrototypeProperties(obj) {
+        if (obj) {
+            return getAllInstanceProperties(obj.prototype);
+        } else {
+            return [];
+        }
+    }
+
+    /*
+     * 1所有实例属性，不可枚举和可枚举 
+     * 2 所有不可枚举属性
+     * 3 原型链上的属性 + 可枚举属性 
+     * 4 所有属性，包括原型上 
+     * 0 所有可枚举属性]    
+     */
+    function getPropertiesRange(range, source) {
+        var propertiesArr = [];
+        switch(range) {
+            case 1:
+                propertiesArr = getAllInstanceProperties(source);
+                break;
+            case 2:
+                propertiesArr = getAllUnEnumerableProperties(source);
+                break;
+            case 3:
+                propertiesArr = getAllPrototypePropertie(source.prototype).concat(getAllEnumerableProperties(source));
+                break;
+            case 4:
+                propertiesArr = getAllPrototypePropertie(source.prototype).concat(getAllInstanceProperties(source));
+                break;
+            case 0:                  
+            default:
+                propertiesArr = getAllEnumerableProperties(source);
+                break;
+        } 
+        return propertiesArr;
+    }
+
+    /**
+     * [copyPropertiesFromObj2Obj description]
+     * @param  {[type]} source [description]
+     * @param  {[type]} target [description]
+     * @param  {[type]} range  [复制的属性范围 
+     * @return {[type]}        [description]
+     */
+    function copyPropertiesFromObj2Obj(target, source, isDeep, range) {
+        range = parseInt(range) || 0;
+        var propertiesArr = getPropertiesRange(range, source);
+        var arrLength = propertiesArr.length;
+        if (isDeep) {
+            for (var i = 0; i < arrLength; i++) {
+                if (isObject(source[propertiesArr[i]])) {
+                    target[propertiesArr[i]] = {};
+                    copyPropertiesFromObj2Obj(target[propertiesArr[i]], source[propertiesArr[i]], true)
+                } else if(isArray(source[propertiesArr[i]])) {
+                    target[propertiesArr[i]] = [];
+                    arrCopy(target[propertiesArr[i]], source[propertiesArr[i]])
+                } else {
+                   target[propertiesArr[i]] = source[propertiesArr[i]]; 
+                }
+            }  
+        } else {
+            for (var i = 0; i < arrLength; i++) {
+                target[propertiesArr[i]] = source[propertiesArr[i]];
+            }  
+        }
+    }
+
+    function arrCopy(target, source) {
+        var length = source.length;
+        for(var i = 0; i <　length; i++) {
+            if (isArray(source[i])) {
+                source[i] = [];
+                arrCopy(target[i], source[i]);
+            } else if (isObject(source[i])) {
+                target[i] = {};
+                copyPropertiesFromObj2Obj(target[i], source[i], true);
+            } else {
+                target[i] = source[i];
+            }  
+        }
+    }
+
     return {
-        ab2string8:ab2string8,
-        ab2string16:ab2string16,
-        string2ab16:string2ab16,
-        string2ab8:string2ab8,
-        getHost:getHost,
-        blob2arrayBuffer:blob2arrayBuffer,
-        arrayBuffer2blob:arrayBuffer2blob,
-        arraryBuffer2TypedArray:arraryBuffer2TypedArray,
-        typedArray2arrayBuffer:typedArray2arrayBuffer,
-        typedArray2Array:typedArray2Array,
-        array2TypedArray:array2TypedArray,
-        logTime:logTime,
-        curryFunc:curryFunc,
-        objDeepCopy:objDeepCopy,
-        isObject:isObject,
-        insertStyle2Head:insertStyle2Head,
-        calculateSpanTime:calculateSpanTime,
-        str2dom:str2dom,
-        sleepBad:sleepBad,
-        onRead:onRead,
-        asyncOnReady:asyncOnReady,
-        onReadyPromise:onReadyPromise,
-        myDebounce:myDebounce,
-        myThrottle:myThrottle,
-        isEmptyObject:isEmptyObject,
-        obj2keyValueString:obj2keyValueString,
-        autoDownloadUrl:autoDownloadUrl,
-        isArray:isArray,
-        isString:isString,
-        initGetUid:initGetUid,
-        promiseAop:promiseAop,
-        getAllProperties:getAllProperties,
-        getAllEnumerableProperties:getAllEnumerableProperties,
-        getAllUnEnumerableProperties:getAllUnEnumerableProperties
-    }  
+        ab2string8: ab2string8,
+        ab2string16: ab2string16,
+        string2ab16: string2ab16,
+        string2ab8: string2ab8,
+        getHost: getHost,
+        blob2arrayBuffer: blob2arrayBuffer,
+        arrayBuffer2blob: arrayBuffer2blob,
+        arraryBuffer2TypedArray: arraryBuffer2TypedArray,
+        typedArray2arrayBuffer: typedArray2arrayBuffer,
+        typedArray2Array: typedArray2Array,
+        array2TypedArray: array2TypedArray,
+        logTime: logTime,
+        curryFunc: curryFunc,
+        objDeepCopy: objDeepCopy,
+        isObject: isObject,
+        insertStyle2Head: insertStyle2Head,
+        calculateSpanTime: calculateSpanTime,
+        str2dom: str2dom,
+        sleepBad: sleepBad,
+        onRead: onRead,
+        asyncOnReady: asyncOnReady,
+        onReadyPromise: onReadyPromise,
+        myDebounce: myDebounce,
+        myThrottle: myThrottle,
+        isEmptyObject: isEmptyObject,
+        obj2keyValueString: obj2keyValueString,
+        autoDownloadUrl: autoDownloadUrl,
+        isArray: isArray,
+        isString: isString,
+        initGetUid: initGetUid,
+        promiseAop: promiseAop,
+        getAllPrototypeProperties: getAllPrototypeProperties,
+        getAllEnumerableProperties: getAllEnumerableProperties,
+        getAllUnEnumerableProperties: getAllUnEnumerableProperties,
+        getAllInstanceProperties:getAllInstanceProperties,
+        copyPropertiesFromObj2Obj:copyPropertiesFromObj2Obj,
+        arrCopy:arrCopy,
+        getPropertiesRange:getPropertiesRange
+    }
 })

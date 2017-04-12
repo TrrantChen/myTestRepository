@@ -64,3 +64,27 @@ exports.createRandomString = function(length) {
     }
     return str;
 }
+
+exports.createRandomTwoDimensionalArray = function(rows, cells, isRandomString) {
+    var arr = [];
+    rows = rows || 10;
+    cells = cells || 10;
+    if (isRandomString) {
+        for(var i = 0; i < rows; i++) {
+            var tmp = new Array(cells);
+            for(var j = 0; j < cells; j++) {
+                tmp[j] = exports.createRandomString(5);
+            }
+            arr.push(tmp);
+        }
+    } else {
+        for(var i = 0; i < rows; i++) {
+            var tmp = new Array(cells);
+            for(var j = 0; j < cells; j++) {
+                tmp[j] = j;
+            }
+            arr.push(tmp);
+        }
+    }
+    return arr;
+}

@@ -8,6 +8,7 @@
 var url = require("url");
 var path = require("path");
 var commonProcess = require("./commonProcess");
+var randomProcess = require("./randomProcess");
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json()
 var txtParser = bodyParser.text();
@@ -22,12 +23,14 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/delayloadtest", delayloadtestGet); 
     commonProcess.preProcessHttpMethods(app, "post", "/delayloadtest", delayloadtestPost, jsonParser);
     commonProcess.preProcessHttpMethods(app, "get", "/getArrayResut", getArrayResut);
+    commonProcess.preProcessHttpMethods(app, "get", "/getRandomTableData", getRandomTableData);
 }
 
-  
+function getRandomTableData(req, res) {
+    res.send(JSON.stringify(randomProcess.createRandomTwoDimensionalArray(req.query.rows, req.query.cells, true)));
+}
 
 function defaultConnect(req, res) {
-    
     res.send("success");
 }
 
