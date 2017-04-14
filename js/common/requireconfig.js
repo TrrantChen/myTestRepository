@@ -8,6 +8,9 @@
             "domoperation":"./common/domoperation",
             "constant":"./common/constant",
             "ajaxtestmodule":"./module/ajaxtestmodule",
-            "testmodule":"./module/testmodule"
+            "testmodule":"./module/testmodule",
+            "othertestmodule": './fileandajax/othertestmodule',
+            "filemodule": "./fileandajax/filemodule",
+            "schememodule": './module/schememodule'          
         }
     })

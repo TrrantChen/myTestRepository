@@ -20,6 +20,7 @@ define(["common"], function(common){
             }                        
         }
     }  
+ 
 
     function getImgCanvas(img) {  
         var imgCanvas = document.createElement("canvas");
@@ -40,6 +41,13 @@ define(["common"], function(common){
             return "";
         }        
     } 
+
+    function getElementComputedStyle(element) {
+        return function(style) {
+            let value = window.getComputedStyle(element).getPropertyValue(style);
+            return value !== void 0 ? parseInt(value) : 0;
+        }
+    }
 
     // function createLinerAnimationSnippt(animationTime, css-attr, total) {
     //     var keyFrameStr = "";

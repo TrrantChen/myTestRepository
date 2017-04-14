@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -24,12 +24,12 @@
             
             body, html {
                 width:100%;
-                /*height:100%;*/
+                height:100%;
             } 
 
             .container {
                 width:100%;
-                /*height:100%;*/
+                height:100%;
                 background: #EFEAC5;
                 /*overflow: hidden;*/
             }
@@ -39,17 +39,14 @@
                 border-spacing: 10px;
             }              
 
-            th {              
+            th, td {              
                 font-weight: normal;
-                border:solid 1px;
+                border:solid 3px #9EC6B8;
+                white-space: nowrap;
             }
 
             tr {
 
-            }
-            
-            td {
-                border:solid 1px;
             }
 
             .resizeStyle {
@@ -73,13 +70,16 @@
                 overflow-x: hidden;
             }*/
             .tableStyle {
-                width:300px;
+                width:700px;
+                /*min-width: 700px !important;*/
             }
 
             .tableDivStyle {
                 display: inline-block;
-                width:500px;
+                width:800px;
                 overflow-x: auto;
+                border: solid 1px;
+                margin-left:100px;
             }
 
             .grip {
@@ -89,64 +89,27 @@
             }
 
             .tableInnerStyle {
-                width:600px;
+                width:2000px;
+            }
+
+            .testDivStyle {
+                width:100px;
+                height:100px;
+                background: #FFFEC7;
+                position: absolute;
+                top:300px;
+                left:10px;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="tableDivStyle">
-                <!--                 <div class="tableInnerStyle">
-                    
-                </div>    -->    
-                <table class="tableStyle" id="example" class="display" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th><div class="resizeStyle">Name</div></th>
-                            <th><div class="resizeStyle">Position</div></th>
-                            <th><div class="resizeStyle">Position</div></th>
-                            <th><div class="resizeStyle">Position</div></th>
-                        <!--                             <th>Name</th>
-                            <th>Position</th>
-                            <th>Position</th>
-                            <th>Position</th>  -->                           
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Tiger Nixon</td>
-                            <td>System Architect</td>
-                            <td>System Architect</td>
-                            <td>System Architect</td>
-                        </tr>
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Accountant</td>
-                            <td>Accountant</td>
-                            <td>Accountant</td>
-                        </tr>                             
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Accountant</td>
-                            <td>Accountant</td>
-                            <td>Accountant</td>
-                        </tr>                             
-                        <tr>
-                            <td>Garrett Winters</td>
-                            <td>Accountant</td>
-                            <td>Accountant</td>
-                            <td>Accountant</td>
-                        </tr>                            
-                    </tbody>
-                </table>                        
-            </div>
 
-            <div class="resizeDiv">
+            <div id="testDiv" class="testDivStyle">
                 
-            </div>            
+            </div>
         </div>
     </body>
-
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
     <script src="../js/common/requireconfig.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -177,14 +140,14 @@
 
                 }
             })
-            require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","colResizable", "dataTable","resizableColumns", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, colResizable, dataTable, resizableColumns) {
+            require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","colResizable", "dataTable","resizableColumns","domoperation", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, colResizable, dataTable, resizableColumns, domoperation) {
 
                 // $('#example').DataTable();
 
-                // $("#example").colResizable({
-                //     // resizeMode:'flex',
-                //     // gripInnerHtml:"<div class='grip'></div>"
-                // })                
+                $("#example2").colResizable({
+                    resizeMode:'overflow',
+                    // gripInnerHtml:"<div class='grip'></div>"
+                })                
 
                 // $("#example").resizableColumns({});
 
@@ -200,15 +163,154 @@
                 }   
                 ajax.generalAjax(option);
 
-                // $("body").on("mousemove", function(event) {
-                //     console.log(event.screenX + " " + event.screenY);
-                // })
+                // (
+                    function createResizeColumn(id) {
+                    var table = $(id);
+                    var parent = table.parent()
+                    var thLst = table.find(">thead>tr:first>th,>thead>tr:first>td");
+                    
+                    var mainDiv = $(document.createElement("div"));
+                    mainDiv.css("position", "relative");
+                    mainDiv.css("left", 0);
+                    mainDiv.css("right", 0);
+                    mainDiv.width(table.width());
+                    
+
+                    thLst.each((index) => {
+                        let th = $(thLst[index]);
+                        let resizeColumnOffset = {
+                            top:table.offset().top,
+                            left:th.offset().left - table.offset().left + th.outerWidth()
+                        } 
+
+                        let div = $(document.createElement("div"));
+                        div.height(th.height());
+                        div.width(5);
+                        div.css("position", "absolute");
+                        div.css("top", 0);
+                        div.css("left", resizeColumnOffset.left);
+                        div.css("cursor", "col-resize");
+                        div.css("background", "red");
+                        div.on("mousedown", mouseDownHandle)  
+                        var startIndex = 0;
+                        function mouseDownHandle(event) {
+                            startIndex = event.clientX;
+                            div.on("mousemove", mouseMoveHandle)
+                            div.on("mouseup", mouseUpHandle)                         
+                        }     
+                        function mouseMoveHandle(event) {
+                            var left = div.css("left") 
+                            console.log("left " + left);
+                            var distance = event.clientX - startIndex;
+                            console.log("distance " + distance);
+                            div.css("left", left + distance);
+                            th.width(th.width() + distance);
+                            table.width(table.width() + distance);                              
+                        } 
+
+                        function mouseUpHandle(event) {
+                            var endIndex = event.clientX;
+                            div.off("mousemove", mouseMoveHandle);
+                            div.off("mouseup", mouseUpHandle);                            
+                        }             
+                        mainDiv.append(div);
+                    })
+
+                    parent.prepend(mainDiv);
+
+                }
+                // )
+                // ("#example")
+
+
+
 
             })              
         } else {
-            var testTable = document.querySelector("#testTable");
-            debugger
         }
     </script>    
 </html>
 
+
+
+
+ -->
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body, html {
+            width:100%;
+            height:100%;
+        }
+        #block {
+            width: 200px;
+            height: 200px;
+            background-color: yellow;
+            position: absolute;
+        }
+
+        .container {
+            width: 100%;
+            height:200%;
+            background: #031634;
+            position:relative;
+            top:0;
+            left:0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="block"></div>
+    </div>
+<script>
+    /**
+     * 拖动元素
+     * @param elementId 元素id
+     */
+    function drag(elementId) {
+        var element = document.getElementById(elementId);
+        var position = {
+            offsetX: 0, //点击处偏移元素的X
+            offsetY: 0, //偏移Y值
+            state: 0 //是否正处于拖拽状态，1表示正在拖拽，0表示释放
+        };
+        //获得兼容的event对象
+        function getEvent(event) {
+            return event || window.event;
+        }
+        //元素被鼠标拖住
+        element.addEventListener('mousedown', function (event) {
+            //获得偏移的位置以及更改状态
+            var e = getEvent(event);
+            position.offsetX = e.offsetX;
+            position.offsetY = e.offsetY;
+            position.state = 1;
+        }, false);
+        //元素移动过程中
+        document.addEventListener('mousemove', function (event) {
+            var e = getEvent(event);
+            if (position.state) {
+                position.endX = e.clientX;
+                position.endY = e.clientY;
+                // position.endX = e.pageX;
+                // position.endY = e.pageY;                
+                //设置绝对位置在文档中，鼠标当前位置-开始拖拽时的偏移位置
+                element.style.position = 'absolute';
+                element.style.top = position.endY - position.offsetY + 'px';
+                element.style.left = position.endX - position.offsetX + 'px';
+            }
+        }, false);
+        //释放拖拽状态
+        element.addEventListener('mouseup', function (event) {
+            position.state = 0;
+        }, false);
+    }
+    drag('block');
+</script>
+</body>
+</html>
