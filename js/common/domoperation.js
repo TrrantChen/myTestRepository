@@ -33,7 +33,7 @@ define(["common"], function(common){
 
     function getBackgroundImageUrl(element) {
         if (element != undefined) {
-            return (window.getComputedStyle(element).getPropertyValue("background-image"))
+            return (getElementComputedStyle(element)("background-image"))
             .match(/url\(([^)]+)\)/i)[0]
             .split(/[()'"]+/)[1];
         }
@@ -45,7 +45,7 @@ define(["common"], function(common){
     function getElementComputedStyle(element) {
         return function(style) {
             let value = window.getComputedStyle(element).getPropertyValue(style);
-            return value !== void 0 ? parseInt(value) : 0;
+            return value;
         }
     }
 
@@ -67,6 +67,33 @@ define(["common"], function(common){
 
     //     return keyFrameStr;
     // }
+
+    function insertStyle2Head(cssString, isInsertFirst) {
+        var style = document.createElement("style"),
+            head = document.getElementsByTagName('head')[0],
+            headChildren = head.children,
+            isLinkExist = false,
+            headLength = headChildren.length; 
+
+        style.type = "text/css";
+        style.innerHTML = cssString;
+        if (isInsertFirst) {
+            for (var i = 0; i < headLength; i++) {
+                if (headChildren[i] instanceof HTMLLinkElement) {
+                    isLinkExist = true;
+                    head.insertBefore(style, headChildren[i])
+                    break;
+                }
+            }
+
+            if (!isLinkExist) {
+                head.appendChild(style);
+            }            
+        } else {
+            head.appendChild(style);
+        }
+    };
+
 
     function insertStr2Dom(htmlText, parentDom) {
         parentDom =  parentDom || document.body;
@@ -116,6 +143,40 @@ define(["common"], function(common){
         }       
     }    
 
+    function checkCss3Support(cssStr) {
+        let prefixArr = ["webkit", "Moz", "ms", "o"],
+            humpStrArr = [],
+            div = document.createElement("div"),
+            styleArr = div.style,
+            _2Hump = (str) => {
+                return str.replace(/-(\w)/g, ($0, $1) => {
+                    return $1.toUpperCase();
+                })
+            };
+
+        for (var i in prefixArr) {
+            humpStrArr.push(_2Hump(prefixArr[i] + "-" + cssStr));
+        };
+
+        humpStrArr.push(_2Hump(cssStr));
+
+        for (var i in humpStrArr) {
+            return humpStrArr[i] in styleArr;
+        };
+    }
+
+
+    function getTheTranslate(selector) {
+        let transformStr = getElementComputedStyle(selector)("transform"),
+            result = {x:0, y:0};
+        if (transformStr !== "none") {
+            let transformArr = transformStr.replace(/matrix\(|\)|\s/g, "").split(",");
+            result.x = parseInt(transformArr[4]);
+            result.y = parseInt(transformArr[5]);                
+        }  
+        return result;      
+    }   
+
     return {
        ctreateImg:ctreateImg,
        getImgCanvas:getImgCanvas,
@@ -123,6 +184,10 @@ define(["common"], function(common){
        // createLinerAnimationSnippt:createLinerAnimationSnippt,
        insertStr2Dom:insertStr2Dom,
        createAndGetProgress:createAndGetProgress,
-       setAjaxWithProcess:setAjaxWithProcess
+       setAjaxWithProcess:setAjaxWithProcess,
+       getElementComputedStyle:getElementComputedStyle,
+       checkCss3Support:checkCss3Support,
+       insertStyle2Head:insertStyle2Head,
+       getTheTranslate:getTheTranslate
     }  
 })
