@@ -43,8 +43,9 @@ define(["common"], function(common){
     } 
 
     function getElementComputedStyle(element) {
+            let elementStyle = window.getComputedStyle(element)
         return function(style) {
-            let value = window.getComputedStyle(element).getPropertyValue(style);
+            let value = elementStyle.getPropertyValue(style);
             return value;
         }
     }
@@ -166,16 +167,56 @@ define(["common"], function(common){
     }
 
 
-    function getTheTranslate(selector) {
-        let transformStr = getElementComputedStyle(selector)("transform"),
+    function getTheTranslate(elementComputedStyles) {
+        let transformStr = elementComputedStyles("transform"),
             result = {x:0, y:0};
         if (transformStr !== "none") {
-            let transformArr = transformStr.replace(/matrix\(|\)|\s/g, "").split(",");
-            result.x = parseInt(transformArr[4]);
-            result.y = parseInt(transformArr[5]);                
+            let transformArr = transformStr.replace(/matrix\(|\)|\s/g, "").split(",");     
+            result.x = common.getInt(transformArr[4]);
+            result.y = common.getInt(transformArr[5]);         
         }  
         return result;      
-    }   
+    }  
+
+    function getBorderWidth(elementComputedStyles) {
+        let left = elementComputedStyles("border-left-width"),
+            top = elementComputedStyles("border-top-width"),
+            right = elementComputedStyles("border-right-width"),
+            bottom = elementComputedStyles("border-bottom-width");
+        return {
+            left:common.getInt(left),
+            top:common.getInt(top),
+            right:common.getInt(right),
+            bottom:common.getInt(bottom)
+        }
+    }
+
+    function getPosition(elementComputedStyles) {
+        let left = parseInt(elementComputedStyles("left")),
+            top = parseInt(elementComputedStyles("top")),
+            right = parseInt(elementComputedStyles("right")),
+            bottom = parseInt(elementComputedStyles("bottom"));
+        return {
+            left:common.getInt(left),
+            top:common.getInt(top),
+            right:common.getInt(right),
+            bottom:common.getInt(bottom)
+        }
+    }
+
+    function getMargin(elementComputedStyles) {
+        let left = parseInt(elementComputedStyles("margin-left")),
+            top = parseInt(elementComputedStyles("margin-top")),
+            right = parseInt(elementComputedStyles("margin-right")),
+            bottom = parseInt(elementComputedStyles("margin-bottom"));
+        return {
+            left:common.getInt(left),
+            top:common.getInt(top),
+            right:common.getInt(right),
+            bottom:common.getInt(bottom)
+        }
+    }
+
 
     return {
        ctreateImg:ctreateImg,
@@ -188,6 +229,9 @@ define(["common"], function(common){
        getElementComputedStyle:getElementComputedStyle,
        checkCss3Support:checkCss3Support,
        insertStyle2Head:insertStyle2Head,
-       getTheTranslate:getTheTranslate
+       getTheTranslate:getTheTranslate,
+       getBorderWidth:getBorderWidth,
+       getPosition:getPosition,
+       getMargin:getMargin
     }  
 })

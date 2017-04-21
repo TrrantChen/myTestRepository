@@ -437,6 +437,11 @@ define([], function() {
         }
     }
 
+    function getInt(num) {
+        let result = parseInt(num);
+        return isNaN(result) ? 0 : result;
+    }
+
     return {
         ab2string8: ab2string8,
         ab2string16: ab2string16,
@@ -475,6 +480,7 @@ define([], function() {
         getAllInstanceProperties:getAllInstanceProperties,
         copyPropertiesFromObj2Obj:copyPropertiesFromObj2Obj,
         arrCopy:arrCopy,
-        getPropertiesRange:getPropertiesRange
+        getPropertiesRange:getPropertiesRange,
+        getInt:getInt
     }
 })

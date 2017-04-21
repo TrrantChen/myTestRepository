@@ -35,12 +35,12 @@
             }   
 
             .testDivStyle {
-                width:100px;
-                height:100px;
+                width:50px;
+                height:50px;
                 background: #2E0D23;
                 position: relative;
                 /*left:100px;*/
-                margin-left: 100px; 
+                /*margin-left: 100px; */
                 /*padding: 100px;*/
                 /*border: solid 10px #6BACBF;*/
                 /*transform: translate(10px, 10px);*/
@@ -49,21 +49,73 @@
             .positionParentDivStyle {
                 position:relative;
                 background: #FFB238;
-                left:300px;
+                left:50px;
+                top:50px;
+                /*left:300px;*/
+                /*margin-left:300px;*/
+                height:400px;
+                width: 400px;
+                /*overflow-y: auto;*/
             }   
 
             .testDivByJqueryuiStyle {
-                width:100px;
-                height:100px;
+                width:50px;
+                height:50px;
                 background: red;
             } 
 
             #block {
-                width: 200px;
-                height: 200px;
+                width: 50px;
+                height: 50px;
                 background-color: yellow;
                 position: absolute;
-            }            
+            }  
+
+            .outDivStyle {
+                width:600px;
+                height:600px;
+                background: #E5F04C;
+                position:relative;
+                left:50px;
+                top:50px;
+            }   
+
+
+
+
+            .marginStyle {
+                width:300px;
+                height:300px;
+                border:solid 1px black;
+                margin-top:50px;
+                margin-left:50px;
+            }   
+
+            .absulteStyle {
+                width:200px;
+                height:200px;
+                border:solid 2px black;
+                position:absolute;
+                left:80px;
+                top:50px
+            }
+
+            .relativeStyle {
+                width:100px;
+                height:100px;
+                border:solid 2px black;
+                position:relative;
+                left:30px;
+                top:40px;
+            }
+
+            .divStyle {
+                width:20px;
+                height:20px;
+                border:solid 2px black;
+                position:relative;
+                margin-left:30px;
+            }
 
         </style>
 
@@ -71,17 +123,57 @@
     </head>
     <body>
         <div class="container">
-            <div id="positionParentDiv" class="positionParentDivStyle">
-                <div id="testDiv" class="testDivStyle">
-                    
-                </div>  
-                <div id="testDivByJqueryui" class="testDivByJqueryuiStyle">
-                    
-                </div>                              
+   <!--          <div id="outDiv" class="outDivStyle">
+                <div id="positionParentDiv" class="positionParentDivStyle">
+                    <div id="testDiv" class="testDivStyle">
+                        
+                    </div>  
+                    <div id="testDivByJqueryui" class="testDivByJqueryuiStyle">
+                        
+                    </div>
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />
+                        p<br />                                                                  
+                </div>                
+            </div> -->
+            <div id="margin" class="marginStyle">
+                <div id="absolute" class="absulteStyle">
+                    <div id="relative" class="relativeStyle">
+                        <div id="testDivByJqueryui" class="divStyle"> 
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
-        
     </body>
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
     <script src="../js/common/requireconfig.js" type="text/javascript"></script>
@@ -173,11 +265,11 @@
 
             function dragByJqueryUi() {
                 var testDivByJqueryui = $("#testDivByJqueryui");
-                testDivByJqueryui.draggable({containment: "#positionParentDiv"});
+                testDivByJqueryui.draggable({containment: "#relative"});
             }
 
             function dragInterationTest() {
-                interaction.dragable("#testDiv");
+                interaction.dragable("#testDivByJqueryui", {containment: "#margin"});
             }
 
             function dragFromWeb() {
@@ -241,11 +333,13 @@
             // xyTest();
             // dragTestByJquery();
             dragInterationTest();
-            dragByJqueryUi();
+            // dragByJqueryUi();
             // dragTestOrigin("#testDiv");
 
 
         })
     </script>    
 </html>
+
+
 
