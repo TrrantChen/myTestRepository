@@ -25,12 +25,14 @@ define(["common", "domoperation"], function(common, domoperation){
             containment = void 0,
             containmentPositionRange = void 0,
             originTranslate = null,
-            targetPositionInfo = {};
+            targetPositionInfo = {},
+            isGetDistanceByBoundingClientRect = true;
             
         option = Object.assign(defaultOption, option);
 
         let isTranslate = option.translate && domoperation.checkCss3Support("transform");
         isTranslate = true;
+
 
         updateTargetPositionInfo();
 
@@ -151,8 +153,9 @@ define(["common", "domoperation"], function(common, domoperation){
         }
 
         function getContainmentPositionRange(containment) {
-            let distanceBetweenContainmentAndDoc = calculateDistanceBetweenEleAndDoc(containment),
-            distanceBetweenTargeEleAndDoc = calculateDistanceBetweenEleAndDoc(target.offsetParent);
+            let distanceBetweenContainmentAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(containment) : calculateDistanceBetweenEleAndDoc(containment),
+            distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent);      
+
             distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.translate.x + target.offsetLeft);
             distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.translate.y + target.offsetTop);                
 
@@ -180,6 +183,14 @@ define(["common", "domoperation"], function(common, domoperation){
                     left:element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
                     top:element.offsetTop + result.top +  element.clientTop + elementTranslate.y               
                 }
+            }
+        }
+
+        function calculateDistanceBetweenEleAndDocByBoundingClientRect(element) {
+            let boundingClientRect = element.getBoundingClientRect();
+            return {
+                left:boundingClientRect.left,
+                top:boundingClientRect.top
             }
         }
 

@@ -99,13 +99,14 @@
                 border:solid 2px black;
                 position:absolute;
                 left:80px;
-                top:50px
+                top:50px;
+                overflow-x: auto;
                 /*margin-top:30px;*/
                 /*margin-left:30px;*/
             }
 
             .relativeStyle {
-                width:100px;
+                width:400px;
                 height:100px;
                 border:solid 2px black;
                 /*position:relative;*/
@@ -113,6 +114,8 @@
                 /*top:40px;*/
                 margin-top:20px;
                 margin-left:20px;
+                
+
             }
 
             .divStyle {
@@ -275,7 +278,8 @@
             }
 
             function dragInterationTest() {
-                interaction.dragable("#testDivByJqueryui", {containment: "#absolute"});
+                // interaction.dragable("#testDivByJqueryui", {containment: "#margin"});
+                interaction.dragable("#testDivByJqueryui");
             }
 
             function dragFromWeb() {
