@@ -442,6 +442,12 @@ define([], function() {
         return isNaN(result) ? 0 : result;
     }
 
+    function beforeFunc(func) {
+        return function() {
+
+        }
+    }
+
     return {
         ab2string8: ab2string8,
         ab2string16: ab2string16,

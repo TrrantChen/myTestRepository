@@ -217,6 +217,9 @@ define(["common"], function(common){
         }
     }
 
+    function setTransform() {
+        
+    }
 
     return {
        ctreateImg:ctreateImg,
@@ -232,6 +235,7 @@ define(["common"], function(common){
        getTheTranslate:getTheTranslate,
        getBorderWidth:getBorderWidth,
        getPosition:getPosition,
-       getMargin:getMargin
+       getMargin:getMargin,
+       setTransform:setTransform
     }  
 })

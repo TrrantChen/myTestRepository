@@ -6,7 +6,7 @@
  */
 
 define(["common", "domoperation"], function(common, domoperation){      
-    function dragable(element, option) {
+    function dragable(selector, option) {
         // axis:x, y
         // todo
         // containment: selector
@@ -15,16 +15,13 @@ define(["common", "domoperation"], function(common, domoperation){
         // snap:
         // translate:true/false 
         option = option || {};
-        let target = document.querySelector(element),
+        let target = document.querySelector(selector),
             mouseDownPage = { x: 0, y: 0 },
             targetComputedStyle = null,
             defaultOption = {
                 axis:"all", 
                 translate:false
             },
-            downEleWay = null,
-            moveEleWay = null,
-            upEleWay = null,
             containment = void 0,
             containmentPositionRange = void 0,
             originTranslate = null,
@@ -33,12 +30,8 @@ define(["common", "domoperation"], function(common, domoperation){
         option = Object.assign(defaultOption, option);
 
         let isTranslate = option.translate && domoperation.checkCss3Support("transform");
+        isTranslate = true;
 
-        // targetComputedStyle = domoperation.getElementComputedStyle(target);
-        // targetPositionInfo.position = domoperation.getPosition(targetComputedStyle);
-        // targetPositionInfo.border = domoperation.getBorderWidth(targetComputedStyle);
-        // targetPositionInfo.margin = domoperation.getMargin(targetComputedStyle);
-        // targetPositionInfo.translate = tion.getTheTranslate(targetComputedStyle);
         updateTargetPositionInfo();
 
         if (option.containment !== void 0) {
@@ -46,13 +39,11 @@ define(["common", "domoperation"], function(common, domoperation){
             containmentPositionRange = getContainmentPositionRange(containment);
         } 
 
-        isTranslate = false;
-
         target.addEventListener("mousedown", mouseDownHandle);
         target.addEventListener("click", clickHandle);
-        domoperation.insertStyle2Head(`${element}:hover{cursor:move}`);
+        domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
+
         function mouseDownHandle(event) {
-            
             event.preventDefault();
             event.stopPropagation();
             mouseDownPage.x = event.pageX;
@@ -72,59 +63,79 @@ define(["common", "domoperation"], function(common, domoperation){
         function mouseMoveHandle(event) {
             event.preventDefault();
             event.stopPropagation();
+            let x = 0, y = 0;
 
             if (isTranslate) {
+                x = originTranslate.x + event.pageX - mouseDownPage.x  - target.clientLeft,
+                y = originTranslate.y + event.pageY - mouseDownPage.y - target.clientTop;
+
+                if (containmentPositionRange !== void 0) {
+                    if (x < containmentPositionRange.left) {
+                        x = containmentPositionRange.left;
+                    }
+
+                    if (x > containmentPositionRange.right) {
+                        x = containmentPositionRange.right;
+                    }
+
+                    if (y < containmentPositionRange.top) {
+                        y = containmentPositionRange.top;
+                    }
+
+                    if (y > containmentPositionRange.bottom) {
+                        y = containmentPositionRange.bottom;
+                    } 
+                }
+
                 switch(option.axis.toUpperCase()) {
                     case "X":
-                        target.style.transform = `translate(${originTranslate.x + event.pageX - mouseDownPage.x  - target.clientLeft}px, 0)`;
+                        target.style.transform = `translate(${x}px, 0)`;
                         break;
                     case "Y":
-                        target.style.transform = `translate(0, ${originTranslate.y + event.pageY - mouseDownPage.y - target.clientTop}px)`;
+                        target.style.transform = `translate(0, ${y}px)`;
                         break;
                     case "ALL":               
                     default:
-                        target.style.transform = `translate(${originTranslate.x + event.pageX - mouseDownPage.x  - target.clientLeft}px, ${originTranslate.y + event.pageY - mouseDownPage.y - target.clientTop}px)`;
+                        target.style.transform = `translate(${x}px, ${y}px)`;
                         break;
                 } 
             } else {
+
+                x = originPosition.left + event.pageX - mouseDownPage.x;
+                y = originPosition.top + event.pageY - mouseDownPage.y;
+
+                if (containmentPositionRange !== void 0) {
+                    if (x < containmentPositionRange.left) {
+                        x = containmentPositionRange.left;
+                    }
+
+                    if (x > containmentPositionRange.right) {
+                        x = containmentPositionRange.right;
+                    }
+
+                    if (y < containmentPositionRange.top) {
+                        y = containmentPositionRange.top;
+                    }
+
+                    if (y > containmentPositionRange.bottom) {
+                        y = containmentPositionRange.bottom;
+                    }                               
+                }
+
                 switch(option.axis.toUpperCase()) {
                     case "X":
-                        target.style.left = originPosition.left + event.pageX - mouseDownPage.x - 0 * target.clientLeft + "px";
+                        target.style.left = x + "px";
                         break;
                     case "Y":
-                        target.style.top = originPosition.top + event.pageY - mouseDownPage.y - 0 * target.clientTop + "px";  
+                        target.style.top = y + "px";  
                         break;
                     case "ALL":                 
                     default:
-                        target.style.left = originPosition.left + event.pageX - mouseDownPage.x - 0 * target.clientLeft + "px";
-                        target.style.top =  originPosition.top + event.pageY - mouseDownPage.y - 0 * target.clientTop + "px";                    
+                        target.style.left = x + "px";
+                        target.style.top =  y + "px";                    
                         break;
-                }                
-            }
-
-            console.log("arget.style.left " + target.style.left);
-            console.log("containmentPositionRange.right " + containmentPositionRange.right);
-            console.log("target.style.top " + target.style.top );
-            console.log("containmentPositionRange.bottom " + containmentPositionRange.bottom );
-            //----------------------------------------------
-            if (containmentPositionRange !== void 0) {
-                if (parseInt(target.style.left) < containmentPositionRange.left) {
-                    target.style.left = containmentPositionRange.left + "px";
-                }
-
-                if (parseInt(target.style.left) > containmentPositionRange.right) {
-                    target.style.left = containmentPositionRange.right + "px";
-                }
-
-                if (parseInt(target.style.top) < containmentPositionRange.top) {
-                    target.style.top = containmentPositionRange.top + "px";
-                }
-
-                if (parseInt(target.style.top) > containmentPositionRange.bottom) {
-                    target.style.top = containmentPositionRange.bottom + "px";
-                }                               
-            }
-            
+                }   
+            }         
         }
 
         function mouseUpHandle(event) {
@@ -140,118 +151,34 @@ define(["common", "domoperation"], function(common, domoperation){
         }
 
         function getContainmentPositionRange(containment) {
-            // todo 
-            // 检查translate也需要递归来
-            // 获取left，top
-            //      需要考虑transform，使用递归来获取
-            // 获取长宽
-            //      需要考虑，有没有滚动条，有没有border
-            // let positionAndTranslate = getElementPositionAndTranslate(containment),
-            //     containmentStyle = domoperation.getElementComputedStyle(containment),
-            //     containmentBorder = domoperation.getBorderWidth(containmentStyle);
-            // return {
-            //     left: positionAndTranslate.left + containmentBorder.left,
-            //     top: positionAndTranslate.top + containmentBorder.top,
-            //     right:positionAndTranslate.left + containmentBorder.left + containment.scrollWidth,
-            //     bottom:positionAndTranslate.top + containmentBorder.top + containment.scrollHeight
-            // }
-            let distanceBetweenContainmentAndDoc = calculateDistanceBetweenContainmentAndDoc(containment),
-            // distanceBeteenTargetAndContainment = {
-            //     left:distanceBetweenTargeEleAndDoc.left - distanceBetweenContainmentAndDoc.left,
-            //     top:distanceBetweenTargeEleAndDoc.top - distanceBetweenContainmentAndDoc.top
-            // },
-            distanceBetweenTargeEleAndDoc = calculateDistanceBetweenTargetAndDoc(target.offsetParent);
-            
+            let distanceBetweenContainmentAndDoc = calculateDistanceBetweenEleAndDoc(containment),
+            distanceBetweenTargeEleAndDoc = calculateDistanceBetweenEleAndDoc(target.offsetParent);
             distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.translate.x + target.offsetLeft);
-            distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.translate.y + target.offsetTop);
+            distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.translate.y + target.offsetTop);                
 
             let distanceBeteenTargetAndContainment = {
-                // left:distanceBetweenTargeEleAndDoc.left - distanceBetweenContainmentAndDoc.left - containment.clientLeft,
-                // top:distanceBetweenTargeEleAndDoc.top - distanceBetweenContainmentAndDoc.top - containment.clientTop
                 left:distanceBetweenTargeEleAndDoc.left - distanceBetweenContainmentAndDoc.left,
                 top:distanceBetweenTargeEleAndDoc.top - distanceBetweenContainmentAndDoc.top
-
             };
-
-
-            // 在containment是parent的时候的默认的定位。需要除去，margin和translate
-            // let elementOriginExcursion = {
-            //     left:0 - targetPositionInfo.margin.left - targetPositionInfo.translate.left,
-            //     top:0 - targetPositionInfo.margin.top - targetPositionInfo.translate.top
-            // }
-            
-            console.log("distanceBetweenContainmentAndDoc " + distanceBetweenContainmentAndDoc.left);
-            console.log("distanceBetweenTargeEleAndDoc " + distanceBetweenTargeEleAndDoc.left);
-            console.log("distanceBeteenTargetAndContainment " + distanceBeteenTargetAndContainment.left);
             
             return {
                 left: 0 - distanceBeteenTargetAndContainment.left,
                 top: 0 - distanceBeteenTargetAndContainment.top,
                 right:0 - distanceBeteenTargetAndContainment.left + containment.scrollWidth - target.offsetWidth,
                 bottom:0 - distanceBeteenTargetAndContainment.top + containment.scrollHeight - target.offsetHeight
-            }
+            }      
         }
 
-        /*
-            计算父容器到文档的间距，Containment的border需要另外计算
-         */
-        function calculateDistanceBetweenContainmentAndDoc(element) {
-            let elementStyle = domoperation.getElementComputedStyle(element);
-                // elementTranslate = domoperation.getTheTranslate(elementStyle),   
-                // elementBorder = domoperation.getBordserWidth(elementStyle);
-
-            if (element === document.body) {
-                // let documentStyle = domoperation.getElementComputedStyle(document.documentElement),
-                //     documentTranslate = domoperation.getTheTranslate(documentStyle),
-                //     documentBorder = domoperation.getBorderWidth(documentStyle),
-                //     documentOffset = {left:document.documentElement.offsetLeft, top:document.documentElement.offsetTop};
-
-                // return {
-                //     left:documentTranslate.x + documentBorder.left + documentOffset.letf + elementTranslate.x + elementBorder.left + elementOffset.letf,
-                //     top:documentTranslate.y + documentBorder.top + documentOffset.top + elementTranslate.y + elementBorder.top + elementOffset.top
-                // }
-                return {left:0, top:0};
-            } else {
-                let result = calculateDistanceBetweenContainmentAndDoc(element.offsetParent);
-                return {
-                    // left:elementTranslate.x + elementBorder.left + elementOffset.letf + result.left,
-                    // top:elementTranslate.y + elementBorder.top + elementOffset.top + result.top
-                    // left:elementTranslate.x + elementOffset.left + result.left,
-                    // top:elementTranslate.y + elementOffset.top + result.top
-                    left:element.offsetLeft + result.left + element.clientLeft,
-                    top:element.offsetTop + result.top + element.clientTop
-                }
-            }
-        }
-
-        // function calculateDistanceBetweenTargetAndDoc(event) {
-        //     let marigin = domoperation.getMargin(targetComputedStyle),
-        //         position = domoperation.getPosition(targetComputedStyle),
-        //         translate = domoperation.getTheTranslate(targetComputedStyle);
-        //         console.log("event.pageX " + common.getInt(event.pageX));
-        //         console.log("event.offsetX " + common.getInt(event.offsetX));
-        //     return {
-        //         left:common.getInt(event.pageX) - common.getInt(event.offsetX) - translate.x - marigin.left - position.left,
-        //         top:common.getInt(event.pageY) - common.getInt(event.offsetY) - translate.y - marigin.top - position.top
-        //         // left:common.getInt(event.pageX) - common.getInt(event.offsetX) - marigin.left - position.left,
-        //         // top:common.getInt(event.pageY) - common.getInt(event.offsetY) - marigin.top - position.top
-        //     }                                                                                                                                                                                                                                                                                                                                                                                              
-        // }
-
-        function calculateDistanceBetweenTargetAndDoc(element) {
-            let elementStyle = domoperation.getElementComputedStyle(element);
-                // elementTranslate = domoperation.getTheTranslate(elementStyle),   
-                // elementBorder = domoperation.getBorderWidth(elementStyle);
-
+        function calculateDistanceBetweenEleAndDoc(element) {
+            let elementStyle = domoperation.getElementComputedStyle(element),
+                elementTranslate = domoperation.getTheTranslate(elementStyle);
             if (element === document.body) {
                 return {left:0, top:0};
             } else {
-                let result = calculateDistanceBetweenTargetAndDoc(element.offsetParent);
+                let result = calculateDistanceBetweenEleAndDoc(element.offsetParent);
                 return {
-                    // left:elementTranslate.x + elementOffset.left + result.left + elementBorder.left,
-                    // top:elementTranslate.y + elementOffset.top + result.top + elementBorder.top 
-                    left:element.offsetLeft + result.left + element.clientLeft,
-                    top:element.offsetTop + result.top +  element.clientTop
+                    left:element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
+                    top:element.offsetTop + result.top +  element.clientTop + elementTranslate.y               
                 }
             }
         }
@@ -259,33 +186,8 @@ define(["common", "domoperation"], function(common, domoperation){
         function updateTargetPositionInfo() {
             targetComputedStyle = domoperation.getElementComputedStyle(target);
             targetPositionInfo.position = domoperation.getPosition(targetComputedStyle);
-            targetPositionInfo.border = domoperation.getBorderWidth(targetComputedStyle);
-            targetPositionInfo.margin = domoperation.getMargin(targetComputedStyle);
             targetPositionInfo.translate = domoperation.getTheTranslate(targetComputedStyle);            
-        }
-
-        // /*
-        //     递归计算元素的translate和position,需要考虑body还有document的position和translate
-        //  */
-        // function getElementPositionAndTranslate(element) {
-        //     let elementStyle = domoperation.getElementComputedStyle(element),
-        //         elementTranslate = domoperation.getTheTranslate(elementStyle),   
-        //         elementPosition = domoperation.getPostion(elementStyle);
-
-        //     if (element === document.body) {
-        //         let documentStyle = domoperation.getElementComputedStyle(document.documentElement),
-        //             documentTranslate = domoperation.getTheTranslate(documentStyle),
-        //             documentPosition = domoperation.getPostion(documentStyle);
-        //         return {left:documentTranslate.x + documentPosition.left + elementTranslate.x + elementPosition.left,
-        //             top:documentTranslate.y + documentPosition.top + elementTranslate.y + elementPosition.top}
-        //     } else {
-        //         let position = getElementPositionAndTranslate(element.offsetParent);
-        //         return {left:elementTranslate.x + elementPosition.left + position.left, 
-        //             top:elementTranslate.y + elementPosition.top + position.top};
-        //     }
-        // }
-    
-
+        }   
     }
 
     function drogable(element) {
