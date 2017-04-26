@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+        <style type="text/css">
+            * {
+                margin:0px;
+                padding:0px;
+                box-sizing: border-box;
+            }
+    
+            body, input, select, button, textarea {
+                font-size: 14px;
+                font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
+            }
+            
+            button {
+                border-width: 0px;
+                outline: none;
+            }            
+            
+            body, html {
+                width:100%;
+                height:100%;
+            }   
+
+            .container {
+                width:200%;
+                height:200%;
+                background: #F5ECB7;
+                position: relative;
+                left: 0;
+                top:0;
+            }   
+
+            .testDiv {
+                width:200px;
+                height:200px;
+                background: #DED1B6;
+            }
+
+            .outterStyle {
+                width:350px;
+                height:350px;
+                background: #83A300;
+            }
+
+            .testBtnStyle {
+                width:100px;
+                height:30px;
+            }
+        </style>
+
+
+    </head>
+    <body>
+        <div class="container">
+            <div id="outter" class="outterStyle">
+                <div id="testDiv" class="testDiv">
+                    <button id="testBtn" class="testBtnStyle">
+                        test
+                    </button>
+                </div>                
+            </div>
+        </div>
+    </body>
+    <script src="../lib/requirejs/require.js" type="text/javascript"></script>
+    <script src="../js/common/requireconfig.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        require.config({
+            paths: {
+                "jqueryui": '../lib/jquery-ui-1.12.1.custom/jquery-ui',
+                "interaction":'../js/common/interaction'
+            },
+            shim: {
+                "jqueryui": {
+                    deps: ["jquery"],
+                    exports: "jqueryui"
+                }
+            }
+        })
+
+        require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","domoperation","interaction", "jqueryui", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, domoperation, interaction){         
+            let testBtn = document.querySelector("#testBtn");
+            testBtn.addEventListener("click", (e) => {
+                let moveDistance = document.documentElement.scrollHeight - window.innerHeight;
+                console.log("moveDistance " + moveDistance);
+                let range = parseInt(moveDistance / 10);
+                // console.log("range " + range)
+                // for (var i = 0; i < 11; i++) {
+                //     setInterval(()=>{
+                //        window.scrollBy(0, range); 
+                //    }, 500);
+                // }
+
+                var promise = new Promise(function(resolve){
+                    setTimeout(function(){
+                        window.scrollBy(0, range); 
+                        resolve()
+                    }, 20);
+                })
+
+                function timePromise(promise, index) {
+                    if (index == 10) {
+                         window.scrollBy(0, range); 
+                    } else {
+                        var newPromise = promise.then(function(){
+                            let p = new Promise(function(resolve){
+                                setTimeout(function(){
+                                     window.scrollBy(0, range); 
+                                    resolve()
+                                }, 20);
+                            })
+                            return p;
+                        })
+                        timePromise(newPromise,++index);
+                    }
+                }
+
+                timePromise(promise, 0);
+
+            })
+
+        })
+    </script>    
+</html>
+
+
+

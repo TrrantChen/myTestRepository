@@ -8,12 +8,13 @@
 define(["common", "domoperation"], function(common, domoperation){      
     function dragable(selector, option) {
         // axis:x, y
-        // todo
         // containment: selector
+        // translate:true/false 
+        // todo
         // handle: selector
         // revert: true/false
         // snap:
-        // translate:true/false 
+        
         option = option || {};
         let target = document.querySelector(selector),
             mouseDownPage = { x: 0, y: 0 },
@@ -25,22 +26,32 @@ define(["common", "domoperation"], function(common, domoperation){
             containment = void 0,
             containmentPositionRange = void 0,
             originTranslate = null,
+            originPosition = null,
             targetPositionInfo = {},
+            isRangeLimit = false,
+            /*
+                是否使用getBoundingClientRect去获取元素与边框的距离
+             */           
             isGetDistanceByBoundingClientRect = true;
             
         option = Object.assign(defaultOption, option);
 
+        /*
+            是否使用translate替代position
+         */ 
         let isTranslate = option.translate && domoperation.checkCss3Support("transform");
         isTranslate = true;
 
-
         updateTargetPositionInfo();
-
         if (option.containment !== void 0) {
             containment = document.querySelector(option.containment);
+            if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
+                isRangeLimit = false;
+            }
             containmentPositionRange = getContainmentPositionRange(containment);
-        } 
+        }  
 
+        // target.addEventListener("mousedown", mouseDownHandle.before(beforeMouseDown));
         target.addEventListener("mousedown", mouseDownHandle);
         target.addEventListener("click", clickHandle);
         domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
@@ -49,15 +60,15 @@ define(["common", "domoperation"], function(common, domoperation){
             event.preventDefault();
             event.stopPropagation();
             mouseDownPage.x = event.pageX;
-            mouseDownPage.y = event.pageY;
-
+            mouseDownPage.y = event.pageY; 
             updateTargetPositionInfo();
-
+            // containmentPositionRange = getContainmentPositionRange(containment);
+            // console.log(containmentPositionRange);
             if (isTranslate) {
                 originTranslate = targetPositionInfo.translate;                
             } else {
                 originPosition = targetPositionInfo.position;                
-            }        
+            }                                 
             document.addEventListener("mousemove", mouseMoveHandle);
             document.addEventListener("mouseup", mouseUpHandle);    
         }
@@ -71,7 +82,7 @@ define(["common", "domoperation"], function(common, domoperation){
                 x = originTranslate.x + event.pageX - mouseDownPage.x  - target.clientLeft,
                 y = originTranslate.y + event.pageY - mouseDownPage.y - target.clientTop;
 
-                if (containmentPositionRange !== void 0) {
+                if (isRangeLimit) {
                     if (x < containmentPositionRange.left) {
                         x = containmentPositionRange.left;
                     }
@@ -106,7 +117,7 @@ define(["common", "domoperation"], function(common, domoperation){
                 x = originPosition.left + event.pageX - mouseDownPage.x;
                 y = originPosition.top + event.pageY - mouseDownPage.y;
 
-                if (containmentPositionRange !== void 0) {
+                if (isRangeLimit) {
                     if (x < containmentPositionRange.left) {
                         x = containmentPositionRange.left;
                     }
@@ -163,12 +174,17 @@ define(["common", "domoperation"], function(common, domoperation){
                 left:distanceBetweenTargeEleAndDoc.left - distanceBetweenContainmentAndDoc.left,
                 top:distanceBetweenTargeEleAndDoc.top - distanceBetweenContainmentAndDoc.top
             };
+
+            console.log("distanceBetweenContainmentAndDoc left " + distanceBetweenContainmentAndDoc.left + " distanceBetweenContainmentAndDoc top " + distanceBetweenContainmentAndDoc.top);
+            console.log("distanceBetweenTargeEleAndDoc left " + distanceBetweenTargeEleAndDoc.left + " distanceBetweenTargeEleAndDoc top " + distanceBetweenTargeEleAndDoc.top);
+            console.log("distanceBeteenTargetAndContainment left " + distanceBeteenTargetAndContainment.left + " distanceBeteenTargetAndContainment top " + distanceBeteenTargetAndContainment.top);
+
             
             return {
                 left: 0 - distanceBeteenTargetAndContainment.left,
                 top: 0 - distanceBeteenTargetAndContainment.top,
-                right:0 - distanceBeteenTargetAndContainment.left + containment.scrollWidth - target.offsetWidth,
-                bottom:0 - distanceBeteenTargetAndContainment.top + containment.scrollHeight - target.offsetHeight
+                right:0 - distanceBeteenTargetAndContainment.left + containment.clientWidth - target.offsetWidth,
+                bottom:0 - distanceBeteenTargetAndContainment.top + containment.clientHeight - target.offsetHeight
             }      
         }
 

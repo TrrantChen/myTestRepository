@@ -437,14 +437,42 @@ define([], function() {
         }
     }
 
+    function arguments2Array(arg) {
+        return arg.length === 1 ? [arg[0]] : Array.apply(null, arg);
+    }
+
     function getInt(num) {
         let result = parseInt(num);
         return isNaN(result) ? 0 : result;
     }
 
-    function beforeFunc(func) {
-        return function() {
+    Function.prototype.before = function(fn) {
+        let args = [],
+            length = arguments.length,
+            _self = this;
 
+        for (var i = 1; i < length; i++) {
+            args.push(arguments[i]);
+        }
+
+        return function() {
+            fn.apply(this, args);
+            _self.apply(this, arguments);
+        }
+    }
+
+    Function.prototype.after = function(fn) {
+        let args = [],
+            length = arguments.length,
+            _seft = this;
+
+        for (var i = 1; i < length; i++) {
+            args.push(arguments[i]);
+        }
+
+        return function() {
+            _self.apply(this, arguments);
+            fn.apply(this, args);
         }
     }
 
@@ -487,6 +515,7 @@ define([], function() {
         copyPropertiesFromObj2Obj:copyPropertiesFromObj2Obj,
         arrCopy:arrCopy,
         getPropertiesRange:getPropertiesRange,
-        getInt:getInt
+        getInt:getInt,
+        arguments2Array:arguments2Array
     }
 })
