@@ -179,46 +179,83 @@ define(["common"], function(common){
     }  
 
     function getBorderWidth(elementComputedStyles) {
-        let left = elementComputedStyles("border-left-width"),
-            top = elementComputedStyles("border-top-width"),
-            right = elementComputedStyles("border-right-width"),
-            bottom = elementComputedStyles("border-bottom-width");
-        return {
-            left:common.getInt(left),
-            top:common.getInt(top),
-            right:common.getInt(right),
-            bottom:common.getInt(bottom)
-        }
+        return getBox(elementComputedStyles, "border");
     }
 
     function getPosition(elementComputedStyles) {
-        let left = parseInt(elementComputedStyles("left")),
-            top = parseInt(elementComputedStyles("top")),
-            right = parseInt(elementComputedStyles("right")),
-            bottom = parseInt(elementComputedStyles("bottom"));
-        return {
-            left:common.getInt(left),
-            top:common.getInt(top),
-            right:common.getInt(right),
-            bottom:common.getInt(bottom)
-        }
+        return getBox(elementComputedStyles, "position");
     }
 
     function getMargin(elementComputedStyles) {
-        let left = parseInt(elementComputedStyles("margin-left")),
-            top = parseInt(elementComputedStyles("margin-top")),
-            right = parseInt(elementComputedStyles("margin-right")),
-            bottom = parseInt(elementComputedStyles("margin-bottom"));
+        return getBox(elementComputedStyles, "margin");
+    }
+
+    function getPadding(elementComputedStyles) {
+        return getBox(elementComputedStyles, "padding");      
+    }
+
+    function getBox(elementComputedStyles, style) {
+        let prefix = style === "position" ? "" : style + "-",
+            postfix = style === "border" ? "-width" : "";
+
+        if (style === "position" && elementComputedStyles("position") === "static") {
+            return {
+                left:0,
+                top:0,
+                right:0,
+                bottom:0
+            }
+        }
+
         return {
-            left:common.getInt(left),
-            top:common.getInt(top),
-            right:common.getInt(right),
-            bottom:common.getInt(bottom)
+            left:common.getInt(elementComputedStyles(prefix + "left" + postfix)),
+            top:common.getInt(elementComputedStyles(prefix + "top" + postfix)),
+            right:common.getInt(elementComputedStyles(prefix + "right" + postfix)),
+            bottom:common.getInt(elementComputedStyles(prefix + "bottom" + postfix))
+        }          
+    }
+
+    function getParents(elem) {
+        let parentsArr = [];
+        while((elem = elem.parentNode()) && elem.nodeType !== 9) {
+            parentsArr.push[elem];
+        }
+        return parentsArr;
+    }
+
+    function getParentsUntil(elem, elemUntil) {
+        let parentArr = [];
+        while ((elem = elem.parentNode()) && elem.nodeType !== 9) {
+            if (elem === elemUntil) {
+                break;
+            }
+            parentArr.push[elem];
+        }
+        return parentArr;
+    }
+
+    /*
+        获取最近的scroll父元素，需要注意的情况是如果元素的position为absolute
+        而父元素为static，那父元素即使有scroll也会被忽略
+        因为这个时候子元素相对的只会是设置了postion relative或者absolute的元素
+        父元素的scroll对这个元素没有影响
+     */
+    function getScrollParent(elem) {
+        let parents = getParents(elem),
+            length = parents.length,
+            isAbsolute = getElementComputedStyle(elem)("position") == "absolute";
+
+        for (var i = 0; i < length; i++) {
+            isAbsolute 
         }
     }
 
-    function setTransform() {
-        
+    /*
+        如果不是visible，证明存在着滚动条。
+     */
+    function isScrollElem(elem) {
+        let elemComputedStyle = getElementComputedStyle(elem);
+        return elemComputedStyle("overflow") !== "visible";
     }
 
     return {
@@ -236,6 +273,10 @@ define(["common"], function(common){
        getBorderWidth:getBorderWidth,
        getPosition:getPosition,
        getMargin:getMargin,
-       setTransform:setTransform
+       getPadding:getPadding,
+       getParents:getParents,
+       getParentsUntil:getParentsUntil,
+       getScrollParent:getScrollParent,
+       isScrollElem:isScrollElem
     }  
 })

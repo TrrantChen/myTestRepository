@@ -23,9 +23,7 @@
             body, html {
                 width:100%;
                 height:100%;
-                margin-top:10px;
-                margin-left:10px;
-            }   
+            }  
 
             .container {
                 width:100%;
@@ -88,33 +86,38 @@
             .marginStyle {
                 width:300px;
                 height:300px;
+                /*border:solid 20px black;*/
                 border:solid 2px black;
-                margin-top:50px;
+                /*margin-top:50px;*/
                 margin-left:50px;
+                position:relative;
             }   
 
             .absulteStyle {
                 width:200px;
                 height:200px;
                 border:solid 2px black;
-                position:absolute;
+                /*border:solid 5px black;*/
+                /*position:absolute;*/
+                position:static;
                 left:80px;
                 top:50px;
                 overflow-x: auto;
-                /*margin-top:30px;*/
-                /*margin-left:30px;*/
+                margin-top:30px;
+                margin-left:30px;
             }
 
             .relativeStyle {
                 width:400px;
+                /*width:100px;*/
                 height:100px;
                 border:solid 2px black;
-                /*position:relative;*/
-                /*left:30px;*/
-                /*top:40px;*/
+                position:relative;
+                left:30px;
+                top:40px;
                 margin-top:20px;
                 margin-left:20px;
-                
+                padding:10px;
 
             }
 
@@ -123,7 +126,11 @@
                 height:20px;
                 border:solid 2px black;
                 position:relative;
+                /*position:absolute;*/
+                left:50px;
+                top:50px;
                 margin-left:30px;
+                /*transform: translate(30px, 0);*/
             }
 
         </style>
@@ -140,38 +147,7 @@
                     <div id="testDivByJqueryui" class="testDivByJqueryuiStyle">
                         
                     </div>
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />
-                        p<br />                                                                  
+                        p<br />                                                                 
                 </div>                
             </div> -->
             <div id="margin" class="marginStyle">
@@ -183,11 +159,7 @@
                 </div>
             </div>
 
-            <div id="outter" style="width:200px;height:200px;background: #DBD8A2;border: solid 5px;">
-                <div id="middle" style="width:150px;height:150px;background:#E2F7CE;margin-left:10px;margin-top:10px;border: solid 5px;">
-                    <div id="inner" style="width:100px;height:100px;background: #C4AC30;margin-left:10px;margin-top:10px;border: solid 5px;"></div>                    
-                </div>
-
+            <div id="scrollDiv" style="width:50px;height:50px;background: #DBD8A2;border: solid 5px;position:relative;">
             </div>
         </div>
     </body>
@@ -208,160 +180,36 @@
         })
 
         require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","domoperation","interaction", "jqueryui", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, domoperation, interaction){         
-            function xyTest() {      
-                document.body.addEventListener("mousemove", function(event){
-                    // console.log("body client " + event.clientX + " " + event.clientY);
-                    console.log("body  page " + event.pageX + " " + event.pageY);
-                    console.log("body movement" + event.movementX + " " + event.movementY )
-                    // console.log("body  screen " + event.screenX + " " + event.screenY);
-                }) 
-
-                document.querySelector("#testDiv").addEventListener("mousemove", function(event){
-                    console.log("testDiv client " + event.clientX + " " + event.clientY);
-                    console.log("testDiv offset " + event.offsetX + " " + event.offsetY);
-                    console.log("testDiv layer " + event.layerX + " " + event.layerY);
-                })                           
-            }
         
-            function dragTestByJquery(){
-                let testDiv = $("#testDiv"),
-                    mouseStartPosition = {x:0, y:0};
-                testDiv.on("mousedown", mouseDownHandle);
-                function mouseDownHandle(event) {                 
-                    mouseStartPosition.x = event.offsetX;
-                    mouseStartPosition.y = event.offsetY;
-                    testDiv.css("cursor", "move");
-                    testDiv.css("position", "relative");
-                    document.addEventListener("mousemove", mouseMoveHandle);
-                    document.addEventListener("mouseup", mouseUpHandle);
-                }
-
-                function mouseMoveHandle(event) {
-                    testDiv.css("left", event.pageX - mouseStartPosition.x);
-                    testDiv.css("top", event.pageY - mouseStartPosition.y);
-                }
-
-                function mouseUpHandle(event) {                
-                    testDiv.css("cursor", "default");
-                    document.removeEventListener("mousemove", mouseMoveHandle);
-                    document.removeEventListener("mouseup", mouseUpHandle);
-                }
-            }
-
-            function dragTestOrigin(selector) {
-                let ele = document.querySelector(selector),
-                    mouseStartOffset = {x:0, y:0};
-                ele.addEventListener("mousedown", mouseDownHandle);
-
-                function mouseDownHandle(event) {
-                    mouseStartOffset.x = event.offsetX;
-                    mouseStartOffset.y = event.offsetY;
-                    ele.style.cursor = "move";
-                    // ele.style.position = "relative";
-                    document.addEventListener("mousemove", mouseMoveHandle);
-                    document.addEventListener("mouseup", mouseUpHandle);
-                }
-
-                function mouseMoveHandle(event) {
-                    // ele.style.left = event.pageX - mouseStartOffset.x + "px";
-                    // ele.style.top = event.pageY - mouseStartOffset.y + "px";
-                    
-                    let eleComputedStyle = domoperation.getElementComputedStyle(ele);
-                    console.log(eleComputedStyle("width"));
-                    console.log(eleComputedStyle("border-left-width"));
-                    ele.style.transform = `translate(${event.pageX - mouseStartOffset.x - eleComputedStyle("width") - eleComputedStyle("border-left-width")}px, ${event.pageY - mouseStartOffset.y - eleComputedStyle("border-top-width")}px)`;
-                }
-
-                function mouseUpHandle(event) {
-                    ele.style.cursor = "default";
-                    document.removeEventListener("mousemove", mouseMoveHandle);
-                    document.removeEventListener("mouseup", mouseUpHandle);                    
-                }
-            }
-
             function dragByJqueryUi() {
                 var testDivByJqueryui = $("#testDivByJqueryui");
-                testDivByJqueryui.draggable({containment: "#absolute"});
-                // testDivByJqueryui.draggable();
+                testDivByJqueryui.draggable({containment: "#margin"});
+                // // testDivByJqueryui.draggable();
+                var scrollDiv = $("#scrollDiv");
+                // scrollDiv.draggable();
+
+                console.log(testDivByJqueryui.scrollParent());
+                // debugger
+                // console.log( scrollDiv.scrollParent());
             }
 
             function dragInterationTest() {
-                interaction.dragable("#testDivByJqueryui", {containment: "#absolute"});
-                // interaction.dragable("#testDivByJqueryui", {containment: "#margin"});
+                interaction.dragable("#testDivByJqueryui", {containment: "#relative"});
+                // interaction.dragable("#testDivByJqueryui", {containment: "#absolute"});
                 // interaction.dragable("#testDivByJqueryui");
+                // interaction.dragable("#scrollDiv");
             }
 
-            function dragFromWeb() {
-                function drag(elementId) {
-                    var element = document.getElementById(elementId);
-                    var position = {
-                        offsetX: 0, //点击处偏移元素的X
-                        offsetY: 0, //偏移Y值
-                        state: 0 //是否正处于拖拽状态，1表示正在拖拽，0表示释放
-                    };
-                    //获得兼容的event对象
-                    function getEvent(event) {
-                        return event || window.event;
-                    }
-                    //元素被鼠标拖住
-                    element.addEventListener('mousedown', function (event) {
-                        //获得偏移的位置以及更改状态
-                        var e = getEvent(event);
-                        position.offsetX = e.offsetX;
-                        position.offsetY = e.offsetY;
-                        position.state = 1;
-                    }, false);
-                    //元素移动过程中
-                    document.addEventListener('mousemove', function (event) {
-                        var e = getEvent(event);
-                        if (position.state) {
-                            position.endX = e.clientX;
-                            position.endY = e.clientY;
-                            //设置绝对位置在文档中，鼠标当前位置-开始拖拽时的偏移位置
-                            element.style.position = 'absolute';
-                            element.style.top = position.endY - position.offsetY + 'px';
-                            element.style.left = position.endX - position.offsetX + 'px';
-                        }
-                    }, false);
-                    //释放拖拽状态
-                    element.addEventListener('mouseup', function (event) {
-                        position.state = 0;
-                    }, false);
-                }
-
-                drag('block');
-            }
-
-            function dragAndMove() {
-                let testDiv = $("#testDiv")
-                testDiv.on("mousedown", function(event) {
-                    $(this).on("mousemove", mouseMoveHandle)
-                })
-
-                function mouseMoveHandle(event) {
-                    console.log(event.clientX + " " + event.clientY);
-                }
-
-                testDiv.on("mouseup", function(event) {
-                    $(this).off("mousemove", mouseMoveHandle)
-                })
-            }
-
-            // dragAndMove();
-            // dragFromWeb()
-            // xyTest();
-            // dragTestByJquery();
             dragInterationTest();
             // dragByJqueryUi();
-            // dragTestOrigin("#testDiv");
-
-
         })
 
-        var testDivByJqueryui = document.querySelector("#testDivByJqueryui");
-        var relative = document.querySelector("#relative");
-        var absolute = document.querySelector("#absolute");
-        var margin = document.querySelector("#margin");
+        let testDivByJqueryui = document.querySelector("#testDivByJqueryui"),
+            relative = document.querySelector("#relative"),
+            absolute = document.querySelector("#absolute"),
+            margin = document.querySelector("#margin"),
+            scrollDiv = document.querySelector("#scrollDiv");
+
     </script>    
 </html>
 

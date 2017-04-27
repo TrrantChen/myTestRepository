@@ -32,7 +32,7 @@ define(["common", "domoperation"], function(common, domoperation){
             /*
                 是否使用getBoundingClientRect去获取元素与边框的距离
              */           
-            isGetDistanceByBoundingClientRect = true;
+            isGetDistanceByBoundingClientRect = false;
             
         option = Object.assign(defaultOption, option);
 
@@ -40,18 +40,20 @@ define(["common", "domoperation"], function(common, domoperation){
             是否使用translate替代position
          */ 
         let isTranslate = option.translate && domoperation.checkCss3Support("transform");
-        isTranslate = true;
-
         updateTargetPositionInfo();
+        isTranslate = false;
+
         if (option.containment !== void 0) {
             containment = document.querySelector(option.containment);
             if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
                 isRangeLimit = false;
+            } else {
+                isRangeLimit = true;
             }
             containmentPositionRange = getContainmentPositionRange(containment);
+            console.log(containmentPositionRange);
         }  
 
-        // target.addEventListener("mousedown", mouseDownHandle.before(beforeMouseDown));
         target.addEventListener("mousedown", mouseDownHandle);
         target.addEventListener("click", clickHandle);
         domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
@@ -62,13 +64,11 @@ define(["common", "domoperation"], function(common, domoperation){
             mouseDownPage.x = event.pageX;
             mouseDownPage.y = event.pageY; 
             updateTargetPositionInfo();
-            // containmentPositionRange = getContainmentPositionRange(containment);
-            // console.log(containmentPositionRange);
             if (isTranslate) {
                 originTranslate = targetPositionInfo.translate;                
             } else {
                 originPosition = targetPositionInfo.position;                
-            }                                 
+            }                               
             document.addEventListener("mousemove", mouseMoveHandle);
             document.addEventListener("mouseup", mouseUpHandle);    
         }
@@ -81,7 +81,6 @@ define(["common", "domoperation"], function(common, domoperation){
             if (isTranslate) {
                 x = originTranslate.x + event.pageX - mouseDownPage.x  - target.clientLeft,
                 y = originTranslate.y + event.pageY - mouseDownPage.y - target.clientTop;
-
                 if (isRangeLimit) {
                     if (x < containmentPositionRange.left) {
                         x = containmentPositionRange.left;
@@ -165,10 +164,16 @@ define(["common", "domoperation"], function(common, domoperation){
 
         function getContainmentPositionRange(containment) {
             let distanceBetweenContainmentAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(containment) : calculateDistanceBetweenEleAndDoc(containment),
-            distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent);      
+                distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent),
+                containmentPadding = domoperation.getPadding(domoperation.getElementComputedStyle(containment));      
 
-            distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.translate.x + target.offsetLeft);
-            distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.translate.y + target.offsetTop);                
+            if (isTranslate) {
+                distanceBetweenTargeEleAndDoc.left +=  (targetPositionInfo.position.left + targetPositionInfo.margin.left + containmentPadding.left);
+                distanceBetweenTargeEleAndDoc.top +=  (targetPositionInfo.position.top + targetPositionInfo.margin.left + containmentPadding.left); 
+            } else {
+                distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.translate.x + targetPositionInfo.margin.left + containmentPadding.left);
+                distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.translate.y + targetPositionInfo.margin.top + containmentPadding.top); 
+            }                 
 
             let distanceBeteenTargetAndContainment = {
                 left:distanceBetweenTargeEleAndDoc.left - distanceBetweenContainmentAndDoc.left,
@@ -205,15 +210,16 @@ define(["common", "domoperation"], function(common, domoperation){
         function calculateDistanceBetweenEleAndDocByBoundingClientRect(element) {
             let boundingClientRect = element.getBoundingClientRect();
             return {
-                left:boundingClientRect.left,
-                top:boundingClientRect.top
+                left:boundingClientRect.left + window.scrollX,
+                top:boundingClientRect.top + window.scrollY
             }
         }
 
         function updateTargetPositionInfo() {
             targetComputedStyle = domoperation.getElementComputedStyle(target);
             targetPositionInfo.position = domoperation.getPosition(targetComputedStyle);
-            targetPositionInfo.translate = domoperation.getTheTranslate(targetComputedStyle);            
+            targetPositionInfo.translate = domoperation.getTheTranslate(targetComputedStyle);
+            targetPositionInfo.margin = domoperation.getMargin(targetComputedStyle);
         }   
     }
 
@@ -231,36 +237,3 @@ define(["common", "domoperation"], function(common, domoperation){
     }  
 })
 
-/*
-    方案0
-  叠加计算margin，translate，position, border
-  left 就用0 - 以上的margin,translate,border 还有其他parent的margin, translate,border以及position
-  往上直接找parentElement
-
-    方案1
-  从元素本身开始，一层一层往外扩散，直到找到parent=containment为止
-  计算每个parent的margin，translate，border还有position，
-
-    方案2
-  首先，在鼠标点击事件中计算，div距离body的边界，
-  然后从containment开始，计算他的offsetLeft + border + translate,然后递归计算他的offsetParent，
-  计算offsetLeft + border + translate，直到body为止
-  然后计算两者的差值，就是边界。
-
-  方案3
-
-  首先，计算出目标在parent上的position为0时的范围
-  为0 - margin -translate 
-  0 - margin -translate + scrollWidth
-    
-
-    如果迭代求每个parent的offset，如果某个parent为absolute，会发生offset发生计算重复的状况。
-
-    获取contaner与body的距离，需要迭代计算，b
-    container的boder需要另外计算 c
-
-    计算公式为
-    点击的时候获取目标的位置，计算目标到body 的距离 a
-    然后
-    a - b - c就是需要移动的距离
- */

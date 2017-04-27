@@ -50,6 +50,15 @@
                 width:100px;
                 height:30px;
             }
+
+            .bottomStyle {
+                width:50px;
+                height:50px;
+                background: #EAC388;
+                position:absolute;
+                bottom: 0px;
+                left:0px;
+            }
         </style>
 
 
@@ -62,6 +71,9 @@
                         test
                     </button>
                 </div>                
+            </div>
+            <div id="bottom" class="bottomStyle">
+                
             </div>
         </div>
     </body>
@@ -94,31 +106,34 @@
                 //    }, 500);
                 // }
 
-                var promise = new Promise(function(resolve){
-                    setTimeout(function(){
-                        window.scrollBy(0, range); 
-                        resolve()
-                    }, 20);
-                })
+                // var promise = new Promise(function(resolve){
+                //     setTimeout(function(){
+                //         window.scrollBy(0, range); 
+                //         resolve()
+                //     }, 20);
+                // })
 
-                function timePromise(promise, index) {
-                    if (index == 10) {
-                         window.scrollBy(0, range); 
-                    } else {
-                        var newPromise = promise.then(function(){
-                            let p = new Promise(function(resolve){
-                                setTimeout(function(){
-                                     window.scrollBy(0, range); 
-                                    resolve()
-                                }, 20);
-                            })
-                            return p;
-                        })
-                        timePromise(newPromise,++index);
-                    }
-                }
+                // function timePromise(promise, index) {
+                //     if (index == 10) {
+                //          window.scrollBy(0, range); 
+                //     } else {
+                //         var newPromise = promise.then(function(){
+                //             let p = new Promise(function(resolve){
+                //                 setTimeout(function(){
+                //                      window.scrollBy(0, range); 
+                //                     resolve()
+                //                 }, 20);
+                //             })
+                //             return p;
+                //         })
+                //         timePromise(newPromise,++index);
+                //     }
+                // }
 
-                timePromise(promise, 0);
+                // timePromise(promise, 0);
+                
+                let bottom = document.querySelector("#bottom");
+                bottom.scrollIntoView({block: "start", behavior: "smooth"})
 
             })
 
