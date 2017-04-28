@@ -21,7 +21,8 @@ define(["common", "domoperation"], function(common, domoperation){
             targetComputedStyle = null,
             defaultOption = {
                 axis:"all", 
-                translate:false
+                translate:false,
+                revert:false
             },
             containment = void 0,
             containmentPositionRange = void 0,
@@ -32,7 +33,9 @@ define(["common", "domoperation"], function(common, domoperation){
             /*
                 是否使用getBoundingClientRect去获取元素与边框的距离
              */           
-            isGetDistanceByBoundingClientRect = false;
+            isGetDistanceByBoundingClientRect = true,
+            scrollParent = void 0,
+            scrollParentBoundingClientRect = void 0;
             
         option = Object.assign(defaultOption, option);
 
@@ -41,7 +44,7 @@ define(["common", "domoperation"], function(common, domoperation){
          */ 
         let isTranslate = option.translate && domoperation.checkCss3Support("transform");
         updateTargetPositionInfo();
-        isTranslate = false;
+        isTranslate = true;
 
         if (option.containment !== void 0) {
             containment = document.querySelector(option.containment);
@@ -53,6 +56,20 @@ define(["common", "domoperation"], function(common, domoperation){
             containmentPositionRange = getContainmentPositionRange(containment);
             console.log(containmentPositionRange);
         }  
+
+        scrollParent = domoperation.getScrollParent(target);
+
+        /*
+            获取滚动的信息
+         */
+        if (scrollParent !== void 0) {
+            if (scrollParent !== document) {
+                scrollParentBoundingClientRect = getElemBoundingClientRect(scrollParent);
+            } else {
+
+            }
+        } 
+
 
         target.addEventListener("mousedown", mouseDownHandle);
         target.addEventListener("click", clickHandle);
@@ -77,10 +94,9 @@ define(["common", "domoperation"], function(common, domoperation){
             event.preventDefault();
             event.stopPropagation();
             let x = 0, y = 0;
-
             if (isTranslate) {
-                x = originTranslate.x + event.pageX - mouseDownPage.x  - target.clientLeft,
-                y = originTranslate.y + event.pageY - mouseDownPage.y - target.clientTop;
+                x = originTranslate.x + event.pageX - mouseDownPage.x,
+                y = originTranslate.y + event.pageY - mouseDownPage.y;
                 if (isRangeLimit) {
                     if (x < containmentPositionRange.left) {
                         x = containmentPositionRange.left;
@@ -147,7 +163,29 @@ define(["common", "domoperation"], function(common, domoperation){
                         target.style.top =  y + "px";                    
                         break;
                 }   
-            }         
+            }   
+
+            /*
+                自动滚动
+             */
+            if (scrollParent !== void 0) {
+                targetBoundingClientRect =  getElemBoundingClientRect(target);
+                distanceBetweenTargetAndScrollParent = {
+                    left:targetBoundingClientRect.left - scrollParentBoundingClientRect.left,
+                    top:targetBoundingClientRect.top - scrollParentBoundingClientRect.top,
+                    right:targetBoundingClientRect.right - scrollParentBoundingClientRect.right,
+                    bottom:targetBoundingClientRect.bottom - scrollParentBoundingClientRect.bottom
+                }
+
+                if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
+                    scrollParent.scrollLeft += 5;
+                }  
+
+                if (distanceBetweenTargetAndScrollParent.left < 0)  {
+                    scrollParent.scrollLeft -= 5;
+                }            
+            }
+
         }
 
         function mouseUpHandle(event) {
@@ -155,6 +193,11 @@ define(["common", "domoperation"], function(common, domoperation){
             event.stopPropagation();
             document.removeEventListener("mousemove", mouseMoveHandle);
             document.removeEventListener("mouseup", mouseUpHandle);
+            
+            if (option.revert) {
+                target.style.transform = `translate(${originTranslate.x}px, ${originTranslate.y}px)`;
+            }
+            
         }
 
         function clickHandle(event) {
@@ -163,9 +206,10 @@ define(["common", "domoperation"], function(common, domoperation){
         }
 
         function getContainmentPositionRange(containment) {
-            let distanceBetweenContainmentAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(containment) : calculateDistanceBetweenEleAndDoc(containment),
-                distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? calculateDistanceBetweenEleAndDocByBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent),
-                containmentPadding = domoperation.getPadding(domoperation.getElementComputedStyle(containment));      
+            let distanceBetweenContainmentAndDoc = isGetDistanceByBoundingClientRect ? getElemBoundingClientRect(containment) : calculateDistanceBetweenEleAndDoc(containment),
+                distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? getElemBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent),
+                containmentPadding = domoperation.getPadding(domoperation.getElementComputedStyle(containment))
+
 
             if (isTranslate) {
                 distanceBetweenTargeEleAndDoc.left +=  (targetPositionInfo.position.left + targetPositionInfo.margin.left + containmentPadding.left);
@@ -207,11 +251,13 @@ define(["common", "domoperation"], function(common, domoperation){
             }
         }
 
-        function calculateDistanceBetweenEleAndDocByBoundingClientRect(element) {
+        function getElemBoundingClientRect(element) {
             let boundingClientRect = element.getBoundingClientRect();
             return {
                 left:boundingClientRect.left + window.scrollX,
-                top:boundingClientRect.top + window.scrollY
+                top:boundingClientRect.top + window.scrollY,
+                right:boundingClientRect.right + window.scrollX,
+                bottom:boundingClientRect.bottom + window.scrollY
             }
         }
 
@@ -237,3 +283,15 @@ define(["common", "domoperation"], function(common, domoperation){
     }  
 })
 
+
+
+/*
+    拖动，滚动条自动滚动。
+    思路为元素与doc的距离大于小于某个阀值的时候会自动增加会减少scrollTop/scrollLeft的值。
+    1、计算滚动元素所在的有滚动条的窗体距离doc的距离
+    2、计算滚动元素距离doc的距离
+    3、获取两者之差，即滚动元素距离滚动窗体的距离
+    4、判断这个距离是否 > 滚动窗体的可视区域 - 元素的宽高
+    5、如果大于这个可视区域，就改变滚动窗体的scrollTop/Left
+    6、
+ */

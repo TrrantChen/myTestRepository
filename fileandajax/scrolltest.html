@@ -94,52 +94,12 @@
         })
 
         require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","domoperation","interaction", "jqueryui", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, domoperation, interaction){         
-            let testBtn = document.querySelector("#testBtn");
-            testBtn.addEventListener("click", (e) => {
-                let moveDistance = document.documentElement.scrollHeight - window.innerHeight;
-                console.log("moveDistance " + moveDistance);
-                let range = parseInt(moveDistance / 10);
-                // console.log("range " + range)
-                // for (var i = 0; i < 11; i++) {
-                //     setInterval(()=>{
-                //        window.scrollBy(0, range); 
-                //    }, 500);
-                // }
-
-                // var promise = new Promise(function(resolve){
-                //     setTimeout(function(){
-                //         window.scrollBy(0, range); 
-                //         resolve()
-                //     }, 20);
-                // })
-
-                // function timePromise(promise, index) {
-                //     if (index == 10) {
-                //          window.scrollBy(0, range); 
-                //     } else {
-                //         var newPromise = promise.then(function(){
-                //             let p = new Promise(function(resolve){
-                //                 setTimeout(function(){
-                //                      window.scrollBy(0, range); 
-                //                     resolve()
-                //                 }, 20);
-                //             })
-                //             return p;
-                //         })
-                //         timePromise(newPromise,++index);
-                //     }
-                // }
-
-                // timePromise(promise, 0);
-                
-                let bottom = document.querySelector("#bottom");
-                bottom.scrollIntoView({block: "start", behavior: "smooth"})
-
-            })
 
         })
     </script>    
 </html>
+
+
 
 
 

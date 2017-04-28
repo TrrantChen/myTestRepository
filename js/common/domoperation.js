@@ -217,19 +217,19 @@ define(["common"], function(common){
 
     function getParents(elem) {
         let parentsArr = [];
-        while((elem = elem.parentNode()) && elem.nodeType !== 9) {
-            parentsArr.push[elem];
+        while((elem = elem.parentNode) && elem.nodeType !== 9) {
+            parentsArr.push(elem);
         }
         return parentsArr;
     }
 
     function getParentsUntil(elem, elemUntil) {
         let parentArr = [];
-        while ((elem = elem.parentNode()) && elem.nodeType !== 9) {
+        while ((elem = elem.parentNode) && elem.nodeType !== 9) {
             if (elem === elemUntil) {
                 break;
             }
-            parentArr.push[elem];
+            parentArr.push(elem);
         }
         return parentArr;
     }
@@ -245,9 +245,15 @@ define(["common"], function(common){
             length = parents.length,
             isAbsolute = getElementComputedStyle(elem)("position") == "absolute";
 
-        for (var i = 0; i < length; i++) {
-            isAbsolute 
-        }
+        let scrollParents =  parents.filter((parent) => {
+            let parentStyle =  getElementComputedStyle(parent);
+            if (isAbsolute && parentStyle("position") == static) {
+                return false;
+            }
+            return /(auto|scroll|hidden)/.test(parentStyle("overflow") + parentStyle("overflow-x") + parentStyle("overflow-y"));
+        });
+
+        return !scrollParents.length ? (elem.ownerDocument || document) : scrollParents[0];
     }
 
     /*
