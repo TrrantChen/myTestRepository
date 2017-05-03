@@ -12,6 +12,7 @@ define(["common", "domoperation"], function(common, domoperation){
         // translate:true/false 
         // todo
         // handle: selector
+        // cancel:selector
         // revert: true/false
         // snap:
         
@@ -29,33 +30,47 @@ define(["common", "domoperation"], function(common, domoperation){
             originTranslate = null,
             originPosition = null,
             targetPositionInfo = {},
-            isRangeLimit = false,
+            isRangeLimit = true,
             /*
                 是否使用getBoundingClientRect去获取元素与边框的距离
              */           
             isGetDistanceByBoundingClientRect = true,
             scrollParent = void 0,
-            scrollParentBoundingClientRect = void 0;
+            scrollParentBoundingClientRect = void 0,
+            handleSelector = void 0,
+            cancelSelector = void 0;
             
         option = Object.assign(defaultOption, option);
 
         /*
             是否使用translate替代position
          */ 
-        let isTranslate = option.translate && domoperation.checkCss3Support("transform");
+        let isTranslate = domoperation.checkCss3Support("transform");
+
+        /*
+            指定可以拖拽的区域
+         */
+        if (option.handle !== void 0) {
+            handleSelector = document.querySelector(option.handle === "this" ? selector : option.handle);
+        }
+
+        if (option.cancel !== void 0) {
+            cancelSelector = document.querySelector(option.cancel);
+        }
+        
         updateTargetPositionInfo();
-        isTranslate = true;
 
         if (option.containment !== void 0) {
             containment = document.querySelector(option.containment);
-            if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
-                isRangeLimit = false;
-            } else {
-                isRangeLimit = true;
-            }
+            // if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
+            //     isRangeLimit = false;
+            // } else {
+            //     isRangeLimit = true;
+            // }
             containmentPositionRange = getContainmentPositionRange(containment);
-            console.log(containmentPositionRange);
-        }  
+        }  else {
+            isRangeLimit = false;
+        }
 
         scrollParent = domoperation.getScrollParent(target);
 
@@ -66,18 +81,46 @@ define(["common", "domoperation"], function(common, domoperation){
             if (scrollParent !== document) {
                 scrollParentBoundingClientRect = getElemBoundingClientRect(scrollParent);
             } else {
-
+                scrollParentBoundingClientRect = {
+                    left:window.scrollX,
+                    top:window.scrollY,
+                    right:document.body.scrollWidth,
+                    bottom:document.body.scrollHeight
+                } 
             }
         } 
 
 
         target.addEventListener("mousedown", mouseDownHandle);
         target.addEventListener("click", clickHandle);
-        domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
+        
+
+        if (option.handle !== void 0 && option.handle !== "this") {
+            domoperation.insertStyle2Head(`${selector}:hover{cursor:default}`);
+            domoperation.insertStyle2Head(`${option.handle}:hover{cursor:move}`);
+        } else {
+            domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
+        }
+
+        if (option.cancel !== void 0) {
+            domoperation.insertStyle2Head(`${option.cancel}:hover{cursor:default}`);
+        }
 
         function mouseDownHandle(event) {
             event.preventDefault();
             event.stopPropagation();
+            if (option.handle !== void 0) {
+                if (handleSelector !== event.target) {
+                    return;
+                }
+            } 
+
+            if (option.cancel !== void 0) {
+                if (cancelSelector === event.target) {
+                    return;
+                }
+            } 
+
             mouseDownPage.x = event.pageX;
             mouseDownPage.y = event.pageY; 
             updateTargetPositionInfo();
@@ -195,6 +238,10 @@ define(["common", "domoperation"], function(common, domoperation){
             document.removeEventListener("mouseup", mouseUpHandle);
             
             if (option.revert) {
+                target.style.transition = "transform 0.5s linear";
+                target.addEventListener("transitionend", (e) => {
+                    target.style.transition = "";
+                })
                 target.style.transform = `translate(${originTranslate.x}px, ${originTranslate.y}px)`;
             }
             

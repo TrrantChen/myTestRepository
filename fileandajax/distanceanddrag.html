@@ -113,7 +113,8 @@
                 /*width:100px;*/
                 height:100px;
                 border:solid 2px black;
-                position:relative;
+                /*position:relative;*/
+                position:static;
                 left:30px;
                 top:40px;
                 margin-top:20px;
@@ -123,16 +124,56 @@
             }
 
             .divStyle {
-                width:20px;
-                height:20px;
-                border:solid 6px black;
-                position:relative;
-                /*position:absolute;*/
+                width:30px;
+                height:30px;
+                border:solid 1px black;
+                /*position:relative;*/
+                position:absolute;
                 left:50px;
                 top:50px;
                 /*margin-left:30px;*/
                 /*transform: translate(30px, 0);*/
-                transition: transform 1s linear;
+
+            }
+
+            .handcontent {                 
+                display: inline-flex; 
+                justify-content:center;
+                align-items:center;
+            }
+
+            .test4handleStyle {
+                width:150px;
+                height:150px;
+                border:solid 1px black;
+                background: #604848;
+                display: inline-block;
+                vertical-align: top;
+                padding:50px 10px 10px 10px;
+            }
+
+            .test4cancelStyle {
+                width:150px;
+                height:150px;
+                border:solid 1px black;
+                background: #F0F0D8;
+                display: inline-block;
+                vertical-align: top;
+                padding: 100px 10px 0px 10px;
+            }
+
+            .test4OnlyCancelStyle {
+                width:150px;
+                height:150px;
+                border:solid 1px black;
+                background: #F0B49E;
+                display: inline-block;
+                vertical-align: top;
+                padding: 100px 10px 0px 10px;
+            }
+
+            .classAddTest {
+                background: #F0F0D8;
             }
 
         </style>
@@ -155,13 +196,26 @@
             <div id="margin" class="marginStyle">
                 <div id="absolute" class="absulteStyle">
                     <div id="relative" class="relativeStyle">
-                        <div id="testDivByJqueryui" class="divStyle"> 
+                        <div id="testDivByJqueryui" class="divStyle classAddTest"> 
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="scrollDiv" style="width:50px;height:50px;background: #DBD8A2;border: solid 5px;position:relative;">
+            <div id="scrollDiv" style="width:50px;height:50px;background: #DBD8A2;border: solid 5px;position:relative;-webkit-user-drag: element;">
             </div>
+            <!-- <div class="handcontent"> -->
+                <div id="test4handle" class="test4handleStyle">
+                    <p id="canP" style="font-size: 16px;border: solid 1px black;background: #C8C8A9;">I can be handle and drag</p>
+                </div>
+                <div id="test4cancel" class="test4cancelStyle">
+                    <p id="canP2" style="font-size:16px;border:solid 1px black;">I can be handle</p>
+                    <p id="noCanP" style="font-size: 16px;border:solid 1px black;background:#FF8A00;">I can not be handle</p>
+                </div> 
+                <div id="test4OnlyCancel" class="test4OnlyCancelStyle">
+                    <p id="noCanP2" style="font-size:16px;border:solid 1px black;">I can not be  handle</p>
+                </div>                    
+            <!-- </div> -->
+
         </div>
     </body>
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
@@ -184,7 +238,7 @@
         
             function dragByJqueryUi() {
                 var testDivByJqueryui = $("#testDivByJqueryui");
-                testDivByJqueryui.draggable({containment: "#relative"});
+                testDivByJqueryui.draggable({containment: "#absolute"});
                 // // testDivByJqueryui.draggable();
                 var scrollDiv = $("#scrollDiv");
                 // scrollDiv.draggable();
@@ -195,10 +249,27 @@
             }
 
             function dragInterationTest() {
-                interaction.dragable("#testDivByJqueryui", {containment: "#relative"});
-                // interaction.dragable("#testDivByJqueryui", {containment: "#absolute"});
+                // interaction.dragable("#testDivByJqueryui", {containment: "#relative"});
+                interaction.dragable("#testDivByJqueryui", {containment: "#absolute", revert:false});
                 // interaction.dragable("#testDivByJqueryui");
                 // interaction.dragable("#scrollDiv");
+                
+                // let testDivByJqueryui = document.querySelector("#testDivByJqueryui");
+                // testDivByJqueryui.addEventListener("transitionrun", function(e){
+                //     console.log("transitionrun")
+                // })
+
+                // testDivByJqueryui.addEventListener("transitionstart", function(e){
+                //     console.log("transitionstart")
+                // })  
+
+                // testDivByJqueryui.addEventListener("transitionend", function(e){
+                //     console.log("transitionend")
+                // })   
+                
+                 interaction.dragable("#test4handle", {handle:"#canP"});
+                 interaction.dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
+                 interaction.dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});                                
             }
 
             dragInterationTest();

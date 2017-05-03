@@ -247,7 +247,7 @@ define(["common"], function(common){
 
         let scrollParents =  parents.filter((parent) => {
             let parentStyle =  getElementComputedStyle(parent);
-            if (isAbsolute && parentStyle("position") == static) {
+            if (isAbsolute && parentStyle("position") == "static") {
                 return false;
             }
             return /(auto|scroll|hidden)/.test(parentStyle("overflow") + parentStyle("overflow-x") + parentStyle("overflow-y"));
