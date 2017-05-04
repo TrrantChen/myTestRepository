@@ -5,7 +5,7 @@
  * @version $Id$
  */
 
-define(["common", "domoperation"], function(common, domoperation){      
+define(["common", "domoperation", "underscore"], function(common, domoperation, underscore){      
     function dragable(selector, option) {
         // axis:x, y
         // containment: selector
@@ -38,7 +38,9 @@ define(["common", "domoperation"], function(common, domoperation){
             scrollParent = void 0,
             scrollParentBoundingClientRect = void 0,
             handleSelector = void 0,
-            cancelSelector = void 0;
+            cancelSelector = void 0,
+            scrollLeftAdd = 10,
+            scrollTopAdd = 10;
             
         option = Object.assign(defaultOption, option);
 
@@ -72,12 +74,13 @@ define(["common", "domoperation"], function(common, domoperation){
             isRangeLimit = false;
         }
 
-        scrollParent = domoperation.getScrollParent(target);
-
+        
         /*
             获取滚动的信息
          */
+        scrollParent = domoperation.getScrollParent(target);
         if (scrollParent !== void 0) {
+
             if (scrollParent !== document) {
                 scrollParentBoundingClientRect = getElemBoundingClientRect(scrollParent);
             } else {
@@ -89,6 +92,12 @@ define(["common", "domoperation"], function(common, domoperation){
                 } 
             }
         } 
+        let originPageX = 0;
+        let scrollLeftAddFunc =  _.throttle(function(scrollParent, event){
+            let distance = event.pageX - originPageX;
+            scrollParent.scrollLeft += distance;
+            originPageX = 0;
+        }, 100);
 
 
         target.addEventListener("mousedown", mouseDownHandle);
@@ -209,7 +218,7 @@ define(["common", "domoperation"], function(common, domoperation){
             }   
 
             /*
-                自动滚动
+                自动滚动，思路，
              */
             if (scrollParent !== void 0) {
                 targetBoundingClientRect =  getElemBoundingClientRect(target);
@@ -220,16 +229,65 @@ define(["common", "domoperation"], function(common, domoperation){
                     bottom:targetBoundingClientRect.bottom - scrollParentBoundingClientRect.bottom
                 }
 
-                if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
-                    scrollParent.scrollLeft += 5;
-                }  
+                if (scrollParentBoundingClientRect.right - event.pageX < event.movementX) {
+                    scrollParent.scrollLeft += event.movementX
+                    console.log(scrollParent.scrollLeft);
+                }
+
+                // if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
+                //     // scrollParent.scrollLeft = document.body.scrollWidth - document.body.clientWidth;
+                //     // scrollParent.scrollLeft = scrollParent.scrollWidth - scrollParent.clientWidth;
+                //     scrollParent.scrollLeft += 20;
+                //     // scrollParent.scrollLeft = scrollParent.scrollLeft + event.movementX;
+                //     // if (originPageX === 0) {
+                //     //     originPageX = event.pageX;
+                //     // }
+                //     // scrollLeftAddFunc(scrollParent, event);
+                // }
 
                 if (distanceBetweenTargetAndScrollParent.left < 0)  {
-                    scrollParent.scrollLeft -= 5;
-                }            
-            }
+                    scrollParent.scrollLeft -= scrollLeftAdd;
+                } 
 
+                if (distanceBetweenTargetAndScrollParent.top > scrollParent.clientHeight - target.offsetHeight) {
+                    scrollParent.scrollTop += scrollTopAdd;
+                } 
+
+                if (distanceBetweenTargetAndScrollParent.top < 0) {
+                    scrollParent.scrollTop -= scrollTopAdd;
+                }  
+            }
         }
+
+        // function autoScroll() {
+        //     targetBoundingClientRect =  getElemBoundingClientRect(target);
+        //     distanceBetweenTargetAndScrollParent = {
+        //         left:targetBoundingClientRect.left - scrollParentBoundingClientRect.left,
+        //         top:targetBoundingClientRect.top - scrollParentBoundingClientRect.top,
+        //         right:targetBoundingClientRect.right - scrollParentBoundingClientRect.right,
+        //         bottom:targetBoundingClientRect.bottom - scrollParentBoundingClientRect.bottom
+        //     }
+
+        //     if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
+        //         // scrollParent.scrollLeft = document.body.scrollWidth - document.body.clientWidth;
+        //         // scrollParent.scrollLeft = scrollParent.scrollWidth - scrollParent.clientWidth;
+        //         scrollParent.scrollLeft += scrollLeftAdd;
+        //         // scrollParent.scrollLeft = scrollParent.scrollLeft + event.movementX;
+        //     }
+
+
+        //     if (distanceBetweenTargetAndScrollParent.left < 0)  {
+        //         scrollParent.scrollLeft -= scrollLeftAdd;
+        //     } 
+
+        //     if (distanceBetweenTargetAndScrollParent.top > scrollParent.clientHeight - target.offsetHeight) {
+        //         scrollParent.scrollTop += scrollTopAdd;
+        //     } 
+
+        //     if (distanceBetweenTargetAndScrollParent.top < 0) {
+        //         scrollParent.scrollTop -= scrollTopAdd;
+        //     }              
+        // }
 
         function mouseUpHandle(event) {
             event.preventDefault();

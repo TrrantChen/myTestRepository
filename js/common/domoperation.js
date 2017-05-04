@@ -253,7 +253,7 @@ define(["common"], function(common){
             return /(auto|scroll|hidden)/.test(parentStyle("overflow") + parentStyle("overflow-x") + parentStyle("overflow-y"));
         });
 
-        return !scrollParents.length ? (elem.ownerDocument || document) : scrollParents[0];
+        return !scrollParents.length ? (elem.ownerDocument.body || document.body) : scrollParents[0];
     }
 
     /*

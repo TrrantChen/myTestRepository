@@ -26,8 +26,8 @@
             }   
 
             .container {
-                width:200%;
-                height:200%;
+                width:100%;
+                height:100%;
                 background: #F5ECB7;
                 position: relative;
                 left: 0;
@@ -41,7 +41,7 @@
             }
 
             .outterStyle {
-                width:350px;
+                width:2350px;
                 height:350px;
                 background: #83A300;
             }
@@ -59,22 +59,42 @@
                 bottom: 0px;
                 left:0px;
             }
+
+            .dragDivStyle {
+                width:100px;
+                height:100px;
+                background: #92C7A3;
+                border:solid 1px #2D2D29;
+            }
+
+            .dragDivJqueryStyle {
+                width:100px;
+                height:100px;
+                background: #DFECE6;
+                border:solid 1px #2D2D29;                
+            }
+
         </style>
 
 
     </head>
     <body>
         <div class="container">
-            <div id="outter" class="outterStyle">
-                <div id="testDiv" class="testDiv">
-                    <button id="testBtn" class="testBtnStyle">
-                        test
-                    </button>
+            <div style="width:500px;height:500px;margin-left:30px;border:solid 1px black;">
+                <div id="outter" style="width:400px;height:400px;border: solid 1px black;overflow-x:auto;margin-left:80px;margin-top:100px;">
+                    <div id="inner" style="width:3400px;height:398px;">
+                        <div id="dragDiv" class="dragDivStyle">
+                            js
+                        </div>
+
+                        <div id="dragDivJquery" class="dragDivJqueryStyle">
+                            jquery
+                        </div>                       
+                    </div>
                 </div>                
             </div>
-            <div id="bottom" class="bottomStyle">
-                
-            </div>
+
+         
         </div>
     </body>
     <script src="../lib/requirejs/require.js" type="text/javascript"></script>
@@ -93,9 +113,15 @@
             }
         })
 
-        require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","domoperation","interaction", "jqueryui", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, domoperation, interaction){         
-
+        require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","domoperation","interaction", "jqueryui", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, domoperation, interaction){        
+            interaction.dragable("#dragDiv", {axis:"x"});
+            $("#dragDivJquery").draggable({axis:"x"});
+            console.log($("#dragDivJquery").scrollParent());
         })
+
+        var dragDivJquery = document.querySelector("#dragDivJquery");
+        var outter = document.querySelector("#outter");
+
     </script>    
 </html>
 

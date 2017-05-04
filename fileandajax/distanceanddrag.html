@@ -113,8 +113,8 @@
                 /*width:100px;*/
                 height:100px;
                 border:solid 2px black;
-                /*position:relative;*/
-                position:static;
+                position:relative;
+                /*position:static;*/
                 left:30px;
                 top:40px;
                 margin-top:20px;
@@ -127,8 +127,8 @@
                 width:30px;
                 height:30px;
                 border:solid 1px black;
-                /*position:relative;*/
-                position:absolute;
+                position:relative;
+                /*position:absolute;*/
                 left:50px;
                 top:50px;
                 /*margin-left:30px;*/
@@ -172,10 +172,6 @@
                 padding: 100px 10px 0px 10px;
             }
 
-            .classAddTest {
-                background: #F0F0D8;
-            }
-
         </style>
 
 
@@ -196,7 +192,7 @@
             <div id="margin" class="marginStyle">
                 <div id="absolute" class="absulteStyle">
                     <div id="relative" class="relativeStyle">
-                        <div id="testDivByJqueryui" class="divStyle classAddTest"> 
+                        <div id="testDivByJqueryui" class="divStyle"> 
                         </div>
                     </div>
                 </div>
@@ -212,7 +208,7 @@
                     <p id="noCanP" style="font-size: 16px;border:solid 1px black;background:#FF8A00;">I can not be handle</p>
                 </div> 
                 <div id="test4OnlyCancel" class="test4OnlyCancelStyle">
-                    <p id="noCanP2" style="font-size:16px;border:solid 1px black;">I can not be  handle</p>
+                    <p id="noCanP2" style="font-size:16px;border:solid 1px black;background:#DFECE6;">I can not be  handle</p>
                 </div>                    
             <!-- </div> -->
 
@@ -249,8 +245,8 @@
             }
 
             function dragInterationTest() {
-                // interaction.dragable("#testDivByJqueryui", {containment: "#relative"});
-                interaction.dragable("#testDivByJqueryui", {containment: "#absolute", revert:false});
+                interaction.dragable("#testDivByJqueryui", {containment: "#relative"});
+                // interaction.dragable("#testDivByJqueryui", {containment: "#absolute", revert:false});
                 // interaction.dragable("#testDivByJqueryui");
                 // interaction.dragable("#scrollDiv");
                 
