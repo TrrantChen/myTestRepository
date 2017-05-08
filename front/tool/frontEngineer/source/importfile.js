@@ -7,5 +7,8 @@
 
  import * as exportfile from "./exportfile"
 	exportfile.print();
-	console.log("ll")
+	console.log(process.env.NODE_ENV);
+	if (process.env.NODE_ENV === "development") {
+  		console.log('development only');
+  	}
 

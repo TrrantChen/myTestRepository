@@ -12,12 +12,22 @@ import livereload from 'gulp-livereload'
 import htmlmin from 'gulp-htmlmin'
 import rename from 'gulp-rename'
 import fs from 'fs'
+import envify from 'gulp-envify'          // 相当于c里的debug宏，可以设置只在debug中出现的代码，例如打印
+import stripDebug from 'gulp-strip-debug'
 
-// let buildArr = ['./source/exportfile.js', './source/importfile.js'];
-let buildArr = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
+let buildArr = ['./source/exportfile.js', './source/importfile.js'];
+// let buildArr = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
+// development production
+let environment = {
+  _: 'purge',
+  NODE_ENV: 'development'
+};
 
 gulp.task("browerifyBuild", () => {
-    return browserify({ entries: buildArr, debug: true })
+    return browserify({ 
+    	entries: buildArr,
+    	debug: true 
+    })
         .transform('babelify', { presets: ["es2015"] })
         .bundle()
         .on('error', function(err) {
@@ -28,7 +38,9 @@ gulp.task("browerifyBuild", () => {
         .pipe(gulp.dest('./target/'))
         .pipe(rename({ suffix: '.min' }))        
         .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(envify(environment))
+        .pipe(stripDebug())
+        .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
         .pipe(sourcemaps.identityMap())
         .pipe(uglify())
         .pipe(sourcemaps.write('./maps'))
@@ -36,6 +48,9 @@ gulp.task("browerifyBuild", () => {
         .pipe(livereload());
 })
 
+/*
+	直接使用babel将es6转换为amd
+ */
 gulp.task("babelBuild", () => {
     return gulp.src("source/*.js")
         .pipe(babel({
@@ -92,6 +107,7 @@ gulp.task('testBuffer', () => {
         .pipe(rename('test.min.js'))
         .pipe(gulp.dest('./target/'))
 })
+
 
 
 
