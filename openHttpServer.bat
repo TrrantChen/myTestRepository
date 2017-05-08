@@ -1,1 +1,1 @@
-start cmd /c http-server
+http-server

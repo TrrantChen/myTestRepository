@@ -7,10 +7,50 @@
 <meta name="description" content="">
 <meta name="keywords" content="">
 <link href="" rel="stylesheet">
+<style type="text/css">
+    * {
+        margin:0px;
+        padding:0px;
+        box-sizing: border-box;
+    }
+
+    body, input, select, button, textarea {
+        font-size: 14px;
+        font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
+    }
+    
+    button {
+        border-width: 0px;
+        outline: none;
+    }            
+    
+    body, html {
+        width:100%;
+        height:100%;
+    }
+
+    .container {
+        width:100%;
+        height:100%;
+        background: #F6AA93;
+    }
+
+    .dragTestStyle {
+        width:100px;
+        height:100px;
+        border:solid 1px black;
+        background: #B9D3B0;
+    }
+
+</style>
 </head>
 <body>
-    
+    <div class="container">
+        <div id="dragTest" class="dragTestStyle">
+            
+        </div>        
+    </div>
 </body>
-<script type="text/javascript" src="./target/test.js"></script>
+<script type="text/javascript" src="./target/test.min.js"></script>
 <!-- <script type="text/javascript" src="./target/main.js"></script> -->
-</html>
+

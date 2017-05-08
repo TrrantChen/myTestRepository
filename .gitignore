@@ -12,5 +12,7 @@ Thumbs.db
 *.tmp
 *.err 
 *.log
+*.txt
 .idea
 node_modules/
+target/
