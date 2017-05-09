@@ -7,6 +7,8 @@ const connectRoute = require('./connectRoute');
 const commomProcess = require('./commonProcess');
 const log4js = require('log4js')
 const arp = require('node-arp');
+const gulp = require('gulp');
+
 
 log4js.configure({
     appenders: [{
@@ -36,6 +38,18 @@ const server = app.listen(8088, function() {
 bodyPostRoute.functionRoute(app);
 fileOperationRoute.functionRoute(app);
 connectRoute.functionRoute(app);
+
+
+
+gulp.task('task-debug', (done) => {
+    gulp.src("./*.js", (err, files) => {
+        console.log(files)
+    })
+})
+
+console.log(gulp.tasks['task-debug'].fn());
+
+debugger
 
 
 

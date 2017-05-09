@@ -14,7 +14,13 @@ import rename from 'gulp-rename'
 import fs from 'fs'
 import envify from 'gulp-envify'          // 相当于c里的debug宏，可以设置只在debug中出现的代码，例如打印
 import stripDebug from 'gulp-strip-debug'
+import glob from 'glob'
+import es from 'event-stream'
+import watchify from 'watchify'
+import gutil from 'gulp-util'
+import lodash from 'lodash'
 
+let assign = lodash.assign;
 let buildArr = ['./source/exportfile.js', './source/importfile.js'];
 // let buildArr = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
 // development production
@@ -24,10 +30,10 @@ let environment = {
 };
 
 gulp.task("browerifyBuild", () => {
-    return browserify({ 
-    	entries: buildArr,
-    	debug: true 
-    })
+    return watchify(browserify(assign({}, watchify.args, { 
+        	entries: buildArr,
+        	debug: true
+        })))
         .transform('babelify', { presets: ["es2015"] })
         .bundle()
         .on('error', function(err) {
@@ -99,7 +105,6 @@ gulp.task('minihtml', () => {
         .pipe(livereload());
 })
 
-
 gulp.task('testBuffer', () => {
         return fs.createReadStream('./source/a.js')  
         .pipe(source('test.js'))
@@ -107,6 +112,128 @@ gulp.task('testBuffer', () => {
         .pipe(rename('test.min.js'))
         .pipe(gulp.dest('./target/'))
 })
+
+
+gulp.task('multifile-browerifyBuildA' , (done) => {
+    glob('./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)', (err, files) => {
+        if(err) {
+            console.log("tst")
+            done(err);
+        };
+        console.log(files);
+        console.log("start")
+        let tasks = files.map((entry,index) => {
+            return browserify({entries:[entry]})
+                .transform('babelify', { presets: ["es2015"] })
+                .bundle()
+                .pipe(source(`entryA${index}.js`))
+                .pipe(gulp.dest('./target/'))
+        })
+        console.log(done)
+        es.merge(tasks).on('end', done);
+        console.log("end")
+    })
+})
+
+gulp.task('multifile-browerifyBuildB', () => {
+    let entries = ['./source/repeatedReferencesA.js','./source/repeatedReferencesB.js','./source/repeatedReferencesC.js'];
+    let tasks = entries.map((entry, index) => {
+            return browserify({entries:[entry]})
+                .transform('babelify', { presets: ["es2015"] })
+                .bundle()
+                .pipe(source(`entryB${index}.js`))
+                .pipe(gulp.dest('./target/'))
+    })
+    return es.merge.apply(null, tasks);
+})
+
+gulp.task('multifile-browerifyBuildC', (done) => {
+    gulp.src("./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)", (err, files) => {
+        if (err) {
+            done(err)
+        }
+        files.forEach((entry, index) => {
+            return browserify({entries:[entry]})
+                .transform('babelify', { presets: ["es2015"] })
+                .bundle()
+                .pipe(source(`entryC${index}.js`))
+                .pipe(gulp.dest('./target/'))
+        })
+    })
+})
+
+/*
+    使用watchify能够加快编译速度
+ */
+
+let browserify_watchify = watchify(browserify(assign({}, watchify.args, { 
+            entries: './source/simulation/serverA/serverA.js',
+            debug: true
+        })));
+
+let bundleFn = function() {
+    return browserify_watchify
+            .external(["_jquery"])
+            .transform('babelify', { presets: ["es2015"] })
+            .bundle()
+            .on('error', function(err) {
+                console.log(err.toString());
+                this.emit('end');
+            })
+            .pipe(source('serverA.js'))
+            .pipe(gulp.dest('./target/'))
+            .pipe(rename({ suffix: '.min' }))        
+            .pipe(buffer())
+            .pipe(envify(environment))
+            // .pipe(stripDebug())
+            .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
+            .pipe(sourcemaps.identityMap())
+            .pipe(uglify())
+            .pipe(sourcemaps.write('./maps'))
+            .pipe(gulp.dest('./target/'))
+            .pipe(livereload());    
+}
+
+browserify_watchify.on('update', () => {
+    livereload.listen();
+    bundleFn();
+}); // 当任何依赖发生改变的时候，运行打包工具
+
+browserify_watchify.on('log', gutil.log); 
+
+gulp.task('', () => {
+    
+})
+
+gulp.task('simulation-server', () => {
+    return browserify({ 
+                entries: './source/simulation/serverA/serverA.js',
+                debug: true
+            })
+            .external(["../lib/_jquery"])
+            .transform('babelify', { presets: ["es2015"] })
+            .bundle()
+            .on('error', function(err) {
+                console.log(err.toString());
+                this.emit('end');
+            })
+            .pipe(source('serverA.js'))
+            .pipe(gulp.dest('./target/'))
+            .pipe(rename({ suffix: '.min' }))        
+            .pipe(buffer())
+            .pipe(envify(environment))
+            // .pipe(stripDebug())
+            .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
+            .pipe(sourcemaps.identityMap())
+            .pipe(uglify())
+            .pipe(sourcemaps.write('./maps'))
+            .pipe(gulp.dest('./target/'))
+            .pipe(livereload()); 
+})
+
+
+
+
 
 
 
