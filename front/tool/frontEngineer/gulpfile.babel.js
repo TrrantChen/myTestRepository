@@ -46,7 +46,7 @@ gulp.task("browerifyBuild", () => {
         	entries: buildArr,
         	debug: true
         })))
-        .transform('babelify', { presets: ["es2015"] })
+        .transform('babelify', { presets: ["es2015"]， plugins: ["transform-runtime"] })
         .bundle()
         .on('error', function(err) {
             console.log(err.toString());
@@ -304,8 +304,8 @@ gulp.task('multifile-browerifyBuildC', (done) => {
             .pipe(stylus())
             // .pipe(stylus({compress:false}))
             .pipe(autoprefixer())
-            .pipe(concat('dest.css'))
-            // .pipe(cleancss())
+            .pipe(concat('dest.min.css'))
+            .pipe(cleancss())
             .pipe(sourcemaps.write('./maps'))
             .pipe(gulp.dest('./target/'))
             .pipe(browsersync.stream())
@@ -313,8 +313,20 @@ gulp.task('multifile-browerifyBuildC', (done) => {
 /*------------stylu compile------------*/
 
 
-
-
+/*------------jshint------------*/
+    gulp.task('stylu-compile', () => {
+        return gulp.src('./source/simulation/css/*.styl')
+            .pipe(sourcemaps.init({loadMaps: true}))      
+            .pipe(stylus())
+            // .pipe(stylus({compress:false}))
+            .pipe(autoprefixer())
+            .pipe(concat('dest.min.css'))
+            .pipe(cleancss())
+            .pipe(sourcemaps.write('./maps'))
+            .pipe(gulp.dest('./target/'))
+            .pipe(browsersync.stream())
+    })
+/*------------jshint------------*/
 
 
 

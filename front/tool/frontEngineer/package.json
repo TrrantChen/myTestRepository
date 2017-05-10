@@ -9,11 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-runtime": "^6.23.0",      // 用于转换promise genenrator等
     "gulp": "^3.9.1"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-runtime": "^6.23.0",  // 用于转换promise genenrator等
     "babel-preset-es2015": "^6.24.1",
     "babelify": "^7.3.0",
     "browser-sync": "^2.18.8",
@@ -27,6 +29,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-envify": "^1.0.0",
     "gulp-htmlmin": "^3.0.0",
+    "gulp-jshint": "^2.0.4",
     "gulp-livereload": "^3.8.1",
     "gulp-minify-css": "^1.2.4",
     "gulp-notify": "^3.0.0",
@@ -37,6 +40,7 @@
     "gulp-stylus": "^2.6.0",
     "gulp-uglify": "^2.1.2",
     "gulp-util": "^3.0.8",
+    "jshint": "^2.9.4",
     "lodash": "^4.17.4",
     "stylus": "^0.54.5",
     "vinyl-buffer": "^1.0.0",
