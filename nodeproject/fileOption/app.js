@@ -49,7 +49,7 @@ gulp.task('task-debug', (done) => {
 
 console.log(gulp.tasks['task-debug'].fn());
 
-debugger
+debugger;
 
 
 

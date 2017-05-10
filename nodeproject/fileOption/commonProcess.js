@@ -9,9 +9,10 @@ var app =  null;
 
 // var accessPath = "http://" +  ((process.platform == "win32") ? os.networkInterfaces()["本地连接"][1].address : "") + ":8099";
 exports.setAccess = function(res) {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
     res.header("Access-Control-Allow-Headers", "Content-type,Content-Length, Authorization, Accept,X-Requested-With, X-PINGOTHER");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");                
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Credentials",true);
 }
 
 exports.getOperationSystemType = function() {

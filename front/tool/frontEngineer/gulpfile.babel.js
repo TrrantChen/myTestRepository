@@ -1,3 +1,5 @@
+// todo 代码静态检查
+
 import gulp from 'gulp'
 import babel from 'gulp-babel'
 import browserify from 'browserify'
@@ -19,6 +21,12 @@ import es from 'event-stream'
 import watchify from 'watchify'
 import gutil from 'gulp-util'
 import lodash from 'lodash'
+import browserSync from 'browser-sync'
+import notify from 'gulp-notify'
+import autoprefixer from 'gulp-autoprefixer'
+import stylus from 'gulp-stylus'
+import cleancss from 'gulp-clean-css'
+import concat from 'gulp-concat'
 
 let assign = lodash.assign;
 let buildArr = ['./source/exportfile.js', './source/importfile.js'];
@@ -28,6 +36,10 @@ let environment = {
   _: 'purge',
   NODE_ENV: 'development'
 };
+
+
+let browsersync = browserSync.create();
+let reloadPage = browsersync.reload;
 
 gulp.task("browerifyBuild", () => {
     return watchify(browserify(assign({}, watchify.args, { 
@@ -162,74 +174,146 @@ gulp.task('multifile-browerifyBuildC', (done) => {
     })
 })
 
-/*
-    使用watchify能够加快编译速度
- */
-
-let browserify_watchify = watchify(browserify(assign({}, watchify.args, { 
-            entries: './source/simulation/serverA/serverA.js',
-            debug: true
-        })));
-
-let bundleFn = function() {
-    return browserify_watchify
-            .external(["_jquery"])
-            .transform('babelify', { presets: ["es2015"] })
-            .bundle()
-            .on('error', function(err) {
-                console.log(err.toString());
-                this.emit('end');
-            })
-            .pipe(source('serverA.js'))
-            .pipe(gulp.dest('./target/'))
-            .pipe(rename({ suffix: '.min' }))        
-            .pipe(buffer())
-            .pipe(envify(environment))
-            // .pipe(stripDebug())
-            .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
-            .pipe(sourcemaps.identityMap())
-            .pipe(uglify())
-            .pipe(sourcemaps.write('./maps'))
-            .pipe(gulp.dest('./target/'))
-            .pipe(livereload());    
-}
-
-browserify_watchify.on('update', () => {
-    livereload.listen();
-    bundleFn();
-}); // 当任何依赖发生改变的时候，运行打包工具
-
-browserify_watchify.on('log', gutil.log); 
-
-gulp.task('', () => {
-    
-})
-
-gulp.task('simulation-server', () => {
-    return browserify({ 
+/*------------使用watchify加快编译速度------------*/
+    let browserify_watchify = watchify(browserify(assign({}, watchify.args, { 
                 entries: './source/simulation/serverA/serverA.js',
                 debug: true
-            })
-            .external(["../lib/_jquery"])
-            .transform('babelify', { presets: ["es2015"] })
-            .bundle()
-            .on('error', function(err) {
-                console.log(err.toString());
-                this.emit('end');
-            })
-            .pipe(source('serverA.js'))
-            .pipe(gulp.dest('./target/'))
-            .pipe(rename({ suffix: '.min' }))        
-            .pipe(buffer())
-            .pipe(envify(environment))
-            // .pipe(stripDebug())
-            .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
-            .pipe(sourcemaps.identityMap())
-            .pipe(uglify())
+            })));
+
+    let bundleFn = function() {
+        return browserify_watchify
+                .external(["_jquery"])
+                .transform('babelify', { presets: ["es2015"] })
+                .bundle()
+                .on('error', function(err) {
+                    console.log(err.toString());
+                    this.emit('end');
+                })
+                .pipe(source('serverA.js'))
+                .pipe(gulp.dest('./target/'))
+                .pipe(rename({ suffix: '.min' }))        
+                .pipe(buffer())
+                .pipe(envify(environment))
+                // .pipe(stripDebug())
+                .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
+                .pipe(sourcemaps.identityMap())
+                .pipe(uglify())
+                .pipe(sourcemaps.write('./maps'))
+                .pipe(gulp.dest('./target/'))
+                .pipe(livereload());    
+    }
+
+    browserify_watchify.on('update', () => {
+        livereload.listen();
+        bundleFn();
+    }); // 当任何依赖发生改变的时候，运行打包工具
+
+    browserify_watchify.on('log', gutil.log); 
+
+    gulp.task('make-fast', bundleFn);
+/*------------使用watchify加快编译速度------------*/
+
+/*------------公共模块排除打包------------*/
+    gulp.task('external-lib', () => {
+        return browserify({ 
+                    entries: './source/simulation/serverA/serverA.js',
+                    debug: true
+                })
+                .external(["../lib/_jquery"])
+                .transform('babelify', { presets: ["es2015"] })
+                .bundle()
+                .on('error', function(err) {
+                    console.log(err.toString());
+                    this.emit('end');
+                })
+                .pipe(source('serverA.js'))
+                .pipe(gulp.dest('./target/'))
+                .pipe(rename({ suffix: '.min' }))        
+                .pipe(buffer())
+                .pipe(envify(environment))
+                // .pipe(stripDebug())
+                .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
+                .pipe(sourcemaps.identityMap())
+                .pipe(uglify())
+                .pipe(sourcemaps.write('./maps'))
+                .pipe(gulp.dest('./target/'))
+                .pipe(browsersync.stream())
+    })
+
+
+    gulp.task('browserify-lib', (done) => {
+        glob('./source/simulation/lib/*.js', (err, files) => {
+
+            if(err) {
+                console.log("tst")
+                done(err);
+            };
+
+            let task =  browserify({ 
+                    entries: files,
+                    debug: true
+                })
+                .transform('babelify', { presets: ["es2015"] })
+                .bundle()
+                .on('error', function(err) {
+                    console.log(err.toString());
+                    this.emit('end');
+                })
+                .pipe(source('lib.js'))
+                .pipe(gulp.dest('./target/'))
+                .pipe(rename({ suffix: '.min' }))        
+                .pipe(buffer())
+                .pipe(envify(environment))
+                .pipe(stripDebug())
+                .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
+                .pipe(sourcemaps.identityMap())
+                .pipe(uglify())
+                .pipe(sourcemaps.write('./maps'))
+                .pipe(gulp.dest('./target/'))
+                .pipe(browsersync.stream())
+            return es.merge(task).on('end', done); 
+        })        
+    })
+/*------------公共模块排除打包------------*/
+
+/*------------使用browsersync自动更新------------*/
+    gulp.task('browser-sync', () => {
+        browsersync.init({
+            server:{
+                baseDir:"./"
+            },
+            open:false,
+            // proxy:'127.0.0.1:8080'
+        })
+    })
+
+    gulp.task('watch-gulpfile-modify', ['browser-sync', 'browserify-lib', 'external-lib'], () => {   
+        gulp.watch('./source/simulation/lib/*.js', ['browserify-lib']);
+        gulp.watch('./gulpfile.babel.js', ['stylu-compile']);
+        // gulp.watch('./gulpfile.babel.js', ['browserify-lib', 'external-lib', 'stylu-compile']);
+        gulp.watch('./source/simulation/serverA/*.js', ['external-lib']);
+        gulp.watch('./source/simulation/viewA.html').on('change', reloadPage);
+        gulp.watch('./source/simulation/css/*.styl', ['stylu-compile']);
+    })
+/*------------使用browsersync自动更新------------*/
+
+/*------------stylu compile------------*/
+    gulp.task('stylu-compile', () => {
+        return gulp.src('./source/simulation/css/*.styl')
+            .pipe(sourcemaps.init({loadMaps: true}))      
+            .pipe(stylus())
+            // .pipe(stylus({compress:false}))
+            .pipe(autoprefixer())
+            .pipe(concat('dest.css'))
+            // .pipe(cleancss())
             .pipe(sourcemaps.write('./maps'))
             .pipe(gulp.dest('./target/'))
-            .pipe(livereload()); 
-})
+            .pipe(browsersync.stream())
+    })
+/*------------stylu compile------------*/
+
+
+
 
 
 

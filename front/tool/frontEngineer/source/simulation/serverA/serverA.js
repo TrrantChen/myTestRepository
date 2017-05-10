@@ -5,15 +5,14 @@
  * @version $Id$
  */
 
-import $ from '../lib/_jquery'
 import * as gis from './gisA'
 import * as util from '../common/util'
 import * as domOperation from '../common/domOperation'
 
 $(function(){
-    alert("view a is ready");
+    alert("view a is ready kkk");
     let dom = domOperation.getDom();
-    console.log("l81")
-    console.log(util.sortArray(dom));
+    console.log("1")
 
+    console.log(util.sortArray(dom));
 })

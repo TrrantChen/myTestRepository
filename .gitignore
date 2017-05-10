@@ -13,7 +13,7 @@ Thumbs.db
 *.err 
 *.log
 *.txt
-.idea
+.idea/
 node_modules/
 target/
 logs/
