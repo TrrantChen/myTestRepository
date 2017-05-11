@@ -15,5 +15,6 @@ Thumbs.db
 *.txt
 .idea/
 node_modules/
+tmp/
 target/
 logs/

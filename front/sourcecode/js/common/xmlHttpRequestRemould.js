@@ -1,9 +1,3 @@
-/**
- * 
- * @authors Your Name (you@example.org)
- * @date    2017-03-14 11:17:06
- * @version $Id$
- */
 (function(global, factory) {
     global.xmlHttpRequestRemould = factory();
 })(this, function() {

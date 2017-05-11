@@ -7,8 +7,9 @@
 
 export function print() {
 	console.log("this is print from exprotfile");
+  calculate();
 }
 
-export default function () {
+export function calculate() {
     console.log("this is a default function");
 };

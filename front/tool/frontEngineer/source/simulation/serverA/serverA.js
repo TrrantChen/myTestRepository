@@ -5,14 +5,17 @@
  * @version $Id$
  */
 
-import * as gis from './gisA'
-import * as util from '../common/util'
-import * as domOperation from '../common/domOperation'
+// import * as gis from './gisA'
+// import $ from '../lib/_jquery';
+import $ from '../lib/jquery-2.2.3'
+import * as util from '../common/util';
 
+// import * as domOperation from '../common/domOperation'
 $(function(){
-    alert("view a is ready kkk");
-    let dom = domOperation.getDom();
+    // alert("view a is ready kkk");
+    // let dom = domOperation.getDom();
     console.log("1")
-
-    console.log(util.sortArray(dom));
+    util.getArray()
 })
+
+

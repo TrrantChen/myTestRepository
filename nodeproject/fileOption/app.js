@@ -10,6 +10,7 @@ const arp = require('node-arp');
 const gulp = require('gulp');
 
 
+
 log4js.configure({
     appenders: [{
         type: 'file',
@@ -39,17 +40,6 @@ bodyPostRoute.functionRoute(app);
 fileOperationRoute.functionRoute(app);
 connectRoute.functionRoute(app);
 
-
-
-gulp.task('task-debug', (done) => {
-    gulp.src("./*.js", (err, files) => {
-        console.log(files)
-    })
-})
-
-console.log(gulp.tasks['task-debug'].fn());
-
-debugger;
 
 
 

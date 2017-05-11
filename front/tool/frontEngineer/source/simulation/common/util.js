@@ -6,10 +6,18 @@
  */
 
 export function getArray() {
-
+    console.log("this is hh util")
 }
+
 
 
 export function sortArray() {
     
+}
+
+console.log("this is glob util")
+
+var time = parseInt(2000) + new Date().getTime();
+while (new Date().getTime() < time) {
+
 }

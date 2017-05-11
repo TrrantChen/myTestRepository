@@ -1,4 +1,5 @@
 // todo 代码静态检查
+//      打上md5
 
 import gulp from 'gulp'
 import babel from 'gulp-babel'
@@ -46,7 +47,7 @@ gulp.task("browerifyBuild", () => {
         	entries: buildArr,
         	debug: true
         })))
-        .transform('babelify', { presets: ["es2015"]， plugins: ["transform-runtime"] })
+        .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
         .bundle()
         .on('error', function(err) {
             console.log(err.toString());
@@ -57,13 +58,12 @@ gulp.task("browerifyBuild", () => {
         .pipe(rename({ suffix: '.min' }))        
         .pipe(buffer())
         .pipe(envify(environment))
-        .pipe(stripDebug())
+        // .pipe(stripDebug())
         .pipe(sourcemaps.init({loadMaps: true}))  // 设置map
         .pipe(sourcemaps.identityMap())
         .pipe(uglify())
         .pipe(sourcemaps.write('./maps'))
-        .pipe(gulp.dest('./target/'))
-        .pipe(livereload());
+        .pipe(gulp.dest('./target/'));
 })
 
 /*
@@ -216,11 +216,11 @@ gulp.task('multifile-browerifyBuildC', (done) => {
 /*------------公共模块排除打包------------*/
     gulp.task('external-lib', () => {
         return browserify({ 
-                    entries: './source/simulation/serverA/serverA.js',
+                    entries: ['./source/simulation/serverA/serverA.js', './source/simulation/common/util.js'],
                     debug: true
                 })
                 .external(["../lib/_jquery"])
-                .transform('babelify', { presets: ["es2015"] })
+                .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
                 .bundle()
                 .on('error', function(err) {
                     console.log(err.toString());
@@ -238,6 +238,7 @@ gulp.task('multifile-browerifyBuildC', (done) => {
                 .pipe(sourcemaps.write('./maps'))
                 .pipe(gulp.dest('./target/'))
                 .pipe(browsersync.stream())
+
     })
 
 
@@ -253,7 +254,7 @@ gulp.task('multifile-browerifyBuildC', (done) => {
                     entries: files,
                     debug: true
                 })
-                .transform('babelify', { presets: ["es2015"] })
+                .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
                 .bundle()
                 .on('error', function(err) {
                     console.log(err.toString());
@@ -289,8 +290,9 @@ gulp.task('multifile-browerifyBuildC', (done) => {
 
     gulp.task('watch-gulpfile-modify', ['browser-sync', 'browserify-lib', 'external-lib'], () => {   
         gulp.watch('./source/simulation/lib/*.js', ['browserify-lib']);
-        gulp.watch('./gulpfile.babel.js', ['stylu-compile']);
+        // gulp.watch('./gulpfile.babel.js', ['stylu-compile']);
         // gulp.watch('./gulpfile.babel.js', ['browserify-lib', 'external-lib', 'stylu-compile']);
+        gulp.watch('./source/simulation/common/*.js', ['external-lib']);
         gulp.watch('./source/simulation/serverA/*.js', ['external-lib']);
         gulp.watch('./source/simulation/viewA.html').on('change', reloadPage);
         gulp.watch('./source/simulation/css/*.styl', ['stylu-compile']);
@@ -312,20 +314,25 @@ gulp.task('multifile-browerifyBuildC', (done) => {
     })
 /*------------stylu compile------------*/
 
+/*------------rollup------------*/
+    gulp.task('rollup-bundle', () => {
+        
+    })
+/*------------rollup------------*/
 
 /*------------jshint------------*/
-    gulp.task('stylu-compile', () => {
-        return gulp.src('./source/simulation/css/*.styl')
-            .pipe(sourcemaps.init({loadMaps: true}))      
-            .pipe(stylus())
-            // .pipe(stylus({compress:false}))
-            .pipe(autoprefixer())
-            .pipe(concat('dest.min.css'))
-            .pipe(cleancss())
-            .pipe(sourcemaps.write('./maps'))
-            .pipe(gulp.dest('./target/'))
-            .pipe(browsersync.stream())
-    })
+    // gulp.task('stylu-compile', () => {
+    //     return gulp.src('./source/simulation/css/*.styl')
+    //         .pipe(sourcemaps.init({loadMaps: true}))      
+    //         .pipe(stylus())
+    //         // .pipe(stylus({compress:false}))
+    //         .pipe(autoprefixer())
+    //         .pipe(concat('dest.min.css'))
+    //         .pipe(cleancss())
+    //         .pipe(sourcemaps.write('./maps'))
+    //         .pipe(gulp.dest('./target/'))
+    //         .pipe(browsersync.stream())
+    // })
 /*------------jshint------------*/
 
 
