@@ -28,6 +28,12 @@ import autoprefixer from 'gulp-autoprefixer'
 import stylus from 'gulp-stylus'
 import cleancss from 'gulp-clean-css'
 import concat from 'gulp-concat'
+import * as rollup from 'rollup'
+import del from 'del'
+import vinylPaths from 'vinyl-paths'
+import revertPath from 'gulp-revert-path'   // 用于还原流中的路径 
+import replace from 'gulp-replace'  // 模板替换 
+import sequence from 'gulp-sequence'  // 串行，并行，任务的顺序，执行。
 
 let assign = lodash.assign;
 let buildArr = ['./source/exportfile.js', './source/importfile.js'];
@@ -92,7 +98,6 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
     gulp.watch('./source/*.js', ['browerifyBuild']);
 })
 
-gulp.task('default', ['browerifyBuild', 'babelBuild', 'watch'])
 
 /*------------测试异步执行------------*/
     /*
@@ -125,54 +130,55 @@ gulp.task('testBuffer', () => {
         .pipe(gulp.dest('./target/'))
 })
 
+/*------------多文件处理------------*/
+  gulp.task('multifile-browerifyBuildA' , (done) => {
+      glob('./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)', (err, files) => {
+          if(err) {
+              console.log("tst")
+              done(err);
+          };
+          console.log(files);
+          console.log("start")
+          let tasks = files.map((entry,index) => {
+              return browserify({entries:[entry]})
+                  .transform('babelify', { presets: ["es2015"] })
+                  .bundle()
+                  .pipe(source(`entryA${index}.js`))
+                  .pipe(gulp.dest('./target/'))
+          })
+          console.log(done)
+          es.merge(tasks).on('end', done);
+          console.log("end")
+      })
+  })
 
-gulp.task('multifile-browerifyBuildA' , (done) => {
-    glob('./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)', (err, files) => {
-        if(err) {
-            console.log("tst")
-            done(err);
-        };
-        console.log(files);
-        console.log("start")
-        let tasks = files.map((entry,index) => {
-            return browserify({entries:[entry]})
-                .transform('babelify', { presets: ["es2015"] })
-                .bundle()
-                .pipe(source(`entryA${index}.js`))
-                .pipe(gulp.dest('./target/'))
-        })
-        console.log(done)
-        es.merge(tasks).on('end', done);
-        console.log("end")
-    })
-})
+  gulp.task('multifile-browerifyBuildB', () => {
+      let entries = ['./source/repeatedReferencesA.js','./source/repeatedReferencesB.js','./source/repeatedReferencesC.js'];
+      let tasks = entries.map((entry, index) => {
+              return browserify({entries:[entry]})
+                  .transform('babelify', { presets: ["es2015"] })
+                  .bundle()
+                  .pipe(source(`entryB${index}.js`))
+                  .pipe(gulp.dest('./target/'))
+      })
+      return es.merge.apply(null, tasks);
+  })
 
-gulp.task('multifile-browerifyBuildB', () => {
-    let entries = ['./source/repeatedReferencesA.js','./source/repeatedReferencesB.js','./source/repeatedReferencesC.js'];
-    let tasks = entries.map((entry, index) => {
-            return browserify({entries:[entry]})
-                .transform('babelify', { presets: ["es2015"] })
-                .bundle()
-                .pipe(source(`entryB${index}.js`))
-                .pipe(gulp.dest('./target/'))
-    })
-    return es.merge.apply(null, tasks);
-})
-
-gulp.task('multifile-browerifyBuildC', (done) => {
-    gulp.src("./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)", (err, files) => {
-        if (err) {
-            done(err)
-        }
-        files.forEach((entry, index) => {
-            return browserify({entries:[entry]})
-                .transform('babelify', { presets: ["es2015"] })
-                .bundle()
-                .pipe(source(`entryC${index}.js`))
-                .pipe(gulp.dest('./target/'))
-        })
-    })
-})
+  gulp.task('multifile-browerifyBuildC', (done) => {
+      gulp.src("./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)", (err, files) => {
+          if (err) {
+              done(err)
+          }
+          files.forEach((entry, index) => {
+              return browserify({entries:[entry]})
+                  .transform('babelify', { presets: ["es2015"] })
+                  .bundle()
+                  .pipe(source(`entryC${index}.js`))
+                  .pipe(gulp.dest('./target/'))
+          })
+      })
+  })
+/*------------多文件处理------------*/
 
 /*------------使用watchify加快编译速度------------*/
     let browserify_watchify = watchify(browserify(assign({}, watchify.args, { 
@@ -315,12 +321,54 @@ gulp.task('multifile-browerifyBuildC', (done) => {
 /*------------stylu compile------------*/
 
 /*------------rollup------------*/
-    gulp.task('rollup-bundle', () => {
-        
-    })
+  gulp.task('rollup-bundle', () => {
+      rollup.rollup({
+          entry: './source/simulation/serverA/serverA.js'
+          
+      }).then((bundle) => {
+          bundle.write({
+              format:'amd',
+              moduleName:'amd',
+              dest: './target/amd.js'
+          })
+      });
+
+      rollup.rollup({
+          entry: './source/simulation/serverA/serverA.js'
+      }).then((bundle) => {
+          bundle.write({
+              dest: './target/cjs.js',
+              moduleName:'cjs',
+              format:'cjs'
+          })
+      });
+
+      rollup.rollup({
+          entry: './source/simulation/serverA/serverA.js'
+      }).then((bundle) => {
+          bundle.write({
+              dest: './target/iife.js',
+              moduleName:'iife',
+              format:'iife'
+          })
+      });
+
+      rollup.rollup({
+          entry: './source/simulation/serverA/serverA.js'
+      }).then((bundle) => {
+          bundle.write({
+              dest: './target/umd.js',
+              moduleName:'umd',
+              format:'umd'
+          })
+      });
+
+      return 0;
+  })
+
 /*------------rollup------------*/
 
-/*------------jshint------------*/
+/*------------eshint------------*/
     // gulp.task('stylu-compile', () => {
     //     return gulp.src('./source/simulation/css/*.styl')
     //         .pipe(sourcemaps.init({loadMaps: true}))      
@@ -333,7 +381,65 @@ gulp.task('multifile-browerifyBuildC', (done) => {
     //         .pipe(gulp.dest('./target/'))
     //         .pipe(browsersync.stream())
     // })
-/*------------jshint------------*/
+/*------------eshint------------*/
+
+/*------------测试task执行顺序------------*/
+  gulp.task('taskA', () => {
+      console.log('taskA start');
+      var time = parseInt(2000) + new Date().getTime();
+      while (new Date().getTime() < time) {
+
+      }      
+      console.log('taskA end');
+  })
+
+  gulp.task('taskB', () => {
+      console.log('this is taskB');
+  })
+
+  gulp.task('taskAll', ['taskA', 'taskB'], () => {
+      
+  })
+/*------------测试task执行顺序------------*/
+
+/*------------删除创建文件------------*/
+  gulp.task('creat-doc', () => {
+      return gulp.src('../../sourcecode/*.html', (err, files) => {
+        if (files.length !== 0) {
+          files.forEach((file, index) => {
+              let name = file.replace(/(D:\/git\/github\/myTestRepository\/front\/sourcecode\/|.html)/g, '')
+              gulp.src(file)
+              .pipe(gulp.dest(`../../sourcecode/${name}/src/`))
+              .pipe(gulp.dest(`../../sourcecode/${name}/build/`))
+              del(file, {force:true});
+          })
+        }
+      })
+  })
+/*------------删除创建文件------------*/
+
+gulp.task('create-project-js', () => {
+    // glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, files) => {
+    //     files.forEach((file, index) => {
+    //         // gulp.src(file + "/*.js", (err, f) => {
+    //         // })
+    //         let name = file.replace(/..\/..\/sourcecode\//g, '');
+    //         gulp.src(file + '/src/*.html')
+    //           .pipe(rename(name + ".js"))
+    //           .pipe(gulp.dest(file + '/src/'))
+    //         // del(file + '/src/' + name + '.js', {force:true});
+    //     })
+    // })
+    
+    gulp.src('../../sourcecode/!(js|lib|package.json|node_modules)/src/*.js', (err, files) => {
+        files.forEach((file, index) => {
+            gulp.src(file)
+            .pipe(replace('<!DOCTYPE html>', "import * as util from '../../js/common/util'"))
+            .pipe(gulp.dest(file))
+        })
+    })
+    return 0;
+})
 
 
 

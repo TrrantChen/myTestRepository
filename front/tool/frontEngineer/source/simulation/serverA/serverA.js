@@ -7,15 +7,16 @@
 
 // import * as gis from './gisA'
 // import $ from '../lib/_jquery';
-import $ from '../lib/jquery-2.2.3'
+// import $ from '../lib/jquery-2.2.3'
 import * as util from '../common/util';
 
 // import * as domOperation from '../common/domOperation'
-$(function(){
-    // alert("view a is ready kkk");
-    // let dom = domOperation.getDom();
-    console.log("1")
-    util.getArray()
-})
+// $(function(){
+//     // alert("view a is ready kkk");
+//     // let dom = domOperation.getDom();
+//     console.log("1")
+//     util.getArray()
+// })
 
 
+util.getArray()

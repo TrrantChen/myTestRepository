@@ -1,0 +1,10 @@
+<snippet>
+    <content><![CDATA[
+require.config({
+    paths:{
+
+    }
+})
+]]></content>
+    <tabTrigger>requireconfig</tabTrigger>
+</snippet>

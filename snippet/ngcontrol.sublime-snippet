@@ -1,0 +1,27 @@
+<snippet>
+    <content><![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+</head>
+<body>
+    
+</body>
+    <script type="text/javascript" src="./lib/requirejs/require.js" data-main="./js/angularControlMain"></script>
+    <script type="text/javascript" src="./js/commonConfig.js"></script>
+    <script type="text/javascript" src="./js/yourjs.js"></script>
+</html>
+]]></content>
+    <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+    <!-- <tabTrigger>hello</tabTrigger> -->
+    <!-- Optional: Set a scope to limit where the snippet will trigger -->
+    <!-- <scope>source.python</scope> -->
+    <tabTrigger>ngcontrol</tabTrigger>
+    <scope>text.html.basic</scope>
+    <description>ng control test</description>
+</snippet>
