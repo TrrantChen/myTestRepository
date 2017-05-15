@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Document</title>
-        <style type="text/css">
-            * {
-                margin:0px;
-                padding:0px;
-                box-sizing: border-box;
-            }
+import * as util from '../../js/common/util'
     
-            body, input, select, button, textarea {
-                font-size: 14px;
-                font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
-            }   
-            
-            body, html {
-                width:100%;
-                height:100%;
-            }            
-        </style>
-    </head>
-    <body>
-    </body>
+    
     <script src="../lib/jquery/jquery-2.1.4.js" type="text/javascript"></script>
     <script src="../lib/angular/angular.js" type="text/javascript"></script>
     <script src="../lib/bootstrap/js/bootstrap.js" type="text/javascript"></script>
@@ -65,4 +43,3 @@
         }
 
     </script>  
-</html>
