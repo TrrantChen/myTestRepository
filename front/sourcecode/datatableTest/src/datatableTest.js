@@ -1,55 +1,48 @@
-<!--  import * as util from '../../js/common/util'
+import * as util from '../../js/common/util'   
+var dragged;
 
-    
-    <script src="../lib/requirejs/require.js" type="text/javascript"></script>
-    <script src="../js/common/requireconfig.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule){  
-             var dragged;
+document.addEventListener("drag", function( event ) {
 
-              document.addEventListener("drag", function( event ) {
+}, false);
 
-              }, false);
+document.addEventListener("dragstart", function( event ) {
+    dragged = event.target;
+    event.target.style.opacity = .5;
+}, false);
 
-              document.addEventListener("dragstart", function( event ) {
-                  dragged = event.target;
-                  event.target.style.opacity = .5;
-              }, false);
+document.addEventListener("dragend", function( event ) {
+    event.target.style.opacity = "";
+}, false);
 
-              document.addEventListener("dragend", function( event ) {
-                  event.target.style.opacity = "";
-              }, false);
+document.addEventListener("dragover", function( event ) {
+    event.preventDefault();
+}, false);
 
-              document.addEventListener("dragover", function( event ) {
-                  event.preventDefault();
-              }, false);
+document.addEventListener("dragenter", function( event ) {
+    if ( event.target.className == "dropzone" ) {
+        event.target.style.background = "purple";
+    }
 
-              document.addEventListener("dragenter", function( event ) {
-                  if ( event.target.className == "dropzone" ) {
-                      event.target.style.background = "purple";
-                  }
+}, false);
 
-              }, false);
+document.addEventListener("dragleave", function( event ) {
+    if ( event.target.className == "dropzone" ) {
+        event.target.style.background = "";
+    }
 
-              document.addEventListener("dragleave", function( event ) {
-                  if ( event.target.className == "dropzone" ) {
-                      event.target.style.background = "";
-                  }
+}, false);
 
-              }, false);
+document.addEventListener("drop", function( event ) {
+    event.preventDefault();
+    if ( event.target.className == "dropzone" ) {
+        event.target.style.background = "";
+        dragged.parentNode.removeChild( dragged );
+        event.target.appendChild( dragged );
+        console.log(dragged);
+    }
+  
+}, false);             
 
-              document.addEventListener("drop", function( event ) {
-                  event.preventDefault();
-                  if ( event.target.className == "dropzone" ) {
-                      event.target.style.background = "";
-                      dragged.parentNode.removeChild( dragged );
-                      event.target.appendChild( dragged );
-                      console.log(dragged);
-                  }
-                
-              }, false);             
-        })
-    </script>    
 
 
 

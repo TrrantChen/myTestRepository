@@ -446,6 +446,11 @@
         return isNaN(result) ? 0 : result;
     }
 
+    export function escapeStringRegexp(str) {
+        let regex = /[|\\{}()[\]^$+*?.]/g
+        return str.replace(regex, '\\$&');
+    }
+
     Function.prototype.before = function(fn) {
         let args = [],
             length = arguments.length,

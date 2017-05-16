@@ -104,20 +104,20 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 
 
 /*------------测试异步执行------------*/
-/*
-    通过callback来保证执行顺序，two中的执行函数为one中的回调。
- */
-gulp.task('one', callback => {
-  setTimeout(() => {
-    console.log("this is one");
-    callback();
-  }, 2000)
-})
+  /*
+      通过callback来保证执行顺序，two中的执行函数为one中的回调。
+   */
+  gulp.task('one', callback => {
+    setTimeout(() => {
+      console.log("this is one");
+      callback();
+    }, 2000)
+  })
 
-gulp.task('two', ['one'], () => {
+  gulp.task('two', ['one'], () => {
     console.log("this is two");
   })
-  /*------------测试异步执行------------*/
+/*------------测试异步执行------------*/
 
 gulp.task('minihtml', () => {
   return gulp.src("index.html")
@@ -135,241 +135,240 @@ gulp.task('testBuffer', () => {
 })
 
 /*------------多文件处理------------*/
-gulp.task('multifile-browerifyBuildA', (done) => {
-  glob('./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)', (err, files) => {
-    if (err) {
-      console.log("tst")
-      done(err);
-    };
-    console.log(files);
-    console.log("start")
-    let tasks = files.map((entry, index) => {
-      return browserify({ entries: [entry] })
-        .transform('babelify', { presets: ["es2015"] })
-        .bundle()
-        .pipe(source(`entryA${index}.js`))
-        .pipe(gulp.dest('./target/'))
-    })
-    console.log(done)
-    es.merge(tasks).on('end', done);
-    console.log("end")
-  })
-})
-
-gulp.task('multifile-browerifyBuildB', () => {
-  let entries = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
-  let tasks = entries.map((entry, index) => {
-    return browserify({ entries: [entry] })
-      .transform('babelify', { presets: ["es2015"] })
-      .bundle()
-      .pipe(source(`entryB${index}.js`))
-      .pipe(gulp.dest('./target/'))
-  })
-  return es.merge.apply(null, tasks);
-})
-
-gulp.task('multifile-browerifyBuildC', (done) => {
-    gulp.src("./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)", (err, files) => {
-      if (err) {
-        done(err)
-      }
-      files.forEach((entry, index) => {
-        return browserify({ entries: [entry] })
-          .transform('babelify', { presets: ["es2015"] })
-          .bundle()
-          .pipe(source(`entryC${index}.js`))
-          .pipe(gulp.dest('./target/'))
-      })
-    })
-  })
-  /*------------多文件处理------------*/
-
-/*------------使用watchify加快编译速度------------*/
-let browserify_watchify = watchify(browserify(assign({}, watchify.args, {
-  entries: './source/simulation/serverA/serverA.js',
-  debug: true
-})));
-
-let bundleFn = function() {
-  return browserify_watchify
-    .external(["_jquery"])
-    .transform('babelify', { presets: ["es2015"] })
-    .bundle()
-    .on('error', function(err) {
-      console.log(err.toString());
-      this.emit('end');
-    })
-    .pipe(source('serverA.js'))
-    .pipe(gulp.dest('./target/'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(buffer())
-    .pipe(envify(environment))
-    // .pipe(stripDebug())
-    .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-    .pipe(sourcemaps.identityMap())
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./target/'))
-    .pipe(livereload());
-}
-
-browserify_watchify.on('update', () => {
-  livereload.listen();
-  bundleFn();
-}); // 当任何依赖发生改变的时候，运行打包工具
-
-browserify_watchify.on('log', gutil.log);
-
-gulp.task('make-fast', bundleFn);
-/*------------使用watchify加快编译速度------------*/
-
-/*------------公共模块排除打包------------*/
-gulp.task('external-lib', () => {
-  return browserify({
-      entries: ['./source/simulation/serverA/serverA.js', './source/simulation/common/util.js'],
-      debug: true
-    })
-    .external(["../lib/_jquery"])
-    .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-    .bundle()
-    .on('error', function(err) {
-      console.log(err.toString());
-      this.emit('end');
-    })
-    .pipe(source('serverA.js'))
-    .pipe(gulp.dest('./target/'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(buffer())
-    .pipe(envify(environment))
-    // .pipe(stripDebug())
-    .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-    .pipe(sourcemaps.identityMap())
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./target/'))
-    .pipe(browsersync.stream())
-
-})
-
-
-gulp.task('browserify-lib', (done) => {
-    glob('./source/simulation/lib/*.js', (err, files) => {
-
+  gulp.task('multifile-browerifyBuildA', (done) => {
+    glob('./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)', (err, files) => {
       if (err) {
         console.log("tst")
         done(err);
       };
-
-      let task = browserify({
-          entries: files,
-          debug: true
-        })
-        .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-        .bundle()
-        .on('error', function(err) {
-          console.log(err.toString());
-          this.emit('end');
-        })
-        .pipe(source('lib.js'))
-        .pipe(gulp.dest('./target/'))
-        .pipe(rename({ suffix: '.min' }))
-        .pipe(buffer())
-        .pipe(envify(environment))
-        .pipe(stripDebug())
-        .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-        .pipe(sourcemaps.identityMap())
-        .pipe(uglify())
-        .pipe(sourcemaps.write('./maps'))
-        .pipe(gulp.dest('./target/'))
-        .pipe(browsersync.stream())
-      return es.merge(task).on('end', done);
+      console.log(files);
+      console.log("start")
+      let tasks = files.map((entry, index) => {
+        return browserify({ entries: [entry] })
+          .transform('babelify', { presets: ["es2015"] })
+          .bundle()
+          .pipe(source(`entryA${index}.js`))
+          .pipe(gulp.dest('./target/'))
+      })
+      console.log(done)
+      es.merge(tasks).on('end', done);
+      console.log("end")
     })
   })
-  /*------------公共模块排除打包------------*/
 
-/*------------使用browsersync自动更新------------*/
-gulp.task('browser-sync', () => {
-  browsersync.init({
-    server: {
-      baseDir: "./"
-    },
-    open: false,
-    // proxy:'127.0.0.1:8080'
+  gulp.task('multifile-browerifyBuildB', () => {
+    let entries = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
+    let tasks = entries.map((entry, index) => {
+      return browserify({ entries: [entry] })
+        .transform('babelify', { presets: ["es2015"] })
+        .bundle()
+        .pipe(source(`entryB${index}.js`))
+        .pipe(gulp.dest('./target/'))
+    })
+    return es.merge.apply(null, tasks);
   })
-})
 
-gulp.task('watch-gulpfile-modify', ['browser-sync', 'browserify-lib', 'external-lib'], () => {
-    gulp.watch('./source/simulation/lib/*.js', ['browserify-lib']);
-    // gulp.watch('./gulpfile.babel.js', ['stylu-compile']);
-    // gulp.watch('./gulpfile.babel.js', ['browserify-lib', 'external-lib', 'stylu-compile']);
-    gulp.watch('./source/simulation/common/*.js', ['external-lib']);
-    gulp.watch('./source/simulation/serverA/*.js', ['external-lib']);
-    gulp.watch('./source/simulation/viewA.html').on('change', reloadPage);
-    gulp.watch('./source/simulation/css/*.styl', ['stylu-compile']);
-  })
-  /*------------使用browsersync自动更新------------*/
+  gulp.task('multifile-browerifyBuildC', (done) => {
+      gulp.src("./source/+(repeatedReferencesA.js|repeatedReferencesB.js|repeatedReferencesC.js)", (err, files) => {
+        if (err) {
+          done(err)
+        }
+        files.forEach((entry, index) => {
+          return browserify({ entries: [entry] })
+            .transform('babelify', { presets: ["es2015"] })
+            .bundle()
+            .pipe(source(`entryC${index}.js`))
+            .pipe(gulp.dest('./target/'))
+        })
+      })
+    })
+/*------------多文件处理------------*/
 
-/*------------stylu compile------------*/
-gulp.task('stylu-compile', () => {
-    return gulp.src('./source/simulation/css/*.styl')
-      .pipe(sourcemaps.init({ loadMaps: true }))
-      .pipe(stylus())
-      // .pipe(stylus({compress:false}))
-      .pipe(autoprefixer())
-      .pipe(concat('dest.min.css'))
-      .pipe(cleancss())
+/*------------使用watchify加快编译速度------------*/
+  let browserify_watchify = watchify(browserify(assign({}, watchify.args, {
+    entries: './source/simulation/serverA/serverA.js',
+    debug: true
+  })));
+
+  let bundleFn = function() {
+    return browserify_watchify
+      .external(["_jquery"])
+      .transform('babelify', { presets: ["es2015"] })
+      .bundle()
+      .on('error', function(err) {
+        console.log(err.toString());
+        this.emit('end');
+      })
+      .pipe(source('serverA.js'))
+      .pipe(gulp.dest('./target/'))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(buffer())
+      .pipe(envify(environment))
+      // .pipe(stripDebug())
+      .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+      .pipe(sourcemaps.identityMap())
+      .pipe(uglify())
+      .pipe(sourcemaps.write('./maps'))
+      .pipe(gulp.dest('./target/'))
+      .pipe(livereload());
+  }
+
+  browserify_watchify.on('update', () => {
+    livereload.listen();
+    bundleFn();
+  }); // 当任何依赖发生改变的时候，运行打包工具
+
+  browserify_watchify.on('log', gutil.log);
+
+  gulp.task('make-fast', bundleFn);
+/*------------使用watchify加快编译速度------------*/
+
+/*------------公共模块排除打包------------*/
+  gulp.task('external-lib', () => {
+    return browserify({
+        entries: ['./source/simulation/serverA/serverA.js', './source/simulation/common/util.js'],
+        debug: true
+      })
+      .external(["../lib/_jquery"])
+      .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
+      .bundle()
+      .on('error', function(err) {
+        console.log(err.toString());
+        this.emit('end');
+      })
+      .pipe(source('serverA.js'))
+      .pipe(gulp.dest('./target/'))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(buffer())
+      .pipe(envify(environment))
+      // .pipe(stripDebug())
+      .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+      .pipe(sourcemaps.identityMap())
+      .pipe(uglify())
       .pipe(sourcemaps.write('./maps'))
       .pipe(gulp.dest('./target/'))
       .pipe(browsersync.stream())
+
   })
-  /*------------stylu compile------------*/
+
+
+  gulp.task('browserify-lib', (done) => {
+      glob('./source/simulation/lib/*.js', (err, files) => {
+
+        if (err) {
+          console.log("tst")
+          done(err);
+        };
+
+        let task = browserify({
+            entries: files,
+            debug: true
+          })
+          .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
+          .bundle()
+          .on('error', function(err) {
+            console.log(err.toString());
+            this.emit('end');
+          })
+          .pipe(source('lib.js'))
+          .pipe(gulp.dest('./target/'))
+          .pipe(rename({ suffix: '.min' }))
+          .pipe(buffer())
+          .pipe(envify(environment))
+          .pipe(stripDebug())
+          .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+          .pipe(sourcemaps.identityMap())
+          .pipe(uglify())
+          .pipe(sourcemaps.write('./maps'))
+          .pipe(gulp.dest('./target/'))
+          .pipe(browsersync.stream())
+        return es.merge(task).on('end', done);
+      })
+  })
+/*------------公共模块排除打包------------*/
+
+/*------------使用browsersync自动更新------------*/
+  gulp.task('browser-sync', () => {
+    browsersync.init({
+      server: {
+        baseDir: "./"
+      },
+      open: false,
+      // proxy:'127.0.0.1:8080'
+    })
+  })
+
+  gulp.task('watch-gulpfile-modify', ['browser-sync', 'browserify-lib', 'external-lib'], () => {
+      gulp.watch('./source/simulation/lib/*.js', ['browserify-lib']);
+      // gulp.watch('./gulpfile.babel.js', ['stylu-compile']);
+      // gulp.watch('./gulpfile.babel.js', ['browserify-lib', 'external-lib', 'stylu-compile']);
+      gulp.watch('./source/simulation/common/*.js', ['external-lib']);
+      gulp.watch('./source/simulation/serverA/*.js', ['external-lib']);
+      gulp.watch('./source/simulation/viewA.html').on('change', reloadPage);
+      gulp.watch('./source/simulation/css/*.styl', ['stylu-compile']);
+  })
+/*------------使用browsersync自动更新------------*/
+
+/*------------stylu compile------------*/
+  gulp.task('stylu-compile', () => {
+      return gulp.src('./source/simulation/css/*.styl')
+        .pipe(sourcemaps.init({ loadMaps: true }))
+        .pipe(stylus())
+        // .pipe(stylus({compress:false}))
+        .pipe(autoprefixer())
+        .pipe(concat('dest.min.css'))
+        .pipe(cleancss())
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest('./target/'))
+        .pipe(browsersync.stream())
+    })
+/*------------stylu compile------------*/
 
 /*------------rollup------------*/
-gulp.task('rollup-bundle', () => {
-  rollup.rollup({
-    entry: './source/simulation/serverA/serverA.js'
+  gulp.task('rollup-bundle', () => {
+    rollup.rollup({
+      entry: './source/simulation/serverA/serverA.js'
 
-  }).then((bundle) => {
-    bundle.write({
-      format: 'amd',
-      moduleName: 'amd',
-      dest: './target/amd.js'
-    })
-  });
+    }).then((bundle) => {
+      bundle.write({
+        format: 'amd',
+        moduleName: 'amd',
+        dest: './target/amd.js'
+      })
+    });
 
-  rollup.rollup({
-    entry: './source/simulation/serverA/serverA.js'
-  }).then((bundle) => {
-    bundle.write({
-      dest: './target/cjs.js',
-      moduleName: 'cjs',
-      format: 'cjs'
-    })
-  });
+    rollup.rollup({
+      entry: './source/simulation/serverA/serverA.js'
+    }).then((bundle) => {
+      bundle.write({
+        dest: './target/cjs.js',
+        moduleName: 'cjs',
+        format: 'cjs'
+      })
+    });
 
-  rollup.rollup({
-    entry: './source/simulation/serverA/serverA.js'
-  }).then((bundle) => {
-    bundle.write({
-      dest: './target/iife.js',
-      moduleName: 'iife',
-      format: 'iife'
-    })
-  });
+    rollup.rollup({
+      entry: './source/simulation/serverA/serverA.js'
+    }).then((bundle) => {
+      bundle.write({
+        dest: './target/iife.js',
+        moduleName: 'iife',
+        format: 'iife'
+      })
+    });
 
-  rollup.rollup({
-    entry: './source/simulation/serverA/serverA.js'
-  }).then((bundle) => {
-    bundle.write({
-      dest: './target/umd.js',
-      moduleName: 'umd',
-      format: 'umd'
-    })
-  });
+    rollup.rollup({
+      entry: './source/simulation/serverA/serverA.js'
+    }).then((bundle) => {
+      bundle.write({
+        dest: './target/umd.js',
+        moduleName: 'umd',
+        format: 'umd'
+      })
+    });
 
-  return 0;
-})
-
+    return 0;
+  })
 /*------------rollup------------*/
 
 /*------------eshint------------*/
@@ -388,26 +387,26 @@ gulp.task('rollup-bundle', () => {
 /*------------eshint------------*/
 
 /*------------测试task执行顺序------------*/
-gulp.task('taskA', () => {
-  console.log('taskA start');
-  var time = parseInt(2000) + new Date().getTime();
-  while (new Date().getTime() < time) {
+  gulp.task('taskA', () => {
+    console.log('taskA start');
+    var time = parseInt(2000) + new Date().getTime();
+    while (new Date().getTime() < time) {
 
-  }
-  console.log('taskA end');
-})
+    }
+    console.log('taskA end');
+  })
 
-gulp.task('taskB', () => {
-  console.log('this is taskB');
-})
+  gulp.task('taskB', () => {
+    console.log('this is taskB');
+  })
 
-gulp.task('taskAll', ['taskA', 'taskB'], () => {
+  gulp.task('taskAll', ['taskA', 'taskB'], () => {
 
   })
-  /*------------测试task执行顺序------------*/
+/*------------测试task执行顺序------------*/
 
 /*------------删除创建文件------------*/
-gulp.task('creat-doc', () => {
+  gulp.task('creat-doc', () => {
     return gulp.src('../../sourcecode/*.html', (err, files) => {
       if (files.length !== 0) {
         files.forEach((file, index) => {
@@ -420,7 +419,7 @@ gulp.task('creat-doc', () => {
       }
     })
   })
-  /*------------删除创建文件------------*/
+/*------------删除创建文件------------*/
 
 gulp.task('create-project-js', () => {
   glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, files) => {
@@ -437,7 +436,6 @@ gulp.task('create-project-js', () => {
         // .pipe(replace(/<head>.*<\/head>/g, ''))
         .pipe(replace(/<head>[\n\r\s\S\w\W\d\D.]*<\/head>|<body>[\n\r\s\S\w\W\d\D.]*<\/body>|<\/html>/g, ''))
         .pipe(gulp.dest(file + '/src/'))
-
     })
   })
 
@@ -452,65 +450,79 @@ gulp.task('create-project-js', () => {
 })
 
 /*------------重写文件------------*/
+  let isHtml = true;
 
-gulp.task('create-tmp', () => {
-  return new Promise((resolve) => {
+  let createTmpOption = isHtml ? {
+    fileType:'.html',
+    replaceSource:(para) => {
+      return /<script[\n\r\s\S\w\W\d\D.]*>[\n\r\s\S\w\W\d\D.]*<\/script>/g;
+    },
+    replaceTarget:(para) => {
+      return `\t<script src='../lib/build/lib.js'></script>\n\r\t<script src='./${para}.js'></script>`
+    }
+  } : {
+    fileType:'.js',
+    replaceSource:(para) => {
+      return /<script.*>.*<\/script>|<\/script>|<script type="text\/javascript">/g;
+    },
+    replaceTarget:(para) => {
+      return '';
+    }
+  }
+
+  gulp.task('create-tmp', () => {
+    return new Promise((resolve) => {
+      glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, files) => {
+        files.forEach((file, index) => {
+          let name = file.replace(/..\/..\/sourcecode\//g, '');
+          let vp = vinylPaths();
+          gulp.src(file + '/src/' + name + createTmpOption.fileType)
+            .pipe(vp)
+            .pipe(rename(name + '.tmp' + createTmpOption.fileType))
+            .pipe(replace(createTmpOption.replaceSource(), createTmpOption.replaceTarget(name)))
+            .pipe(gulp.dest(file + '/src/'))
+            .on('end', () => {
+              console.log(vp.paths);
+              del(vp.paths, { force: true }).then(resolve);
+            })
+        })
+      })
+    })
+  })
+
+  gulp.task('write-file', ['create-tmp'], () => {
     glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, files) => {
       files.forEach((file, index) => {
         let name = file.replace(/..\/..\/sourcecode\//g, '');
         let vp = vinylPaths();
-        gulp.src(file + '/src/' + name + '.html')
+        gulp.src(file + '/src/' + name + '.tmp' + createTmpOption.fileType)
           .pipe(vp)
-          .pipe(rename(name + '.tmp.html'))
-          .pipe(replace(/<script[\n\r\s\S\w\W\d\D.]*>[\n\r\s\S\w\W\d\D.]*<\/script>/g, `\t<script src='../lib/build/lib.js'></script>\n\r\t<script src='./${name}.js'></script>`))
+          .pipe(rename(name + createTmpOption.fileType))
           .pipe(gulp.dest(file + '/src/'))
           .on('end', () => {
             console.log(vp.paths);
-            del(vp.paths, { force: true }).then(resolve);
+            del(vp.paths, { force: true });
           })
       })
     })
   })
-})
 
-gulp.task('write-file', ['create-tmp'], () => {
-  return new Promise((resolve) => {
+  gulp.task('delete-html', () => {
+      let vp = vinylPaths();
+      return gulp.src('../../sourcecode/*/src/*.html')
+        .pipe(vp)
+        .on('end', () => {
+          del(vp.paths, { force: true })
+      })      
+  })
+
+  gulp.task('recover', ['delete-html'], () => {
     glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, files) => {
       files.forEach((file, index) => {
         let name = file.replace(/..\/..\/sourcecode\//g, '');
-        let vp = vinylPaths();
-        gulp.src(file + '/src/' + name + '.tmp.html')
-          .pipe(vp)
-          .pipe(rename(name + '.html'))
+        gulp.src(file + '/build/' + name + '.html')
           .pipe(gulp.dest(file + '/src/'))
-          .on('end', () => {
-            console.log(vp.paths);
-            del(vp.paths, { force: true }).then(resolve);
-          })
       })
     })
   })
-})
-
-gulp.task('delete-html', () => {
-  let vp = vinylPaths();
-  return gulp.src('../../sourcecode/*/src/*.html')
-    .pipe(vp)
-    .on('end', () => {
-      console.log(vp.paths);
-      del(vp.paths, { force: true })
-    })
-})
-
-gulp.task('recover', ['delete-html'], () => {
-  glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, files) => {
-    files.forEach((file, index) => {
-      let name = file.replace(/..\/..\/sourcecode\//g, '');
-      gulp.src(file + '/build/' + name + '.html')
-        .pipe(gulp.dest(file + '/src/'))
-    })
-  })
-})
-
-
 /*------------重写文件------------*/

@@ -1,17 +1,9 @@
-<!DOCTYPE HTML>
-<html>
+import * as util from '../../js/common/util'
 
-
-
-
-<script src="../lib/jquery/jquery-2.1.4.js" type="text/javascript"></script>
-<script src="../lib/angular/angular.js" type="text/javascript"></script>
-<script src="../lib/bootstrap/js/bootstrap.js" type="text/javascript"></script>
-<script type="text/javascript">
-jQuery(document).ready(function() {
+$(function(){
     test4postJson()
-});
-
+})
+    
 function test4get1() {
     var xhr = new XMLHttpRequest();
     xhr.open("get", "/ajaxtest/test1?t=10086", false);
@@ -131,6 +123,6 @@ function stateChange(readyState, status, result) {
             break;
     }
 }
-</script>
+
 
 

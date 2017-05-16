@@ -1,106 +1,56 @@
 import * as util from '../../js/common/util'
-<head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <style type="text/css">
-        * {
-            margin:0px;
-            padding:0px;
-            box-sizing: border-box;
-        }
 
-        body, input, select, button, textarea {
-            font-size: 14px;
-            font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
-        }
-        
-        button, input {
-            border-width: 0px;
-            outline: none;
-        }  
+function btnFunc() {
+  console.log("btnFunc apply time " + new Date())
+} 
 
+function inputFunc(domName) {
+  console.log($("#" + domName).val());
+}
 
-        
-        body, html {
-            width:100%;
-            height:100%;
-        } 
+var delayTime = 5000;
+var myThrottleBtnFunc = util.myThrottle(btnFunc, delayTime);
+var underscoreThrottleBtnFunc = _.throttle(btnFunc, delayTime);
+var myDebounceBtnFunc = util.myDebounce(btnFunc, delayTime);
+var underscoreDebounceBtnFunc = _.debounce(btnFunc, delayTime);
 
-        .container {
-            width:100%;
-            height:100%;
-            background: #EFF3CD;
-            overflow:hidden
-        }
+var myThrottleInputFunc = util.myThrottle(inputFunc, delayTime);
+var underscoreThrottleInputFunc = _.throttle(inputFunc, delayTime);
+var myDebounceInputFunc = util.myDebounce(inputFunc, delayTime);
+var underscoreDebounceInputFunc = _.debounce(inputFunc, delayTime);            
 
-        :root {
-          --main-bg-color: green;
-        }
+$("#btnContainer").on("click", function(event) {
+  var domName = event.target.id;
+  switch (domName) {
+    case "myThrottleBtnTest":
+      myThrottleBtnFunc();
+      break;
+    case "underscoreThrottleBtnTest":
+      underscoreThrottleBtnFunc();
+      break; 
+    case "myDebounceBtnTest":
+      myDebounceBtnFunc();
+      break;
+    case "underscoreDebounceBtnTest":
+      underscoreDebounceBtnFunc();
+      break;                                               
+  }
+}) 
 
-        .one {
-          width:100px;
-          height:100px;
-          background-color: var(--main-bg-color);
-        }
-
-        .two {
-          width:100px;
-          height:100px;                
-          background-color:var(--main-bg-color);
-        }
-
-        .readonly-input {
-          -webkit-appearance: textfield;
-          background-color: white;
-          -webkit-rtl-ordering: logical;
-          user-select: text;
-          cursor: auto;
-          padding: 1px;
-          border-width: 2px;
-          border-style: inset;
-          border-color: initial;
-          border-image: initial;
-          text-rendering: auto;
-          color: initial;
-          letter-spacing: normal;
-          word-spacing: normal;
-          text-transform: none;
-          text-indent: 0px;
-          text-shadow: none;
-          display: inline-block;
-          text-align: start;
-          margin: 0em 0em 0em 0em;
-          font: 11px BlinkMacSystemFont;
-          -webkit-writing-mode: horizontal-tb;
-          width:100px;
-          height:30px;
-          vertical-align: middle;
-        }
-
-        .readonly-input:focus {
-          outline-offset: -2px;
-          outline: -webkit-focus-ring-color auto 5px;
-        }
-
-        .btnStyle {
-          background-color: #CDECCC;
-          padding: 5px;
-          border:solid 2px #321D2E;
-        }
-
-        .btnStyle:hover {
-          background-color: #FAD089;
-          border:solid 2px #FF9C5B;
-          cursor: pointer;
-        }
-
-        .inputStyle {
-          width:200px;
-          height:35px;
-          line-height:35px;
-        }
-
-        .subContainer {
-          margin:5px 5px 0px 5px;
-        }
-    </style>
+$("#inputContainer").on("keydown", function(event) {
+  var domName = event.target.id;
+  switch (domName) {
+    case "myThrottleInputTest":
+      myThrottleInputFunc(domName);
+      break;
+    case "underscoreThrottleInputTest":
+      underscoreThrottleInputFunc(domName);
+      break; 
+    case "myDebounceInputTest":
+      myDebounceInputFunc(domName);
+      break;
+    case "underscoreDebounceInputTest":
+      underscoreDebounceInputFunc(domName);
+      break;                                               
+  }
+})

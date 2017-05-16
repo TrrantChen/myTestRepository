@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<script>
-    console.log("start")
-</script>
-<html lang="en">
-    <script>
-        var startTime = new Date().getTime();
-    </script>
-    
-    
-    <script src="../lib/requirejs/require.js" type="text/javascript"></script>
-    <script src="../js/common/requireconfig.js" type="text/javascript"></script>
-    <script src="../lib/jquery/jquery-1.11.3.min.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        // require.config({
+    // require.config({
         //     paths: {
         //         "othertestmodule": '../js/fileandajax/othertestmodule',
         //         "jquery": '../lib/jquery/jquery-1.11.3.min'
@@ -37,7 +23,7 @@
         // window.onload = function() {
         //     console.log("loadeddata");
         // }
-    </script>    
+        
 
 
 

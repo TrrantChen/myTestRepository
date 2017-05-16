@@ -1,32 +1,14 @@
 import * as util from '../../js/common/util'
-    
-    
-    <script src="../lib/requirejs/require.js" type="text/javascript"></script>
-    <script src="../js/common/requireconfig.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        require.config({
-            paths: {
-                "jqueryui": '../lib/jquery-ui-1.12.1.custom/jquery-ui',
-                "interaction":'../js/common/interaction'
-            },
-            shim: {
-                "jqueryui": {
-                    deps: ["jquery"],
-                    exports: "jqueryui"
-                }
-            }
-        })
+import * as interaction from '../../js/common/interaction'
 
-        require(["common", "othertestmodule", "filemodule", "constant", "schememodule","ajax", "ajaxtestmodule","domoperation","interaction", "jqueryui", "jquery", "underscore"], function(common, othertestmodule, filemodule, constant, schememodule, ajax, ajaxtestmodule, domoperation, interaction){        
-            interaction.dragable("#dragDiv", {axis:"x"});
-            $("#dragDivJquery").draggable({axis:"x"});
-            console.log($("#dragDivJquery").scrollParent());
-        })
+interaction.dragable("#dragDiv", {axis:"x"});
+$("#dragDivJquery").draggable({axis:"x"});
+console.log($("#dragDivJquery").scrollParent());
 
-        var dragDivJquery = document.querySelector("#dragDivJquery");
-        var outter = document.querySelector("#outter");
+var dragDivJquery = document.querySelector("#dragDivJquery");
+var outter = document.querySelector("#outter");
 
-    </script>    
+        
 
 
 
