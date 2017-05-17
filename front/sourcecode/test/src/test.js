@@ -52,6 +52,8 @@ var deepCpyObj = {
 var jqueryExtendObj = {};
 // console.time("cpy");
 $.extend(true,jqueryExtendObj, deepCpyObj);
+
+console.log(jqueryExtendObj);
 // common.copyPropertiesFromObj2Obj(jqueryExtendObj, deepCpyObj, true);
 // console.timeEnd("cpy");
 

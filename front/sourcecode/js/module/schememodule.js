@@ -62,7 +62,7 @@ export function isEven(num) {
 
 /*------------fibonacc------------*/
   // f(1, 0, n);
-  export function fibonaccFuncWithRecursive(num) {
+  export function fibonaccFuncWithRecursive1(num) {
       console.log(num)
       switch (num) {
           case 0:
@@ -70,7 +70,7 @@ export function isEven(num) {
           case 1:
               return 1;
           default:
-              return fibonaccFuncWithRecursive(num - 1) + fibonaccFuncWithRecursive(num - 2);
+              return fibonaccFuncWithRecursive1(num - 1) + fibonaccFuncWithRecursive1(num - 2);
       }
   }
 
@@ -334,11 +334,11 @@ export function isEven(num) {
       }
   }
 
-  export function fibonaccFuncWithIteration(product, iter, counter) {
+  export function fibonaccFuncWithIteration1(product, iter, counter) {
       if (counter == 0) {
           return iter;
       } else {
-          return fibonaccFuncWithIteration(product + iter, product, --counter)
+          return fibonaccFuncWithIteration1(product + iter, product, --counter)
       }
   }
 

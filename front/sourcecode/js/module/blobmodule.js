@@ -1,4 +1,4 @@
-import util from '../common/util.js';
+import * as util from '../common/util.js';
 
 let path = util.getHost();
 

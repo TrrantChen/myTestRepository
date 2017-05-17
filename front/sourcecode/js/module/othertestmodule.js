@@ -1,4 +1,4 @@
-import util from '../common/util.js';
+import * as util from '../common/util.js';
 var path = util.getHost();
 
 export function testPath() {

@@ -1,5 +1,5 @@
 import * as domoperation from './domoperation';
-import _ from "../../lib/underscore.js";
+import _ from "../../lib/underscore/underscore.js";
 
 export function dragable(selector, option) {
     // axis:x, y

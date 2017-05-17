@@ -1,5 +1,5 @@
 import * as util from "./util";
-import _ from "../../lib/underscore.js";
+import _ from "../../lib/underscore/underscore.js";
 
 // option httpmethod async contentType data dataType url isUpload 
 export function generalAjax(option) {
