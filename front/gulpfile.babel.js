@@ -500,8 +500,19 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 
 /*------------publish------------*/
   let basePath = './sourcecode';
-  let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js', basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js', basePath + '/lib/underscore/underscore.js']
+  let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js', basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js', basePath + '/lib/underscore/underscore.js',
+    basePath + '/js/common/util.js']
   let reg = new RegExp(escapeStringRegexp(basePath + "/"), 'g');
+
+  gulp.task('clear-build', () => {
+    let vp = vinylPaths();
+    return gulp.src(basePath + '/!(js|lib|package.json|node_modules)/build/*')
+      .pipe(vp)
+      .on('end', () => {
+        console.log("del path is " + vp.paths)
+        del(vp.paths, {force:true})
+      })
+  })
 
   gulp.task('compressHtml', () => {
     glob(basePath + '/!(js|lib|package.json|node_modules)', (err, files) => {
@@ -527,102 +538,47 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
     .pipe(notify("compress lib over"))   
   })
 
+  glob(basePath + '/js/*/*.js', (err, files) => {
+    files.forEach((file, index) => {
+      console.log(file);
+    })
+  })
+
   gulp.task('processBusinessJS', (done) => {
-    // glob('./sourcecode/ajaxdebug', (err, projectFiles) => {
-    // // glob('../../sourcecode/!(js|lib|package.json|node_modules)', (err, projectFiles) => {
-    //   projectFiles.forEach((projectFile, index) => {
-    //     let projectName = projectFile.replace(/.\/sourcecode\//g, '');
-    //     glob(projectFile + '/src/*.js', (err, jsFiles) => {
-    //       // let browserify_watch = watchify(browserify(assign({}, watchify.args, {
-    //       //     entries: jsFiles,
-    //       //     debug: true
-    //       //   }))
-    //       //   // .external(libArr)
-    //       // )
-
-    //       // let bundleFn = function() {
-    //       //   return browserify_watch
-    //       //     .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-    //       //     .bundle()
-    //       //     .on('error', function(err) {
-    //       //       console.log(err.toString());
-    //       //       this.emit('end');
-    //       //     })
-    //       //     .pipe(source(projectName + '.js'))
-    //       //     // .pipe(gulp.dest('./target/'))
-    //       //     // .pipe(rename({ suffix: '.min' }))
-    //       //     .pipe(buffer())
-    //       //     .pipe(envify(environment))
-    //       //     // .pipe(stripDebug())
-    //       //     .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-    //       //     .pipe(sourcemaps.identityMap())
-    //       //     .pipe(uglify())
-    //       //     .pipe(sourcemaps.write(projectFile + '/build/maps'))
-    //       //     .pipe(gulp.dest(projectFile + '/build/'));             
-    //       // };
-
-    //       // browserify_watch.on('update', () => {
-    //       //   bundleFn();
-    //       // });
-
-    //       // browserify_watchify.on('log', gutil.log);
-          
-    //       let testFile = './source/ajaxdebug'
-    //       let task = browserify({
-    //               entries: ['./source/ajaxdebug/src/ajaxdebug.js'],
-    //               debug: true
-    //             })
-    //           .external(libArr)
-    //           .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-    //           .bundle()
-    //           .on('error', function(err) {
-    //             console.log(err.toString());
-    //             this.emit('end');
-    //           })
-    //           .pipe(source('hjahsjhjss.js'))
-    //           .pipe(buffer())
-    //           .pipe(envify(environment))
-    //           .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-    //           .pipe(sourcemaps.identityMap())
-    //           .pipe(uglify())
-    //           .pipe(sourcemaps.write(testFile + '/build/maps'))
-    //           .pipe(gulp.dest('./source/ajaxdebug/build/')); 
-
-    //       return es.merge(task).on('end', done);                 
-    //     })
-    //   }) 
-    // })
-    let testFile = './sourcecode/ajaxdebug'
-    let task = browserify({
-            entries: ['./sourcecode/ajaxdebug/src/ajaxdebug.js'],
-            debug: true
-          })
-        .external(libArr)
-        .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-        .bundle()
-        .on('error', function(err) {
-          console.log(err.toString());
-          this.emit('end');
+    glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
+      projectFiles.forEach((projectFile, index) => {
+        let name = projectFile.replace(reg, '');
+        glob(projectFile + '/src/*.js', (err, files) => {
+          browserify({
+                entries: files,
+                debug: true
+              })
+            .external(libArr)
+            .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
+            .bundle()
+            .on('error', function(err) {
+              console.log(err.toString());
+              this.emit('end');
+            })
+            .pipe(source(name + '.js'))
+            .pipe(buffer())
+            .pipe(envify(environment))
+            .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+            .pipe(sourcemaps.identityMap())
+            // .pipe(uglify())
+            .pipe(sourcemaps.write(projectFile + '/build/maps'))
+            .pipe(gulp.dest(projectFile + '/build/'))                   
         })
-        .pipe(source('hjahsjhjss.js'))
-        .pipe(buffer())
-        .pipe(envify(environment))
-        .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-        .pipe(sourcemaps.identityMap())
-        .pipe(uglify())
-        .pipe(sourcemaps.write(testFile + '/build/maps'))
-        .pipe(gulp.dest('./sourcecode/ajaxdebug/build/')); 
-
-    return task;
-    // return es.merge(task).on('end', done);       
+      })
+    })      
   })
 
   gulp.task('processCommonJS', (done) => {
     glob(basePath + '/js/!(other)', (err, docs) => {
       docs.forEach((doc, index) => {
-        let name = doc.replace(reg, '');
         glob(doc + '/*.js', (err, files) => {
           files.forEach((file, index) => {
+              let name = file.replace(new RegExp(escapeStringRegexp(doc + '/'), 'g'), '');
               browserify({
                     entries: file,
                     debug: true
@@ -634,15 +590,14 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
                   console.log(err.toString());
                   this.emit('end');
                 })
-                .pipe(source(name + '.js'))
+                .pipe(source(name))
                 .pipe(buffer())
                 .pipe(envify(environment))
                 .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
                 .pipe(sourcemaps.identityMap())
                 .pipe(uglify())
-                .pipe(sourcemaps.write('/build/maps'))
-                .pipe(gulp.dest(doc + '/build'))
-                .pipe(notify(" doc is " + doc + " file is " + file));                
+                .pipe(sourcemaps.write(doc + '/build/maps'))
+                .pipe(gulp.dest(doc + '/build'))             
           })
         })          
       }) 
