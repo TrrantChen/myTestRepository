@@ -1,5 +1,7 @@
 // todo 代码静态检查
 //      打上md5
+//      使用rollup
+//      增量
 
 import gulp from 'gulp'
 import babel from 'gulp-babel'
@@ -35,6 +37,10 @@ import revertPath from 'gulp-revert-path' // 用于还原流中的路径
 import replace from 'gulp-replace' // 模板替换 
 import sequence from 'gulp-sequence' // 串行，并行，任务的顺序，执行。
 import events from 'events'
+import rollupbabel from 'rollup-plugin-babel'
+import multiEntry from 'rollup-plugin-multi-entry'// rollup 多入口
+import path from 'path'
+import rollupCommonjs from 'rollup-plugin-commonjs'
 
 // solve MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase l imit
 events.EventEmitter.defaultMaxListeners = 0;
@@ -353,6 +359,30 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 
     return 0;
   })
+
+  gulp.task('jquery-rollup', () => {
+    return rollup.rollup({
+      entry: './source/simulation/serverA/serverA.js'
+      // ,external:[
+      //   path.resolve('./source/simulation/lib/_jquery.js') 
+      // ]
+      ,plugins:[
+        rollupCommonjs({
+          namedExports:{
+            './source/simulation/lib/jquery-2.2.3.js':['jquery']
+          }
+        })
+      ]
+    }).then((bundle) => {
+      bundle.write({
+        format: 'cjs'
+        // ,moduleName: 'amd'
+        ,dest: './target/cjs.js'
+      }).then(function(){
+
+      })
+    });
+  })
 /*------------rollup------------*/
 
 /*------------测试task执行顺序------------*/
@@ -453,7 +483,6 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
             .pipe(replace(createTmpOption.replaceSource(), createTmpOption.replaceTarget(name)))
             .pipe(gulp.dest(file + '/src/'))
             .on('end', () => {
-              console.log(vp.paths);
               del(vp.paths, { force: true }).then(resolve);
             })
         })
@@ -471,7 +500,6 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
           .pipe(rename(name + createTmpOption.fileType))
           .pipe(gulp.dest(file + '/src/'))
           .on('end', () => {
-            console.log(vp.paths);
             del(vp.paths, { force: true });
           })
       })
@@ -500,16 +528,29 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 
 /*------------publish------------*/
   let basePath = './sourcecode';
-  let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js', basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js', basePath + '/lib/underscore/underscore.js',
-    basePath + '/js/common/util.js']
+  let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js', basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js', basePath + '/lib/underscore/underscore.js'];
+  let externalArr = libArr;
   let reg = new RegExp(escapeStringRegexp(basePath + "/"), 'g');
+  let taskLst = null;
+
+  gulp.task('get-extern-lst', (done) => {
+    return new Promise((resolve) => {
+      glob(basePath + '/js/!(other)/*.js').on('end', (files) => {
+        externalArr =externalArr.concat(files);
+        resolve();
+      })
+    })
+  })
 
   gulp.task('clear-build', () => {
     let vp = vinylPaths();
-    return gulp.src(basePath + '/!(js|lib|package.json|node_modules)/build/*')
+      return gulp.src(basePath + '/js/*/build/*')
       .pipe(vp)
       .on('end', () => {
-        console.log("del path is " + vp.paths)
+        console.log("del path is");
+        vp.paths.forEach((path) => {
+          console.log(path);
+        })
         del(vp.paths, {force:true})
       })
   })
@@ -538,13 +579,7 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
     .pipe(notify("compress lib over"))   
   })
 
-  glob(basePath + '/js/*/*.js', (err, files) => {
-    files.forEach((file, index) => {
-      console.log(file);
-    })
-  })
-
-  gulp.task('processBusinessJS', (done) => {
+  gulp.task('processBusinessJS', ['get-extern-lst'], (done) => {
     glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
       projectFiles.forEach((projectFile, index) => {
         let name = projectFile.replace(reg, '');
@@ -553,7 +588,7 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
                 entries: files,
                 debug: true
               })
-            .external(libArr)
+            .external(externalArr)
             .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
             .bundle()
             .on('error', function(err) {
@@ -566,8 +601,8 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
             .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
             .pipe(sourcemaps.identityMap())
             // .pipe(uglify())
-            .pipe(sourcemaps.write(projectFile + '/build/maps'))
-            .pipe(gulp.dest(projectFile + '/build/'))                   
+            .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
+            .pipe(gulp.dest(projectFile + '/build'))                    
         })
       })
     })      
@@ -595,14 +630,58 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
                 .pipe(envify(environment))
                 .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
                 .pipe(sourcemaps.identityMap())
-                .pipe(uglify())
-                .pipe(sourcemaps.write(doc + '/build/maps'))
+                // .pipe(uglify())
+                .pipe(sourcemaps.write('./maps'))
                 .pipe(gulp.dest(doc + '/build'))             
           })
         })          
       }) 
     })  
   })
+
+  gulp.task('processWithRollup', (done) => {
+    glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
+      projectFiles.forEach((projectFile, index) => {
+        let name = projectFile.replace(reg, '');
+        return rollup.rollup({
+            entry: projectFile + '/src/*.js'
+            ,plugins:[
+              multiEntry()
+              // ,rollupbabel()
+            ]
+            ,external:libArr.map((lib) => {
+              return path.resolve(lib);
+            })
+          }).then((bundle) => {
+            bundle.write({
+              dest: projectFile + '/build/rollupTest/' + name + '.js',
+              format: 'cjs'
+            }).then(function() {
+                browserify({
+                      entries: projectFile + '/build/rollupTest/' + name + '.js',
+                      debug: true
+                    })
+                  .external(externalArr)
+                  .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
+                  .bundle()
+                  .on('error', function(err) {
+                    console.log(err.toString());
+                    this.emit('end');
+                  })
+                  .pipe(source(name + '.js'))
+                  .pipe(buffer())
+                  .pipe(envify(environment))
+                  .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+                  .pipe(sourcemaps.identityMap())
+                  // .pipe(uglify())
+                  .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
+                  .pipe(gulp.dest(projectFile + '/build'))               
+            })
+          });
+      })
+    })
+  })
+
 /*------------publish------------*/
 
 function escapeStringRegexp(str) {

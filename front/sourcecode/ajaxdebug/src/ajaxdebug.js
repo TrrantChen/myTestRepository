@@ -1,4 +1,4 @@
-import * as util from '../../js/common/util'
+import * as util from '../../js/common/util.js'
 import * as ajaxtestmodule from '../../js/module/ajaxtestmodule'
 
 let oldFetch = window.fetch;
@@ -7,5 +7,8 @@ window.fetch = function() {
     return oldFetch.apply(this, arr);
 }
 
-util.promiseAop();
-ajaxtestmodule.fetchTest();
+$(function(){
+  util.promiseAop();
+  ajaxtestmodule.fetchTest();  
+})
+
