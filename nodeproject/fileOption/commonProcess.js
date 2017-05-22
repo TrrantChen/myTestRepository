@@ -8,7 +8,7 @@ var os = require('os');
 var app =  null;  
 
 // var accessPath = "http://" +  ((process.platform == "win32") ? os.networkInterfaces()["本地连接"][1].address : "") + ":8099";
-exports.setAccess = function(res) {
+exports.setAccess = function(req, res) {
     res.header("Access-Control-Allow-Origin", req.headers.origin);
     res.header("Access-Control-Allow-Headers", "Content-type,Content-Length, Authorization, Accept,X-Requested-With, X-PINGOTHER");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
@@ -20,7 +20,7 @@ exports.getOperationSystemType = function() {
 }
 
 exports.optionsProcess = function(req, res) {
-    exports.setAccess(res);
+    exports.setAccess(req, res);
     res.send(" ");    
 }
 
@@ -62,7 +62,7 @@ exports.calculateSpanTime = function(func, funcName, isShowTheResult) {
 
 function preProcessCallback(callback) {
     return function(req, res) {
-        exports.setAccess(res);
+        exports.setAccess(req, res);
         callback(req, res);  
     }
 }

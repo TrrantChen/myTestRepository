@@ -19,7 +19,7 @@ exports.functionRoute = function(app) {
 
 // buffer都可以直接传送到客户端，无需转码
 function getBufferFromServer(req, res) {
-    commonProcess.setAccess(res)
+    commonProcess.setAccess(req, res)
     var bufEn = new Buffer("server is normal");
     var bufCn = new Buffer("服务器反应正常");
     res.send( "bufCn is " + bufCn + "\n" +
@@ -27,7 +27,7 @@ function getBufferFromServer(req, res) {
 }
 
 function testByteLength(req, res) {
-    commonProcess.setAccess(res)
+    commonProcess.setAccess(req, res)
     var result = "testByteLength \n";
     for (var i = 0; i < copeTypeArray.length; i++) {
         result += (" 蛤 " + copeTypeArray[i] + " " + bufferProcess.getByteLength("蛤", copeTypeArray[i]) + "\n")
@@ -41,7 +41,7 @@ function testByteLength(req, res) {
 }
 
 function string2Buffer(req, res) {
-    commonProcess.setAccess(res)
+    commonProcess.setAccess(req, res)
     var result = "string2Buffer \n"
     copeTypeArray.forEach(function (copeType) {
         try {
@@ -64,7 +64,7 @@ function string2Buffer(req, res) {
 }
 
 function buffer2String(req, res) {
-    commonProcess.setAccess(res)
+    commonProcess.setAccess(req, res)
     var result = "buffer2String \n"
     copeTypeArray.forEach(function (copeType) {
         try {

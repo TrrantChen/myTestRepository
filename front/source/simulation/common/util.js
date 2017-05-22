@@ -309,22 +309,35 @@
             return new origin(arguments[0]);
         };
 
-        var arrProperties = getAllInstanceProperties(origin);
+        var arrProperties = getWritableInstanceProperties(origin);
 
         for (var i = 0; i < arrProperties.length; i++) {
             Promise[arrProperties[i]] = origin[arrProperties[i]];
         }
+        
     }
 
     /*
         返回所有实例属性，不管是可枚举的还是不可枚举
      */
     export function getAllInstanceProperties(obj) {
+
         if (obj === void 0) {
             return [];
         } else {
-            return Object.getOwnPropertyNames(obj);
+            return Object.getOwnPropertyNames(obj)
         }
+    }
+
+    export function getWritableInstanceProperties(obj) {
+      if (obj === void 0) {
+        return [];
+      } else {
+        let instancePropertiesArr = getAllInstanceProperties(obj);
+        return instancePropertiesArr.filter((instanceProperties, index) => {
+          return Object.getOwnPropertyDescriptor(obj, instanceProperties).writable === true;
+        })
+      }
     }
 
     /*

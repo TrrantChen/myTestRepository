@@ -309,7 +309,7 @@
             return new origin(arguments[0]);
         };
 
-        var arrProperties = getAllInstanceProperties(origin);
+        let arrProperties = getWritableInstanceProperties(origin);
 
         for (var i = 0; i < arrProperties.length; i++) {
             Promise[arrProperties[i]] = origin[arrProperties[i]];
@@ -326,6 +326,20 @@
             return Object.getOwnPropertyNames(obj);
         }
     }
+
+    /*
+        返回所有可改写的属性
+     */
+    export function getWritableInstanceProperties(obj) {
+      if (obj === void 0) {
+        return [];
+      } else {
+        let instancePropertiesArr = getAllInstanceProperties(obj);
+        return instancePropertiesArr.filter((instanceProperties, index) => {
+          return Object.getOwnPropertyDescriptor(obj, instanceProperties).writable === true;
+        })
+      }
+    }    
 
     /*
         获取所有可枚举属性

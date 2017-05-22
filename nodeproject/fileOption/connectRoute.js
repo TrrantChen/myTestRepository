@@ -35,7 +35,7 @@ function defaultConnect(req, res) {
 }
 
 function testUrlAndpath(req, res) {
-    commonProcess.setAccess(res)
+    commonProcess.setAccess(req, res)
     var pathname = url.parse(req.url).pathname;
     res.send("pathname is " + pathname)
 }
@@ -72,7 +72,7 @@ function getClientIPAdress(req, res) {
 }
 
 function serverPathTest(req, res) {
-    commonProcess.setAccess(res)
+    commonProcess.setAccess(req, res)
     console.log("system is " + process.platform + "\n"); // win32
     console.log("__dirname " + __dirname + "\n"); // D:\Demo\frontDemo\nodeproject\fileOption     绝对路径
     console.log("__filename " + __filename + "\n"); // D:\Demo\frontDemo\nodeproject\fileOption\app.js 绝对路径
