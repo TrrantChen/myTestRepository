@@ -4177,7 +4177,7 @@ var widgetsSelectable = $.widget( "ui.selectable", $.ui.mouse, {
 						unselecting: selectee.element
 					} );
 				}
-				return false;
+				return false ;
 			}
 		} );
 

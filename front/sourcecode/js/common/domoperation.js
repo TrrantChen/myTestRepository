@@ -161,7 +161,7 @@ export function getPadding(elementComputedStyles) {
     return getBox(elementComputedStyles, "padding");
 }
 
-export function getBox(elementComputedStyles, style) {
+function getBox(elementComputedStyles, style) {
     let prefix = style === "position" ? "" : style + "-",
         postfix = style === "border" ? "-width" : "";
 

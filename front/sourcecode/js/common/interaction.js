@@ -1,16 +1,13 @@
 import * as domoperation from './domoperation';
-import _ from "../../lib/underscore/underscore.js";
+import * as util from './util';
 
 export function dragable(selector, option) {
     // axis:x, y
     // containment: selector
     // translate:true/false 
-    // todo
     // handle: selector
     // cancel:selector
-    // revert: true/false
-    // snap:
-
+    // revert: true/false    
     option = option || {};
     let target = document.querySelector(selector),
         mouseDownPage = { x: 0, y: 0 },
@@ -176,7 +173,6 @@ export function dragable(selector, option) {
                     break;
             }
         } else {
-
             x = originPosition.left + event.pageX - mouseDownPage.x;
             y = originPosition.top + event.pageY - mouseDownPage.y;
 
@@ -217,8 +213,8 @@ export function dragable(selector, option) {
             自动滚动，思路，
          */
         if (scrollParent !== void 0) {
-            targetBoundingClientRect = getElemBoundingClientRect(target);
-            distanceBetweenTargetAndScrollParent = {
+            let targetBoundingClientRect = getElemBoundingClientRect(target);
+            let distanceBetweenTargetAndScrollParent = {
                 left: targetBoundingClientRect.left - scrollParentBoundingClientRect.left,
                 top: targetBoundingClientRect.top - scrollParentBoundingClientRect.top,
                 right: targetBoundingClientRect.right - scrollParentBoundingClientRect.right,
@@ -355,10 +351,10 @@ export function dragable(selector, option) {
     function getElemBoundingClientRect(element) {
         let boundingClientRect = element.getBoundingClientRect();
         return {
-            left: boundingClientRect.left + window.scrollX,
-            top: boundingClientRect.top + window.scrollY,
-            right: boundingClientRect.right + window.scrollX,
-            bottom: boundingClientRect.bottom + window.scrollY
+            left: boundingClientRect.left + window.scrollX
+            ,top: boundingClientRect.top + window.scrollY
+            ,right: boundingClientRect.right + window.scrollX
+            ,bottom: boundingClientRect.bottom + window.scrollY
         }
     }
 
@@ -378,7 +374,85 @@ export function resizable(element) {
 
 }
 
+export function selectable(selector, option) {
+  // filter:  string or arrary
+    let target = document.querySelector(selector)
+        ,dom = null
+        ,startMousePosition = null
+        ,startDomPosition = null
+        ,defaultOption = {
+          filter:""
+        }
+        ,filterArr = []
+        ,selectedArr = [];
 
+    option = Object.assign(defaultOption, option);
+
+    if (option.filter !== "") {
+      filterArr = Array.isArray(option.filter) ? 
+        option.filger.map((selector, index) => {
+          return document.querySelector(selector);
+        })
+       : document.querySelector(option.filter);
+    }
+
+    let filterArrLength = filterArr.length;
+
+    target.addEventListener('mousedown', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      startMousePosition = {x:event.pageX, y:event.pageY};
+      startDomPosition = {x:event.pageX - window.scrollX, y:event.pageY - window.scrollY}
+      dom = util.str2dom(`<div style="border:1px dashed black;width:0px;height:0px;position:fixed;left:${startDomPosition.x}px;top:${startDomPosition.y}px;background:none;"></div>`)
+      target.appendChild(dom);    
+      document.addEventListener('mousemove', mouseMoveHandle);
+      document.addEventListener('mouseup', mouseUpHandle);      
+    })
+
+    function mouseMoveHandle(event) {
+      console.log(event.target);
+      event.stopPropagation();
+      event.preventDefault();
+      // let width = Math.abs(event.pageX - startMousePosition.x)
+      //     ,height = Math.abs(event.pageY - startMousePosition.y)
+      let width = event.pageX - startMousePosition.x
+          ,height = event.pageY - startMousePosition.y;
+
+      if (width < 0) {
+        dom.style.left = (startDomPosition.x + width) + 'px';
+      }
+
+      if (height < 0) {
+        dom.style.top = (startDomPosition.y + height) + 'px';
+      }
+
+      dom.style.width = Math.abs(width) + "px";
+      dom.style.height = Math.abs(height) + "px";   
+
+      let moveOverDom = event.target;
+      // if (filterArrLength === 0) {
+      // } else {
+      // }
+
+      if (moveOverDom !== target && !moveOverDom.classList.contains("selected")) {
+        moveOverDom.classList.add("selected")
+      }      
+    }
+
+    function mouseUpHandle(event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if (dom != null) {
+        dom.remove(); 
+        dom = null;
+      }    
+      document.removeEventListener('mousemove', mouseMoveHandle);
+      document.removeEventListener('mouseup', mouseUpHandle);    
+    }
+    
+
+
+}
 
 /*
     拖动，滚动条自动滚动。

@@ -60,9 +60,10 @@ let reloadPage = browsersync.reload;
 
 let basePath = './sourcecode';
 let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js'
- ,basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js' 
- ,basePath + '/lib/underscore/underscore.js'
- ,basePath + '/lib/globalTest.js'];
+             ,basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js' 
+             ,basePath + '/lib/underscore/underscore.js'
+             ,basePath + '/lib/globalTest.js'
+            ];
 let externalArr = libArr;
 let reg = new RegExp(escapeStringRegexp(basePath + "/"), 'g');
 
@@ -563,7 +564,8 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
       let taskLst = files.map((file, index) => {
         return gulp.src(file + '/src/*.html')
             .pipe(htmlmin({ minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:true}))  
-            .pipe(gulp.dest(file + '/build/'))  
+            .pipe(gulp.dest(file + '/build/')) 
+            .pipe(browsersync.stream()) 
       });
       es.merge(taskLst).on('end', done);
     })
@@ -642,87 +644,91 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
   })
 
   gulp.task('processWithRollup', (done) => {
-    glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
-      projectFiles.forEach((projectFile, index) => {
-        let name = projectFile.replace(reg, '');
-        return rollup.rollup({
-            entry: projectFile + '/src/*.js'
-            ,plugins:[
-              multiEntry()
-              // ,rollupbabel()
-              // ,rollupCommonjs({
-              //   namedExports:{
-              //     './sourcecode/lib/jquery/jquery-2.2.3.js':['jquery']
-              //   }
-              // })            
-            ]
-            ,external:libArr.map((lib) => {
-              return path.resolve(lib);
-            })  
-          }).then((bundle) => {
-            // bundle.write({
-            //   dest: projectFile + '/build/rollupTest/' + name + '.js'
-            //   ,moduleName: name
-            //   ,format: 'iife'
-            //   ,globals : {
-            //     // _:'../../lib/underscore/underscore.js'
-            //     // ,$:'../../lib/jquery/_jquery.js'
-            //     // _:'D:/git/github/myTestRepository/front/sourcecode/lib/underscore/underscore.js'
-            //     // ,$:'D:/git/github/myTestRepository/front/sourcecode/lib/jquery/jquery-2.2.3.js'
-            //     // _:"_"
-            //     // ,$:"$"
-                
-            //   }          
-            // })
-            
-            let result = bundle.generate({
-              format:'iife'
-              ,sourceMap:true
-              ,sourceMapFile:projectFile + '/build/rollupTest/' + name + '.js'
-              ,moduleName:name
-              // ,globals:{
-              //   // _:'D:/git/github/myTestRepository/front/sourcecode/lib/underscore/underscore.js'
-              //   // ,$:'D:/git/github/myTestRepository/front/sourcecode/lib/jquery/jquery-2.2.3.js'   
-              //   // testGlobal:"testst" 
-              //   // underscore: '_'  
-              //   testGlobal:'D:\\git\\github\\myTestRepository\\front\\sourcecode\\lib\\globalTest.js'  
-              // }
-            })
-            
-            fs.writeFileSync(projectFile + '/build/rollupTest/' + name + '.js.map', result.map.toString());
-            fs.writeFileSync(projectFile + '/build/rollupTest/' + name + '.js', result.code  +
-  '\n//# sourceMappingURL=./' + name + '.js.map');
-            
-
-            // .then(function() {
-            //     browserify({
-            //           entries: projectFile + '/build/rollupTest/' + name + '.js',
-            //           debug: true
-            //         })
-            //       .external(externalArr)
-            //       .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-            //       .bundle()
-            //       .on('error', function(err) {
-            //         console.log(err.toString());
-            //         this.emit('end');
-            //       })
-            //       .pipe(source(name + '.js'))
-            //       .pipe(buffer())
-            //       .pipe(envify(environment))
-            //       .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-            //       .pipe(sourcemaps.identityMap())
-            //       // .pipe(uglify())
-            //       .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
-            //       .pipe(gulp.dest(projectFile + '/build'))               
-            // })
-          });
-      })
+    return new Promise((resolve, reject) => {
+      glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
+        projectFiles.forEach((projectFile, index) => {
+          let name = projectFile.replace(reg, '');
+          rollup.rollup({
+              entry: projectFile + '/src/*.js'
+              ,plugins:[
+                multiEntry()
+                // ,rollupbabel()
+                // ,rollupCommonjs({
+                //   namedExports:{
+                //     './sourcecode/lib/jquery/jquery-2.2.3.js':['jquery']
+                //   }
+                // })            
+              ]
+              ,external:libArr.map((lib) => {
+                return path.resolve(lib);
+              })  
+            }).then((bundle) => {
+              // bundle.write({
+              //   dest: projectFile + '/build/rollupTest/' + name + '.js'
+              //   ,moduleName: name
+              //   ,format: 'iife'
+              //   ,globals : {
+              //     // _:'../../lib/underscore/underscore.js'
+              //     // ,$:'../../lib/jquery/_jquery.js'
+              //     // _:'D:/git/github/myTestRepository/front/sourcecode/lib/underscore/underscore.js'
+              //     // ,$:'D:/git/github/myTestRepository/front/sourcecode/lib/jquery/jquery-2.2.3.js'
+              //     // _:"_"
+              //     // ,$:"$"
+                  
+              //   }          
+              // })
+              
+              let result = bundle.generate({
+                format:'iife'
+                ,sourceMap:true
+                ,sourceMapFile:projectFile + '/build/' + name + '.js'
+                ,moduleName:name
+                // ,globals:{
+                //   // _:'D:/git/github/myTestRepository/front/sourcecode/lib/underscore/underscore.js'
+                //   // ,$:'D:/git/github/myTestRepository/front/sourcecode/lib/jquery/jquery-2.2.3.js'   
+                //   // testGlobal:"testst" 
+                //   // underscore: '_'  
+                //   testGlobal:'D:\\git\\github\\myTestRepository\\front\\sourcecode\\lib\\globalTest.js'  
+                // }
+              })
+              
+              fs.writeFileSync(projectFile + '/build/' + name + '.js.map', result.map.toString());
+              fs.writeFileSync(projectFile + '/build/' + name + '.js', result.code + '\n//# sourceMappingURL=./' + name + '.js.map');
+              resolve(done);
+              // .then(function() {
+              //     browserify({
+              //           entries: projectFile + '/build/rollupTest/' + name + '.js',
+              //           debug: true
+              //         })
+              //       .external(externalArr)
+              //       .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
+              //       .bundle()
+              //       .on('error', function(err) {
+              //         console.log(err.toString());
+              //         this.emit('end');
+              //       })
+              //       .pipe(source(name + '.js'))
+              //       .pipe(buffer())
+              //       .pipe(envify(environment))
+              //       .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+              //       .pipe(sourcemaps.identityMap())
+              //       // .pipe(uglify())
+              //       .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
+              //       .pipe(gulp.dest(projectFile + '/build'))               
+              // })
+            });
+        })
+      })       
     })
   })
 
-  gulp.task('watch-html-compress', ['compressHtml'], (done) => {
+  gulp.task('watch-compress', ['browser-sync', 'compressHtml', 'processWithRollup'], (done) => {
     gulp.watch(basePath + '/!(js|lib|package.json|node_modules)/src/*.html' , ['compressHtml']);
+    gulp.watch(basePath + '/!(js|lib|package.json|node_modules)/src/*.js' , ['processWithRollup']).on('change', reloadPage);
+    gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup']).on('change', reloadPage);
+
   })
+
 /*------------publish------------*/
 
 function escapeStringRegexp(str) {

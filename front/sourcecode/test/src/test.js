@@ -1,5 +1,20 @@
+import $ from '../../lib/jquery/jquery-2.2.3';
+import * as util from '../../js/common/util'; 
 
-import * as util from '../../js/common/util'
+$(function() {
+  let firstContainer = document.querySelector('#firstContainer')
+      ,firstChild = document.querySelector("#firstChild")
+      ,secondContainer = document.querySelector('#secondContainer')
+
+  firstChild.addEventListener('click', (event) => {
+    console.log("this is button");
+  } )
+
+  // let result = firstContainer.removeChild(firstChild);
+  // secondContainer.appendChild(result);
+  
+  firstContainer.remove();
+})
 
 // function Test() {
 //     this.print = () => {

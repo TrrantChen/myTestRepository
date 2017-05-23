@@ -7,9 +7,9 @@
             * {
                 margin:0px;
                 padding:0px;
-                box-sizing: border-box;
+                box-sizing: border-box;               
             }
-    
+
             body, input, select, button, textarea {
                 font-size: 14px;
                 font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
@@ -171,10 +171,48 @@
                 vertical-align: top;
                 padding: 100px 10px 0px 10px;
             }
+            
+            .selectorContainerStyle {
+                width:1500px;
+                height:100%;
+                border: solid 5px black;
+                margin-top:20px;
+                -moz-user-select: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;               
+            }
+
+            .liStyle {
+              width:200px;
+              height:40px;
+              margin:10px 0px 10px 10px;
+              padding-left:10px;
+              background:#61A6AB;
+              line-height:40px;
+            }
+
+            .ui-selectable-helper {
+                position: absolute;
+                z-index: 100;
+                border: 1px dotted black;
+            } 
+
+            .ui-selected {
+                background: #F39814;
+                color: white;
+            } 
+
+            .selectouter {
+              width:600px;
+              height:600px;
+              border:solid 1px black;
+              overflow-x: auto;
+              display: inline-block;   
+            }  
 
         </style>
-
-
+        <link rel="stylesheet" href="./distanceanddrag.css">
     </head>
     <body>
         <div class="container">
@@ -211,11 +249,32 @@
                     <p id="noCanP2" style="font-size:16px;border:solid 1px black;background:#DFECE6;">I can not be  handle</p>
                 </div>                    
             <!-- </div> -->
-
+            <div>
+              <div class="selectouter">
+                <div id="selectorContainer" class="selectorContainerStyle">
+                  <li class="liStyle">test1</li>
+                  <h1>test</h1>
+                  <li class="liStyle">test2</li>
+                  <li class="liStyle">test3</li>
+                  <li class="liStyle">test4</li>
+                  <li class="liStyle">test5</li>
+                </div>              
+              </div>
+              <div class="selectouter">
+                <div id="selectorContainer2" class="selectorContainerStyle">
+                  <li class="liStyle">test1</li>
+                  <h1>test</h1>
+                  <li class="liStyle">test2</li>
+                  <li class="liStyle">test3</li>
+                  <li class="liStyle">test4</li>
+                  <li class="liStyle">test5</li>
+                </div>              
+              </div>              
+            </div>
         </div>
     </body>
-    			<script src=../../lib/build/lib.js></script>
-	<script src='./distanceanddrag.js'></script>    
+    <script src=../../lib/build/lib.js></script>
+    <script src='./distanceanddrag.js'></script>    
 </html>
 
 

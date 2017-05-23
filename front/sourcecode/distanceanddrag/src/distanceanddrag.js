@@ -1,4 +1,8 @@
-import * as util from '../../js/common/util'  
+import $ from '../../lib/jquery/jquery-2.2.3';
+import * as util from '../../js/common/util';  
+import * as interaction from '../../js/common/interaction'; 
+import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';
+
 function dragByJqueryUi() {
     var testDivByJqueryui = $("#testDivByJqueryui");
     testDivByJqueryui.draggable({containment: "#absolute"});
@@ -35,14 +39,24 @@ function dragInterationTest() {
      interaction.dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});                                
 }
 
-dragInterationTest();
+function selectableTest() {
+    interaction.selectable("#selectorContainer")
+}
+
+function selectableByJqueryUi() {
+    $("#selectorContainer2").selectable();
+}
+
+$(function() {
+    selectableTest();
+    selectableByJqueryUi();
+})
+
+
+
+// dragInterationTest();
 // dragByJqueryUi();
 
-let testDivByJqueryui = document.querySelector("#testDivByJqueryui"),
-    relative = document.querySelector("#relative"),
-    absolute = document.querySelector("#absolute"),
-    margin = document.querySelector("#margin"),
-    scrollDiv = document.querySelector("#scrollDiv");
 
         
 
