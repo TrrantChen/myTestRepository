@@ -16,7 +16,7 @@ function dragByJqueryUi() {
 }
 
 function dragInterationTest() {
-    interaction.dragable("#testDivByJqueryui", {containment: "#relative"});
+    interaction.dragable("#relative");
     // interaction.dragable("#testDivByJqueryui", {containment: "#absolute", revert:false});
     // interaction.dragable("#testDivByJqueryui");
     // interaction.dragable("#scrollDiv");
@@ -44,12 +44,13 @@ function selectableTest() {
 }
 
 function selectableByJqueryUi() {
-    $("#selectorContainer2").selectable();
+    $("#selectorContainer2").selectable({tolerance:"touch"});
 }
 
 $(function() {
     selectableTest();
     selectableByJqueryUi();
+    dragInterationTest();
 })
 
 

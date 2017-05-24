@@ -537,6 +537,7 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 /*------------重写文件------------*/
 
 /*------------publish------------*/
+
   gulp.task('get-extern-lst', (done) => {
     return new Promise((resolve) => {
       glob(basePath + '/js/!(other)/*.js').on('end', (files) => {
@@ -726,7 +727,7 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
     gulp.watch(basePath + '/!(js|lib|package.json|node_modules)/src/*.html' , ['compressHtml']);
     gulp.watch(basePath + '/!(js|lib|package.json|node_modules)/src/*.js' , ['processWithRollup']).on('change', reloadPage);
     gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup']).on('change', reloadPage);
-
+    gulp.watch('./sourcecode/distanceanddrag/build/distanceanddrag.css').on('change', reloadPage);
   })
 
 /*------------publish------------*/

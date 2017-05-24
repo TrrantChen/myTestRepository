@@ -376,6 +376,8 @@ export function resizable(element) {
 
 export function selectable(selector, option) {
   // filter:  string or arrary
+  // todo
+  // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
     let target = document.querySelector(selector)
         ,dom = null
         ,startMousePosition = null
@@ -429,14 +431,15 @@ export function selectable(selector, option) {
       dom.style.width = Math.abs(width) + "px";
       dom.style.height = Math.abs(height) + "px";   
 
-      let moveOverDom = event.target;
+      // let moveOverDom = event.target;
       // if (filterArrLength === 0) {
       // } else {
       // }
-
-      if (moveOverDom !== target && !moveOverDom.classList.contains("selected")) {
-        moveOverDom.classList.add("selected")
-      }      
+      // if (moveOverDom !== target && !moveOverDom.classList.contains("selected")) {
+      //   moveOverDom.classList.add("selected")
+      // } 
+      
+           
     }
 
     function mouseUpHandle(event) {
@@ -449,9 +452,6 @@ export function selectable(selector, option) {
       document.removeEventListener('mousemove', mouseMoveHandle);
       document.removeEventListener('mouseup', mouseUpHandle);    
     }
-    
-
-
 }
 
 /*
