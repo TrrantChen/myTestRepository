@@ -1,5 +1,15 @@
 import * as util from './util';
 
+let win = window
+    ,doc = document;
+
+export function setFrame(frame)  {
+  if (frame !== void 0) {
+    win = frame.contentWindow;
+    doc = frame.contentDocument
+  }
+}
+
 export function ctreateImg(imgUrl, callback) {
     var img = new Image();
     img.src = imgUrl;
@@ -17,7 +27,7 @@ export function ctreateImg(imgUrl, callback) {
 }
 
 export function getImgCanvas(img) {
-    var imgCanvas = document.createElement("canvas");
+    var imgCanvas = doc.createElement("canvas");
     imgCanvas.width = acturalWidth
     imgCanvas.height = acturalHeight
     var myctx = imgCanvas.getContext("2d");
@@ -36,7 +46,7 @@ export function getBackgroundImageUrl(element) {
 }
 
 export function getElementComputedStyle(element) {
-    let elementStyle = window.getComputedStyle(element)
+    let elementStyle = win.getComputedStyle(element)
     return function(style) {
         let value = elementStyle.getPropertyValue(style);
         return value;
@@ -44,8 +54,8 @@ export function getElementComputedStyle(element) {
 }
 
 export function insertStyle2Head(cssString, isInsertFirst) {
-    var style = document.createElement("style"),
-        head = document.getElementsByTagName('head')[0],
+    var style = doc.createElement("style"),
+        head = doc.getElementsByTagName('head')[0],
         headChildren = head.children,
         isLinkExist = false,
         headLength = headChildren.length;
@@ -70,18 +80,19 @@ export function insertStyle2Head(cssString, isInsertFirst) {
 };
 
 export function insertStr2Dom(htmlText, parentDom) {
-    parentDom = parentDom || document.body;
-    var dom = util.str2dom(htmlText);
+    parentDom = parentDom || doc.body;
+    var dom = str2dom(htmlText);
     parentDom.appendChild(dom);
+    return dom;
 }
 
 export function createAndGetProgress() {
-    var progressContainer = document.querySelector(".progressContainer");
+    var progressContainer = doc.querySelector(".progressContainer");
     if (progressContainer == void 0 || progressContainer == null) {
         var htmlStr = '<div class="progressContainer">' + '    <div class="progressStyle">' + '        <div class="progressBar"></div>' + '    </div>' + '    <div class="progressNum">0%</div>' + '</div>';
         insertStr2Dom(htmlStr);
     }
-    return document.querySelector(".progressContainer")
+    return doc.querySelector(".progressContainer")
 }
 
 export function setAjaxWithProcess(option, isWithProcess) {
@@ -101,11 +112,11 @@ export function setAjaxWithProcess(option, isWithProcess) {
     };
     option.onprogress = function(event) {
         if (isWithProcess) {
-            var progressStyle = document.querySelector(".progressStyle");
-            var progressBar = document.querySelector(".progressBar");
-            var progressNum = document.querySelector(".progressNum");
-            var strLength = window.getComputedStyle(progressStyle).getPropertyValue("width").length;
-            var totalWidth = window.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
+            var progressStyle = doc.querySelector(".progressStyle");
+            var progressBar = doc.querySelector(".progressBar");
+            var progressNum = doc.querySelector(".progressNum");
+            var strLength = win.getComputedStyle(progressStyle).getPropertyValue("width").length;
+            var totalWidth = win.getComputedStyle(progressStyle).getPropertyValue("width").slice(0, strLength - 2);
             progressBar.style.width = parseInt(totalWidth) * Math.round(event.loaded / event.total * 100) / 100 + "px";
             progressNum.innerText = Math.round(event.loaded / event.total * 100) + "%"
         }
@@ -115,7 +126,7 @@ export function setAjaxWithProcess(option, isWithProcess) {
 export function checkCss3Support(cssStr) {
     let prefixArr = ["webkit", "Moz", "ms", "o"],
         humpStrArr = [],
-        div = document.createElement("div"),
+        div = doc.createElement("div"),
         styleArr = div.style,
         _2Hump = (str) => {
             return str.replace(/-(\w)/g, ($0, $1) => {
@@ -220,7 +231,7 @@ export function getScrollParent(elem) {
         return /(auto|scroll|hidden)/.test(parentStyle("overflow") + parentStyle("overflow-x") + parentStyle("overflow-y"));
     });
 
-    return !scrollParents.length ? (elem.ownerDocument.body || document.body) : scrollParents[0];
+    return !scrollParents.length ? (elem.ownerDocument.body || doc.body) : scrollParents[0];
 }
 
 /*
@@ -231,4 +242,47 @@ export function isScrollElem(elem) {
     return elemComputedStyle("overflow") !== "visible";
 }
 
+export function onRead(fn) {
+  var ready = doc.readyState;
+  if (ready == "interactive" || ready == "complete") {
+    fn();
+  } else {
+    win.addEventListener("DOMContentLoaded", fn);
+  }
+}
 
+export function asyncOnReady(fn) {
+  var ready = doc.readyState;
+  if (ready == "interactive" || ready == "complete") {
+    setTimeout(fn(), 0);
+  } else {
+    win.addEventListener("DOMContentLoaded", fn);
+  }
+}
+
+export function onReadyPromise() {
+  return new Promise(function(resolve, reject) {
+    var readyState = doc.readyState;
+    if (readyState === 'interactive' || readyState === 'complete') {
+      resolve();
+    } else {
+      win.addEventListener('DOMContentLoaded', resolve);
+    }
+  });
+}
+
+export function autoDownloadUrl(downloadName, downloadContent) {
+  var a = doc.createElement('a');
+  var evt = doc.createEvent("HTMLEvents");
+  evt.initEvent("click", false, false);
+  a.download = downloadName;
+  a.href = win.URL.createObjectURL(downloadContent);
+  a.dispatchEvent(evt);
+  a.click();
+}
+
+export function str2dom(str) {　　
+  var objE = doc.createElement("div");　　
+  objE.innerHTML = str;　　
+  return objE.children[0];
+}

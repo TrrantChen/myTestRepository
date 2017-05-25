@@ -41,6 +41,7 @@ import rollupbabel from 'rollup-plugin-babel'
 import multiEntry from 'rollup-plugin-multi-entry'// rollup 多入口
 import path from 'path'
 import rollupCommonjs from 'rollup-plugin-commonjs'
+import rollupAnalyzer from 'rollup-analyzer'
 
 // solve MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase l imit
 events.EventEmitter.defaultMaxListeners = 0;
@@ -646,7 +647,8 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 
   gulp.task('processWithRollup', (done) => {
     return new Promise((resolve, reject) => {
-      glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
+      // glob(basePath + '/!(js|lib|package.json|node_modules)', (err, projectFiles)  => {
+      glob(basePath + '/dropdemo', (err, projectFiles)  => {
         projectFiles.forEach((projectFile, index) => {
           let name = projectFile.replace(reg, '');
           rollup.rollup({
@@ -678,6 +680,8 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
                   
               //   }          
               // })
+              // 
+              rollupAnalyzer.formatted(bundle).then(console.log).catch(console.err);
               
               let result = bundle.generate({
                 format:'iife'
@@ -717,6 +721,8 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
               //       .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
               //       .pipe(gulp.dest(projectFile + '/build'))               
               // })
+            }).catch((err) => {
+              console.log(err);
             });
         })
       })       

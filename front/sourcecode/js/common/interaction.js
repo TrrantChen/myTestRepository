@@ -7,35 +7,45 @@ export function dragable(selector, option) {
     // translate:true/false 
     // handle: selector
     // cancel:selector
-    // revert: true/false    
+    // revert: true/false 
+    // frame: iframe dom  
     option = option || {};
-    let target = document.querySelector(selector),
-        mouseDownPage = { x: 0, y: 0 },
-        targetComputedStyle = null,
-        defaultOption = {
-            axis: "all",
-            translate: false,
-            revert: false
-        },
-        containment = void 0,
-        containmentPositionRange = void 0,
-        originTranslate = null,
-        originPosition = null,
-        targetPositionInfo = {},
-        isRangeLimit = true,
+    let target = null
+        ,mouseDownPage = { x: 0, y: 0 }
+        ,targetComputedStyle = null
+        ,defaultOption = {
+            axis: "all"
+            ,translate: false
+            ,revert: false
+        }
+        ,containment = void 0
+        ,containmentPositionRange = void 0
+        ,originTranslate = null
+        ,originPosition = null
+        ,targetPositionInfo = {}
+        ,isRangeLimit = true
         /*
             是否使用getBoundingClientRect去获取元素与边框的距离
          */
-        isGetDistanceByBoundingClientRect = true,
-        scrollParent = void 0,
-        scrollParentBoundingClientRect = void 0,
-        handleSelector = void 0,
-        cancelSelector = void 0,
-        scrollLeftAdd = 10,
-        scrollTopAdd = 10;
+        ,isGetDistanceByBoundingClientRect = true
+        ,scrollParent = void 0
+        ,scrollParentBoundingClientRect = void 0
+        ,handleSelector = void 0
+        ,cancelSelector = void 0
+        ,scrollLeftAdd = 10
+        ,scrollTopAdd = 10
+        ,doc = document
+        ,win = window;
 
     option = Object.assign(defaultOption, option);
 
+    if (option.frame !== void 0) {
+        doc = option.frame.contentDocument;
+        win = option.frame.contentwin;
+        domoperation.setFrame(option.frame);
+    }
+
+    target = doc.querySelector(selector);
     /*
         是否使用translate替代position
      */
@@ -45,17 +55,17 @@ export function dragable(selector, option) {
         指定可以拖拽的区域
      */
     if (option.handle !== void 0) {
-        handleSelector = document.querySelector(option.handle === "this" ? selector : option.handle);
+        handleSelector = doc.querySelector(option.handle === "this" ? selector : option.handle);
     }
 
     if (option.cancel !== void 0) {
-        cancelSelector = document.querySelector(option.cancel);
+        cancelSelector = doc.querySelector(option.cancel);
     }
 
     updateTargetPositionInfo();
 
     if (option.containment !== void 0) {
-        containment = document.querySelector(option.containment);
+        containment = doc.querySelector(option.containment);
         // if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
         //     isRangeLimit = false;
         // } else {
@@ -73,14 +83,14 @@ export function dragable(selector, option) {
     scrollParent = domoperation.getScrollParent(target);
     if (scrollParent !== void 0) {
 
-        if (scrollParent !== document) {
+        if (scrollParent !== doc) {
             scrollParentBoundingClientRect = getElemBoundingClientRect(scrollParent);
         } else {
             scrollParentBoundingClientRect = {
-                left: window.scrollX,
-                top: window.scrollY,
-                right: document.body.scrollWidth,
-                bottom: document.body.scrollHeight
+                left: win.scrollX,
+                top: win.scrollY,
+                right: doc.body.scrollWidth,
+                bottom: doc.body.scrollHeight
             }
         }
     }
@@ -130,8 +140,8 @@ export function dragable(selector, option) {
         } else {
             originPosition = targetPositionInfo.position;
         }
-        document.addEventListener("mousemove", mouseMoveHandle);
-        document.addEventListener("mouseup", mouseUpHandle);
+        doc.addEventListener("mousemove", mouseMoveHandle);
+        doc.addEventListener("mouseup", mouseUpHandle);
     }
 
     function mouseMoveHandle(event) {
@@ -227,7 +237,7 @@ export function dragable(selector, option) {
             }
 
             // if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
-            //     // scrollParent.scrollLeft = document.body.scrollWidth - document.body.clientWidth;
+            //     // scrollParent.scrollLeft = doc.body.scrollWidth - doc.body.clientWidth;
             //     // scrollParent.scrollLeft = scrollParent.scrollWidth - scrollParent.clientWidth;
             //     scrollParent.scrollLeft += 20;
             //     // scrollParent.scrollLeft = scrollParent.scrollLeft + event.movementX;
@@ -261,7 +271,7 @@ export function dragable(selector, option) {
     //     }
 
     //     if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
-    //         // scrollParent.scrollLeft = document.body.scrollWidth - document.body.clientWidth;
+    //         // scrollParent.scrollLeft = doc.body.scrollWidth - doc.body.clientWidth;
     //         // scrollParent.scrollLeft = scrollParent.scrollWidth - scrollParent.clientWidth;
     //         scrollParent.scrollLeft += scrollLeftAdd;
     //         // scrollParent.scrollLeft = scrollParent.scrollLeft + event.movementX;
@@ -284,8 +294,8 @@ export function dragable(selector, option) {
     function mouseUpHandle(event) {
         event.preventDefault();
         event.stopPropagation();
-        document.removeEventListener("mousemove", mouseMoveHandle);
-        document.removeEventListener("mouseup", mouseUpHandle);
+        doc.removeEventListener("mousemove", mouseMoveHandle);
+        doc.removeEventListener("mouseup", mouseUpHandle);
 
         if (option.revert) {
             target.style.transition = "transform 0.5s linear";
@@ -337,7 +347,7 @@ export function dragable(selector, option) {
     function calculateDistanceBetweenEleAndDoc(element) {
         let elementStyle = domoperation.getElementComputedStyle(element),
             elementTranslate = domoperation.getTheTranslate(elementStyle);
-        if (element === document.body) {
+        if (element === doc.body) {
             return { left: 0, top: 0 };
         } else {
             let result = calculateDistanceBetweenEleAndDoc(element.offsetParent);
@@ -351,10 +361,10 @@ export function dragable(selector, option) {
     function getElemBoundingClientRect(element) {
         let boundingClientRect = element.getBoundingClientRect();
         return {
-            left: boundingClientRect.left + window.scrollX
-            ,top: boundingClientRect.top + window.scrollY
-            ,right: boundingClientRect.right + window.scrollX
-            ,bottom: boundingClientRect.bottom + window.scrollY
+            left: boundingClientRect.left + win.scrollX
+            ,top: boundingClientRect.top + win.scrollY
+            ,right: boundingClientRect.right + win.scrollX
+            ,bottom: boundingClientRect.bottom + win.scrollY
         }
     }
 
@@ -375,83 +385,83 @@ export function resizable(element) {
 }
 
 export function selectable(selector, option) {
-  // filter:  string or arrary
-  // todo
-  // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
-    let target = document.querySelector(selector)
-        ,dom = null
-        ,startMousePosition = null
-        ,startDomPosition = null
-        ,defaultOption = {
-          filter:""
-        }
-        ,filterArr = []
-        ,selectedArr = [];
+  // // filter:  string or arrary
+  // // todo
+  // // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
+  //   let target = document.querySelector(selector)
+  //       ,dom = null
+  //       ,startMousePosition = null
+  //       ,startDomPosition = null
+  //       ,defaultOption = {
+  //         filter:""
+  //       }
+  //       ,filterArr = []
+  //       ,selectedArr = [];
 
-    option = Object.assign(defaultOption, option);
+  //   option = Object.assign(defaultOption, option);
 
-    if (option.filter !== "") {
-      filterArr = Array.isArray(option.filter) ? 
-        option.filger.map((selector, index) => {
-          return document.querySelector(selector);
-        })
-       : document.querySelector(option.filter);
-    }
+  //   if (option.filter !== "") {
+  //     filterArr = Array.isArray(option.filter) ? 
+  //       option.filger.map((selector, index) => {
+  //         return document.querySelector(selector);
+  //       })
+  //      : document.querySelector(option.filter);
+  //   }
 
-    let filterArrLength = filterArr.length;
+  //   let filterArrLength = filterArr.length;
 
-    target.addEventListener('mousedown', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      startMousePosition = {x:event.pageX, y:event.pageY};
-      startDomPosition = {x:event.pageX - window.scrollX, y:event.pageY - window.scrollY}
-      dom = util.str2dom(`<div style="border:1px dashed black;width:0px;height:0px;position:fixed;left:${startDomPosition.x}px;top:${startDomPosition.y}px;background:none;"></div>`)
-      target.appendChild(dom);    
-      document.addEventListener('mousemove', mouseMoveHandle);
-      document.addEventListener('mouseup', mouseUpHandle);      
-    })
+  //   target.addEventListener('mousedown', (event) => {
+  //     event.stopPropagation();
+  //     event.preventDefault();
+  //     startMousePosition = {x:event.pageX, y:event.pageY};
+  //     startDomPosition = {x:event.pageX - window.scrollX, y:event.pageY - window.scrollY}
+  //     dom = domoperation.str2dom(`<div style="border:1px dashed black;width:0px;height:0px;position:fixed;left:${startDomPosition.x}px;top:${startDomPosition.y}px;background:none;"></div>`)
+  //     target.appendChild(dom);    
+  //     document.addEventListener('mousemove', mouseMoveHandle);
+  //     document.addEventListener('mouseup', mouseUpHandle);      
+  //   })
 
-    function mouseMoveHandle(event) {
-      console.log(event.target);
-      event.stopPropagation();
-      event.preventDefault();
-      // let width = Math.abs(event.pageX - startMousePosition.x)
-      //     ,height = Math.abs(event.pageY - startMousePosition.y)
-      let width = event.pageX - startMousePosition.x
-          ,height = event.pageY - startMousePosition.y;
+  //   function mouseMoveHandle(event) {
+  //     console.log(event.target);
+  //     event.stopPropagation();
+  //     event.preventDefault();
+  //     // let width = Math.abs(event.pageX - startMousePosition.x)
+  //     //     ,height = Math.abs(event.pageY - startMousePosition.y)
+  //     let width = event.pageX - startMousePosition.x
+  //         ,height = event.pageY - startMousePosition.y;
 
-      if (width < 0) {
-        dom.style.left = (startDomPosition.x + width) + 'px';
-      }
+  //     if (width < 0) {
+  //       dom.style.left = (startDomPosition.x + width) + 'px';
+  //     }
 
-      if (height < 0) {
-        dom.style.top = (startDomPosition.y + height) + 'px';
-      }
+  //     if (height < 0) {
+  //       dom.style.top = (startDomPosition.y + height) + 'px';
+  //     }
 
-      dom.style.width = Math.abs(width) + "px";
-      dom.style.height = Math.abs(height) + "px";   
+  //     dom.style.width = Math.abs(width) + "px";
+  //     dom.style.height = Math.abs(height) + "px";   
 
-      // let moveOverDom = event.target;
-      // if (filterArrLength === 0) {
-      // } else {
-      // }
-      // if (moveOverDom !== target && !moveOverDom.classList.contains("selected")) {
-      //   moveOverDom.classList.add("selected")
-      // } 
+  //     // let moveOverDom = event.target;
+  //     // if (filterArrLength === 0) {
+  //     // } else {
+  //     // }
+  //     // if (moveOverDom !== target && !moveOverDom.classList.contains("selected")) {
+  //     //   moveOverDom.classList.add("selected")
+  //     // } 
       
            
-    }
+  //   }
 
-    function mouseUpHandle(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      if (dom != null) {
-        dom.remove(); 
-        dom = null;
-      }    
-      document.removeEventListener('mousemove', mouseMoveHandle);
-      document.removeEventListener('mouseup', mouseUpHandle);    
-    }
+  //   function mouseUpHandle(event) {
+  //     event.stopPropagation();
+  //     event.preventDefault();
+  //     if (dom != null) {
+  //       dom.remove(); 
+  //       dom = null;
+  //     }    
+  //     document.removeEventListener('mousemove', mouseMoveHandle);
+  //     document.removeEventListener('mouseup', mouseUpHandle);    
+  //   }
 }
 
 /*
