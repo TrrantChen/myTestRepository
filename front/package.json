@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "babel-runtime": "^6.23.0",
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "jquery": "^3.2.1"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -52,6 +53,8 @@
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-multi-entry": "^2.0.1",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-typescript": "^0.8.1",
     "stylus": "^0.54.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-paths": "^2.1.0",

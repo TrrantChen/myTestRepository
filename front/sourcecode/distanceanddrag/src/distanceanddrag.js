@@ -1,4 +1,4 @@
-import $ from '../../lib/jquery/jquery-2.2.3';
+import $ from 'jquery';
 import * as util from '../../js/common/util';  
 import * as interaction from '../../js/common/interaction'; 
 import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';

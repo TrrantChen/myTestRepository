@@ -1,6 +1,6 @@
 import * as util from '../common/util.js';
 import * as ajax from '../common/ajax.js';
-import $ from '../../lib/jquery/_jquery.js';
+import $ from 'jquery';
      
 export function objAndArrDeepCpy() {
     var deepCpyObj = {

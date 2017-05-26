@@ -1,4 +1,4 @@
-// import $ from '../../lib/jquery/jquery-2.2.3';
+// import $ from 'jquery';
 import * as util from '../../js/common/util'; 
 
 let originEventListener = EventTarget.prototype.addEventListener
@@ -122,7 +122,3 @@ EventTarget.prototype.addEventListener = function() {
 // //     a:test
 // // }
 // // $.extend(targetEqualCpy, sourceCpy);
-
-
-
-

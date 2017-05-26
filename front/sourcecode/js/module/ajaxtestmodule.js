@@ -1,5 +1,5 @@
 import * as ajax from '../common/ajax.js';
-import $ from '../../lib/jquery/_jquery.js';
+import $ from 'jquery';
 
 export function originXmlHttpRequestTestReadyStateChange() {
     var xhr = new XMLHttpRequest();

@@ -1,10 +1,20 @@
-import $ from '../../lib/jquery/jquery-2.2.3';
+import $ from 'jquery';
+import _ from 'underscore';
+// import $ from 'jquery';
 // import '../../lib/jquery-ui-1.12.1/jquery-ui';
-import * as util from '../../js/common/util'; 
-import * as domoperation from '../../js/common/domoperation';
-import * as interaction from '../../js/common/interaction';
+// import * as util from '../../js/common/util'; 
+// import * as domoperation from '../../js/common/domoperation';
+// import * as interaction from '../../js/common/interaction';
 
-window.onload = function() {
+$(() => {
+  console.log("ready");
+  var arr = [1, 2, 3];
+  _.forEach(arr, function(num) {
+    console.log(num);
+  })
+})
+
+// window.onload = function() {
   // let sonframe = document.querySelector("#sonframe");
   // let sonDoc = sonframe.contentDocument;
   // let sonWin = sonframe.contentWindow;
@@ -22,7 +32,7 @@ window.onload = function() {
   // control2.addEventListener("click", (event) => {
   //   console.log(sonDoc.querySelector("#test" + id));
   // })
-}
+// }
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);

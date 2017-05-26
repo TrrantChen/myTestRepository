@@ -1,7 +1,7 @@
-import $ from '../../lib/jquery/jquery-2.2.3';
+import $ from 'jquery';
 import * as util from '../../js/common/util'
 import * as ajaxtestmodule from '../../js/module/ajaxtestmodule'
-import globalTest from '../../lib/globalTest.js'
+// import globalTest from 'globalTest'
 
 let oldFetch = window.fetch;
 window.fetch = function() {
@@ -12,6 +12,7 @@ window.fetch = function() {
 $(function(){
   util.promiseAop();
   ajaxtestmodule.fetchTest(); 
-  globalTest();
+  // globalTest();
+  console.log("test");
 })
 
