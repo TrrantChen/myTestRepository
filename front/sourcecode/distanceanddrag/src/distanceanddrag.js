@@ -47,10 +47,13 @@ function selectableByJqueryUi() {
     $("#selectorContainer2").selectable({tolerance:"touch"});
 }
 
+function sortableByJqueryUi() {
+    $("#sortableContainer1").sortable();
+    $("#sortableContainer1").disableSelection();
+}
+
 $(function() {
-    selectableTest();
-    selectableByJqueryUi();
-    dragInterationTest();
+    sortableByJqueryUi();
 })
 
 

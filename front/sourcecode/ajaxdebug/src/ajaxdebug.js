@@ -1,7 +1,7 @@
 import $ from 'jquery';
+import _ from 'underscore'
 import * as util from '../../js/common/util'
 import * as ajaxtestmodule from '../../js/module/ajaxtestmodule'
-// import globalTest from 'globalTest'
 
 let oldFetch = window.fetch;
 window.fetch = function() {
@@ -12,7 +12,10 @@ window.fetch = function() {
 $(function(){
   util.promiseAop();
   ajaxtestmodule.fetchTest(); 
-  // globalTest();
+  var arr = [1, 2, 3];
+  _.forEach(arr, (num) => {
+    console.log(num);
+  })
   console.log("test");
 })
 

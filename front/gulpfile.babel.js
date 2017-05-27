@@ -1,6 +1,5 @@
 // todo 代码静态检查
 //      打上md5
-//      使用rollup
 //      增量
 
 import gulp from 'gulp'
@@ -51,7 +50,6 @@ events.EventEmitter.defaultMaxListeners = 0;
 let assign = lodash.assign;
 let buildArr = ['./source/exportfile.js', './source/importfile.js'];
 // let buildArr = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
-// development production
 let environment = {
   _: 'purge',
   NODE_ENV: 'development'
@@ -71,56 +69,50 @@ let externalArr = libArr;
 let reg = new RegExp(escapeStringRegexp(basePath + "/"), 'g');
 let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
-gulp.task("browerifyBuild", () => {
-  return watchify(browserify(assign({}, watchify.args, {
-      entries: buildArr,
-      debug: true
-    })))
-    .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
-    .bundle()
-    .on('error', function(err) {
-      console.log(err.toString());
-      this.emit('end');
-    })
-    .pipe(source('test.js'))
-    .pipe(gulp.dest('./target/'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(buffer())
-    .pipe(envify(environment))
-    // .pipe(stripDebug())
-    .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-    .pipe(sourcemaps.identityMap())
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./target/'));
-})
+/*------------普通的使用browerfy的例子------------*/
+  gulp.task("browerifyBuild", () => {
+    return watchify(browserify(assign({}, watchify.args, {
+        entries: buildArr,
+        debug: true
+      })))
+      .transform('babelify', { presets: ["es2015"], plugins: ["transform-runtime"] })
+      .bundle()
+      .on('error', function(err) {
+        console.log(err.toString());
+        this.emit('end');
+      })
+      .pipe(source('test.js'))
+      .pipe(gulp.dest('./target/'))
+      .pipe(rename({ suffix: '.min' }))
+      .pipe(buffer())
+      .pipe(envify(environment))
+      // .pipe(stripDebug())
+      .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+      .pipe(sourcemaps.identityMap())
+      .pipe(uglify())
+      .pipe(sourcemaps.write('./maps'))
+      .pipe(gulp.dest('./target/'));
+  })
 
-/*
-  直接使用babel将es6转换为amd
- */
-gulp.task("babelBuild", () => {
-  return gulp.src("source/*.js")
-    .pipe(babel({
-      plugins: [
-        ['transform-es2015-modules-amd']
-      ],
-      presets: ['es2015']
-    }))
-    .pipe(gulp.dest("target"))
-    .pipe(livereload());
-})
+  gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
+    livereload.listen();
+    gulp.watch('./source/*.js', ['browerifyBuild']);
+  })
+/*------------普通的使用browerfy的例子------------*/
 
-gulp.task("watch", ['browerifyBuild', 'babelBuild'], () => {
-  livereload.listen();
-  gulp.watch('./source/*.js', ['browerifyBuild']);
-  gulp.watch('./source/*.js', ['babelBuild']);
-})
-
-gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
-  livereload.listen();
-  gulp.watch('./source/*.js', ['browerifyBuild']);
-})
-
+/*------------使用babel直接将es转换为amd------------*/
+  gulp.task("babelBuild", () => {
+    return gulp.src("source/*.js")
+      .pipe(babel({
+        plugins: [
+          ['transform-es2015-modules-amd']
+        ],
+        presets: ['es2015']
+      }))
+      .pipe(gulp.dest("target"))
+      .pipe(livereload());
+  })
+/*------------使用babel直接将es转换为amd------------*/
 
 /*------------测试异步执行------------*/
   /*
@@ -541,7 +533,6 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 /*------------重写文件------------*/
 
 /*------------publish------------*/
-
   gulp.task('get-extern-lst', (done) => {
     return new Promise((resolve) => {
       glob(basePath + '/js/!(other)/*.js').on('end', (files) => {
@@ -553,10 +544,9 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
 
   gulp.task('clear-build', () => {
     let vp = vinylPaths();
-      return gulp.src(basePath + '/js/*/build/*')
+      return gulp.src(basePath + '/*/build/*')
       .pipe(vp)
       .on('end', () => {
-        console.log("del path is");
         vp.paths.forEach((path) => {
           console.log(path);
         })
@@ -621,10 +611,9 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
   gulp.task('processWithRollup', (done) => {
     return new Promise((resolve, reject) => {
       glob(projectDoc, (err, projectFiles)  => {    
-      // glob(basePath + '/dropdemo', (err, projectFiles)  => {
-        projectFiles.forEach((projectFile, index) => {
+        let tasks = projectFiles.map((projectFile, index) => {
           let name = projectFile.replace(reg, '');
-          rollup.rollup({
+          return rollup.rollup({
               entry: projectFile + '/src/*.js'
               ,plugins:[
                 multiEntry()
@@ -637,14 +626,12 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
                   sourceMap:true,
                   nameExports:{
                     jquery:['jQuery']
-                    ,_:['underscore']
+                    ,underscore:['_']
                   }
                 })         
               ]
               ,external:['jquery', 'underscore']
-            }).then((bundle) => {
-              // rollupAnalyzer.formatted(bundle).then(console.log).catch(console.err);
-              
+            }).then((bundle) => {          
               let result = bundle.generate({
                 format:'iife'
                 ,sourceMap:true
@@ -652,26 +639,29 @@ gulp.task("browerifyBuildWatch", ["browerifyBuild"], () => {
                 ,moduleName:name
                 ,globals: {
                   jquery: 'jQuery'
-                  ,_:'underscore'
+                  ,underscore:'_'
                 }
               })
               
               fs.writeFileSync(projectFile + '/build/' + name + '.js.map', result.map.toString());
               fs.writeFileSync(projectFile + '/build/' + name + '.js', result.code + '\n//# sourceMappingURL=./' + name + '.js.map');
-              resolve(done);
             }).catch((err) => {
               console.log(err);
             });
+        });
+
+        Promise.all(tasks).then(() => {
+          resolve(done);
+          reloadPage();
         })
       })       
     })
   })
 
   gulp.task('watch-compress', ['browser-sync', 'compressHtml', 'processWithRollup'], (done) => {
-    gulp.watch(projectDoc + '/src/*.html' , ['compressHtml']);
-    gulp.watch(projectDoc + '/src/*.js' , ['processWithRollup']).on('change', reloadPage);
-    gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup']).on('change', reloadPage);
-    gulp.watch('./sourcecode/distanceanddrag/build/distanceanddrag.css').on('change', reloadPage);
+    gulp.watch(projectDoc + '/src/*.html' , ['compressHtml']).on('change', reloadPage);
+    gulp.watch(projectDoc + '/src/*.js' , ['processWithRollup'])
+    gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup'])
   })
 /*------------publish------------*/
 

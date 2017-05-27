@@ -41,7 +41,7 @@ export function dragable(selector, option) {
 
     if (option.frame !== void 0) {
         doc = option.frame.contentDocument;
-        win = option.frame.contentwin;
+        win = option.frame.contentWindow;
         domoperation.setFrame(option.frame);
     }
 
