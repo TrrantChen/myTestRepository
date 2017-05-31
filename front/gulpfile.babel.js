@@ -43,6 +43,7 @@ import rollupCommonjs from 'rollup-plugin-commonjs'
 import rollupNodeResolve from 'rollup-plugin-node-resolve'
 import rollupAnalyzer from 'rollup-analyzer'
 import rollupTypescript from 'rollup-plugin-typescript'
+import md5 from 'md5'
 
 // solve MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase l imit
 events.EventEmitter.defaultMaxListeners = 0;
@@ -558,13 +559,27 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
     glob(projectDoc, (err, files) => {
       let taskLst = files.map((file, index) => {
         return gulp.src(file + '/src/*.html')
-            .pipe(htmlmin({ minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:true}))  
+            .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:true}))  
             .pipe(gulp.dest(file + '/build/')) 
             .pipe(browsersync.stream()) 
       });
       es.merge(taskLst).on('end', done);
     })
   })
+
+  gulp.task('replaceHtml', (done) => {
+    let md5message = md5(new Date());
+    glob(projectDoc, (err, files) => {
+      let taskLst = files.map((file, index) => {
+        let name = file.replace(reg, '')
+           ,regex = new RegExp(`<script src='./${name}.js([\\n\\r\\s\\S\\w\\W\\d\\D.]*|\\s)'></script>`, 'g');
+        return gulp.src(file + '/src/*.html')
+            .pipe(replace(regex, `<script src='./${name}.js?${md5message}'></script>`))
+            .pipe(browsersync.stream()) 
+      });
+      es.merge(taskLst).on('end', done);
+    })
+  })  
   
   gulp.task('cmopressLib', () => {
     return gulp.src(libArr, (err, files) => {
@@ -607,7 +622,6 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
     })      
   })
 
-
   gulp.task('processWithRollup', (done) => {
     return new Promise((resolve, reject) => {
       glob(projectDoc, (err, projectFiles)  => {    
@@ -645,6 +659,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
               
               fs.writeFileSync(projectFile + '/build/' + name + '.js.map', result.map.toString());
               fs.writeFileSync(projectFile + '/build/' + name + '.js', result.code + '\n//# sourceMappingURL=./' + name + '.js.map');
+
             }).catch((err) => {
               console.log(err);
             });
@@ -659,9 +674,9 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('watch-compress', ['browser-sync', 'compressHtml', 'processWithRollup'], (done) => {
-    gulp.watch(projectDoc + '/src/*.html' , ['compressHtml']).on('change', reloadPage);
-    gulp.watch(projectDoc + '/src/*.js' , ['processWithRollup'])
-    gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup'])
+    gulp.watch(projectDoc + '/src/*.html' , ['compressHtml']);
+    gulp.watch(projectDoc + '/src/*.js' , ['processWithRollup']);
+    gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup']);
   })
 /*------------publish------------*/
 
