@@ -17,5 +17,6 @@ $(function(){
     console.log(num);
   })
   console.log("test");
+  alert("test")
 })
 

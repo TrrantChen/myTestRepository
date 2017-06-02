@@ -457,37 +457,18 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
 
 /*------------重写文件------------*/
-  let isHtml = false;
-  let createTmpOption = isHtml ? {
-    fileType:'.html',
-    replaceSource:(para) => {
-      // return /<script[\n\r\s\S\w\W\d\D.]*>[\n\r\s\S\w\W\d\D.]*<\/script>/g;
-      return /'..\/lib\/build\/lib.js'/g;
-    },
-    replaceTarget:(para) => {
-      // return `\t<script src='../lib/build/lib.js'></script>\n\r\t<script src='./${para}.js'></script>`
-      return '../../lib/build/lib.js'
-    }
-  } : {
-    fileType:'.js',
-    replaceSource:(para) => {
-      return /..\/..\/lib\/jquery\/jquery-2.2.3|..\/..\/lib\/jquery\/jquery-2.2.3.js/g;
-    },
-    replaceTarget:(para) => {
-      return 'jquery';
-    }
-  }
-
   gulp.task('create-tmp', () => {
+    let md5message = md5(new Date());
     return new Promise((resolve) => {
       glob(projectDoc, (err, files) => {
         files.forEach((file, index) => {
-          let name = file.replace(reg, '');
-          let vp = vinylPaths();
-          gulp.src(file + '/src/' + name + createTmpOption.fileType)
+          let name = file.replace(reg, '')
+            ,vp = vinylPaths()
+            ,regex = new RegExp(`<script src='./${name}.js([\\n\\r\\s\\S\\w\\W\\d\\D.]*|\\s)'></script>`, 'g');
+          gulp.src(file + '/src/' + name + '.html')
             .pipe(vp)
-            .pipe(rename(name + '.tmp' + createTmpOption.fileType))
-            .pipe(replace(createTmpOption.replaceSource(), createTmpOption.replaceTarget(name)))
+            .pipe(rename(name + '.tmp.html'))
+            .pipe(replace(regex, `<script src='./${name}.js?${md5message}'></script>`))
             .pipe(gulp.dest(file + '/src/'))
             .on('end', () => {
               del(vp.paths, { force: true }).then(resolve);
@@ -498,18 +479,20 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('write-file', ['create-tmp'], () => {
-    glob(projectDoc, (err, files) => {
-      files.forEach((file, index) => {
-        let name = file.replace(reg, '');
-        let vp = vinylPaths();
-        gulp.src(file + '/src/' + name + '.tmp' + createTmpOption.fileType)
-          .pipe(vp)
-          .pipe(rename(name + createTmpOption.fileType))
-          .pipe(gulp.dest(file + '/src/'))
-          .on('end', () => {
-            del(vp.paths, { force: true });
-          })
-      })
+    return new Promise((resolve) => {
+      glob(projectDoc, (err, files) => {
+        files.forEach((file, index) => {
+          let name = file.replace(reg, '');
+          let vp = vinylPaths();
+          gulp.src(file + '/src/' + name + '.tmp.html')
+            .pipe(vp)
+            .pipe(rename(name + '.html'))
+            .pipe(gulp.dest(file + '/src/'))
+            .on('end', () => {
+              del(vp.paths, { force: true }).then(resolve);
+            })
+        })
+      })      
     })
   })
 
@@ -556,30 +539,21 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('compressHtml', (done) => {
-    glob(projectDoc, (err, files) => {
-      let taskLst = files.map((file, index) => {
-        return gulp.src(file + '/src/*.html')
-            .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:true}))  
-            .pipe(gulp.dest(file + '/build/')) 
-            .pipe(browsersync.stream()) 
-      });
-      es.merge(taskLst).on('end', done);
-    })
-  })
-
-  gulp.task('replaceHtml', (done) => {
     let md5message = md5(new Date());
-    glob(projectDoc, (err, files) => {
-      let taskLst = files.map((file, index) => {
-        let name = file.replace(reg, '')
-           ,regex = new RegExp(`<script src='./${name}.js([\\n\\r\\s\\S\\w\\W\\d\\D.]*|\\s)'></script>`, 'g');
-        return gulp.src(file + '/src/*.html')
-            .pipe(replace(regex, `<script src='./${name}.js?${md5message}'></script>`))
-            .pipe(browsersync.stream()) 
-      });
-      es.merge(taskLst).on('end', done);
-    })
-  })  
+    return new Promise((resolve, reject) => {
+      glob(projectDoc, (err, files) => {
+        let taskLst = files.map((file, index) => {
+          return gulp.src(file + '/src/*.html')
+              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:true}))  
+              .pipe(gulp.dest(file + '/build/')) 
+        });
+        es.merge(taskLst).on('end', () => {
+          reloadPage();
+          resolve(done);
+        });
+      })         
+    }) 
+  })
   
   gulp.task('cmopressLib', () => {
     return gulp.src(libArr, (err, files) => {
@@ -624,7 +598,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
   gulp.task('processWithRollup', (done) => {
     return new Promise((resolve, reject) => {
-      glob(projectDoc, (err, projectFiles)  => {    
+      glob(projectDoc, (err, projectFiles)  => {   
         let tasks = projectFiles.map((projectFile, index) => {
           let name = projectFile.replace(reg, '');
           return rollup.rollup({
@@ -664,19 +638,32 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
               console.log(err);
             });
         });
-
         Promise.all(tasks).then(() => {
           resolve(done);
-          reloadPage();
-        })
+        }).catch(reject);
       })       
     })
   })
 
-  gulp.task('watch-compress', ['browser-sync', 'compressHtml', 'processWithRollup'], (done) => {
-    gulp.watch(projectDoc + '/src/*.html' , ['compressHtml']);
-    gulp.watch(projectDoc + '/src/*.js' , ['processWithRollup']);
-    gulp.watch(basePath + '/js/!(other)/*.js' , ['processWithRollup']);
+  gulp.task('replace-hash', ['processWithRollup'], (done) => {
+    let md5message = md5(new Date());
+    glob(projectDoc, (err, files) => {
+      let tasks = files.map((file, index) => {
+          let name = file.replace(reg, '')
+          ,vp = vinylPaths()
+          ,regex = new RegExp(`<script src='./${name}.js([\\n\\r\\s\\S\\w\\W\\d\\D.]*|\\s)'></script>`, 'g');
+          return gulp.src(file + '/src/' + name + '.html')
+          .pipe(vp)
+          .pipe(replace(regex, `<script src='./${name}.js?${md5message}'></script>`))
+          .pipe(gulp.dest(file + '/src/'))          
+      });
+      es.merge(tasks).on('end', done);
+    })
+  })
+
+  gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'compressHtml'], (done) => {
+    gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
+    gulp.watch(projectDoc + '/src/*.html', ['compressHtml'])
   })
 /*------------publish------------*/
 
