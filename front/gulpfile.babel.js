@@ -1,5 +1,4 @@
 // todo 代码静态检查
-//      打上md5
 //      增量
 
 import gulp from 'gulp'
@@ -44,10 +43,13 @@ import rollupNodeResolve from 'rollup-plugin-node-resolve'
 import rollupAnalyzer from 'rollup-analyzer'
 import rollupTypescript from 'rollup-plugin-typescript'
 import md5 from 'md5'
+import pump from 'pump'
+import stream from 'stream'
 
 // solve MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase l imit
 events.EventEmitter.defaultMaxListeners = 0;
 
+let Readable = stream.Readable;
 let assign = lodash.assign;
 let buildArr = ['./source/exportfile.js', './source/importfile.js'];
 // let buildArr = ['./source/repeatedReferencesA.js', './source/repeatedReferencesB.js', './source/repeatedReferencesC.js'];
@@ -288,9 +290,10 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
     browsersync.init({
       server: {
         baseDir: "./"
-      },
-      open: false,
-      // proxy:'127.0.0.1:8080'
+      }
+      ,open: false
+      ,host:'127.0.0.1'
+      // ,proxy:'127.0.0.1:3000'
     })
   })
 
@@ -321,49 +324,34 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 /*------------stylu compile------------*/
 
 /*------------rollup------------*/
-  gulp.task('rollup-bundle', () => {
-    rollup.rollup({
-      entry: './source/simulation/serverA/serverA.js'
-
-    }).then((bundle) => {
-      bundle.write({
-        format: 'amd',
-        moduleName: 'amd',
-        dest: './target/amd.js'
-      })
-    });
-
-    rollup.rollup({
+  gulp.task('rollup-bundle', (done) => {
+    return rollup.rollup({
       entry: './source/simulation/serverA/serverA.js'
     }).then((bundle) => {
-      bundle.write({
-        dest: './target/cjs.js',
-        moduleName: 'cjs',
-        format: 'cjs'
-      })
-    });
+        let result = bundle.generate({
+          format:'iife'
+          ,moduleName:'iife'
+        });
+        let s = str2stream(result.code)
+        
+        let u = uglify();
+        u.on('pipe', function() {
+          console.log("=====================");
+          console.log(arguments);
+        })
 
-    rollup.rollup({
-      entry: './source/simulation/serverA/serverA.js'
-    }).then((bundle) => {
-      bundle.write({
-        dest: './target/iife.js',
-        moduleName: 'iife',
-        format: 'iife'
-      })
-    });
 
-    rollup.rollup({
-      entry: './source/simulation/serverA/serverA.js'
-    }).then((bundle) => {
-      bundle.write({
-        dest: './target/umd.js',
-        moduleName: 'umd',
-        format: 'umd'
-      })
-    });
 
-    return 0;
+        s.pipe(source('tst.js'))
+        .pipe(buffer())
+        // .pipe(gulp.dest('./source/'))      
+        .pipe(u)
+        .on('error', (err) => {
+          console.log(err.toString());
+        })
+        .pipe(gulp.dest('./source/'))
+
+    });
   })
 
   gulp.task('jquery-rollup', () => {
@@ -528,7 +516,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
   gulp.task('clear-build', () => {
     let vp = vinylPaths();
-      return gulp.src(basePath + '/*/build/*')
+      return gulp.src(projectDoc + '/build/*')
       .pipe(vp)
       .on('end', () => {
         vp.paths.forEach((path) => {
@@ -598,7 +586,8 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
   gulp.task('processWithRollup', (done) => {
     return new Promise((resolve, reject) => {
-      glob(projectDoc, (err, projectFiles)  => {   
+      glob(basePath + '/test', (err, projectFiles)  => {  
+      // glob(projectDoc, (err, projectFiles)  => {   
         let tasks = projectFiles.map((projectFile, index) => {
           let name = projectFile.replace(reg, '');
           return rollup.rollup({
@@ -620,19 +609,41 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
               ]
               ,external:['jquery', 'underscore']
             }).then((bundle) => {          
+              // let result = bundle.generate({
+              //   format:'iife'
+              //   ,sourceMap:true
+              //   ,sourceMapFile:projectFile + '/build/' + name + '.js'
+              //   ,moduleName:name
+              //   ,globals: {
+              //     jquery: 'jQuery'
+              //     ,underscore:'_'
+              //   }
+              // })
+              // fs.writeFileSync(projectFile + '/build/' + name + '.js.map', result.map.toString());
+              // fs.writeFileSync(projectFile + '/build/' + name + '.js', result.code + '\n//# sourceMappingURL=./' + name + '.js.map');
+           
               let result = bundle.generate({
                 format:'iife'
-                ,sourceMap:true
-                ,sourceMapFile:projectFile + '/build/' + name + '.js'
                 ,moduleName:name
+                ,sourceMap:true
                 ,globals: {
                   jquery: 'jQuery'
                   ,underscore:'_'
                 }
+              });
+              console.log(result.code);
+              str2stream(result.code)
+              .pipe(source(name + '.js'))
+              .pipe(buffer())
+              .pipe(envify(environment))
+              .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+              .pipe(sourcemaps.identityMap())
+              .pipe(uglify())
+              .on('error', (err) => {
+                console.log(err);
               })
-              
-              fs.writeFileSync(projectFile + '/build/' + name + '.js.map', result.map.toString());
-              fs.writeFileSync(projectFile + '/build/' + name + '.js', result.code + '\n//# sourceMappingURL=./' + name + '.js.map');
+              .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
+              .pipe(gulp.dest(projectFile + '/build'))  
 
             }).catch((err) => {
               console.log(err);
@@ -680,6 +691,29 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 /*------------test4eventStream------------*/
 
+/*------------stream and buffer------------*/
+  gulp.task('nodejsstream2vstream', (done) => {
+    return fs.createReadStream('./source/underscore.js')
+          .pipe(source('underscore_test.js'))
+          .pipe(buffer())
+          .pipe(uglify())
+          .on('error', (err) => {
+            console.log(err.toString());
+          })
+          .pipe(gulp.dest('./source/'))
+ 
+    // pump(
+    //   fs.createReadStream('./source/underscore.js.js')
+    //   ,source()
+    //   ,buffer()
+    //   ,uglify()
+    //   ,function(err) {
+    //     console.log("=================================")
+    //     console.log(err);
+    //   })
+  })
+/*------------stream and buffer------------*/
+
 /*------------rollup typescript------------*/
   gulp.task('rollup-typescript', (done) => {
     return new Promise((resolve, reject) => {
@@ -702,9 +736,20 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 /*------------rollup typescript------------*/
 
-function escapeStringRegexp(str) {
-  let regex = /[|\\{}()[\]^$+*?.]/g
-  return str.replace(regex, '\\$&');
-}
+/*------------tool fn------------*/
+  function escapeStringRegexp(str) {
+    let regex = /[|\\{}()[\]^$+*?.]/g
+    return str.replace(regex, '\\$&');
+  }
+
+  function str2stream(str) {
+      let s = new Readable();
+      s._read = function noop() {};
+      s.push(str);
+      s.push(null); 
+      return s;
+  }
+/*------------tool fn------------*/
+
 
 

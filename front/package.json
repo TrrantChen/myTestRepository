@@ -51,6 +51,7 @@
     "jshint": "^2.9.4",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
+    "pump": "^1.0.2",
     "rollup": "^0.41.6",
     "rollup-analyzer": "^1.0.2",
     "rollup-plugin-babel": "^2.7.1",

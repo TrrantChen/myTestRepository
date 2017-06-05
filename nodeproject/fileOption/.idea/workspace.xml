@@ -107,7 +107,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -122,6 +121,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -412,11 +412,12 @@
       <workItem from="1496278713081" duration="596000" />
       <workItem from="1496283206040" duration="20000" />
       <workItem from="1496364992257" duration="599000" />
+      <workItem from="1496627902153" duration="448000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="183880000" />
+    <option name="totallyTimeSpent" value="184328000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
