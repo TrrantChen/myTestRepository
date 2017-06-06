@@ -1,6 +1,5 @@
 // todo 代码静态检查
 //      增量
-
 import gulp from 'gulp'
 import babel from 'gulp-babel'
 import browserify from 'browserify'
@@ -36,6 +35,7 @@ import replace from 'gulp-replace' // 模板替换
 import sequence from 'gulp-sequence' // 串行，并行，任务的顺序，执行。
 import events from 'events'
 import rollupbabel from 'rollup-plugin-babel'
+// import babel from 'rollup-plugin-babel'
 import multiEntry from 'rollup-plugin-multi-entry'// rollup 多入口
 import path from 'path'
 import rollupCommonjs from 'rollup-plugin-commonjs'
@@ -327,6 +327,9 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   gulp.task('rollup-bundle', (done) => {
     return rollup.rollup({
       entry: './source/simulation/serverA/serverA.js'
+      // ,plugins:[
+      //   rollupbabel()      
+      // ]      
     }).then((bundle) => {
         let result = bundle.generate({
           format:'iife'
@@ -334,23 +337,13 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
         });
         let s = str2stream(result.code)
         
-        let u = uglify();
-        u.on('pipe', function() {
-          console.log("=====================");
-          console.log(arguments);
-        })
-
-
-
         s.pipe(source('tst.js'))
-        .pipe(buffer())
-        // .pipe(gulp.dest('./source/'))      
-        .pipe(u)
+        .pipe(buffer())       
+        .pipe(uglify())
         .on('error', (err) => {
           console.log(err.toString());
         })
-        .pipe(gulp.dest('./source/'))
-
+        .pipe(gulp.dest('./source/'));
     });
   })
 
@@ -605,7 +598,8 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                     jquery:['jQuery']
                     ,underscore:['_']
                   }
-                })         
+                }) 
+                // ,rollupbabel()       
               ]
               ,external:['jquery', 'underscore']
             }).then((bundle) => {          
@@ -631,7 +625,6 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   ,underscore:'_'
                 }
               });
-              console.log(result.code);
               str2stream(result.code)
               .pipe(source(name + '.js'))
               .pipe(buffer())
