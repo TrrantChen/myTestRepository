@@ -35,13 +35,14 @@ import replace from 'gulp-replace' // 模板替换
 import sequence from 'gulp-sequence' // 串行，并行，任务的顺序，执行。
 import events from 'events'
 import rollupbabel from 'rollup-plugin-babel'
-// import babel from 'rollup-plugin-babel'
 import multiEntry from 'rollup-plugin-multi-entry'// rollup 多入口
 import path from 'path'
 import rollupCommonjs from 'rollup-plugin-commonjs'
 import rollupNodeResolve from 'rollup-plugin-node-resolve'
 import rollupAnalyzer from 'rollup-analyzer'
 import rollupTypescript from 'rollup-plugin-typescript'
+import rollupUglify from 'rollup-plugin-uglify'
+import { minify } from 'uglify-es';
 import md5 from 'md5'
 import pump from 'pump'
 import stream from 'stream'
@@ -327,19 +328,28 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   gulp.task('rollup-bundle', (done) => {
     return rollup.rollup({
       entry: './source/simulation/serverA/serverA.js'
-      // ,plugins:[
-      //   rollupbabel()      
-      // ]      
+      ,plugins:[
+        rollupbabel({
+          presets: [
+            [
+              "es2015", {
+                "modules": false
+              }
+            ]
+          ],
+          babelrc: false,
+          exclude: 'node_modules/**'
+        })      
+      ]      
     }).then((bundle) => {
         let result = bundle.generate({
           format:'iife'
           ,moduleName:'iife'
         });
         let s = str2stream(result.code)
-        
         s.pipe(source('tst.js'))
         .pipe(buffer())       
-        .pipe(uglify())
+        // .pipe(uglify())
         .on('error', (err) => {
           console.log(err.toString());
         })
@@ -599,46 +609,66 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                     ,underscore:['_']
                   }
                 }) 
-                // ,rollupbabel()       
+                ,rollupbabel({
+                  presets: [
+                    [
+                      "es2015", {
+                        "modules": false
+                      }
+                    ]
+                  ],
+                  babelrc: false,
+                  exclude: 'node_modules/**'
+                })  
+                ,rollupUglify({}, minify)     
               ]
               ,external:['jquery', 'underscore']
-            }).then((bundle) => {          
-              // let result = bundle.generate({
-              //   format:'iife'
-              //   ,sourceMap:true
-              //   ,sourceMapFile:projectFile + '/build/' + name + '.js'
-              //   ,moduleName:name
-              //   ,globals: {
-              //     jquery: 'jQuery'
-              //     ,underscore:'_'
-              //   }
-              // })
-              // fs.writeFileSync(projectFile + '/build/' + name + '.js.map', result.map.toString());
-              // fs.writeFileSync(projectFile + '/build/' + name + '.js', result.code + '\n//# sourceMappingURL=./' + name + '.js.map');
-           
-              let result = bundle.generate({
+            }).then((bundle) => {  
+
+              return bundle.generate({
                 format:'iife'
-                ,moduleName:name
                 ,sourceMap:true
+                ,sourceMapFile:projectFile + '/build/' + name + '.js'
+                ,moduleName:name
                 ,globals: {
                   jquery: 'jQuery'
                   ,underscore:'_'
                 }
               });
-              str2stream(result.code)
-              .pipe(source(name + '.js'))
-              .pipe(buffer())
-              .pipe(envify(environment))
-              .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
-              .pipe(sourcemaps.identityMap())
-              .pipe(uglify())
-              .on('error', (err) => {
-                console.log(err);
-              })
-              .pipe(sourcemaps.write('./maps'))         // map居然是以dest的输出目录作为根目录
-              .pipe(gulp.dest(projectFile + '/build'))  
 
-            }).catch((err) => {
+              /*------------map没有找到解决方案------------*/
+                // return bundle.generate({
+                //   format:'iife'
+                //   ,moduleName:name
+                //   ,sourceMap:true
+                //   ,globals: {
+                //     jquery: 'jQuery'
+                //     ,underscore:'_'
+                //   }
+                // });            
+              /*------------map没有找到解决方案------------*/
+
+            }).then((gen) => {
+
+              /*------------map没有找到解决方案------------*/
+                // str2stream(gen.code)
+                // .pipe(source(name + '.js'))
+                // .pipe(buffer())
+                // .pipe(envify(environment))
+                // .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
+                // .pipe(sourcemaps.identityMap())
+                // .pipe(uglify())
+                // .on('error', (err) => {
+                //   console.log(err);
+                // })
+                // .pipe(sourcemaps.write('./'))         // map居然是以dest的输出目录作为根目录
+                // .pipe(gulp.dest(projectFile + '/build'))                
+              /*------------map没有找到解决方案------------*/
+
+              fs.writeFileSync(projectFile + '/build/' + name + '.js.map', gen.map.toString())
+              fs.writeFileSync(projectFile + '/build/' + name + '.js', gen.code + '\n//# sourceMappingURL=./' + name + '.js.map');              
+            })
+            .catch((err) => {
               console.log(err);
             });
         });

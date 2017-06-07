@@ -2,7 +2,6 @@
 import * as util from '../../js/common/util'; 
 
 let originEventListener = EventTarget.prototype.addEventListener
-
 EventTarget.prototype.addEventListener = function() {
   let args = [].slice.call(arguments);
   if (this.id === 'firstChild') {
@@ -25,7 +24,6 @@ EventTarget.prototype.addEventListener = function() {
   }
   originEventListener.apply(this, args);    
 }
-
 
 // $(function() {
   // let firstContainer = document.querySelector('#firstContainer')
