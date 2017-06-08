@@ -99,6 +99,7 @@ function getWritableInstanceProperties(obj) {
 
 
 
+
 Function.prototype.before = function (fn) {
     var args = [],
         length = arguments.length,

@@ -589,8 +589,8 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
   gulp.task('processWithRollup', (done) => {
     return new Promise((resolve, reject) => {
-      glob(basePath + '/test', (err, projectFiles)  => {  
-      // glob(projectDoc, (err, projectFiles)  => {   
+      // glob(basePath + '/test', (err, projectFiles)  => {  
+      glob(projectDoc, (err, projectFiles)  => {   
         let tasks = projectFiles.map((projectFile, index) => {
           let name = projectFile.replace(reg, '');
           return rollup.rollup({
@@ -696,6 +696,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'compressHtml'], (done) => {
+    gulp.watch(basePath + '/js/(common|module)/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.html', ['compressHtml'])
   })

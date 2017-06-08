@@ -286,3 +286,12 @@ export function str2dom(str) {　　
   objE.innerHTML = str;　　
   return objE.children[0];
 }
+
+export function getDomCount(selector, isOnlyElement) {
+    let target = document.querySelector(selector);
+    if (target === void 0 || target === null) {
+        return 0;
+    } else {
+        let childrenLst = target.children
+    }
+}
