@@ -288,10 +288,12 @@ export function str2dom(str) {　　
 }
 
 export function getDomCount(selector, isOnlyElement) {
+    isOnlyElement = isOnlyElement || true;    
     let target = document.querySelector(selector);
     if (target === void 0 || target === null) {
         return 0;
     } else {
-        let childrenLst = target.children
+        let domLst = isOnlyElement ? target.children : target.childNodes;
+        
     }
 }
