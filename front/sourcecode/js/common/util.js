@@ -393,6 +393,18 @@ export function getInt(num) {
   return isNaN(result) ? 0 : result;
 }
 
+/*
+  用于过滤正则表达式特殊符号的
+  例 var a = "aaa..";
+  想把.号过滤掉，需要一个特殊的表达式
+  var reg = "."
+  如果使用
+  a.replace(new RegExp(reg), "")
+  结果为"",因为.表示把所有的都过滤掉
+  所以需要使用
+  escapeStringRegexp(reg)将"."转化为"\."
+  才表示需要把.给过滤掉。
+ */
 export function escapeStringRegexp(str) {
   let regex = /[|\\{}()[\]^$+*?.]/g
   return str.replace(regex, '\\$&');
@@ -435,6 +447,18 @@ export function removeElemDefaultEvent(id,addFn) {
     originEventListener.apply(this, args);    
   }
 }
+
+/*
+  将string转换为可以pipe的stream
+ */
+export function str2stream(str) {
+    let s = new Readable();
+    s._read = function noop() {};
+    s.push(str);
+    s.push(null); 
+    return s;
+}
+
 
 Function.prototype.before = function(fn) {
   let args = [],
@@ -493,3 +517,5 @@ Date.prototype.format = function(str) {
             .replace("ss", second)
             .replace("ffff", milliseconds)
 }
+
+

@@ -287,13 +287,22 @@ export function str2dom(str) {　　
   return objE.children[0];
 }
 
-export function getDomCount(selector, isOnlyElement) {
-    isOnlyElement = isOnlyElement || true;    
-    let target = document.querySelector(selector);
-    if (target === void 0 || target === null) {
+export function getDomCount(dom, isOnlyElement) {
+    if (isOnlyElement === void 0) {
+        isOnlyElement = true;
+    };
+
+    if (dom === void 0 || dom === null) {
         return 0;
     } else {
-        let domLst = isOnlyElement ? target.children : target.childNodes;
-        
+        let domLst = isOnlyElement ? dom.children : dom.childNodes
+            ,domLstLength = domLst.length
+            ,result = 0;
+
+        for (var i = 0; i < domLstLength; i++) {
+            result = result + 1 + getDomCount(domLst[i], isOnlyElement);
+        }
+
+        return result;
     }
 }

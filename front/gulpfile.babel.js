@@ -46,6 +46,7 @@ import { minify } from 'uglify-es';
 import md5 from 'md5'
 import pump from 'pump'
 import stream from 'stream'
+import * as util from './sourcecode/js/common/util.js'
 
 // solve MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase l imit
 events.EventEmitter.defaultMaxListeners = 0;
@@ -70,7 +71,7 @@ let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js'
              ,basePath + '/lib/globalTest.js'
             ];
 let externalArr = libArr;
-let reg = new RegExp(escapeStringRegexp(basePath + "/"), 'g');
+let reg = new RegExp(util.escapeStringRegexp(basePath + "/"), 'g');
 let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 
 /*------------普通的使用browerfy的例子------------*/
@@ -346,7 +347,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
           format:'iife'
           ,moduleName:'iife'
         });
-        let s = str2stream(result.code)
+        let s = util.str2stream(result.code)
         s.pipe(source('tst.js'))
         .pipe(buffer())       
         // .pipe(uglify())
@@ -535,7 +536,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
       glob(projectDoc, (err, files) => {
         let taskLst = files.map((file, index) => {
           return gulp.src(file + '/src/*.html')
-              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:true}))  
+              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:false}))  
               .pipe(gulp.dest(file + '/build/')) 
         });
         es.merge(taskLst).on('end', () => {
@@ -696,7 +697,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'compressHtml'], (done) => {
-    gulp.watch(basePath + '/js/(common|module)/*.js', ['replace-hash']);
+    gulp.watch(basePath + '/js/common/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.html', ['compressHtml'])
   })
@@ -760,20 +761,6 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 /*------------rollup typescript------------*/
 
-/*------------tool fn------------*/
-  function escapeStringRegexp(str) {
-    let regex = /[|\\{}()[\]^$+*?.]/g
-    return str.replace(regex, '\\$&');
-  }
-
-  function str2stream(str) {
-      let s = new Readable();
-      s._read = function noop() {};
-      s.push(str);
-      s.push(null); 
-      return s;
-  }
-/*------------tool fn------------*/
 
 
 

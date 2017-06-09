@@ -1,10 +1,15 @@
 import $ from 'jquery';
 import * as util from '../../js/common/util'; 
+import { getDomCount } from '../../js/common/domoperation';
 
 $(() => {
   let container = document.querySelector(".container");
-  console.log(`container children length ${container.children.length}`);
-  console.log(`container childNodes length ${container.childNodes.length}`)
+  console.log(getDomCount(container, false))
+  // let length = container.childNodes.length;
+  // for (var i = 0; i < length; i++) {
+  //   console.log("nodeName " + container.childNodes[i].nodeName + " nodeType " + container.childNodes[i].nodeType)
+  // }
+  
 })
 
 // function Test() {
