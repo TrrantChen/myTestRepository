@@ -2,14 +2,26 @@ import $ from 'jquery';
 import * as util from '../../js/common/util'; 
 import { getDomCount } from '../../js/common/domoperation';
 
+
+Object.defineProperty(Object.prototype, 'self', {
+  get() {
+    return this;
+  }
+})
+
 $(() => {
-  let container = document.querySelector(".container");
-  console.log(getDomCount(container, false))
-  // let length = container.childNodes.length;
-  // for (var i = 0; i < length; i++) {
-  //   console.log("nodeName " + container.childNodes[i].nodeName + " nodeType " + container.childNodes[i].nodeType)
-  // }
-  
+  let foo = function() {
+    let obj = {
+      a:1
+      ,b:2
+    };
+    return function(key) {
+      return obj[key];
+    }
+  }()
+
+  let a = foo("self");
+  console.log(a);
 })
 
 // function Test() {

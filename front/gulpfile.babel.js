@@ -60,6 +60,8 @@ let environment = {
   NODE_ENV: 'development'
 };
 
+process.env.NODE_ENV = 'development';
+
 
 let browsersync = browserSync.create();
 let reloadPage = browsersync.reload;
@@ -621,7 +623,15 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   babelrc: false,
                   exclude: 'node_modules/**'
                 })  
-                ,rollupUglify({}, minify)     
+                ,
+
+                function(){
+                  if (process.env.NODE_ENV === 'production') {
+                    rollupUglify({}, minify);     
+                  } else {
+                    return 1;
+                  }
+                }()    
               ]
               ,external:['jquery', 'underscore']
             }).then((bundle) => {  
@@ -681,19 +691,24 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('replace-hash', ['processWithRollup'], (done) => {
-    let md5message = md5(new Date());
-    glob(projectDoc, (err, files) => {
-      let tasks = files.map((file, index) => {
-          let name = file.replace(reg, '')
-          ,vp = vinylPaths()
-          ,regex = new RegExp(`<script src='./${name}.js([\\n\\r\\s\\S\\w\\W\\d\\D.]*|\\s)'></script>`, 'g');
-          return gulp.src(file + '/src/' + name + '.html')
-          .pipe(vp)
-          .pipe(replace(regex, `<script src='./${name}.js?${md5message}'></script>`))
-          .pipe(gulp.dest(file + '/src/'))          
-      });
-      es.merge(tasks).on('end', done);
-    })
+    if (process.env.NODE_ENV === 'production') {
+      let md5message = md5(new Date());
+      glob(projectDoc, (err, files) => {
+        let tasks = files.map((file, index) => {
+            let name = file.replace(reg, '')
+            ,vp = vinylPaths()
+            ,regex = new RegExp(`<script src='./${name}.js([\\n\\r\\s\\S\\w\\W\\d\\D.]*|\\s)'></script>`, 'g');
+            return gulp.src(file + '/src/' + name + '.html')
+            .pipe(vp)
+            .pipe(replace(regex, `<script src='./${name}.js?${md5message}'></script>`))
+            .pipe(gulp.dest(file + '/src/'))          
+        });
+        es.merge(tasks).on('end', done);
+      })
+    } else {
+      reloadPage();
+      done();
+    }
   })
 
   gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'compressHtml'], (done) => {

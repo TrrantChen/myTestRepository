@@ -250,7 +250,7 @@ export function promiseAop(func) {
 }
 
 /*
-    返回所有实例属性，不管是可枚举的还是不可枚举
+ 返回所有实例属性，不管是可枚举的还是不可枚举
  */
 export function getAllInstanceProperties(obj) {
   if (obj === void 0) {
@@ -261,7 +261,7 @@ export function getAllInstanceProperties(obj) {
 }
 
 /*
-    返回所有可改写的属性
+  返回所有可改写的属性
  */
 export function getWritableInstanceProperties(obj) {
   if (obj === void 0) {
@@ -275,7 +275,7 @@ export function getWritableInstanceProperties(obj) {
 }
 
 /*
-    获取所有可枚举属性
+  获取所有可枚举属性
  */
 export function getAllEnumerableProperties(obj) {
   if (obj === void 0) {
@@ -286,7 +286,7 @@ export function getAllEnumerableProperties(obj) {
 }
 
 /*
-    获取所有不可枚举属性
+  获取所有不可枚举属性
  */
 export function getAllUnEnumerableProperties(obj) {
   if (obj === void 0) {
@@ -299,7 +299,7 @@ export function getAllUnEnumerableProperties(obj) {
 }
 
 /*
-    返回对象原型链上属性
+  返回对象原型链上属性
  */
 export function getAllPrototypeProperties(obj) {
   if (obj) {
