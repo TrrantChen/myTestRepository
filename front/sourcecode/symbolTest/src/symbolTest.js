@@ -10,7 +10,7 @@ import * as util from '../../js/common/util';
 import './module';
 
 $(() => {
-  test4SymbolIterator();
+  userDefinedIterables()
 })
 
 /*
@@ -53,24 +53,28 @@ function checkSymbolProperty() {
   console.log(Object.getOwnPropertySymbols(Object.prototype));
 }
 
-function test4SymbolIterator() {
-  function Test() {
-    this.name = "test";
-    this.age = 30;
-    this.num = 1;
-    let a = 2;
-    let b = 3;
+/*
+  Symbol.iterator 会产生一个迭代器, 本例的做法是直接将array转换为iterator
+ */
+function test4SymbolIterator() {  
+  let arr = [1, 2, 3, 4];
+  let bArr = arr[Symbol.iterator]()
+  for (var num of bArr) {
+    console.log(num);
   }
-
-  Test.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator]
-
-  let test = new Test();
-
-  for(var a of test) {
-    console.log(a);
-  }
-
-  
-
-
 }
+
+function userDefinedIterables() {
+  let myIteratable = {};
+
+  var gen = function* () {
+    yield 1;
+    yield 2;
+    yield 3;
+  }()
+
+  for (var num of gen) {
+    console.log(num)
+  }
+}
+
