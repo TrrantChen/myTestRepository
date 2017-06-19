@@ -1,28 +1,113 @@
 import $ from 'jquery';
 import * as util from '../../js/common/util'; 
-import { getDomCount } from '../../js/common/domoperation';
-
-
-Object.defineProperty(Object.prototype, 'self', {
-  get() {
-    return this;
-  }
-})
+import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 
 $(() => {
-  let foo = function() {
-    let obj = {
-      a:1
-      ,b:2
-    };
-    return function(key) {
-      return obj[key];
-    }
-  }()
+  let container = document.querySelector(".container");
+  let currentDiv = document.querySelector("#currentDiv");
+  action4EverySonDom(container, (dom)=> {
+    dom.addEventListener("mouseenter", (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      let targetDom = evt.target
+      ,boundingClientRect = targetDom.getBoundingClientRect();
+      console.log(targetDom);
+      console.log(`width:${boundingClientRect.width} height:${boundingClientRect.height} left:${boundingClientRect.left + window.scrollX} top:${boundingClientRect.top + window.scrollY}`)
+      // currentDiv.style.width = boundingClientRect.width + "px";
+      // currentDiv.style.height = boundingClientRect.height + "px";
+      // currentDiv.style.transform = `translate(${boundingClientRect.left}px, ${boundingClientRect.top}px)`
+    });
+  })
+  // let test11 = document.querySelector(".test11");
+  // test11.addEventListener("mouseenter", (evt) => {
+  //   evt.preventDefault();
+  //   console.log("this is target");
+  //   console.log(evt.target);
+  //   console.log("this is currentTarget")
+  //   console.log(evt.currentTarget);
+  // }, false);
 
-  let a = foo("self");
-  console.log(a);
+  // let test111 = document.querySelector(".test111");
+  // test111.addEventListener("mouseenter", (evt) => {
+  //   evt.preventDefault();
+  //   console.log("this is target");
+  //   console.log(evt.target);
+  //   console.log("this is currentTarget")
+  //   console.log(evt.currentTarget);
+  // }, false);
+  // 
+  // document.addEventListener("mouseenter", (evt) => {
+  //   console.log("================")
+  //   console.log(evt.currentTarget);
+  //   console.log(evt.target);
+  // })
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // function Test() {
 //     this.print = () => {
