@@ -12,6 +12,7 @@ import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 $(() => {
   mouseEventThroughDiv();
   selfEventTest();
+  customEventTest();
 })
 
 function mouseEventThroughDiv() {
@@ -58,6 +59,18 @@ function selfEventTest() {
     console.log(evt.target)
     console.log("this is button2")
   })
+}
+
+function customEventTest() {
+  let customEventBtn = document.querySelector("#customEventBtn")
+    ,event = new CustomEvent("cat", {'detail':"this is test message"});
+
+  
+  customEventBtn.addEventListener("cat", (evt) => {
+    console.log(evt.detail);
+  });
+
+  customEventBtn.dispatchEvent(event);
 }
 
 

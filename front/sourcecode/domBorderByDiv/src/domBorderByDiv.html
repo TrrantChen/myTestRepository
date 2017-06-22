@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+    }
+    
+    body,
+    input,
+    select,
+    button,
+    textarea {
+        font-size: 14px;
+        font-family: 'Microsoft YaHei', Tahoma, Geneva, sans-serif;
+    }
+    
+    button,
+    input {
+        border-width: 0px;
+        outline: none;
+    }
+    
+    body,
+    html {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .container {
+        width: 100%;
+        height: 100%;
+        background: #EFF3CD;
+        overflow: hidden
+    }
+    
+    :root {
+        --main-bg-color: green;
+    }
+    
+    .one {
+        width: 100px;
+        height: 100px;
+        background-color: var(--main-bg-color);
+    }
+    
+    .two {
+        width: 100px;
+        height: 100px;
+        background-color: var(--main-bg-color);
+    }
+    
+    .readonly-input {
+        -webkit-appearance: textfield;
+        background-color: white;
+        -webkit-rtl-ordering: logical;
+        user-select: text;
+        cursor: auto;
+        padding: 1px;
+        border-width: 2px;
+        border-style: inset;
+        border-color: initial;
+        border-image: initial;
+        text-rendering: auto;
+        color: initial;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        display: inline-block;
+        text-align: start;
+        margin: 0em 0em 0em 0em;
+        font: 11px BlinkMacSystemFont;
+        -webkit-writing-mode: horizontal-tb;
+        width: 100px;
+        height: 30px;
+        vertical-align: middle;
+    }
+    
+    .readonly-input:focus {
+        outline-offset: -2px;
+        outline: -webkit-focus-ring-color auto 5px;
+    }
+    
+    .btnStyle {
+        background-color: #CDECCC;
+        padding: 5px;
+        border: solid 2px #321D2E;
+    }
+    
+    .btnStyle:hover {
+        background-color: #FAD089;
+        border: solid 2px #FF9C5B;
+        cursor: pointer;
+    }
+    
+    .inputStyle {
+        width: 200px;
+        height: 35px;
+        line-height: 35px;
+    }
+    
+    .subContainer {
+        margin: 5px 5px 0px 5px;
+    }
+
+    .testContainerStyle {
+        width:200px;
+        height:400px;
+        border: solid 1px black;
+        margin-left:10px;
+        font-size: 0;
+        display: flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        align-content:center;
+    }
+
+    .sonStyle {
+        width:50px;
+        height:50px;
+        background: #FF9C97;
+        display: inline-block;
+        margin:5px 5px;       
+    }
+
+    .testClick {
+        width:100px;
+        height:100px;
+        background: #FFB969;
+    }
+
+    .test11 {
+        width:300px;
+        height:300px;
+        background: #EAF27E;
+    }
+
+    .test111 {
+        width:20px;
+        height:20px;
+        background: #DED1B6;
+    }
+
+    .test112 {
+        width:40px;
+        height:40px;
+        background:#DED1B6;
+    }
+
+    .test113 {
+        width:50px;
+        height:50px;
+        background: #42282C;
+    }
+
+    .test12 {
+        width:200px;
+        height:200px;
+        background: #EAA353;
+    }
+
+    .test121 {
+        width:100px;
+        height:100px;
+        background:#FF1F4C; 
+        margin-left:200px;
+    }
+
+    .test122 {
+        width:100px;
+        height:100px;
+        background: #A85163
+    }
+
+    .test123 {
+        width:100px;
+        height:100px;
+        background: #EAA353;
+    }
+
+    .currentDivStyle {
+        border:solid 2px red;
+        position:absolute;
+        left:0px;
+        top:0px;  
+        background:transparent;
+        pointer-events: none;     
+    }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="test11">
+            <div class="test111">test</div>
+            <!--this is hehe-->
+            <div class="test112"></div>
+            <div class="test113"></div>
+        </div>
+        <div class="test12">
+            <div class="test121"></div>
+            <div class="test122"></div>
+            <div class="test123"></div>
+        </div>
+        <!--this is hehe-->
+        hahaha
+        <div id="testDiv" class="testClick"></div>
+    </div>
+    <div id="currentDiv" class="currentDivStyle">
+        
+    </div>
+    <script src=../../lib/build/lib.js></script>
+  <script src='./domBorderByDiv.js'></script>
+</body>

@@ -3,44 +3,24 @@ import * as util from '../../js/common/util';
 import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 
 $(() => {
-  let container = document.querySelector(".container");
-  let currentDiv = document.querySelector("#currentDiv");
-  action4EverySonDom(container, (dom)=> {
-    dom.addEventListener("mouseenter", (evt) => {
-      evt.preventDefault();
-      evt.stopPropagation();
-      let targetDom = evt.target
-      ,boundingClientRect = targetDom.getBoundingClientRect();
-      console.log(targetDom);
-      console.log(`width:${boundingClientRect.width} height:${boundingClientRect.height} left:${boundingClientRect.left + window.scrollX} top:${boundingClientRect.top + window.scrollY}`)
-      // currentDiv.style.width = boundingClientRect.width + "px";
-      // currentDiv.style.height = boundingClientRect.height + "px";
-      // currentDiv.style.transform = `translate(${boundingClientRect.left}px, ${boundingClientRect.top}px)`
-    });
-  })
-  // let test11 = document.querySelector(".test11");
-  // test11.addEventListener("mouseenter", (evt) => {
-  //   evt.preventDefault();
-  //   console.log("this is target");
-  //   console.log(evt.target);
-  //   console.log("this is currentTarget")
-  //   console.log(evt.currentTarget);
-  // }, false);
-
-  // let test111 = document.querySelector(".test111");
-  // test111.addEventListener("mouseenter", (evt) => {
-  //   evt.preventDefault();
-  //   console.log("this is target");
-  //   console.log(evt.target);
-  //   console.log("this is currentTarget")
-  //   console.log(evt.currentTarget);
-  // }, false);
-  // 
-  // document.addEventListener("mouseenter", (evt) => {
-  //   console.log("================")
-  //   console.log(evt.currentTarget);
-  //   console.log(evt.target);
-  // })
+  let div = document.querySelector("#div")
+    ,label = document.querySelector("#label")
+    ,input = document.querySelector("#input")
+    ,button = document.querySelector("#button")
+    ,container = document.querySelector(".container")
+    ,arr = [div, label, input, button]
+    ,length = arr.length;
+  for(var i = 0; i < length; i++) {
+    console.log("=====================================");
+    console.log(arr[i].valueOf());
+    console.log("textContent " + arr[i].textContent);
+    console.log("innerText " + arr[i].innerText);
+    console.log("value " + arr[i].value); 
+  }
+  console.log("-----------------------------------")
+  let jContainer = $(container);
+  console.log("val " + jContainer.val());
+  console.log("text " + jContainer.text());
 })
 
 

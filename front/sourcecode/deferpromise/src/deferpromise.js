@@ -209,10 +209,18 @@ function demo0() {
 function demo7() {
     console.log("before")
     var promise = new Promise(function(resolve) {
-        resolve();
+        setTimeout(function() {
+            resolve();
+            console.log("ttt");
+        }, 200)
+        
+        console.log("test")
     })
     promise.then(function() {
         console.log("then");
+        // return "test"
+    }).then(function(value) {
+        console.log("this is " + value);
     })
 
     console.log("after");
@@ -383,7 +391,7 @@ function onloadAndPromiseAll() {
 }
 
 (function aopTest() {
-    common.promiseAop(function(){
+    util.promiseAop(function(){
         console.log("not test");
     });
     var timePromise = new Promise(function(resolve, reject){
@@ -401,8 +409,10 @@ function onloadAndPromiseAll() {
         console.log("this is time");
     })
 
-    console.log(common.getAllUnEnumerableProperties(Math));
+    console.log(util.getAllUnEnumerableProperties(Math));
 })()
+
+demo7();
 
 
 
