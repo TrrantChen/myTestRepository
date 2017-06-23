@@ -3,24 +3,16 @@ import * as util from '../../js/common/util';
 import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 
 $(() => {
-  let div = document.querySelector("#div")
-    ,label = document.querySelector("#label")
-    ,input = document.querySelector("#input")
-    ,button = document.querySelector("#button")
-    ,container = document.querySelector(".container")
-    ,arr = [div, label, input, button]
-    ,length = arr.length;
-  for(var i = 0; i < length; i++) {
-    console.log("=====================================");
-    console.log(arr[i].valueOf());
-    console.log("textContent " + arr[i].textContent);
-    console.log("innerText " + arr[i].innerText);
-    console.log("value " + arr[i].value); 
-  }
-  console.log("-----------------------------------")
-  let jContainer = $(container);
-  console.log("val " + jContainer.val());
-  console.log("text " + jContainer.text());
+  let container = document.querySelector(".container");
+  let label = document.querySelector("#label");
+
+  label.addEventListener("click", () => {
+   alert("label"); 
+  })
+
+  let labelClone = label.cloneNode(true);
+  container.appendChild(labelClone);
+  label.innerText = "fff"
 })
 
 

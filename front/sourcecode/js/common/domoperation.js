@@ -1,4 +1,5 @@
 import * as util from './util';
+import { isClear } from './symbolManage';
 
 let win = window,
   doc = document;
@@ -316,5 +317,33 @@ export function action4EverySonDom(dom, fn, paraArr) {
     for (var i = 0; i < domLstLength; i++) {
       action4EverySonDom(domLst[i], fn, paraArr);
     }
+  }
+}
+
+/*
+  去除节点的自定义事件
+ */
+export function removeElemDefaultEvent(id,addFn) {
+  let originEventListener = EventTarget.prototype.addEventListener
+  EventTarget.prototype.addEventListener = function() {
+    let args = [].slice.call(arguments);
+    if (this.id === id) {
+      if (args.length >= 2) {
+        let fn = args[1];
+        if (!this.addEventListener[isClear]) {
+          fn = function(){};
+        } else {
+          let oldFn = fn;
+          fn = function() {
+            if (addFn !== void 0) {
+              addFn.apply(this, arguments);
+            }
+            oldFn.apply(this, arguments);
+          }        
+        }
+        args[1] = fn;
+      }
+    }
+    originEventListener.apply(this, args);    
   }
 }
