@@ -1,18 +1,9 @@
 import $ from 'jquery';
 import * as util from '../../js/common/util'; 
 import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
-
+let container = document.querySelector(".container");
 $(() => {
-  let container = document.querySelector(".container");
-  let label = document.querySelector("#label");
-
-  label.addEventListener("click", () => {
-   alert("label"); 
-  })
-
-  let labelClone = label.cloneNode(true);
-  container.appendChild(labelClone);
-  label.innerText = "fff"
+  
 })
 
 

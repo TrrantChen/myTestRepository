@@ -9,27 +9,58 @@ import * as util from '../../js/common/util';
 import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 
 $(() => {
-  let container = document.querySelector(".container");
-  let currentDiv = document.querySelector("#currentDiv");
-  action4EverySonDom(container, (dom)=> {
-    dom.addEventListener("mouseover", (evt) => {
-      currentDiv.style.borderColor = "red";
-      evt.preventDefault();
-      evt.stopPropagation();
-      let targetDom = evt.target
-      ,boundingClientRect = targetDom.getBoundingClientRect();
-      console.log(targetDom);
-      console.log(`width:${boundingClientRect.width} height:${boundingClientRect.height} left:${boundingClientRect.left + window.scrollX} top:${boundingClientRect.top + window.scrollY}`)
-      currentDiv.style.width = boundingClientRect.width + "px";
-      currentDiv.style.height = boundingClientRect.height + "px";
-      currentDiv.style.transform = `translate(${boundingClientRect.left}px, ${boundingClientRect.top}px)`
-    });
+  let container = document.querySelector(".container")
+  ,mouseoverDiv = document.querySelector("#mouseoverDiv")
+  ,clickDiv = document.querySelector("#clickDiv")
+  ,moduleDiv = document.querySelector("#moduleDiv")
+  ,closeDiv = document.querySelector("#closeDiv")
+  ,containerChildren = container.children
+  ,containerChildrenLength = container.children.length
+  ,test11 = document.querySelector(".test11");
 
-    dom.addEventListener("click", (evt) => {
-      evt.stopPropagation();
-      currentDiv.style.borderColor = "green";
+  for (var i = 0; i < containerChildrenLength; i++) {
+    let dom = containerChildren[i];
+    if ((/MODULE/g).test(dom.nodeName)) {
+      dom.addEventListener("mouseover", (evt) => {
+          evt.stopPropagation();
+          let mouseoverDom = evt.target;
+          let moduleDom = evt.currentTarget;
+          setDomBoundingClientRect(mouseoverDiv, mouseoverDom);  
+          setDomBoundingClientRect(moduleDiv, moduleDom);  
+          console.log("this is dom")  
+      })
+
+      dom.addEventListener("click", (evt) => {
+        evt.stopPropagation();
+        let clickDom = evt.target;
+        setDomBoundingClientRect(clickDiv, clickDom);
+      })
+    }
+  }
+
+  moduleDiv.addEventListener("mouseover", (evt) => {
+    let event = new MouseEvent("mouseover", {
+      bubbles:true
+      ,cancelable:false
+      ,view:window
     })
+    console.log("shadow");
+    test11.dispatchEvent(event);
   })
 
+  closeDiv.addEventListener("click", () => {
+    alert("test");
+  })
 
 })
+
+function setDomBoundingClientRect(target, source) {
+
+  let boundingClientRect = source.getBoundingClientRect();
+
+  target.style.width = boundingClientRect.width + "px";
+  target.style.height = boundingClientRect.height + "px";
+  target.style.transform = `translate(${boundingClientRect.left}px, ${boundingClientRect.top}px)`
+}
+
+let currentDiv = document.querySelector("#currentDiv")

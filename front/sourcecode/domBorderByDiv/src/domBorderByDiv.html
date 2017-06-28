@@ -140,6 +140,9 @@
         width:300px;
         height:300px;
         background: #EAF27E;
+        position:absolute;
+        left:300px;
+        top:10px;        
     }
 
     .test111 {
@@ -164,19 +167,21 @@
         width:200px;
         height:200px;
         background: #EAA353;
+        position:absolute;
+        left:700px;
+        top:300px;         
     }
 
     .test121 {
         width:100px;
         height:100px;
-        background:#FF1F4C; 
-        margin-left:200px;
+        background:#0F0F4C; 
     }
 
     .test122 {
         width:100px;
         height:100px;
-        background: #A85163
+        background: #A85163;
     }
 
     .test123 {
@@ -185,7 +190,7 @@
         background: #EAA353;
     }
 
-    .currentDivStyle {
+    .mouseoverDivStyle {
         border:solid 2px red;
         position:absolute;
         left:0px;
@@ -194,28 +199,72 @@
         pointer-events: none;     
     }
 
+    .clickDivStyle {
+        border:solid 2px green;
+        position:absolute;
+        left:0px;
+        top:0px;  
+        background:transparent;
+        pointer-events: none; 
+        z-index:100;          
+    }
+
+    .moduleDivStyle {
+        border:solid 2px black;
+        position:absolute;
+        left:0px;
+        top:0px;  
+        background:transparent;
+        z-index:50;  
+        /*pointer-events: none;            */
+    }
+
+    .closeDivStyle {
+        width:20px;
+        height:20px;
+        position:absolute;
+        top: 0px;
+        right:0px;
+        background:#fafafa;
+        color:#333;
+        line-height: 20px;
+        font-size:20px;
+        text-align: center;
+        z-index:-2000;
+    }
+
+
+    module-1, module-2 {
+        display: block;
+    }
+
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="test11">
+        <module-1 class="test11">
             <div class="test111">test</div>
             <!--this is hehe-->
             <div class="test112"></div>
             <div class="test113"></div>
-        </div>
-        <div class="test12">
+        </module-1>
+        <module-2 class="test12">
             <div class="test121"></div>
             <div class="test122"></div>
             <div class="test123"></div>
-        </div>
-        <!--this is hehe-->
-        hahaha
+            <!--this is hehe-->
+            hahaha            
+        </module-2>
+
         <div id="testDiv" class="testClick"></div>
     </div>
-    <div id="currentDiv" class="currentDivStyle">
-        
+    <div id="mouseoverDiv" class="mouseoverDivStyle">
+    </div>
+    <div id="clickDiv" class="clickDivStyle">
+    </div>   
+    <div id="moduleDiv" class="moduleDivStyle">
+        <div id="closeDiv" class="closeDivStyle">X</div>
     </div>
     <script src=../../lib/build/lib.js></script>
   <script src='./domBorderByDiv.js'></script>
