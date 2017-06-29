@@ -1,6 +1,89 @@
 <!DOCTYPE html>
-			<script src=../../lib/build/lib.js></script>
-	<script src='./iframeOnly.js?f4fd7edb8c1c129d1855792cc7f3932b'></script>    
+<script>
+console.log("start")
+</script>
+<html lang="en">
+<script>
+var startTime = new Date().getTime();
+</script>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style type="text/css">
+  * {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+  }
+  
+  body,
+  input,
+  select,
+  button,
+  textarea {
+    font-size: 14px;
+    font-family: 'Microsoft YaHei', Tahoma, Geneva, sans-serif;
+  }
+  
+  button {
+    border-width: 0px;
+    outline: none;
+  }
+  
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .container {
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+  }
+  
+  .framestyle {
+    width: 50%;
+    height: 90%;
+    display: inline-block;
+  }
+  
+  .spanStyle {
+    font-size: 16px;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <iframe id="iframe1" src="iframeWithSelfFunction.html" frameborder="0" class="framestyle"></iframe>
+    <iframe id="iframe2" src="https://www.baidu.com/" frameborder="0" class="framestyle"></iframe>
+    <!-- <iframe id="iframe2" src="iframeWithSelfFunction2.html" frameborder="0" class="framestyle"></iframe> -->
+    <span class="spanStyle"></span>
+  </div>
+</body>
+<script type="text/javascript">
+function useIframeHiddenTheScript() {
+  let container = document.querySelector("#iframe1"),
+    script = document.createElement("script");
+  script.innerHTML = "setTimeout(function(){console.log(this)}, 500)";
+  container.appendChild(script);
+}
+
+function modifyIframe() {
+  let iframe = document.querySelector("#iframe1")
+
+  iframe.onload = function() {
+    let iframeDoc = iframe.contentDocument
+      ,div = iframeDoc.querySelector("#testDiv");
+
+    div.style.background = 'red';
+  } 
+}
+
+modifyIframe();
+
+</script>
+
 </html>
-
-

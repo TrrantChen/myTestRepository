@@ -88,6 +88,23 @@ function demo5() {
       })
     })
   })
+
+  // 一种改进写法
+  $.ajax(ajaxOption).then((result1) => {
+    ajaxOption.data.para0 = parseInt(result1) + 100;
+    return $.ajax(ajaxOption)
+  })
+  .then((result2) => {
+    ajaxOption.data.para0 = parseInt(result2) + 150;
+    return $.ajax(ajaxOption)
+  })
+  .then((result3) => {
+    ajaxOption.data.para0 = parseInt(result3) + 200;
+    return $.ajax(ajaxOption)
+  })
+  .then((result4) => {
+    console.log(result4);
+  })
 }
 
 function demo6() {
@@ -138,6 +155,7 @@ function demo6() {
   console.log("d");
   console.log(d);
 
+  //------------------------------------
   var a = new Promise(function(resolve) {
     $.ajax(ajaxOption).then(function(result) {
       resolve(result);
@@ -194,7 +212,7 @@ function demo0() {
   })
   console.log("b");
   console.log(b);
-  var c = b.then(function(result3) {
+  var c = b.then(function(result3) {  
     console.log(result3);
     return timePromise(parseInt(result3) + 100);
   })
@@ -349,18 +367,23 @@ function demo12() {
 function onloadAndPromiseAll() {
   var span = document.querySelector(".spanStyle");
   var subframe1 = document.querySelector("#iframe1");
-  subframe1.onload = function() {
-    subframe1.contentWindow.iframeFun();
-  }
+  // onload 被覆盖掉
+  // subframe1.onload = function() {
+  //   console.log(subframe1.contentWindow.iframeFun());
+  // }
 
   var subframe2 = document.querySelector("#iframe2");
-  subframe2.onload = function() {
-    subframe2.contentWindow.iframeFun();
-  }
+  // onload 被覆盖掉
+  // subframe2.onload = function() {
+  //   console.log(subframe2.contentWindow.iframeFun());
+  // }
 
   function promiseFrame(dom) {
     var promise = new Promise(function(resolve) {
-      dom.onload = resolve;
+      dom.onload = function() {
+        resolve();
+      };
+      // 可以简写为 dom.onload = resolve;
     })
     return promise;
   }
@@ -387,9 +410,8 @@ function aopTest() {
   timePromise.then(function() {
     console.log("this is time");
   })
-
-  console.log(util.getAllUnEnumerableProperties(Math));
 }
+
 
 function demo7() {
   console.log("before")
@@ -413,17 +435,11 @@ function demo7() {
 
 (function mySelfPromise() {
   let MyPromise = function(fn) {
-    this.resolve = null;
-    this.reject = null;    
-    fn(this.resolve, this.reject);
+    this.resolve = null;    
     this.then = function(cb) {
       this.resolve = cb;
     }
-
-    // this.catch = function(cb) {
-    //   this.catch = cb;
-    //   this.catch();
-    // }
+    fn(this.resolve);
   };
 
   let myPromise = new MyPromise(function(resolve) {
@@ -433,13 +449,10 @@ function demo7() {
   myPromise.then(function() {
     console.log("this is test");
   })
-  
-  
-  let promise = new Promise((resolve) => {
-    resolve();
-  });
-
-  promise.then(() => {
-    console.log("this is promise");
-  })
-})();
+  // let promise = new Promise((resolve) => {
+  //   resolve();
+  // });
+  // promise.then(() => {
+  //   console.log("this is promise");
+  // })
+})()

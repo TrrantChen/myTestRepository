@@ -18,25 +18,34 @@ $(() => {
 function mouseEventThroughDiv() {
   let buttom = document.querySelector(".buttom");
   let shade = document.querySelector(".shade");
-  buttom.addEventListener("mouseover", mouseEnterHandle)
-  shade.addEventListener("mouseover", (evt) => {
-    // evt.preventDefault();
-    let event = new MouseEvent("mouseenter", {
+  // let son = document.querySelector(".son");
+  buttom.addEventListener("mousedown", (evt) => {
+    console.log("buttom " + evt.screenX);
+    console.log("buttom target ")
+    console.log(evt.target);
+    console.log("buttom current target ")
+    console.log(evt.currentTarget);
+    console.log(evt.relatedTarget);
+  })
+  // son.addEventListener("mousedown", (evt) => {
+  //   console.log("son")
+  // })
+
+  shade.addEventListener("mousedown", (evt) => {
+    let event = new MouseEvent("mousedown", {
       bubbles:true
       ,cancelable:true
       ,view:window
+      ,screenX:evt.screenX
+      ,relatedTarget:son
     })
-
+    console.log("shade " + evt.screenX);
+    console.log("shade target") 
+    console.log(evt.target);
+    console.log("shade current target ") 
+    console.log(evt.currentTarget);
     buttom.dispatchEvent(event);
-    console.log("shade")
   })
-
-  function mouseEnterHandle(evt) {
-      // evt.stopPropagation();
-      // evt.preventDefault();
-      console.log(evt.target);  
-      console.log("buttom")
-  }
 }
 
 function selfEventTest() {
