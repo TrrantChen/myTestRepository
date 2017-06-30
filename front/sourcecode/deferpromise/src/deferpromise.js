@@ -435,24 +435,42 @@ function demo7() {
 
 (function mySelfPromise() {
   let MyPromise = function(fn) {
-    this.resolve = null;    
-    this.then = function(cb) {
-      this.resolve = cb;
+    let deferreds = [];    
+    this.then = function(resolve) {
+      deferreds.push(resolve);  
+      return this;
+    }; 
+
+    function action(value) {
+      deferreds.forEach((deferred) => {
+        deferred(value);
+      })
     }
-    fn(this.resolve);
+
+    fn(action);
   };
 
   let myPromise = new MyPromise(function(resolve) {
-    resolve();  
+    setTimeout(() => {
+      resolve("aa");  
+    }, 500)
   })
 
-  myPromise.then(function() {
-    console.log("this is test");
+  myPromise.then((value) => {
+    console.log("this is " + value);
+  }).then((value) => {
+    console.log("this is " + value);
   })
+
   // let promise = new Promise((resolve) => {
-  //   resolve();
+  //   setTimeout(() => {
+  //     resolve("aa");
+  //   }, 500);
+    
   // });
-  // promise.then(() => {
-  //   console.log("this is promise");
-  // })
+  // promise.then((value) => {
+  //   console.log("this is " + value);
+  // }).then((value) => {
+  //   console.log("this is " + value);
+  // });
 })()
