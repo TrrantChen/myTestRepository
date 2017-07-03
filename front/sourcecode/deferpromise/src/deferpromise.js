@@ -435,42 +435,66 @@ function demo7() {
 
 (function mySelfPromise() {
   let MyPromise = function(fn) {
-    let deferreds = [];    
-    this.then = function(resolve) {
-      deferreds.push(resolve);  
-      return this;
-    }; 
+    let thisPromise = this
+    ,privateResolveArr = []
+    ,stated = "pending"
+    ,value = null;
 
-    function action(value) {
-      deferreds.forEach((deferred) => {
-        deferred(value);
-      })
+    thisPromise.then = function(onFulfilled) {
+      // if (stated.toLowerCase() === "pending") {
+        privateResolveArr.push(onFulfilled);
+        return this;        
+      // }
+      // onFulfilled(value);
+      // return this;
     }
 
-    fn(action);
-  };
+    function resolve(newValue) {
+      value = newValue;
+      // stated = "fulfilled";
+      setTimeout(() => {
+        privateResolveArr.forEach((privateResolve) => {
+          // value = privateResolve(value);
+          privateResolve(value);
+        })                      
+      }, 0)
+    }
 
-  let myPromise = new MyPromise(function(resolve) {
+    fn(resolve);
+  } 
+
+  function promiseConstruct(resolve) {
     setTimeout(() => {
-      resolve("aa");  
-    }, 500)
-  })
+      resolve("yc");
+    }, 0)
+  }
 
-  myPromise.then((value) => {
+  function thenCallBack(value) {
     console.log("this is " + value);
-  }).then((value) => {
-    console.log("this is " + value);
-  })
+  }
 
-  // let promise = new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve("aa");
-  //   }, 500);
-    
-  // });
-  // promise.then((value) => {
-  //   console.log("this is " + value);
-  // }).then((value) => {
-  //   console.log("this is " + value);
-  // });
+  function thenOtherCallBack(value) {
+    console.log("this is " + value);
+  }
+
+  function thenAnotherCallBack(value) {
+    console.log("this is another " + value)
+  }
+
+  let myPromise = new MyPromise(promiseConstruct);
+
+  myPromise.then(thenCallBack)
+  // .then(thenOtherCallBack);
+  
+  setTimeout(() => {
+    myPromise.then(thenAnotherCallBack);
+  }, 0);
+  
+ 
+
+  // let promise = new Promise(promiseConstruct);
+  
+  // promise.then(thenCallBack)
+  // // .then(thenOtherCallBack);
+  // promise.then(thenAnotherCallBack);
 })()
