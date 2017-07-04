@@ -412,7 +412,6 @@ function aopTest() {
   })
 }
 
-
 function demo7() {
   console.log("before")
   var promise = new Promise(function(resolve) {
@@ -435,66 +434,302 @@ function demo7() {
 
 (function mySelfPromise() {
   let MyPromise = function(fn) {
-    let thisPromise = this
-    ,privateResolveArr = []
-    ,stated = "pending"
-    ,value = null;
+    let resolveArr = []
+      ,state = 'pending'
+      ,value = null;
 
-    thisPromise.then = function(onFulfilled) {
-      // if (stated.toLowerCase() === "pending") {
-        privateResolveArr.push(onFulfilled);
-        return this;        
-      // }
-      // onFulfilled(value);
-      // return this;
+    this.then = function(onFulfilled) {
+      if (state.toLowerCase() === "pending") {
+        resolveArr.push(onFulfilled);
+        return this;
+      }
+      onFulfilled(value);
+      return this;
     }
 
     function resolve(newValue) {
       value = newValue;
-      // stated = "fulfilled";
+      state = "fulfilled";
       setTimeout(() => {
-        privateResolveArr.forEach((privateResolve) => {
-          // value = privateResolve(value);
-          privateResolve(value);
-        })                      
+        resolveArr.forEach((privateResolve) => {
+            privateResolve(value);
+        })        
       }, 0)
     }
 
     fn(resolve);
   } 
 
-  function promiseConstruct(resolve) {
-    setTimeout(() => {
+  /*
+    最简单的测试
+   */
+  function testCase1() {
+    function promiseConstruct(resolve) {
+      setTimeout(() => {
+        resolve();
+      }, 0)
+    }
+
+    function thenCallBack() {
+      console.log("this is then callback");
+    }
+
+    function otherCallBack() {
+      console.log("this is other callback");
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+    myPromise.then(thenCallBack).then(otherCallBack);  
+
+    let promise = new Promise(promiseConstruct);
+    promise.then(thenCallBack).then(otherCallBack); 
+  }
+
+  /*
+    构造函数中使用同步方法
+   */
+  function testCase2() {
+    function promiseConstruct(resolve) {
+      resolve();
+    }
+
+    function thenCallBack(value) {
+      console.log("this is then callback");
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+    myPromise.then(thenCallBack);  
+
+    let promise = new Promise(promiseConstruct);
+    promise.then(thenCallBack);    
+  }
+
+  /*
+    测试pending, fulfilled, rejected各种状态
+   */
+  function testCase3() {
+    function promiseConstruct(resolve) {
+      resolve();
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+
+    myPromise.then(() => {
+      myPromise.then(() => {
+        console.log("this is inner promise");
+      })
+    })
+
+    let promise = new Promise(promiseConstruct);
+
+    promise.then(() => {
+      promise.then(() => {
+        console.log("this is inner promise");
+      })
+    })
+  }
+
+  /*
+    测试构造函数中的打印语句与then中打印语句的顺序,因为resolve中的执行是异步的
+   */
+  function testCase4() {
+    function promiseConstruct(resolve) {
+      resolve();
+      console.log("this is construct");
+    }
+
+    function thenCallBack(value) {
+      console.log("this is then callback");
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+
+    myPromise.then(thenCallBack);
+
+    let promise = new Promise(promiseConstruct);
+
+    promise.then(thenCallBack);  
+  }
+
+  // 未通过
+  /*
+    单个promise连续传递参数
+   */
+  function testCase5() {
+    function promiseConstruct(resolve) {
+      setTimeout(() => {
+        resolve("yc");
+      }, 0)
+    }
+
+    function thenFn(value) {
+      console.log(value);
+      return "test";      
+    }
+
+    function otherFn(value) {
+      console.log(value);
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+    myPromise.then(thenFn).then(otherFn);
+
+    // let promise = new Promise(promiseConstruct);
+    // promise.then(thenFn).then(otherFn);
+  }
+
+  /*
+    多个promise传递参数
+   */
+  function testCase6() {
+    function promiseConstruct(resolve) {
+      setTimeout(() => {
+        resolve("yc");
+      }, 0)
+    }
+
+    function thenFn(value) {
+      console.log("then " + value);
+    }
+
+    function otherFn(value) {
+      console.log("other " + value);
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+    myPromise.then(thenFn);
+    myPromise.then(otherFn);
+
+    let promise = new Promise(promiseConstruct);
+    promise.then(thenFn);
+    promise.then(otherFn);
+  }
+
+  /*
+    内嵌传递参数
+   */
+  function testCase7() {
+    function promiseConstruct(resolve) {
       resolve("yc");
-    }, 0)
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+
+    myPromise.then(() => {
+      myPromise.then((value) => {
+        console.log(value);
+      })
+    })
+
+    let promise = new Promise(promiseConstruct);
+
+    promise.then(() => {
+      promise.then((value) => {
+        console.log(value);
+      })
+    })
   }
 
-  function thenCallBack(value) {
-    console.log("this is " + value);
+  // 未通过
+  /*
+    多个连续then传递参数
+   */
+  function testCase8() {
+    function promiseConstruct(resolve) {
+      setTimeout(() => {
+        resolve("yc");
+      }, 0)
+    }
+
+    function thenFn(value) {
+      console.log(value);
+      return "test2";      
+    }
+
+    function otherFn(value) {
+      console.log(value);
+    }
+
+    function anotherFn(value) {
+      console.log(value);
+      return "another";
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+    myPromise.then(thenFn).then(otherFn);
+    myPromise.then(anotherFn).then(otherFn);
+
+    // let promise = new Promise(promiseConstruct);
+    // promise.then(thenFn).then(otherFn);
+    // promise.then(anotherFn).then(otherFn);
   }
 
-  function thenOtherCallBack(value) {
-    console.log("this is " + value);
+  // 未通过
+  /*
+    内嵌连续then传递参数
+   */
+  function testCase9() {
+    function promiseConstruct(resolve) {
+      resolve("yc");
+    }
+
+    let myPromise = new MyPromise(promiseConstruct);
+
+    myPromise.then(() => {
+      myPromise.then((value) => {
+        console.log(value);
+        return "test";
+      }).then((value) => {
+        console.log(value);
+      })
+    })
+
+    let promise = new Promise(promiseConstruct);
+
+    promise.then(() => {
+      promise.then((value) => {
+        console.log(value);
+        return "test";
+      }).then((value) => {
+        console.log(value);
+      })
+    })
   }
 
-  function thenAnotherCallBack(value) {
-    console.log("this is another " + value)
+  // 未通过
+  /*
+    串行promise，即参数的传递，如何通过then将不同的value给串起来
+   */
+  function testCase10() {
+    function timePromise(value) {
+      // let promise = new Promise((resolve) => {
+      //   setTimeout(() => {
+      //     resolve(value);
+      //   }, 0)
+      // })       
+      let promise = new MyPromise((resolve) => {
+        setTimeout(() => {
+          resolve(value);
+        }, 0)
+      }) 
+
+      return promise;     
+    }
+
+
+    timePromise(1).then((value) => {
+      ++value;
+      console.log("first then " + value);
+      return timePromise(value);
+    })
+    .then((value) => {
+      console.log("second then " + value);
+    })
   }
 
-  let myPromise = new MyPromise(promiseConstruct);
+    testCase1();
 
-  myPromise.then(thenCallBack)
-  // .then(thenOtherCallBack);
-  
-  setTimeout(() => {
-    myPromise.then(thenAnotherCallBack);
-  }, 0);
-  
- 
-
-  // let promise = new Promise(promiseConstruct);
-  
-  // promise.then(thenCallBack)
-  // // .then(thenOtherCallBack);
-  // promise.then(thenAnotherCallBack);
 })()
+
+
+
