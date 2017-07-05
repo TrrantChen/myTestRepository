@@ -776,5 +776,3 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 /*------------rollup typescript------------*/
 
 
-
-

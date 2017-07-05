@@ -434,27 +434,64 @@ function demo7() {
 
 (function mySelfPromise() {
   let MyPromise = function(fn) {
-    let resolveArr = []
+    let deferreds = []
       ,state = 'pending'
       ,value = null;
 
+    // this.then = function(onFulfilled) {
+    //   if (state.toLowerCase() === "pending") {
+    //     deferreds.push(onFulfilled);
+    //     return this;
+    //   }
+    //   onFulfilled(value);
+    //   return this;
+    // }
+    
     this.then = function(onFulfilled) {
-      if (state.toLowerCase() === "pending") {
-        resolveArr.push(onFulfilled);
-        return this;
-      }
-      onFulfilled(value);
-      return this;
+      return new MyPromise((resolve) => {
+        handle({
+          onFulfilled:onFulfilled || null,
+          resolve:resolve
+        })
+      })
     }
 
+    function handle(deferred) {
+      if(state.toLowerCase() === "pending") {
+        deferreds.push(deferred);
+      } else {
+        let ret = deferred.onFulfilled(value);
+
+        deferred.resolve(ret);        
+      }
+    }
+
+    // function resolve(newValue) {
+    //   value = newValue;
+    //   state = "fulfilled";
+    //   setTimeout(() => {
+    //     deferreds.forEach((privateResolve) => {
+    //         privateResolve(value);
+    //     })        
+    //   }, 0)
+    // }
+    
     function resolve(newValue) {
+      if (newValue && (typeof newValue === "object" || typeof newValue === "function")) {
+        let then = newValue.then;
+
+        if(typeof then === "function") {
+          then.call(newValue, resolve);
+          return;
+        }
+      }
+      state = 'fulfilled';
       value = newValue;
-      state = "fulfilled";
       setTimeout(() => {
-        resolveArr.forEach((privateResolve) => {
-            privateResolve(value);
-        })        
-      }, 0)
+        deferreds.forEach((deferred) => {
+          handle(deferred);
+        })
+      }, 0);
     }
 
     fn(resolve);
@@ -574,8 +611,8 @@ function demo7() {
     let myPromise = new MyPromise(promiseConstruct);
     myPromise.then(thenFn).then(otherFn);
 
-    // let promise = new Promise(promiseConstruct);
-    // promise.then(thenFn).then(otherFn);
+    let promise = new Promise(promiseConstruct);
+    promise.then(thenFn).then(otherFn);
   }
 
   /*
@@ -659,9 +696,9 @@ function demo7() {
     myPromise.then(thenFn).then(otherFn);
     myPromise.then(anotherFn).then(otherFn);
 
-    // let promise = new Promise(promiseConstruct);
-    // promise.then(thenFn).then(otherFn);
-    // promise.then(anotherFn).then(otherFn);
+    let promise = new Promise(promiseConstruct);
+    promise.then(thenFn).then(otherFn);
+    promise.then(anotherFn).then(otherFn);
   }
 
   // 未通过
@@ -701,34 +738,72 @@ function demo7() {
     串行promise，即参数的传递，如何通过then将不同的value给串起来
    */
   function testCase10() {
-    function timePromise(value) {
-      // let promise = new Promise((resolve) => {
-      //   setTimeout(() => {
-      //     resolve(value);
-      //   }, 0)
-      // })       
-      let promise = new MyPromise((resolve) => {
-        setTimeout(() => {
-          resolve(value);
-        }, 0)
-      }) 
+    // function timePromise(value) {
+    //   // let promise = new Promise((resolve) => {
+    //   //   setTimeout(() => {
+    //   //     resolve(value);
+    //   //   }, 0)
+    //   // })       
+    //   let promise = new MyPromise((resolve) => {
+    //     setTimeout(() => {
+    //       resolve(value);
+    //     }, 0)
+    //   }) 
 
-      return promise;     
+    //   return promise;     
+    // }
+
+
+    // timePromise(1).then((value) => {
+    //   ++value;
+    //   console.log("first then " + value);
+    //   return timePromise(value);
+    // })
+    // .then((value) => {
+    //   console.log("second then " + value);
+    // })
+    
+
+    function getID() {
+      return new MyPromise(function(resolve, reject) {
+        console.log("get id...");
+        setTimeout(function() {
+          resolve("666");
+        }, 1000);
+      })
     }
+    function getNameByID(id) {
+      return new MyPromise(function(resolve, reject) {
+        console.log(id);
+        console.log("get name...");
+        setTimeout(function() {
+          resolve("hjm");
+        }, 1000);
+      })
+    }
+    getID().then(getNameByID).then(function(name) {
+      console.log(name);
+    }, function(err) {
+      console.log(err);
+    });
 
+    // new MyPromise((resolve) => {
+    //   setTimeout(() => {
+    //     resolve(1);
+    //   }, 0)
+    // }).then((value) => {
+    //   return new MyPromise((resolve) => {
+    //     setTimeout(() => {
+    //       resolve(++value);
+    //     })
+    //   }).then((value) => {
+    //     console.log(value);
+    //   })
+    // })
 
-    timePromise(1).then((value) => {
-      ++value;
-      console.log("first then " + value);
-      return timePromise(value);
-    })
-    .then((value) => {
-      console.log("second then " + value);
-    })
   }
 
-    testCase1();
-
+  testCase10();
 })()
 
 
