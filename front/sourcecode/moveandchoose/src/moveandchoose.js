@@ -3,6 +3,41 @@ import * as util from '../../js/common/util';
 import * as interaction from '../../js/common/interaction'; 
 import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';
 
+$(function() {
+    let btnDrag = document.querySelector("#btnDrag")
+      ,btnSelector = document.querySelector("#btnSelector")
+      ,btnSortable = document.querySelector("#btnSortable")
+      ,isDragShow = false
+      ,isSelectorShow = false
+      ,isSortableShow = false
+      ,dragContent = document.querySelector("#dragContent")
+      ,selectorContent = document.querySelector("#selectorContent")
+      ,sortableContent = document.querySelector("#sortableContent");
+    clickAndShow(btnDrag, dragContent, isDragShow);
+    clickAndShow(btnSelector, selectorContent, isSelectorShow);
+    clickAndShow(btnSortable, sortableContent, isSortableShow);
+
+    dragInterationTest();
+    selectableTest();
+    sortableByJqueryUi();
+    selectableByJqueryUi();
+
+})
+
+function clickAndShow(button, content, isShow) {
+    button.addEventListener("click", (evt) => {
+        isShow = !isShow;
+        if (isShow) {
+          content.classList.remove("hidden");
+          content.classList.add("show");
+        } else {
+          content.classList.remove("show");
+          content.classList.add("hidden");
+        }
+    })  
+}
+
+
 function dragByJqueryUi() {
     var testDivByJqueryui = $("#testDivByJqueryui");
     testDivByJqueryui.draggable({containment: "#absolute"});
@@ -48,13 +83,10 @@ function selectableByJqueryUi() {
 }
 
 function sortableByJqueryUi() {
-    $("#sortableContainer1").sortable();
-    $("#sortableContainer1").disableSelection();
+    $("#sortableContainer2").sortable();
+    $("#sortableContainer2").disableSelection();
 }
 
-$(function() {
-    sortableByJqueryUi();
-})
 
 
 

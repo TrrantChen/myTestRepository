@@ -11,7 +11,8 @@
   "dependencies": {
     "babel-runtime": "^6.23.0",
     "gulp": "^3.9.1",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "object-sizeof": "^1.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
