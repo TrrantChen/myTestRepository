@@ -42,6 +42,9 @@ import rollupNodeResolve from 'rollup-plugin-node-resolve'
 import rollupAnalyzer from 'rollup-analyzer'
 import rollupTypescript from 'rollup-plugin-typescript'
 import rollupUglify from 'rollup-plugin-uglify'
+import rollupJson from 'rollup-plugin-json';
+import rollupBuiltins from 'rollup-plugin-node-builtins';
+import rollupGlobals from 'rollup-plugin-node-globals';
 import { minify } from 'uglify-es';
 import md5 from 'md5'
 import pump from 'pump'
@@ -71,6 +74,7 @@ let libArr = [basePath + '/lib/jquery/jquery-2.2.3.js'
              ,basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js' 
              ,basePath + '/lib/underscore/underscore.js'
              ,basePath + '/lib/globalTest.js'
+             ,basePath + '/lib/sizeof.js'
             ];
 let externalArr = libArr;
 let reg = new RegExp(util.escapeStringRegexp(basePath + "/"), 'g');
@@ -600,16 +604,24 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
               entry: projectFile + '/src/*.js'
               ,plugins:[
                 multiEntry()
+
+                // 用于将nodejs的模块转换到浏览器端使用
+                ,rollupGlobals()
+                ,rollupBuiltins()
+
                 ,rollupNodeResolve({
-                  jsnext: true,
-                  main: true
+                  jsnext: true
+                  ,main: true
+                  ,browser: true
                 })             
                 ,rollupCommonjs({
-                  include:'sourcecode/lib/**',
+                  include:['sourcecode/lib/**'],
                   sourceMap:true,
                   nameExports:{
                     jquery:['jQuery']
                     ,underscore:['_']
+                    ,'sourcecode/lib/commonjsTest.js':['named']
+                    ,'sourcecode/lib/sizeof/index.js':['sizeof']
                   }
                 }) 
                 ,rollupbabel({

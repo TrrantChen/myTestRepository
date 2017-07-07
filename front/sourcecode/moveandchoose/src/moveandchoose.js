@@ -19,8 +19,9 @@ $(function() {
 
     dragInterationTest();
     selectableTest();
-    sortableByJqueryUi();
     selectableByJqueryUi();
+    sortableByJqueryUi();
+    
 
 })
 

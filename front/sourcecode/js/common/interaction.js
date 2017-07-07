@@ -1,6 +1,8 @@
 import * as domoperation from './domoperation';
 import * as util from './util';
 
+
+
 export function dragable(selector, option) {
     // axis:x, y
     // containment: selector
@@ -385,10 +387,12 @@ export function resizable(element) {
 }
 
 export function selectable(selector, option) {
-  // filter:  string or arrary
+  // filter:  string or array
+  // frame 
   // todo
   // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
-    let target = document.querySelector(selector)
+  
+    let target = null
         ,dom = null
         ,startMousePosition = null
         ,startDomPosition = null
@@ -396,16 +400,26 @@ export function selectable(selector, option) {
           filter:""
         }
         ,filterArr = []
-        ,selectedArr = [];
+        ,selectedArr = []
+        ,doc = document
+        ,win = window;
 
     option = Object.assign(defaultOption, option);
+
+    if (option.frame !== void 0) {
+        doc = option.frame.contentDocument;
+        win = option.frame.contentWindow;
+        domoperation.setFrame(option.frame);
+    }
+
+    target = doc.querySelector(selector)
 
     if (option.filter !== "") {
       filterArr = Array.isArray(option.filter) ? 
         option.filger.map((selector, index) => {
-          return document.querySelector(selector);
+          return doc.querySelector(selector);
         })
-       : document.querySelector(option.filter);
+       : doc.querySelector(option.filter);
     }
 
     let filterArrLength = filterArr.length;
@@ -414,11 +428,11 @@ export function selectable(selector, option) {
       event.stopPropagation();
       event.preventDefault();
       startMousePosition = {x:event.pageX, y:event.pageY};
-      startDomPosition = {x:event.pageX - window.scrollX, y:event.pageY - window.scrollY}
+      startDomPosition = {x:event.pageX - win.scrollX, y:event.pageY - win.scrollY}
       dom = domoperation.str2dom(`<div style="border:1px dashed black;width:0px;height:0px;position:fixed;left:${startDomPosition.x}px;top:${startDomPosition.y}px;background:none;"></div>`)
       target.appendChild(dom);    
-      document.addEventListener('mousemove', mouseMoveHandle);
-      document.addEventListener('mouseup', mouseUpHandle);      
+      doc.addEventListener('mousemove', mouseMoveHandle);
+      doc.addEventListener('mouseup', mouseUpHandle);      
     })
 
     function mouseMoveHandle(event) {
@@ -459,8 +473,8 @@ export function selectable(selector, option) {
         dom.remove(); 
         dom = null;
       }    
-      document.removeEventListener('mousemove', mouseMoveHandle);
-      document.removeEventListener('mouseup', mouseUpHandle);    
+      doc.removeEventListener('mousemove', mouseMoveHandle);
+      doc.removeEventListener('mouseup', mouseUpHandle);    
     }
 }
 

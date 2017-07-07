@@ -5,8 +5,17 @@ import * as util from '../../js/common/util';
 import * as domoperation from '../../js/common/domoperation';
 import * as interaction from '../../js/common/interaction';
 
-
 window.onload = function() {
+
+  let getFrame = document.querySelector("#getFrame");
+  getFrame.addEventListener("click", (evt) => {
+    domoperation.setFrame();
+    let winAndDoc = domoperation.getWinAndDoc();
+
+    console.log(winAndDoc.win);
+    console.log(winAndDoc.doc);
+  })
+
   let sonframe = document.querySelector("#sonframe");
   let sonDoc = sonframe.contentDocument;
   let sonWin = sonframe.contentWindow;

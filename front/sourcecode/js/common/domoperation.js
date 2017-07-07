@@ -8,6 +8,16 @@ export function setFrame(frame) {
   if (frame !== void 0) {
     win = frame.contentWindow;
     doc = frame.contentDocument
+  } else {
+    win = window;
+    doc = document;
+  }
+}
+
+export function getWinAndDoc() {
+  return {
+    doc:doc
+    ,win:win
   }
 }
 

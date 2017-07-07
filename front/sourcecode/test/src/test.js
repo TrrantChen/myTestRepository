@@ -1,10 +1,12 @@
 import $ from 'jquery';
-import  sizeof from "test"
 import  * as util from '../../js/common/util'; 
+import * as objectSizeof  from '../../lib/sizeof/index';
 import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 let container = document.querySelector(".container");
 $(() => {
-  // 
+  // console.log("container " + objectSizeof.default(container));
+  console.log("$ " + objectSizeof.default($));
+  console.log("$ " + sizeof($));
 })
 
 
