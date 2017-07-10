@@ -537,7 +537,6 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   })
 
   gulp.task('compressHtml', (done) => {
-    let md5message = md5(new Date());
     return new Promise((resolve, reject) => {
       glob(projectDoc, (err, files) => {
         let taskLst = files.map((file, index) => {
@@ -624,18 +623,18 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                     ,'sourcecode/lib/sizeof/index.js':['sizeof']
                   }
                 }) 
-                ,rollupbabel({
-                  presets: [
-                    [
-                      "es2015", {
-                        "modules": false
-                      }
-                    ]
-                  ],
-                  plugins: ["transform-regenerator"],
-                  babelrc: false,
-                  exclude: 'node_modules/**'
-                })  
+                // ,rollupbabel({
+                //   presets: [
+                //     [
+                //       "es2015", {
+                //         "modules": false
+                //       }
+                //     ]
+                //   ],
+                //   plugins: ["transform-regenerator"],
+                //   babelrc: false,
+                //   exclude: 'node_modules/**'
+                // })  
                 ,function(){
                   if (process.env.NODE_ENV === 'production') {
                     rollupUglify({}, minify);     
