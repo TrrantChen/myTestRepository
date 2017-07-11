@@ -1,8 +1,6 @@
 import * as domoperation from './domoperation';
 import * as util from './util';
 
-
-
 export function dragable(selector, option) {
   // axis:x, y
   // containment: selector
@@ -392,6 +390,12 @@ export function selectable(selector, option) {
   // frame 
   // todo
   // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
+  // selected;
+  // selecting;
+  // start;
+  // stop;
+  // unselected;
+  // unselecting;
   let target = null,
     dom = null,
     startMousePosition = null,
@@ -423,23 +427,28 @@ export function selectable(selector, option) {
     }
 
     let filterArrLength = filterArr.length;
-    let children = target.children,
-      childrenLength = children.length;
 
-    let elemAndRectArr = children.map((elem) => {
-      let boundingClientRect = elem.getBoundingClientRect();
-      return {
-        elem: elem,
-        left: boundingClientRect.left,
-        right: boundingClientRect.right,
-        top: boundingClientRect.top,
-        bottom: boundingClientRect.bottom
-      }
-    })
+    // 方案1
+    let elemAndRectArr = null;
 
     target.addEventListener('mousedown', (event) => {
       event.stopPropagation();
       event.preventDefault();
+
+      // 方案1
+      elemAndRectArr = Array.prototype.map.call(target.children, (elem) => {
+        let boundingClientRect = elem.getBoundingClientRect();
+        return {
+          elem: elem,
+          left: boundingClientRect.left,
+          right: boundingClientRect.right,
+          top: boundingClientRect.top,
+          bottom: boundingClientRect.bottom
+        }
+      });
+      // 方案2
+      
+
       startMousePosition = { x: event.pageX, y: event.pageY };
       startDomPosition = { x: event.pageX - win.scrollX, y: event.pageY - win.scrollY }
       dom = domoperation.str2dom(`
@@ -450,7 +459,8 @@ export function selectable(selector, option) {
             position:fixed;
             left:${startDomPosition.x}px;
             top:${startDomPosition.y}px;
-            background:none;">
+            background:none;
+            pointer-events: none;">
           </div>`)
       target.appendChild(dom);
       doc.addEventListener('mousemove', mouseMoveHandle);
@@ -460,8 +470,8 @@ export function selectable(selector, option) {
     function mouseMoveHandle(event) {
       event.stopPropagation();
       event.preventDefault();
-      let width = event.pageX - startMousePosition.x,
-        height = event.pageY - startMousePosition.y;
+      let width = event.pageX - startMousePosition.x
+        ,height = event.pageY - startMousePosition.y;
 
       let testLeft = 0;
 
@@ -481,23 +491,43 @@ export function selectable(selector, option) {
       dom.style.width = Math.abs(width) + "px";
       dom.style.height = Math.abs(height) + "px";
 
-      // let moveOverDom = event.target;
-      // if (filterArrLength === 0) {
-      // } else {
-      // }
-      // if (moveOverDom !== target && !moveOverDom.classList.contains("selected")) {
-      //   moveOverDom.classList.add("selected")
-      // } 
-      // 
-      
-      // 经过子元素触发事件
-      let mouseX = event.pageX - win.scrollX
-        , mouseY = event.pageY - win.scrollY;
+      // 框选覆盖条件判断，判断条件为如果框的clientRect的大小如果和container中child的大小有重叠
+      // 则为其执行覆盖事件
+      // 方案 1
+      let domClientRect = dom.getBoundingClientRect();
       for(var i = 0; i < elemAndRectArr.length; i++) {
-        if ()
+        let elemAndRect = elemAndRectArr[i];
+
+        if (isRectOverlap(domClientRect, elemAndRect)) {
+          if (!util.isArrayContain(elemAndRect.elem.classList, "select")) {
+            elemAndRect.elem.classList.add("select");
+          }
+        } else {
+          if (util.isArrayContain(elemAndRect.elem.classList, "select")) {
+            elemAndRect.elem.classList.remove("select");
+          }
+        }
+      } 
+      // 方案2 
+      // 通过eventTarget来动态添加mouseenter，mouseout，但每次也要过一下循环判断是不是children里的
+      // let targetDom = event.target;
+      // if (util.isArrayContain(target.children, targetDom)) {
+      //   targetDom.addEventListener("mouseenter", (evt) => {
+          
+      //   })
+
+      //   targetDom.addEventListener("mouseout", (evt) => {
+          
+      //   })
+      // } 
+    }
+
+    function isRectOverlap(domClientRect, elemAndRect) {
+      if (domClientRect.right < elemAndRect.left || domClientRect.left > elemAndRect.right || domClientRect.bottom < elemAndRect.top || domClientRect.top > elemAndRect.bottom) {
+        return false;
+      } else {
+        return true;
       }
-      
-      
     }
 
     function mouseUpHandle(event) {

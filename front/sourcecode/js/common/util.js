@@ -431,6 +431,9 @@ export function str2stream(str) {
     return s;
 }
 
+export function isArrayContain(set, ele) {
+  return [].indexOf.call(set, ele) !== -1 ? true : false;
+}
 
 Function.prototype.before = function(fn) {
   let args = [],
