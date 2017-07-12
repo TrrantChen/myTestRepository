@@ -435,6 +435,40 @@ export function isArrayContain(set, ele) {
   return [].indexOf.call(set, ele) !== -1 ? true : false;
 }
 
+export function arraySort(array, desc) {
+    desc = desc || false;
+    if (desc) {
+        return array.sort(desSort)
+    } else {
+        return array.sort(ascSort)
+    } 
+}
+
+// ascSort(a,b)传给sort()，数字数组作升序排列
+function ascSort (a, b) {  // a和b是数组中相邻的两个数组项
+    return a - b; 
+    // 如果 return -1, 表示a小于b，a排列在b的前面
+    // 如果 return 1, 表示a大于b,a排列在b的后面
+    // 如果 return 0, 表示a等于b,a和b的位置保持不变
+}
+
+// desSort(a,b)传给sort()，数字数组作降序排列
+function desSort (a, b) { // a和b是数组中相邻的两个数组项
+    return b - a;
+    // 如果 return -1, 表示b小于a，b排列在a的前面
+    // 如果 return 1, 表示b大于a, b排列在a的后面
+    // 如果 return 0, 表示 b等于a, b和a的位置保持不变
+}
+
+export function num2char(num) {
+    return String.fromCharCode(num);
+}
+
+export function char2num(ch) {
+    return ch.charCodeAt(0);
+}
+
+
 Function.prototype.before = function(fn) {
   let args = [],
     length = arguments.length,

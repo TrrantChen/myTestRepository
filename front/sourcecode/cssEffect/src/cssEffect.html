@@ -39,26 +39,6 @@
     overflow: hidden
   }
 
-  .outterDiv {
-    width:0px;
-    height:0px;
-    border:solid 1px #111;
-    position: absolute;
-    border-radius: 100%;
-    transition: all 1s  ease-in-out; 
-    transition-delay:0.2s;
-    opacity: 1;
-  }
-
-  .innerDiv {
-    width:0px;
-    height:0px;
-    border:solid 1px #111;
-    position: absolute;
-    border-radius: 100%;
-    transition: all 1s  ease-in-out;  
-    opacity: 1;
-  }  
 
   
 
@@ -94,19 +74,52 @@
     transition: all 1s  ease-in-out;  
     opacity: 1;    
   }
+
+  .testTransitionEventClashContentStyle {
+    display: none;
+  }
+
+
+  
+  .testBtnStyle {
+    width:120px;
+    height:30px;
+    background: #88A65E;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .show {
+    display: block;
+  }
+
+  .testCssDiv{
+    --test-width:100px;
+    width:var(--test-width);
+    height:var(--test-height);
+    background:#F7AF63;
+  }
+
+  .testCssDiv::before {
+    content:attr(data-attr);
+  }
+
+  :root {
+    --test-height:100px;
+  }; 
   </style>
 </head>
 
 <body>
   <div class="container">
-    <button id="testBtn">test</button>
-    <button id="testTransitionEventClash">testTransitionEventClash</button>
-    <div id="testTransitionEventClashContent">
-      <div id="test1" class="test1Style"></div>
-      <div id="test2" class="test2Style"></div>
-    </div>
-    <div id="testDiv" class="testDiv">
-      
+    <button id="testBtn" class="testBtnStyle">test</button>
+    <button id="testAttrModifyCssPropertyBtn">testAttrModifyCssPropertyBtn</button>
+    <div id="testAttrModifyCssPropertyContent" class="hidden">
+      <button id="changeCssCustomPropBtn">changeCssCustomPropBtn</button>
+      <div class="testCssDiv" data-attr="100px">
+      </div>
     </div>
   </div>
   <script src=../../lib/build/lib.js></script>
