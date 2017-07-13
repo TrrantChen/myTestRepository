@@ -357,3 +357,220 @@ export function removeElemDefaultEvent(id,addFn) {
     originEventListener.apply(this, args);    
   }
 }
+
+
+export function rainEffect(effectNum) {
+  effectNum = effectNum || 1;
+  let cssString = ""
+  switch (effectNum) {
+    case 1:
+      cssString = `
+        .outterDiv {
+          width:0px;
+          height:0px;
+          border:solid 1px #111;
+          position: absolute;
+          border-radius: 100%;
+          transition: all 1s  ease-in-out; 
+          transition-delay:0.3s;
+          opacity: 1;
+        }
+
+        .innerDiv {
+          width:0px;
+          height:0px;
+          border:solid 1px #111;
+          position: absolute;
+          border-radius: 100%;
+          transition: all 1s  ease-in-out;  
+          opacity: 1;
+        }  
+      `;
+      break;
+    case 2:
+      cssString = `
+        .outterDiv {
+          width:1px;
+          height:1px;
+          border:solid 1px #111;
+          position: absolute;
+          border-radius: 100%;
+          opacity: 1;
+          animation-name:circleExtend;
+          animation-duration:1s;
+          animation-timing-function:ease-in-out;
+          animation-iteration-count:1;             
+        }
+
+        .innerDiv {
+          width:1px;
+          height:1px;
+          border:solid 1px #111;
+          position: absolute;
+          border-radius: 100%;
+          opacity: 1;
+          animation-name:circleExtend;
+          animation-duration:1s;
+          animation-timing-function:ease-out;
+          animation-delay:0.2s;
+          animation-iteration-count:1;          
+        } 
+
+        @keyframes circleExtend {
+          0% {
+            transform:scale(0, 0);
+          }
+
+          50% {
+            transform:scale(100, 100);
+          }
+
+          100% {
+            transform:scale(150, 150);
+            opacity:0;
+          }
+        }       
+      `;
+      break;
+    case 3:
+      cssString = `
+        .outterDiv {
+          width:50px;
+          height:50px;
+          border:solid 1px #111;
+          position: absolute;
+          border-radius: 100%;
+          opacity: 1;
+          animation-name:circleExtend;
+          animation-duration:2s;
+          animation-timing-function:ease-out;
+          animation-iteration-count:1;
+          transform: scale(0);             
+        }
+
+        .innerDiv {
+          width:50px;
+          height:50px;
+          border:solid 1px #111;
+          position: absolute;
+          border-radius: 100%;
+          opacity: 1;
+          animation-name:circleExtend;
+          animation-duration:2s;
+          animation-timing-function:ease-out;
+          animation-delay:0.2s;
+          animation-iteration-count:1;
+          transform: scale(0); 
+       
+        } 
+
+        @keyframes circleExtend {
+         to {
+            transform:scale(var(--animation-scale), var(--animation-scale));
+            /*transform:scale(3, 3);*/
+            opacity:0;
+          }
+        } 
+
+        :root {
+          --animation-scale:3;
+        }
+
+      `;
+    default:
+      break;
+  }
+
+  insertStyle2Head(cssString);
+
+  return function(container, startPositionX, startPositionY, radius) {
+    switch (effectNum) {
+      case 1:
+        rainEffectRealizeOne(container, startPositionX, startPositionY, radius);
+        break;
+      case 2:
+      case 3:
+        rainEffectRealizeTwo(container, startPositionX, startPositionY, radius);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+function rainEffectRealizeOne(container, startPositionX, startPositionY, radius) {
+  if (container !== void 0 && container !== null) {
+    radius = radius || 50;
+    let outter = doc.createElement("div")
+
+    outter.className = "outterDiv";
+    outter.style.left = startPositionX + "px";
+    outter.style.top = startPositionY + "px"; 
+    container.append(outter);
+
+    let computedStyleOutter = win.getComputedStyle(outter);
+
+    outter.style.width = (parseInt(computedStyleOutter.getPropertyValue("width").replace("px", "")) + radius * 2) + "px";
+    outter.style.height = (parseInt(computedStyleOutter.getPropertyValue("height").replace("px", "")) + radius * 2) + "px";
+    outter.style.left = (parseInt(computedStyleOutter.getPropertyValue("left").replace("px", "")) - radius) + "px";
+    outter.style.top = (parseInt(computedStyleOutter.getPropertyValue("top").replace("px", "")) - radius) + "px";
+    outter.addEventListener('transitionend',transitionOutterFn) 
+    outter.style.opacity = 0;
+
+    function transitionOutterFn(evt) {
+      outter.removeEventListener('transitionend', transitionOutterFn)
+      outter.remove();
+    }  
+
+    let inner = doc.createElement("div");
+
+    inner.className = "innerDiv";
+    inner.style.left = startPositionX + "px";
+    inner.style.top = startPositionY + "px";
+
+    container.append(inner)
+
+    let computedStyleInner = win.getComputedStyle(inner);
+    inner.style.width = (parseInt(computedStyleInner.getPropertyValue("width").replace("px", "")) + radius * 2) + "px";
+    inner.style.height = (parseInt(computedStyleInner.getPropertyValue("height").replace("px", "")) + radius * 2) + "px";
+    inner.style.left = (parseInt(computedStyleInner.getPropertyValue("left").replace("px", "")) - radius) + "px";
+    inner.style.top = (parseInt(computedStyleInner.getPropertyValue("top").replace("px", "")) - radius) + "px";
+    inner.addEventListener('transitionend',transitionInnerFn) 
+    inner.style.opacity = 0;
+
+    function transitionInnerFn(evt) {
+      inner.removeEventListener('transitionend', transitionInnerFn)
+      inner.remove();
+    }   
+  }  
+}
+
+function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
+  if (container !== void 0 && container !== null) {
+    let outter = doc.createElement("div")
+
+    outter.className = "outterDiv";
+    outter.style.left = startPositionX + "px";
+    outter.style.top = startPositionY + "px"; 
+    outter.addEventListener("animationend", animationOutterEnd);
+    container.append(outter)
+
+    function animationOutterEnd(evt) {
+      outter.removeEventListener("animationend", animationOutterEnd);
+      outter.remove();
+    }
+
+    let inner = doc.createElement("div");
+
+    inner.className = "innerDiv";  
+    inner.style.left = startPositionX + "px";
+    inner.style.top = startPositionY + "px";   
+    inner.addEventListener("animationend", animationInnerEnd);
+    container.append(inner)  
+
+    function animationInnerEnd(evt) {
+      inner.removeEventListener("animationend", animationInnerEnd);
+      inner.remove();
+    }
+  }
+}
