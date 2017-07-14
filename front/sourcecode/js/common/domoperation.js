@@ -64,7 +64,41 @@ export function getElementComputedStyle(element) {
   }
 }
 
-export function insertStyle2Head(cssString, isInsertFirst) {
+/*
+  [{
+  className:""
+  classValue:""  
+  }]
+ */
+export function insertStyle2Head(css, isInsertFirst, isCheckRepeat) {
+  let cssString = "";
+
+  if (typeof css !== "string"){
+
+    if (isCheckRepeat) {
+      let classNameArr = getAllClassNameArr()
+        , classNameArrLength = classNameArr.length;
+      css.filter((obj) => {
+        for(var i = 0; i < classNameArrLength; i++) {
+          if (classNameArr[i] === obj.className) {
+            return false;
+          }
+        }
+        return true;
+      })
+    }
+
+    cssString = css.reduce((obj1, obj2) => {
+      if (typeof obj1 === "string") {
+        return obj1 + obj2.className + obj2.classValue;
+      } else {
+        return obj1.className + obj1.classValue + obj2.className + obj2.classValue;
+      }  
+    })
+  } else {
+    cssString = css;
+  }
+
   var style = doc.createElement("style"),
     head = doc.getElementsByTagName('head')[0],
     headChildren = head.children,
@@ -573,4 +607,23 @@ function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
       inner.remove();
     }
   }
+}
+
+export function getAllClassNameArr() {
+  var styleSheetLst =  doc.styleSheets
+    ,styleSheetLstLength = styleSheetLst.length
+    ,resultArr = [];
+  for(var i = 0; i < styleSheetLstLength; i++) {
+    var cssRuleLst = styleSheetLst[i].cssRules
+      ,cssRuleLstLength = cssRuleLst.length;
+    for(var j = 0; j < cssRuleLstLength; j++) {
+      var rule = cssRuleLst[j];
+      if (rule.selectorText !== void 0) {
+        resultArr.push(rule.selectorText);
+      } else {
+        resultArr.push(rule.name);
+      }
+    }
+  }
+  return resultArr;
 }

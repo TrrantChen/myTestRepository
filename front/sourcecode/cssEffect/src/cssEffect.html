@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <link rel="stylesheet" href="./testCss.css">
   <style type="text/css">
   * {
     margin: 0px;
@@ -38,106 +39,129 @@
     background: #EFF3CD;
     overflow: hidden
   }
-
-
   
-
   .test1Style {
-    width:100px;
-    height:100px;
+    width: 100px;
+    height: 100px;
     background: #3D1C00;
-    transition: all 1s linear; 
-    position:absolute;
-    z-index: 100;
-    left:100px;
-    top:100px;
-  }
-
-  .test2Style {
-    width:100px;
-    height:100px;
-    background:#86B8B1;
-    transition: all 3s linear; 
-    position:absolute;
-    left:100px;
-    top:100px;
-  }
-
-  .testDiv {
-    width:0px;
-    height:0px;
-    border:solid 1px #111;
+    transition: all 1s linear;
     position: absolute;
-    left:100px;
-    top:100px;
-    border-radius: 100%;
-    transition: all 1s  ease-in-out;  
-    opacity: 1;    
+    z-index: 100;
+    left: 100px;
+    top: 100px;
   }
-
+  
+  .test2Style {
+    width: 100px;
+    height: 100px;
+    background: #86B8B1;
+    transition: all 3s linear;
+    position: absolute;
+    left: 100px;
+    top: 100px;
+  }
+  
+  .testDiv {
+    width: 0px;
+    height: 0px;
+    border: solid 1px #111;
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    border-radius: 100%;
+    transition: all 1s ease-in-out;
+    opacity: 1;
+  }
+  
   .testTransitionEventClashContentStyle {
     display: none;
   }
-
-
   
   .btnStyle {
-    padding:0 20px;
-    height:30px;
+    padding: 0 20px;
+    height: 30px;
     background: #88A65E;
+    margin: 20px;
   }
-
+  
   .hidden {
     display: none;
   }
-
+  
   .show {
     display: block;
   }
-
-  .testCssDiv{
-    --test-width:100px;
-    width:var(--test-width);
-    height:var(--test-height);
-    background:var(--main-color);
+  
+  .testCssDiv {
+    --test-width: 100px;
+    width: var(--test-width);
+    height: var(--test-height);
+    background: var(--main-color);
   }
-
+  
   .testCssDiv::before {
-    content:attr(data-attr);
+    content: attr(data-attr);
   }
-
+  
   :root {
-    --test-height:100px;
-    --main-color:#F7AF63;
-  }; 
-
+    --test-height: 100px;
+    --main-color: #F7AF63;
+  }
+  
+  ;
   :root,
   :root:lang(green) {
-    --main-color:green;
+    --main-color: green;
   }
+  
   :root:lang(blue) {
-    --main-color:red;
+    --main-color: red;
   }
   
   .rainDivStyle {
     border: solid 1px #49007E;
     display: inline-block;
-    margin:0px 10px;
+    margin: 0px 10px;
   }
-
+  
   .lineLayoutContent {
     background: #58a;
-/*    background-image:
-        linear-gradient(rgba(255,255,255,.3) 1px, transparent 0),
-        linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 0),
-        linear-gradient(white 1px, transparent 0),
-        linear-gradient(90deg, white 1px, transparent 0);
-    background-size: 15px 15px, 15px 15px, 75px 75px, 75px 75px;*/
+    background-image: linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 0), linear-gradient(90deg, rgba(255, 255, 255, .3) 1px, transparent 0), linear-gradient(white 1px, transparent 0), linear-gradient(90deg, white 1px, transparent 0);
+    background-size: 15px 15px, 15px 15px, 75px 75px, 75px 75px;
     width: 450px;
-    height: 450px;    
+    height: 450px;
   }
-
-
+  
+  .repeatLinearGradientContent {
+    width: 300px;
+    height: 20px;
+    background: repeating-linear-gradient(135deg, #000, #000 .25em, #0092b7 0, #0092b7 .75em);
+  }
+  
+  .materialDesignBtnStyle {
+    position: relative;
+  }
+  
+  .waveDiv {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    position: absolute;
+    background: rgb(0, 0, 0);
+    animation-name: waveanimation;
+    animation-duration: 0.6s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+    transform: scale(0);
+    opacity: 0;
+  }
+  
+  @keyframes waveanimation {
+    to {
+      transform: scale(3, 3);
+      opacity: 0.15;
+    }
+  }
   </style>
 </head>
 
@@ -147,6 +171,8 @@
     <button id="testAttrModifyCssPropertyBtn" class="btnStyle">testAttrModifyCssPropertyBtn</button>
     <button id="showRainControlBtn" class="btnStyle">showRainControlBtn</button>
     <button id="showLineLayoutBtn" class="btnStyle">showLineLayoutBtn</button>
+    <button id="showRepeatLinearGradientBtn" class="btnStyle">showRepeatLinearGradient</button>
+    <button id="showMaterialDesignBtn" class="btnStyle">showMaterialDesignBtn</button>
     <div id="testAttrModifyCssPropertyContent" class="hidden">
       <button id="changeCssCustomPropBtn" class="btnStyle">changeCssCustomPropBtn</button>
       <div class="testCssDiv" data-attr="100px">
@@ -154,21 +180,30 @@
     </div>
     <div id="showRainControlContent" class="showRainControlContentStyle hidden">
       <div class="rainDivStyle">
-        <input id="rainMouseDown" type="checkbox"><label for="">mouse down</label>
+        <input id="rainMouseDown" type="checkbox">
+        <label for="">mouse down</label>
       </div>
       <div class="rainDivStyle">
-        <input id="rainMouseMove" type="checkbox"><label for="">mouse move</label>
+        <input id="rainMouseMove" type="checkbox">
+        <label for="">mouse move</label>
       </div>
       <div class="rainDivStyle">
-        <input id="autoRandom" type="checkbox"><label for="">auto random</label>
+        <input id="autoRandom" type="checkbox">
+        <label for="">auto random</label>
       </div>
       <div class="rainDivStyle">
-        <input id="autoRandomScale" type="checkbox"><label for="">auto random scale</label>
+        <input id="autoRandomScale" type="checkbox">
+        <label for="">auto random scale</label>
       </div>
     </div>
     <div id="showLineLayoutContent" class="lineLayoutContent hidden">
-      
     </div>
+    <div id="showRepeatLinearGradientContent" class="repeatLinearGradientContent hidden">
+    </div>
+    <div id="showMaterialDesignContent" class="hidden">
+      <button id="materialDesignBtn" class="btnStyle">materialDesignBtn</button>
+    </div>
+    <div class="waveDiv"></div>
   </div>
   <script src=../../lib/build/lib.js></script>
   <script src='./cssEffect.js'></script>

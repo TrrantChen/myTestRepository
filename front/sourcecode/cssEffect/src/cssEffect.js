@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import  * as util from '../../js/common/util'; 
-import { rainEffect, getDomCount, action4EverySonDom, insertStyle2Head} from '../../js/common/domoperation';
+import { rainEffect, getDomCount, action4EverySonDom, insertStyle2Head, getAllClassNameArr} from '../../js/common/domoperation';
 import { getRandomInt, getRandomArbitrary } from '../../js/common/random';
 
 let container = document.querySelector(".container");
@@ -58,8 +58,21 @@ $(() => {
 
   btnControlShow(showLineLayoutBtn, showLineLayoutContent);
 
+  let showRepeatLinearGradientBtn = document.querySelector("#showRepeatLinearGradientBtn");
+  let showRepeatLinearGradientContent = document.querySelector("#showRepeatLinearGradientContent");
+
+  btnControlShow(showRepeatLinearGradientBtn, showRepeatLinearGradientContent);
+
+  let showMaterialDesignBtn = document.querySelector("#showMaterialDesignBtn");
+  let showMaterialDesignContent = document.querySelector("#showMaterialDesignContent");
+
+  btnControlShow(showMaterialDesignBtn, showMaterialDesignContent);
+
   testClick();
   test4CssCustomProp();
+
+  let materialDesignBtn = document.querySelector("#materialDesignBtn");
+  materialDesignBtnFn(materialDesignBtn);
 })
 
 function btnControlShow(btn, content) {
@@ -138,6 +151,75 @@ function test4CssCustomProp() {
     document.documentElement.setAttribute('lang', value);
 
   })
+}
+
+function materialDesignBtnFn(btn) {
+  // let cssArr = [{
+  //   className:".materialDesignBtnStyle"
+  //   ,classValue:`{
+  //     position:relative;
+  //   }`
+  // }
+  // , {
+  //   className:".waveDiv"
+  //   ,classValue:`
+  //   {
+  //     width:20px;
+  //     height:20px;
+  //     border-radius:100%;
+  //     position:absolute;
+  //     background:rgb(0,0,0);
+  //     animation-name:waveanimation;
+  //     animation-duration:0.6s;
+  //     animation-timing-function:ease-out;
+  //     animation-iteration-count:1;
+  //     transform: scale(0);
+  //     opacity:0;
+  //   }
+  //   `
+  // }
+  // , {
+  //   className:"@keyframes waveanimation"
+  //   ,classValue:`
+  //   {
+  //     to {
+  //       transform:scale(3, 3);
+  //       opacity:0;
+  //     }
+  //   }      
+  //   `
+  // }]
+
+  // insertStyle2Head(cssArr, false, false);
+  
+  
+  btn.addEventListener("click", clickHandle)
+  btn.classList.add("materialDesignBtnStyle");
+  
+  let div = createDiv();
+
+  btn.append(div);
+
+  function clickHandle(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    div.style.left = evt.offsetX;
+    div.style.top = evt.offsetY;
+    div.style.opacity = 1;
+  }
+
+  div.addEventListener("animationend", animationendHandle)
+
+  function animationendHandle(evt) {
+     div.style.opacity = 0;
+  }
+
+
+  function createDiv() {
+    let div = document.createElement("div");
+    div.className = "waveDiv";
+    return div;
+  }
 }
 
 
