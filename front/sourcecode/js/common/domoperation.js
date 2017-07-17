@@ -1,5 +1,6 @@
 import * as util from './util';
 import { isClear } from './symbolManage';
+import { getRandomInt, getRandomArbitrary } from './random';
 
 let win = window,
   doc = document;
@@ -65,30 +66,60 @@ export function getElementComputedStyle(element) {
 }
 
 /*
-  [{
-  className:""
-  classValue:""  
-  }]
+  cssObj {
+   id:""
+   cssArr:[{
+    className:""
+    classValue:""    
+   }]
+  }
+
+  option {
+  isInsertFirst
+  isCheckRepeat
+  isCreateStyle
+  }
  */
-export function insertStyle2Head(css, isInsertFirst, isCheckRepeat) {
-  let cssString = "";
-
-  if (typeof css !== "string"){
-
-    if (isCheckRepeat) {
-      let classNameArr = getAllClassNameArr()
-        , classNameArrLength = classNameArr.length;
-      css.filter((obj) => {
-        for(var i = 0; i < classNameArrLength; i++) {
-          if (classNameArr[i] === obj.className) {
-            return false;
-          }
-        }
-        return true;
-      })
+export function insertStyle2Head(cssObj, option) {
+  let cssString = ""
+    , defaultOption = {
+      isInsertFirst:false
+      , isCheckRepeat:false
+      , isCreateStyle:true
     }
 
-    cssString = css.reduce((obj1, obj2) => {
+  // 为了兼容老的接口
+  if (typeof option !== "object") {
+    defaultOption.isInsertFirst = option;
+    defaultOption.isCheckRepeat = arguments[2];
+    option = {};
+  }
+
+  option = Object.assign(defaultOption, option);
+  
+  if (typeof cssObj !== "string"){
+    if (option.isCheckRepeat) {
+      if ( cssObj.id !== void 0) {
+        let style = document.querySelector("#" + cssObj.id)
+        if (style !== void 0 && style != null) {
+          return;
+        }
+      } else {
+        let classNameArr = getAllClassNameArr()
+          , classNameArrLength = classNameArr.length;
+        cssObj.cssArr.filter((obj) => {
+          for(var i = 0; i < classNameArrLength; i++) {
+            if (classNameArr[i] === obj.className) {
+              return false;
+            }
+          }
+          return true;
+        })
+      }
+
+    }
+
+    cssString = cssObj.cssArr.reduce((obj1, obj2) => {
       if (typeof obj1 === "string") {
         return obj1 + obj2.className + obj2.classValue;
       } else {
@@ -96,31 +127,47 @@ export function insertStyle2Head(css, isInsertFirst, isCheckRepeat) {
       }  
     })
   } else {
-    cssString = css;
+    cssString = cssObj;
   }
 
-  var style = doc.createElement("style"),
-    head = doc.getElementsByTagName('head')[0],
-    headChildren = head.children,
-    isLinkExist = false,
-    headLength = headChildren.length;
-
-  style.type = "text/css";
-  style.innerHTML = cssString;
-  if (isInsertFirst) {
-    for (var i = 0; i < headLength; i++) {
-      if (headChildren[i] instanceof HTMLLinkElement) {
-        isLinkExist = true;
-        head.insertBefore(style, headChildren[i])
-        break;
-      }
-    }
-
-    if (!isLinkExist) {
-      head.appendChild(style);
+  // 两种不同的插入方式，前一种为推荐的，但感觉不是很方便
+  if (doc.styleSheets && doc.styleSheets.length && !option.isCreateStyle) {
+    if (option.isInsertFirst) {
+      doc.styleSheets[0].insertRule(cssString);
+    } else {
+      let styleSheetsLength = doc.styleSheets.length
+        , cssRuleLst = doc.styleSheets[styleSheetsLength - 1]
+        , cssRuleLstLength = cssRuleLst.length;
+      cssRuleLst.insertRule(cssString, cssRuleLstLength);
     }
   } else {
-    head.appendChild(style);
+    let style = doc.createElement("style"),
+      head = doc.getElementsByTagName('head')[0],
+      headChildren = head.children,
+      isLinkExist = false,
+      headLength = headChildren.length;
+
+    if (cssObj.id !== void 0) {
+      style.id =  cssObj.id;
+    }
+    
+    style.type = "text/css";
+    style.innerHTML = cssString;
+    if (option.isInsertFirst) {
+      for (var i = 0; i < headLength; i++) {
+        if (headChildren[i] instanceof HTMLLinkElement) {
+          isLinkExist = true;
+          head.insertBefore(style, headChildren[i])
+          break;
+        }
+      }
+
+      if (!isLinkExist) {
+        head.appendChild(style);
+      }
+    } else {
+      head.appendChild(style);
+    }
   }
 };
 
@@ -134,7 +181,12 @@ export function insertStr2Dom(htmlText, parentDom) {
 export function createAndGetProgress() {
   var progressContainer = doc.querySelector(".progressContainer");
   if (progressContainer == void 0 || progressContainer == null) {
-    var htmlStr = '<div class="progressContainer">' + '    <div class="progressStyle">' + '        <div class="progressBar"></div>' + '    </div>' + '    <div class="progressNum">0%</div>' + '</div>';
+    var htmlStr = `<div class="progressContainer">
+                       <div class="progressStyle">
+                           <div class="progressBar"></div>
+                       </div>
+                       <div class="progressNum">0%</div>
+                   </div>`;
     insertStr2Dom(htmlStr);
   }
   return doc.querySelector(".progressContainer")
@@ -395,10 +447,10 @@ export function removeElemDefaultEvent(id,addFn) {
 
 export function rainEffect(effectNum) {
   effectNum = effectNum || 1;
-  let cssString = ""
+  let css = ""
   switch (effectNum) {
     case 1:
-      cssString = `
+      css = `
         .outterDiv {
           width:0px;
           height:0px;
@@ -422,7 +474,7 @@ export function rainEffect(effectNum) {
       `;
       break;
     case 2:
-      cssString = `
+      css = `
         .outterDiv {
           width:1px;
           height:1px;
@@ -467,64 +519,126 @@ export function rainEffect(effectNum) {
       `;
       break;
     case 3:
-      cssString = `
-        .outterDiv {
-          width:50px;
-          height:50px;
-          border:solid 1px #111;
-          position: absolute;
-          border-radius: 100%;
-          opacity: 1;
-          animation-name:circleExtend;
-          animation-duration:2s;
-          animation-timing-function:ease-out;
-          animation-iteration-count:1;
-          transform: scale(0);             
-        }
-
-        .innerDiv {
-          width:50px;
-          height:50px;
-          border:solid 1px #111;
-          position: absolute;
-          border-radius: 100%;
-          opacity: 1;
-          animation-name:circleExtend;
-          animation-duration:2s;
-          animation-timing-function:ease-out;
-          animation-delay:0.2s;
-          animation-iteration-count:1;
-          transform: scale(0); 
-       
-        } 
-
-        @keyframes circleExtend {
-         to {
-            transform:scale(var(--animation-scale), var(--animation-scale));
-            /*transform:scale(3, 3);*/
-            opacity:0;
+      css = {
+        styleTitle:"rainAnimation"
+        ,cssArr:[
+          {
+            className:".outterDiv"
+            ,classValue:`
+              {
+                width:50px;
+                height:50px;
+                border:solid 1px #111;
+                position: absolute;
+                border-radius: 100%;
+                opacity: 1;
+                animation-name:circleExtend;
+                animation-duration:2s;
+                animation-timing-function:ease-out;
+                animation-iteration-count:1;
+                transform: scale(0);             
+              }
+            ` 
+          }, 
+          {
+            className:"innerDiv"
+            ,classValue:`
+              {
+                width:50px;
+                height:50px;
+                border:solid 1px #111;
+                position: absolute;
+                border-radius: 100%;
+                opacity: 1;
+                animation-name:circleExtend;
+                animation-duration:2s;
+                animation-timing-function:ease-out;
+                animation-delay:0.2s;
+                animation-iteration-count:1;
+                transform: scale(0); 
+              } 
+            `
+          },
+          {
+            className:"@keyframes circleExtend"
+            ,classValue:`
+            {
+             to {
+                transform:scale(var(--animation-scale), var(--animation-scale));
+                /*transform:scale(3, 3);*/
+                opacity:0;
+              }
+            } 
+            `
+          },
+          {
+            className:":root"
+            ,classValue:`
+            {
+              --animation-scale:3;
+            }
+            `
           }
-        } 
-
-        :root {
-          --animation-scale:3;
-        }
-
-      `;
+        ]
+      }
+    case 4:
+      css = {
+        styleTitle:""
+        ,cssArr:[
+          {
+            className:".outterDiv"
+            ,classValue:`
+              {
+                width:50px;
+                height:50px;
+                border:solid 1px #111;
+                position: absolute;
+                border-radius: 100%;
+                opacity: 1;
+                animation-duration:2s;
+                animation-timing-function:ease-out;
+                animation-iteration-count:1;
+                transform: scale(0);             
+              }
+            ` 
+          }, 
+          {
+            className:".innerDiv"
+            ,classValue:`
+              {
+                width:50px;
+                height:50px;
+                border:solid 1px #111;
+                position: absolute;
+                border-radius: 100%;
+                opacity: 1;
+                animation-duration:2s;
+                animation-timing-function:ease-out;
+                animation-delay:0.2s;
+                animation-iteration-count:1;
+                transform: scale(0); 
+              } 
+            `
+          }
+        ]
+      }    
     default:
       break;
   }
-
-  insertStyle2Head(cssString);
+  let index = 0;
+  insertStyle2Head(css);
 
   return function(container, startPositionX, startPositionY, radius) {
+    ++index;
     switch (effectNum) {
       case 1:
         rainEffectRealizeOne(container, startPositionX, startPositionY, radius);
         break;
       case 2:
       case 3:
-        rainEffectRealizeTwo(container, startPositionX, startPositionY, radius);
+        rainEffectRealizeTwo(container, startPositionX, startPositionY);
+      case 4:
+        rainEffectRealizeThree(container, startPositionX, startPositionY, index);
         break;
       default:
         break;
@@ -581,9 +695,39 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
 
 function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
   if (container !== void 0 && container !== null) {
-    let outter = doc.createElement("div")
+    let randomScale = getRandomArbitrary(1, 8)
+      , styleId = `rainAnimation${index}`
+      ,activeAnimation = `activeAnimation${index}`
+      ,cssObj = {
+        id:styleId
+        ,cssArr: [
+          {
+            className:`@keyframes circleExtend${index}`
+            ,classValue:`
+            {
+             to {
+                transform:scale(${randomScale}, ${randomScale});
+                opacity:0;
+              }
+            } 
+            `
+          },
+          {
+            className:`.${activeAnimation}`
+            ,classValue:`
+            {
+              animation-name:circleExtend${index};
+            }
+            `
+          }
+        ]
+      };
 
-    outter.className = "outterDiv";
+    insertStyle2Head(cssObj);
+
+    let outter = doc.createElement("div");
+    outter.classList.add(activeAnimation);
+    outter.classList.add("outterDiv");
     outter.style.left = startPositionX + "px";
     outter.style.top = startPositionY + "px"; 
     outter.addEventListener("animationend", animationOutterEnd);
@@ -595,14 +739,76 @@ function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
     }
 
     let inner = doc.createElement("div");
-
-    inner.className = "innerDiv";  
+    inner.classList.add(activeAnimation); 
+    inner.classList.add("innerDiv");  
     inner.style.left = startPositionX + "px";
     inner.style.top = startPositionY + "px";   
     inner.addEventListener("animationend", animationInnerEnd);
     container.append(inner)  
 
     function animationInnerEnd(evt) {
+      document.querySelector("#" + styleId).remove();
+      inner.removeEventListener("animationend", animationInnerEnd);
+      inner.remove();
+    }
+  }
+}
+
+function rainEffectRealizeThree(container, startPositionX, startPositionY, index) {
+  if (container !== void 0 && container !== null) {
+    let randomScale = getRandomArbitrary(1, 8)
+      , styleId = `rainAnimation${index}`
+      ,activeAnimation = `activeAnimation${index}`
+      ,cssObj = {
+        id:styleId
+        ,cssArr: [
+          {
+            className:`@keyframes circleExtend${index}`
+            ,classValue:`
+            {
+             to {
+                transform:scale(${randomScale}, ${randomScale});
+                opacity:0;
+              }
+            } 
+            `
+          },
+          {
+            className:`.${activeAnimation}`
+            ,classValue:`
+            {
+              animation-name:circleExtend${index};
+            }
+            `
+          }
+        ]
+      };
+
+    insertStyle2Head(cssObj);
+
+    let outter = doc.createElement("div");
+    outter.classList.add(activeAnimation);
+    outter.classList.add("outterDiv");
+    outter.style.left = startPositionX + "px";
+    outter.style.top = startPositionY + "px"; 
+    outter.addEventListener("animationend", animationOutterEnd);
+    container.append(outter)
+
+    function animationOutterEnd(evt) {
+      outter.removeEventListener("animationend", animationOutterEnd);
+      outter.remove();
+    }
+
+    let inner = doc.createElement("div");
+    inner.classList.add(activeAnimation); 
+    inner.classList.add("innerDiv");  
+    inner.style.left = startPositionX + "px";
+    inner.style.top = startPositionY + "px";   
+    inner.addEventListener("animationend", animationInnerEnd);
+    container.append(inner)  
+
+    function animationInnerEnd(evt) {
+      document.querySelector("#" + styleId).remove();
       inner.removeEventListener("animationend", animationInnerEnd);
       inner.remove();
     }
@@ -626,4 +832,73 @@ export function getAllClassNameArr() {
     }
   }
   return resultArr;
+}
+
+export function ripple(container) {
+  let cssObj = {
+    id:"rippleStype"
+    , cssArr:  [{
+        className:".rippleStyle"
+        , classValue:`
+        {
+          position: relative;
+          overflow:hidden;
+        }
+        `
+      }, {
+        className:".waveDiv"
+        , classValue:`
+        {
+          width: 100px;
+          height: 100px;
+          border-radius: 100%;
+          position: absolute;
+          background: rgba(0,0,0,.15);
+          transform: scale(0);
+          animation-name: waveanimation;
+          animation-duration: 0.6s;
+          animation-timing-function: ease-out;
+          animation-iteration-count: 1;    
+          pointer-events: none;    
+        }
+        `
+      }, {
+        className:"@keyframes waveanimation"
+        , classValue:`
+        {
+          to {
+            transform: scale(2, 2);
+            opacity: 1;
+          }
+        }
+        `
+      }]
+  }
+
+  insertStyle2Head(cssObj, {isCheckRepeat:true});
+  
+  container.addEventListener("click", clickHandle)
+  container.classList.add("rippleStyle");
+  
+  function clickHandle(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    let div = document.createElement("div");
+    div.classList.add ("waveDiv");    
+    let width = parseInt(window.getComputedStyle(container).getPropertyValue("width").replace("px", ""))
+      , height = parseInt(window.getComputedStyle(container).getPropertyValue("height").replace("px", ""))
+      , radiu = (width > height ? width : height);
+    div.style.width = radiu + "px";
+    div.style.height = radiu + "px";
+    div.style.left = evt.offsetX - parseInt(radiu)/2 + "px";
+    div.style.top = evt.offsetY -  parseInt(radiu)/2 + "px" ;
+    container.append(div);
+    div.addEventListener("animationend", animationendHandle)
+  }
+
+  function animationendHandle(evt) {
+    let div = evt.target;
+    div.removeEventListener("animationend", animationendHandle);
+    div.remove();
+  }
 }
