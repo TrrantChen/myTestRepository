@@ -112,18 +112,17 @@ function randomRainHandle() {
 function randomRadiusRainHandleWithCustomProperty() {
   function fn() {
     let startPositionX = getRandomInt(0, 1000)
-      ,startPositionY = getRandomInt(0, 600);
-    //   ,randomScale = getRandomArbitrary(1, 8);
-    
-    // document.documentElement.style.setProperty("--animation-scale", randomScale);
-    addRainEffect(container, startPositionX, startPositionY)   
+      ,startPositionY = getRandomInt(0, 600)
+      ,randomScale = getRandomArbitrary(1, 8);
+
+    document.documentElement.style.setProperty("--animation-scale", randomScale);
+    addRainEffect(container, startPositionX, startPositionY); 
   };
   clearRandomScaleId = setInterval(fn, 300);
 }
 
-
 /*
-  使用增删样式表来控制动画，但是效果不好，会出现卡顿。
+  使用增删样式表来控制动画(改进型)
  */
 function randomRadiusRainHandleWithInsertAndDelete() {
   function fn() {
@@ -132,9 +131,7 @@ function randomRadiusRainHandleWithInsertAndDelete() {
       ,randomScale = getRandomArbitrary(1, 8)
       ,styleSheetList =  document.styleSheets[2];
 
-    styleSheetList.deleteRule(2);
-    styleSheetList.insertRule(`@keyframes circleExtend {to {transform:scale(${randomScale}, ${randomScale});opacity:0;}}`, 2);
-    addRainEffect(container, startPositionX, startPositionY)   
+     addRainEffect(container, startPositionX, startPositionY); 
   };
   clearRandomScaleId =setInterval(fn, 300);  
 }

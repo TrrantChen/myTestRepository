@@ -444,83 +444,120 @@ export function removeElemDefaultEvent(id,addFn) {
   }
 }
 
-
-export function rainEffect(effectNum) {
+/*
+ option:{
+  radius
+  ,isRandom
+  ,index 
+ }
+ */
+export function rainEffect(effectNum, option) {
+  let defaultOption = {
+    
+  }
   effectNum = effectNum || 1;
   let css = ""
   switch (effectNum) {
     case 1:
-      css = `
-        .outterDiv {
-          width:0px;
-          height:0px;
-          border:solid 1px #111;
-          position: absolute;
-          border-radius: 100%;
-          transition: all 1s  ease-in-out; 
-          transition-delay:0.3s;
-          opacity: 1;
-        }
-
-        .innerDiv {
-          width:0px;
-          height:0px;
-          border:solid 1px #111;
-          position: absolute;
-          border-radius: 100%;
-          transition: all 1s  ease-in-out;  
-          opacity: 1;
-        }  
-      `;
+      css = {
+        id:"rainAnimation"
+        ,cssArr:[
+          {
+            className:".outterDiv"
+            ,classValue:`
+              {
+                width:0px;
+                height:0px;
+                border:solid 1px #111;
+                position: absolute;
+                border-radius: 100%;
+                transition: all 1s  ease-in-out; 
+                transition-delay:0.3s;
+                opacity: 1;
+              }
+            ` 
+          }, 
+          {
+            className:".innerDiv"
+            ,classValue:`
+            {
+              width:0px;
+              height:0px;
+              border:solid 1px #111;
+              position: absolute;
+              border-radius: 100%;
+              transition: all 1s  ease-in-out;  
+              opacity: 1;
+            } 
+            `
+          }
+        ]
+      }   
       break;
     case 2:
-      css = `
-        .outterDiv {
-          width:1px;
-          height:1px;
-          border:solid 1px #111;
-          position: absolute;
-          border-radius: 100%;
-          opacity: 1;
-          animation-name:circleExtend;
-          animation-duration:1s;
-          animation-timing-function:ease-in-out;
-          animation-iteration-count:1;             
-        }
-
-        .innerDiv {
-          width:1px;
-          height:1px;
-          border:solid 1px #111;
-          position: absolute;
-          border-radius: 100%;
-          opacity: 1;
-          animation-name:circleExtend;
-          animation-duration:1s;
-          animation-timing-function:ease-out;
-          animation-delay:0.2s;
-          animation-iteration-count:1;          
-        } 
-
-        @keyframes circleExtend {
-          0% {
-            transform:scale(0, 0);
+      css = {
+        id:"rainAnimation"
+        ,cssArr:[
+          {
+            className:".outterDiv"
+            , classValue:`
+              {
+                width:1px;
+                height:1px;
+                border:solid 1px #111;
+                position: absolute;
+                border-radius: 100%;
+                opacity: 1;
+                animation-name:circleExtend;
+                animation-duration:1s;
+                animation-timing-function:ease-in-out;
+                animation-iteration-count:1;             
+              }            
+            `
           }
-
-          50% {
-            transform:scale(100, 100);
+          , {
+            className:".innerDiv"
+            , classValue:`
+             {
+              width:1px;
+              height:1px;
+              border:solid 1px #111;
+              position: absolute;
+              border-radius: 100%;
+              opacity: 1;
+              animation-name:circleExtend;
+              animation-duration:1s;
+              animation-timing-function:ease-out;
+              animation-delay:0.2s;
+              animation-iteration-count:1;          
+            } 
+            `
           }
+          , {
+            className:"@keyframes circleExtend"
+            , classValue:`
+             {
+              0% {
+                transform:scale(0, 0);
+              }
 
-          100% {
-            transform:scale(150, 150);
-            opacity:0;
+              50% {
+                transform:scale(100, 100);
+              }
+
+              100% {
+                transform:scale(150, 150);
+                opacity:0;
+              }
+            } 
+            `
           }
-        }       
-      `;
+        ]
+      }
       break;
     case 3:
       css = {
-        styleTitle:"rainAnimation"
+        id:"rainAnimation"
         ,cssArr:[
           {
             className:".outterDiv"
@@ -583,7 +620,7 @@ export function rainEffect(effectNum) {
       }
     case 4:
       css = {
-        styleTitle:""
+        id:"rainAnimation"
         ,cssArr:[
           {
             className:".outterDiv"
@@ -625,10 +662,9 @@ export function rainEffect(effectNum) {
     default:
       break;
   }
-  let index = 0;
-  insertStyle2Head(css);
-
-  return function(container, startPositionX, startPositionY, radius) {
+  insertStyle2Head(css, {isCheckRepeat:true});
+  return function(container, startPositionX, startPositionY) {
+    let de
     ++index;
     switch (effectNum) {
       case 1:
@@ -638,7 +674,7 @@ export function rainEffect(effectNum) {
       case 3:
         rainEffectRealizeTwo(container, startPositionX, startPositionY);
       case 4:
-        rainEffectRealizeThree(container, startPositionX, startPositionY, index);
+        rainEffectRealizeThree(container, startPositionX, startPositionY, option);
         break;
       default:
         break;
@@ -695,51 +731,18 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
 
 function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
   if (container !== void 0 && container !== null) {
-    let randomScale = getRandomArbitrary(1, 8)
-      , styleId = `rainAnimation${index}`
-      ,activeAnimation = `activeAnimation${index}`
-      ,cssObj = {
-        id:styleId
-        ,cssArr: [
-          {
-            className:`@keyframes circleExtend${index}`
-            ,classValue:`
-            {
-             to {
-                transform:scale(${randomScale}, ${randomScale});
-                opacity:0;
-              }
-            } 
-            `
-          },
-          {
-            className:`.${activeAnimation}`
-            ,classValue:`
-            {
-              animation-name:circleExtend${index};
-            }
-            `
-          }
-        ]
-      };
-
-    insertStyle2Head(cssObj);
-
     let outter = doc.createElement("div");
-    outter.classList.add(activeAnimation);
     outter.classList.add("outterDiv");
     outter.style.left = startPositionX + "px";
     outter.style.top = startPositionY + "px"; 
     outter.addEventListener("animationend", animationOutterEnd);
     container.append(outter)
-
     function animationOutterEnd(evt) {
       outter.removeEventListener("animationend", animationOutterEnd);
       outter.remove();
     }
 
     let inner = doc.createElement("div");
-    inner.classList.add(activeAnimation); 
     inner.classList.add("innerDiv");  
     inner.style.left = startPositionX + "px";
     inner.style.top = startPositionY + "px";   
@@ -747,14 +750,13 @@ function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
     container.append(inner)  
 
     function animationInnerEnd(evt) {
-      document.querySelector("#" + styleId).remove();
       inner.removeEventListener("animationend", animationInnerEnd);
       inner.remove();
     }
   }
 }
 
-function rainEffectRealizeThree(container, startPositionX, startPositionY, index) {
+function rainEffectRealizeThree(container, startPositionX, startPositionY, option) {
   if (container !== void 0 && container !== null) {
     let randomScale = getRandomArbitrary(1, 8)
       , styleId = `rainAnimation${index}`
