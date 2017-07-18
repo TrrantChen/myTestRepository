@@ -449,14 +449,27 @@ export function removeElemDefaultEvent(id,addFn) {
   radius
   ,isRandom
   ,index 
+  ,randomMin
+  ,randomMax
  }
  */
 export function rainEffect(effectNum, option) {
+  effectNum = effectNum || 4;
+  option = option || {};
+
   let defaultOption = {
-    
+    radius:2
+    ,isRandom:false
+    ,index:0 
+    ,randomMin:1
+    ,randomMax:8
   }
-  effectNum = effectNum || 1;
+
+  option = Object.assign(defaultOption, option);
+  
+
   let css = ""
+
   switch (effectNum) {
     case 1:
       css = {
@@ -492,7 +505,7 @@ export function rainEffect(effectNum, option) {
             `
           }
         ]
-      }   
+      };  
       break;
     case 2:
       css = {
@@ -553,6 +566,10 @@ export function rainEffect(effectNum, option) {
             `
           }
         ]
+      };
+
+      if (!option.isRandom) {
+        document.documentElement.style.setProperty("--animation-scale", option.radius); 
       }
       break;
     case 3:
@@ -578,7 +595,7 @@ export function rainEffect(effectNum, option) {
             ` 
           }, 
           {
-            className:"innerDiv"
+            className:".innerDiv"
             ,classValue:`
               {
                 width:50px;
@@ -617,7 +634,12 @@ export function rainEffect(effectNum, option) {
             `
           }
         ]
+      };
+
+      if (!option.isRandom) {
+        document.documentElement.style.setProperty("--animation-scale", option.radius); 
       }
+      break;
     case 4:
       css = {
         id:"rainAnimation"
@@ -664,17 +686,17 @@ export function rainEffect(effectNum, option) {
   }
   insertStyle2Head(css, {isCheckRepeat:true});
   return function(container, startPositionX, startPositionY) {
-    let de
-    ++index;
+    option.index += 1;
     switch (effectNum) {
       case 1:
         rainEffectRealizeOne(container, startPositionX, startPositionY, radius);
         break;
       case 2:
       case 3:
-        rainEffectRealizeTwo(container, startPositionX, startPositionY);
+        rainEffectRandomByCssProperty(container, startPositionX, startPositionY, option);
+        break;
       case 4:
-        rainEffectRealizeThree(container, startPositionX, startPositionY, option);
+        rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY, option);
         break;
       default:
         break;
@@ -729,20 +751,27 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
   }  
 }
 
-function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
+function rainEffectRandomByCssProperty(container, startPositionX, startPositionY, option) {
   if (container !== void 0 && container !== null) {
+    if (option.isRandom) {
+      document.documentElement.style.setProperty("--animation-scale", getRandomArbitrary(option.randomMin, option.randomMax));      
+    } 
+
     let outter = doc.createElement("div");
+
     outter.classList.add("outterDiv");
     outter.style.left = startPositionX + "px";
     outter.style.top = startPositionY + "px"; 
     outter.addEventListener("animationend", animationOutterEnd);
     container.append(outter)
+
     function animationOutterEnd(evt) {
       outter.removeEventListener("animationend", animationOutterEnd);
       outter.remove();
     }
 
     let inner = doc.createElement("div");
+    
     inner.classList.add("innerDiv");  
     inner.style.left = startPositionX + "px";
     inner.style.top = startPositionY + "px";   
@@ -756,16 +785,16 @@ function rainEffectRealizeTwo(container, startPositionX, startPositionY) {
   }
 }
 
-function rainEffectRealizeThree(container, startPositionX, startPositionY, option) {
+function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY, option) {
   if (container !== void 0 && container !== null) {
-    let randomScale = getRandomArbitrary(1, 8)
-      , styleId = `rainAnimation${index}`
-      ,activeAnimation = `activeAnimation${index}`
+    let randomScale = option.isRandom ? getRandomArbitrary(option.randomMin, option.randomMax) : option.radius
+      , styleId = `rainAnimation${option.index}`
+      ,activeAnimation = `activeAnimation${option.index}`
       ,cssObj = {
         id:styleId
         ,cssArr: [
           {
-            className:`@keyframes circleExtend${index}`
+            className:`@keyframes circleExtend${option.index}`
             ,classValue:`
             {
              to {
@@ -779,7 +808,7 @@ function rainEffectRealizeThree(container, startPositionX, startPositionY, optio
             className:`.${activeAnimation}`
             ,classValue:`
             {
-              animation-name:circleExtend${index};
+              animation-name:circleExtend${option.index};
             }
             `
           }

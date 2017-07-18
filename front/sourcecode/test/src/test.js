@@ -7,6 +7,19 @@ $(() => {
   // console.log("container " + objectSizeof.default(container));
   // console.log("$ " + objectSizeof.default($));
   // console.log("$ " + sizeof($));
+  
+  class TestClass {
+
+  }
+
+  var testClass = new TestClass();
+
+  function TestFunction() {
+
+  }
+
+  var testFunc = new TestFunction();
+
 })
 
 

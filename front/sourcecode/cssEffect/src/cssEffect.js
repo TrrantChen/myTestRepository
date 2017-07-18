@@ -4,7 +4,7 @@ import { rainEffect, getDomCount, action4EverySonDom, insertStyle2Head, getAllCl
 import { getRandomInt, getRandomArbitrary } from '../../js/common/random';
 
 let container = document.querySelector(".container");
-let addRainEffect =  rainEffect(4);
+let addRainEffect =  rainEffect(3, {isRandom:true});
 let clearRandomId = null;
 let clearRandomScaleId = null;
 
@@ -45,7 +45,7 @@ $(() => {
           break; 
         case "autorandomscale":
           if (isChecked) {
-            randomRadiusRainHandleWithCustomProperty();
+            randomRadiusRainHandle();
           } else {
             window.clearInterval(clearRandomScaleId)
           }        
@@ -73,6 +73,23 @@ $(() => {
 
   let materialDesignBtn = document.querySelector("#materialDesignBtn");
   materialDesignBtnFn(materialDesignBtn);
+
+  let showChangeStyleBySheetBtn = document.querySelector("#showChangeStyleBySheetBtn");
+  let changeStyleBySheetContent = document.querySelector("#changeStyleBySheetContent");
+
+  btnControlShow(showChangeStyleBySheetBtn, changeStyleBySheetContent);
+
+  let changeStyleBtn = document.querySelector("#changeStyleBtn");
+  changeStyleBtn.addEventListener("click", (evt) => {
+    changeStyleUseSheet();
+  })
+
+  let showCssPseudoClassTestBtn = document.querySelector("#showCssPseudoClassTestBtn");
+  let cssPseudoClassTestContent = document.querySelector("#cssPseudoClassTestContent");
+
+  btnControlShow(showCssPseudoClassTestBtn, cssPseudoClassTestContent);
+
+  pseudoClassTest();
 })
 
 function btnControlShow(btn, content) {
@@ -80,6 +97,7 @@ function btnControlShow(btn, content) {
     content.classList.toggle("show");
   })
 }
+
 
 function testClick() {
   let testBtn = document.querySelector("#testBtn");
@@ -106,34 +124,13 @@ function randomRainHandle() {
   }, 50)
 }
 
-/*
-  css自定义属性，但在firefox下会有问题。
- */
-function randomRadiusRainHandleWithCustomProperty() {
+function randomRadiusRainHandle() {
   function fn() {
     let startPositionX = getRandomInt(0, 1000)
       ,startPositionY = getRandomInt(0, 600)
-      ,randomScale = getRandomArbitrary(1, 8);
-
-    document.documentElement.style.setProperty("--animation-scale", randomScale);
     addRainEffect(container, startPositionX, startPositionY); 
   };
   clearRandomScaleId = setInterval(fn, 300);
-}
-
-/*
-  使用增删样式表来控制动画(改进型)
- */
-function randomRadiusRainHandleWithInsertAndDelete() {
-  function fn() {
-    let startPositionX = getRandomInt(0, 1000)
-      ,startPositionY = getRandomInt(0, 600)
-      ,randomScale = getRandomArbitrary(1, 8)
-      ,styleSheetList =  document.styleSheets[2];
-
-     addRainEffect(container, startPositionX, startPositionY); 
-  };
-  clearRandomScaleId =setInterval(fn, 300);  
 }
 
 function test4CssCustomProp() {
@@ -156,6 +153,14 @@ function test4CssCustomProp() {
 
 function materialDesignBtnFn(btn) {
   ripple(btn);
+}
+
+function changeStyleUseSheet() {
+  document.styleSheets[1].cssRules[20].style.background = "#F4DD51";
+}
+
+function pseudoClassTest() {
+
 }
 
 

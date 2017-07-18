@@ -468,6 +468,29 @@ export function char2num(ch) {
     return ch.charCodeAt(0);
 }
 
+/*
+  数组去重
+ */
+export function twoArrayUnique(target, source) {
+  let result = []
+    , tmpMap = new Map()
+    , sourceLength = source.length
+    , targetLength = target.length;
+
+  for (var i = 0; i < sourceLength; i++) {
+    tmpMap.set(source[i], true);
+  }
+
+  for (var i = 0; i < targetLength; i++) {
+    if (tmpMap.get(target[i]) !== true) {
+      result.push(target[i]);
+    }
+  }
+
+  return result;
+}
+
+
 
 Function.prototype.before = function(fn) {
   let args = [],

@@ -385,8 +385,8 @@ export function resizable(element) {
 
 }
 
-export function selectable(selector, option) {
-  // filter:  string or array
+export function selectable(elem, option) {
+  // filterArr:  array elem
   // frame 
   // todo
   // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
@@ -396,14 +396,13 @@ export function selectable(selector, option) {
   // stop;
   // unselected;
   // unselecting;
-  let target = null,
+  let target = elem,
     dom = null,
     startMousePosition = null,
     startDomPosition = null,
     defaultOption = {
-      filter: ""
+      filterArr: []
     },
-    filterArr = [],
     selectedArr = [],
     doc = document,
     win = window;
@@ -416,27 +415,21 @@ export function selectable(selector, option) {
     domoperation.setFrame(option.frame);
   }
 
-  target = doc.querySelector(selector)
-
   if (target !== void 0 && target !== null) {
-    if (option.filter !== "") {
-      filterArr = Array.isArray(option.filter) ?
-        option.filger.map((selector, index) => {
-          return doc.querySelector(selector);
-        }) : doc.querySelector(option.filter);
-    }
-
-    let filterArrLength = filterArr.length;
-
-    // 方案1
     let elemAndRectArr = null;
 
     target.addEventListener('mousedown', (event) => {
       event.stopPropagation();
       event.preventDefault();
 
-      // 方案1
-      elemAndRectArr = Array.prototype.map.call(target.children, (elem) => {
+      let domArr = [].slice.call(target.children)
+        , domArrLength = domArr.length;
+
+      if (option.filterArr.length !== 0) {
+        domArr = util.twoArrayUnique(domArr, option.filterArr);
+      };
+
+      elemAndRectArr = domArr.map((elem) => {
         let boundingClientRect = elem.getBoundingClientRect();
         return {
           elem: elem,
@@ -444,10 +437,8 @@ export function selectable(selector, option) {
           right: boundingClientRect.right,
           top: boundingClientRect.top,
           bottom: boundingClientRect.bottom
-        }
+        }          
       });
-      // 方案2
-      
 
       startMousePosition = { x: event.pageX, y: event.pageY };
       startDomPosition = { x: event.pageX - win.scrollX, y: event.pageY - win.scrollY }
@@ -493,7 +484,6 @@ export function selectable(selector, option) {
 
       // 框选覆盖条件判断，判断条件为如果框的clientRect的大小如果和container中child的大小有重叠
       // 则为其执行覆盖事件
-      // 方案 1
       let domClientRect = dom.getBoundingClientRect();
       for(var i = 0; i < elemAndRectArr.length; i++) {
         let elemAndRect = elemAndRectArr[i];
@@ -508,18 +498,6 @@ export function selectable(selector, option) {
           }
         }
       } 
-      // 方案2 
-      // 通过eventTarget来动态添加mouseenter，mouseout，但每次也要过一下循环判断是不是children里的
-      // let targetDom = event.target;
-      // if (util.isArrayContain(target.children, targetDom)) {
-      //   targetDom.addEventListener("mouseenter", (evt) => {
-          
-      //   })
-
-      //   targetDom.addEventListener("mouseout", (evt) => {
-          
-      //   })
-      // } 
     }
 
     function isRectOverlap(domClientRect, elemAndRect) {

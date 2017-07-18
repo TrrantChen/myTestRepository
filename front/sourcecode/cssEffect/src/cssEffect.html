@@ -107,8 +107,7 @@
       --test-height: 100px;
       --main-color: #F7AF63;
     }
-    
-    ;
+
     :root,
     :root:lang(green) {
       --main-color: green;
@@ -137,6 +136,12 @@
       height: 20px;
       background: repeating-linear-gradient(135deg, #000, #000 .25em, #0092b7 0, #0092b7 .75em);
     }
+
+    .changeStyleBySheetContent {
+      width:300px;
+      height:300px;
+      background:#FDE6BD;
+    }
   </style>
 </head>
 
@@ -148,6 +153,8 @@
     <button id="showLineLayoutBtn" class="btnStyle">showLineLayoutBtn</button>
     <button id="showRepeatLinearGradientBtn" class="btnStyle">showRepeatLinearGradient</button>
     <button id="showMaterialDesignBtn" class="btnStyle">showMaterialDesignBtn</button>
+    <button id="showChangeStyleBySheetBtn" class="btnStyle">showChangeStyleBySheet</button>
+    <button id="showCssPseudoClassTestBtn" class="btnStyle">showCssPseudoClassTest</button>
     <div id="testAttrModifyCssPropertyContent" class="hidden">
       <button id="changeCssCustomPropBtn" class="btnStyle">changeCssCustomPropBtn</button>
       <div class="testCssDiv" data-attr="100px">
@@ -177,6 +184,13 @@
     </div>
     <div id="showMaterialDesignContent" class="hidden">
       <button id="materialDesignBtn" class="btnStyle">materialDesignBtn</button>
+    </div>
+    <div id="changeStyleBySheetContent" class="changeStyleBySheetContent hidden">
+      <button id="changeStyleBtn" class="btnStyle">changeStyle</button>
+    </div>
+    <div id="cssPseudoClassTestContent" class="hidden">
+      
+      
     </div>
     <div class="testClass1"></div>
   </div>

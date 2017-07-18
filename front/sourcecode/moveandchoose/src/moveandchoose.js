@@ -76,7 +76,9 @@ function dragInterationTest() {
 }
 
 function selectableTest() {
-    interaction.selectable("#selectorContainer")
+  let filterArr = [].slice.call(document.querySelectorAll(".filter"))
+    , selectorContainer = document.querySelector("#selectorContainer")
+  interaction.selectable(selectorContainer, {filterArr:filterArr})
 }
 
 function selectableByJqueryUi() {
