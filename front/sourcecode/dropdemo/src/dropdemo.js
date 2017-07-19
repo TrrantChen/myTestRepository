@@ -10,8 +10,10 @@ window.onload = function() {
   let hBtn = document.querySelector("#hBtn");
 
   hBtn.addEventListener("click", (evt) => {
-    if (selectedArr.length !== 0) {
-      
+    let domArrLength = selectedArr.length;
+    if (domArrLength !== 0) {
+      let standardDom = selectedArr[0];
+      let standardY = window.getComputedStyle()
     }
   })
   getFrame.addEventListener("click", (evt) => {
