@@ -432,7 +432,7 @@ function demo7() {
   console.log("after");
 }
 
-(function mySelfPromise() {
+function mySelfPromise() {
   let MyPromise = function(fn) {
     let deferreds = []
       ,state = 'pending'
@@ -804,7 +804,42 @@ function demo7() {
   }
 
   testCase10();
+}
+
+(function promiseCallback() {
+  let testBtn = document.querySelector("#testBtn");
+  window.index = 0;
+
+  // function promiseFn() {
+  //   let promise = new Promise((resolve) => {
+  //     testBtn.addEventListener("click", (evt) => {
+  //       ++index;
+  //       resolve(index);
+  //     })         
+  //   })
+  //   return promise;
+  // }
+
+
+  // promiseFn().then((index) => {
+  //   console.log(index);
+  // })
+  
+  function callbakFn(fn) {
+    let num = 1;
+    testBtn.addEventListener("click", (evt) => {
+      ++window.index;
+      fn();
+    })  
+  }
+
+  callbakFn(() => {
+    console.log(window.index);
+  })
+
 })()
+
+
 
 
 

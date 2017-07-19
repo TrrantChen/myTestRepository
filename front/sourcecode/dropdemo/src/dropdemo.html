@@ -41,6 +41,9 @@
     height:40px;
     width:100%;
     background: #DEE8BE;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .contentZone {
@@ -83,11 +86,20 @@
     display: block;
   }
 
+  .btnStyle {
+    background:;#F6E7D3;
+    color:#000;
+    line-height: 30px;
+    width:200px;
+  }
+
 </style>
 </head>
 <body>
   <main class="container">
-    <nav class="navigation"></nav>
+    <nav class="navigation">
+      <button id="hBtn" class="btnStyle">horizontal alignment</button>
+    </nav>
     <div class="contentZone">
       <aside class="controlZone">
         <div id="control1" class="control"></div>

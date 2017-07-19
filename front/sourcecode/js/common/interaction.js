@@ -46,7 +46,12 @@ export function dragable(selector, option) {
     domoperation.setFrame(option.frame);
   }
 
-  target = doc.querySelector(selector);
+  if (typeof selector === "string") {
+    target = doc.querySelector(selector);
+  } else{
+    target = selector;
+  }
+  
   /*
       是否使用translate替代position
    */
@@ -388,6 +393,7 @@ export function resizable(element) {
 export function selectable(elem, option) {
   // filterArr:  array elem
   // frame 
+  // selected:function()  // event
   // todo
   // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
   // selected;
@@ -396,18 +402,39 @@ export function selectable(elem, option) {
   // stop;
   // unselected;
   // unselecting;
-  let target = elem,
-    dom = null,
-    startMousePosition = null,
-    startDomPosition = null,
-    defaultOption = {
+  let target = elem
+    ,dom = null
+    ,startMousePosition = null
+    ,startDomPosition = null
+    ,defaultOption = {
       filterArr: []
-    },
-    selectedArr = [],
-    doc = document,
-    win = window;
+      ,selected:(evt) => {}
+    }
+    ,selectedArr = []
+    ,doc = document
+    ,win = window
+    ,cssString = `
+    .selecting {
+      background:#C1D9CD;
+    }
+    
+    .selected{
+      background:#F7EADC;
+    }
 
+    .selectBox {
+      border:1px dashed black;
+      width:0px;
+      height:0px;
+      position:fixed;
+      background:none;
+      pointer-events: none;
+    }`
+    ,promise = null;
+
+  domoperation.insertStyle2Head(cssString);
   option = Object.assign(defaultOption, option);
+
 
   if (option.frame !== void 0) {
     doc = option.frame.contentDocument;
@@ -422,6 +449,8 @@ export function selectable(elem, option) {
       event.stopPropagation();
       event.preventDefault();
 
+      selectedArr = [];
+
       let domArr = [].slice.call(target.children)
         , domArrLength = domArr.length;
 
@@ -430,7 +459,10 @@ export function selectable(elem, option) {
       };
 
       elemAndRectArr = domArr.map((elem) => {
+        elem.classList.remove("selecting");
+        elem.classList.remove("selected");
         let boundingClientRect = elem.getBoundingClientRect();
+
         return {
           elem: elem,
           left: boundingClientRect.left,
@@ -442,17 +474,10 @@ export function selectable(elem, option) {
 
       startMousePosition = { x: event.pageX, y: event.pageY };
       startDomPosition = { x: event.pageX - win.scrollX, y: event.pageY - win.scrollY }
-      dom = domoperation.str2dom(`
-          <div style="
-            border:1px dashed black;
-            width:0px;
-            height:0px;
-            position:fixed;
-            left:${startDomPosition.x}px;
-            top:${startDomPosition.y}px;
-            background:none;
-            pointer-events: none;">
-          </div>`)
+      dom = doc.createElement("div");
+      dom.classList.add("selectBox");
+      dom.style.left = startDomPosition.x + "px";
+      dom.style.top = startDomPosition.y + "px";
       target.appendChild(dom);
       doc.addEventListener('mousemove', mouseMoveHandle);
       doc.addEventListener('mouseup', mouseUpHandle);
@@ -489,12 +514,15 @@ export function selectable(elem, option) {
         let elemAndRect = elemAndRectArr[i];
 
         if (isRectOverlap(domClientRect, elemAndRect)) {
-          if (!util.isArrayContain(elemAndRect.elem.classList, "select")) {
-            elemAndRect.elem.classList.add("select");
+          if (!util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
+            selectedArr.push(elemAndRect.elem);
+            elemAndRect.elem.classList.add("selecting");
           }
         } else {
-          if (util.isArrayContain(elemAndRect.elem.classList, "select")) {
-            elemAndRect.elem.classList.remove("select");
+          if (util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
+
+            elemAndRect.elem.classList.remove("selecting");
+            selectedArr.splice(selectedArr.indexOf(elemAndRect.elem), 1);
           }
         }
       } 
@@ -509,16 +537,25 @@ export function selectable(elem, option) {
     }
 
     function mouseUpHandle(event) {
+      selectedArr.forEach((dom) => {
+        dom.classList.remove("selecting");
+        dom.classList.add("selected");
+      })
       event.stopPropagation();
       event.preventDefault();
+
       if (dom != null) {
         dom.remove();
         dom = null;
       }
+      
+      event.selectedArr = selectedArr;
+      option.selected(event);
       doc.removeEventListener('mousemove', mouseMoveHandle);
       doc.removeEventListener('mouseup', mouseUpHandle);
-    }
+    }      
   }
+
 }
 
 

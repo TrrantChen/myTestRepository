@@ -84,9 +84,9 @@ export function insertStyle2Head(cssObj, option) {
   let cssString = ""
     , defaultOption = {
       isInsertFirst:false
-      , isCheckRepeat:false
-      , isCreateStyle:true
-    }
+      ,isCheckRepeat:false
+      ,isCreateStyle:true
+    };
 
   // 为了兼容老的接口
   if (typeof option !== "object") {
@@ -100,13 +100,13 @@ export function insertStyle2Head(cssObj, option) {
   if (typeof cssObj !== "string"){
     if (option.isCheckRepeat) {
       if ( cssObj.id !== void 0) {
-        let style = document.querySelector("#" + cssObj.id)
+        let style = doc.querySelector("#" + cssObj.id)
         if (style !== void 0 && style != null) {
           return;
         }
       } else {
         let classNameArr = getAllClassNameArr()
-          , classNameArrLength = classNameArr.length;
+          ,classNameArrLength = classNameArr.length;
         cssObj.cssArr.filter((obj) => {
           for(var i = 0; i < classNameArrLength; i++) {
             if (classNameArr[i] === obj.className) {
@@ -116,16 +116,20 @@ export function insertStyle2Head(cssObj, option) {
           return true;
         })
       }
-
     }
 
-    cssString = cssObj.cssArr.reduce((obj1, obj2) => {
-      if (typeof obj1 === "string") {
-        return obj1 + obj2.className + obj2.classValue;
-      } else {
-        return obj1.className + obj1.classValue + obj2.className + obj2.classValue;
-      }  
-    })
+    if (cssObj.cssArr.length !== 1) {
+      cssString = cssObj.cssArr.reduce((obj1, obj2) => {
+        if (typeof obj1 === "string") {
+          return obj1 + obj2.className + obj2.classValue;
+        } else {
+          return obj1.className + obj1.classValue + obj2.className + obj2.classValue;
+        }  
+      })
+    } else {
+      cssString = cssObj.cssArr[0].className + cssObj.cssArr[0].classValue;
+    }
+
   } else {
     cssString = cssObj;
   }
@@ -154,16 +158,10 @@ export function insertStyle2Head(cssObj, option) {
     style.type = "text/css";
     style.innerHTML = cssString;
     if (option.isInsertFirst) {
-      for (var i = 0; i < headLength; i++) {
-        if (headChildren[i] instanceof HTMLLinkElement) {
-          isLinkExist = true;
-          head.insertBefore(style, headChildren[i])
-          break;
-        }
-      }
-
-      if (!isLinkExist) {
+      if (headLength === 0) {
         head.appendChild(style);
+      } else {
+        head.insertBefore(style, headChildren[0]);
       }
     } else {
       head.appendChild(style);
@@ -569,7 +567,7 @@ export function rainEffect(effectNum, option) {
       };
 
       if (!option.isRandom) {
-        document.documentElement.style.setProperty("--animation-scale", option.radius); 
+       doc.documentElement.style.setProperty("--animation-scale", option.radius); 
       }
       break;
     case 3:
