@@ -12,8 +12,15 @@ window.onload = function() {
   hBtn.addEventListener("click", (evt) => {
     let domArrLength = selectedArr.length;
     if (domArrLength !== 0) {
-      let standardDom = selectedArr[0];
-      let standardY = window.getComputedStyle()
+      let standardDom = selectedArr[0]
+        ,standardDomComputedStyles = domoperation.getElementComputedStyle(standardDom)
+        ,translate = domoperation.getTheTranslate(standardDomComputedStyles)
+        ,position = domoperation.getPosition(standardDomComputedStyles)
+      for (var i = 1; i < domArrLength; i++) {
+        selectedArr[i].style.top = position.top + "px";
+        domoperation.setTheTranslate(selectedArr[i], { y : translate.y });
+
+      }
     }
   })
   getFrame.addEventListener("click", (evt) => {

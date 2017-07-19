@@ -251,6 +251,31 @@ export function getTheTranslate(elementComputedStyles) {
   return result;
 }
 
+/*
+  point {
+    x:0
+    ,y:0
+  }
+ */
+export function setTheTranslate(elem, point) {
+  let elementComputedStyle = getElementComputedStyle(elem)
+    ,translate = getTheTranslate(elementComputedStyle)
+    ,x = translate.x
+    ,y = translate.y;
+  if(point.x !== void 0 && point.y === void 0) {
+    x = point.x;
+    y = translate.y;
+  } else if(point.x === void 0 && point.y !== void 0) {
+    x = translate.x;
+    y = point.y; 
+  } else if (point.x !== void 0 && pointy !== void 0) {
+    x = point.x;
+    y = point.y;
+  }
+
+  elem.style.transform = `translate(${x}px, ${y}px)`;
+}
+
 export function getBorderWidth(elementComputedStyles) {
   return getBox(elementComputedStyles, "border");
 }

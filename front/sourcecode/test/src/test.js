@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import  * as util from '../../js/common/util'; 
-import * as objectSizeof  from '../../lib/sizeof/index';
+// import * as objectSizeof  from '../../lib/sizeof/index';
 import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
 let container = document.querySelector(".container");
 $(() => {

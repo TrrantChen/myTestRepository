@@ -403,7 +403,7 @@ export function selectable(elem, option) {
   // unselected;
   // unselecting;
   let target = elem
-    ,dom = null
+    ,selectDiv = null
     ,startMousePosition = null
     ,startDomPosition = null
     ,defaultOption = {
@@ -474,11 +474,16 @@ export function selectable(elem, option) {
 
       startMousePosition = { x: event.pageX, y: event.pageY };
       startDomPosition = { x: event.pageX - win.scrollX, y: event.pageY - win.scrollY }
-      dom = doc.createElement("div");
-      dom.classList.add("selectBox");
-      dom.style.left = startDomPosition.x + "px";
-      dom.style.top = startDomPosition.y + "px";
-      target.appendChild(dom);
+      if (selectDiv === null) {
+        selectDiv = doc.createElement("div");
+        selectDiv.classList.add("selectBox");        
+      } else {
+        selectDiv.style.display = "block";
+      }
+
+      selectDiv.style.left = startDomPosition.x + "px";
+      selectDiv.style.top = startDomPosition.y + "px";
+      target.appendChild(selectDiv);
       doc.addEventListener('mousemove', mouseMoveHandle);
       doc.addEventListener('mouseup', mouseUpHandle);
     })
@@ -492,28 +497,28 @@ export function selectable(elem, option) {
       let testLeft = 0;
 
       if (width < 0) {
-        dom.style.left = (startDomPosition.x + width) + 'px';
+        selectDiv.style.left = (startDomPosition.x + width) + 'px';
       } else {
-        dom.style.left = startDomPosition.x + 'px';
+        selectDiv.style.left = startDomPosition.x + 'px';
       }
 
       if (height < 0) {
-        dom.style.top = (startDomPosition.y + height) + 'px';
+        selectDiv.style.top = (startDomPosition.y + height) + 'px';
       } else {
-        dom.style.top = startDomPosition.y + 'px';
+        selectDiv.style.top = startDomPosition.y + 'px';
       }
 
 
-      dom.style.width = Math.abs(width) + "px";
-      dom.style.height = Math.abs(height) + "px";
+      selectDiv.style.width = Math.abs(width) + "px";
+      selectDiv.style.height = Math.abs(height) + "px";
 
       // 框选覆盖条件判断，判断条件为如果框的clientRect的大小如果和container中child的大小有重叠
       // 则为其执行覆盖事件
-      let domClientRect = dom.getBoundingClientRect();
+      let selectDivClientRect = selectDiv.getBoundingClientRect();
       for(var i = 0; i < elemAndRectArr.length; i++) {
         let elemAndRect = elemAndRectArr[i];
 
-        if (isRectOverlap(domClientRect, elemAndRect)) {
+        if (isRectOverlap(selectDivClientRect, elemAndRect)) {
           if (!util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
             selectedArr.push(elemAndRect.elem);
             elemAndRect.elem.classList.add("selecting");
@@ -528,8 +533,8 @@ export function selectable(elem, option) {
       } 
     }
 
-    function isRectOverlap(domClientRect, elemAndRect) {
-      if (domClientRect.right < elemAndRect.left || domClientRect.left > elemAndRect.right || domClientRect.bottom < elemAndRect.top || domClientRect.top > elemAndRect.bottom) {
+    function isRectOverlap(selectDivClientRect, elemAndRect) {
+      if (selectDivClientRect.right < elemAndRect.left || selectDivClientRect.left > elemAndRect.right || selectDivClientRect.bottom < elemAndRect.top || selectDivClientRect.top > elemAndRect.bottom) {
         return false;
       } else {
         return true;
@@ -543,12 +548,9 @@ export function selectable(elem, option) {
       })
       event.stopPropagation();
       event.preventDefault();
-
-      if (dom != null) {
-        dom.remove();
-        dom = null;
-      }
-      
+      selectDiv.style.width = "0px";
+      selectDiv.style.height = "0px";
+      selectDiv.style.display = "none";
       event.selectedArr = selectedArr;
       option.selected(event);
       doc.removeEventListener('mousemove', mouseMoveHandle);
