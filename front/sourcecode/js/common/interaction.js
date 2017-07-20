@@ -383,11 +383,9 @@ export function dragable(selector, option) {
 }
 
 export function drogable(element) {
-
 }
 
 export function resizable(element) {
-
 }
 
 export function selectable(elem, option) {
@@ -415,11 +413,9 @@ export function selectable(elem, option) {
     ,win = window
     ,cssString = `
     .selecting {
-      background:#C1D9CD;
     }
     
-    .selected{
-      background:#F7EADC;
+    .selected {
     }
 
     .selectBox {
@@ -489,6 +485,7 @@ export function selectable(elem, option) {
     })
 
     function mouseMoveHandle(event) {
+      console.log(event.target);
       event.stopPropagation();
       event.preventDefault();
       let width = event.pageX - startMousePosition.x
@@ -542,12 +539,13 @@ export function selectable(elem, option) {
     }
 
     function mouseUpHandle(event) {
+      event.stopPropagation();
+      event.preventDefault();
       selectedArr.forEach((dom) => {
         dom.classList.remove("selecting");
         dom.classList.add("selected");
       })
-      event.stopPropagation();
-      event.preventDefault();
+
       selectDiv.style.width = "0px";
       selectDiv.style.height = "0px";
       selectDiv.style.display = "none";
@@ -557,9 +555,7 @@ export function selectable(elem, option) {
       doc.removeEventListener('mouseup', mouseUpHandle);
     }      
   }
-
 }
-
 
 /*
     拖动，滚动条自动滚动。
@@ -571,3 +567,40 @@ export function selectable(elem, option) {
     5、如果大于这个可视区域，就改变滚动窗体的scrollTop/Left
     6、
  */
+
+
+/*
+  option : {
+    align: h/v
+  }
+ */
+export function align(elemArr, option) {
+  if (elemArr !== void 0 && elemArr !== null && elemArr.length > 1) {
+    option = option || {};
+    let defaultOption = {
+      align:"h"
+    }
+    ,elemArrLength = elemArr.length
+    ,standardDom = elemArr[0]
+    ,standardDomComputedStyles = domoperation.getElementComputedStyle(standardDom)
+    ,translate = domoperation.getTheTranslate(standardDomComputedStyles)
+    ,position = domoperation.getPosition(standardDomComputedStyles);
+
+    option = Object.assign(defaultOption, option);
+
+    switch(option.align.toLowerCase()) {
+      case "h":
+        for (var i = 1; i < elemArrLength; i++) {
+          elemArr[i].style.top = position.top + "px";
+          domoperation.setTheTranslate(elemArr[i], { y : translate.y });
+        }      
+        break;
+      case "v":
+        for (var i = 1; i < elemArrLength; i++) {
+          elemArr[i].style.left = position.left + "px";
+          domoperation.setTheTranslate(elemArr[i], { x : translate.x });
+        }      
+        break;
+    }      
+  }
+}

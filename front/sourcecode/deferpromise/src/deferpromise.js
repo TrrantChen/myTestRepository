@@ -1,5 +1,6 @@
 import * as util from '../../js/common/util'
 import * as othertestmodule from '../../js/module/othertestmodule'
+import '../../../node_modules/babel-polyfill/browser'
 
 function demo1() {
   othertestmodule.promiseResult("get", "delayloadtest", 500).then(function(result) {
@@ -808,7 +809,7 @@ function mySelfPromise() {
 
 (function promiseCallback() {
   let testBtn = document.querySelector("#testBtn");
-  window.index = 0;
+  let index = 0;
 
   // function promiseFn() {
   //   let promise = new Promise((resolve) => {
@@ -825,18 +826,17 @@ function mySelfPromise() {
   //   console.log(index);
   // })
   
-  function callbakFn(fn) {
-    let num = 1;
-    testBtn.addEventListener("click", (evt) => {
-      ++window.index;
-      fn();
-    })  
-  }
+  // function callbakFn(fn) {
+  //   let num = 1;
+  //   testBtn.addEventListener("click", (evt) => {
+  //     ++window.index;
+  //     fn();
+  //   })  
+  // }
 
-  callbakFn(() => {
-    console.log(window.index);
-  })
-
+  // callbakFn(() => {
+  //   console.log(window.index);
+  // })
 })()
 
 

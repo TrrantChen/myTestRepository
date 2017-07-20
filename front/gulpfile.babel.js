@@ -1,5 +1,7 @@
 // todo 代码静态检查
 //      增量
+
+import "babel-polyfill";
 import gulp from 'gulp'
 import babel from 'gulp-babel'
 import browserify from 'browserify'
@@ -614,27 +616,27 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   ,browser: true
                 })             
                 ,rollupCommonjs({
-                  include:['sourcecode/lib/**'],
+                  include:['sourcecode/lib/**', 'node_modules/**'],
                   sourceMap:true,
                   nameExports:{
                     jquery:['jQuery']
                     ,underscore:['_']
-                    ,'sourcecode/lib/commonjsTest.js':['named']
+                    // ,'sourcecode/lib/commonjsTest.js':['named']
                     ,'sourcecode/lib/sizeof/index.js':['sizeof']
                   }
                 }) 
-                // ,rollupbabel({
-                //   presets: [
-                //     [
-                //       "es2015", {
-                //         "modules": false
-                //       }
-                //     ]
-                //   ],
-                //   plugins: ["transform-regenerator"],
-                //   babelrc: false,
-                //   exclude: 'node_modules/**'
-                // })  
+                ,rollupbabel({
+                  presets: [
+                    [
+                      "es2015", {
+                        "modules": false
+                      }
+                    ]
+                  ],
+                  plugins: ["transform-regenerator"],
+                  babelrc: false,
+                  exclude: 'node_modules/**'
+                })  
                 ,function(){
                   if (process.env.NODE_ENV === 'production') {
                     rollupUglify({}, minify);     
@@ -643,6 +645,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   }
                 }()    
               ]
+              // ,external:['jquery', 'underscore']
               ,external:['jquery', 'underscore']
             }).then((bundle) => {  
 
@@ -654,6 +657,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                 ,globals: {
                   jquery: 'jQuery'
                   ,underscore:'_'
+                  // ,namedTest:'named'
                 }
               });
 

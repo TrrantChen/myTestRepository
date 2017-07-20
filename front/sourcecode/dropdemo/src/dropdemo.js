@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import _ from 'underscore';
-// import '../../lib/jquery-ui-1.12.1/jquery-ui';
+import '../../lib/jquery-ui-1.12.1.custom/jquery-ui';
 import * as util from '../../js/common/util'; 
 import * as domoperation from '../../js/common/domoperation';
 import * as interaction from '../../js/common/interaction';
@@ -8,23 +8,23 @@ import * as interaction from '../../js/common/interaction';
 window.onload = function() {
   let getFrame = document.querySelector("#getFrame");
   let hBtn = document.querySelector("#hBtn");
+  let vBtn = document.querySelector("#vBtn");
 
   hBtn.addEventListener("click", (evt) => {
     let domArrLength = selectedArr.length;
     if (domArrLength !== 0) {
-      let standardDom = selectedArr[0]
-        ,standardDomComputedStyles = domoperation.getElementComputedStyle(standardDom)
-        ,translate = domoperation.getTheTranslate(standardDomComputedStyles)
-        ,position = domoperation.getPosition(standardDomComputedStyles)
-      for (var i = 1; i < domArrLength; i++) {
-        selectedArr[i].style.top = position.top + "px";
-        domoperation.setTheTranslate(selectedArr[i], { y : translate.y });
-
-      }
+      interaction.align(selectedArr, {align:"h"});
     }
   })
+
+  vBtn.addEventListener("click", (evt) => {
+    let domArrLength = selectedArr.length;
+    if (domArrLength !== 0) {
+      interaction.align(selectedArr, {align:"v"});
+    }
+  })  
+
   getFrame.addEventListener("click", (evt) => {
-    // domoperation.setFrame();
     let winAndDoc = domoperation.getWinAndDoc();
 
     console.log(winAndDoc.win);
@@ -40,6 +40,7 @@ window.onload = function() {
   let selectedArr = [];
   var id = 0;
   let sonFrameMain = sonDoc.querySelector("#sonFrameMain");
+  let sonFrameMain2 = sonDoc.querySelector("#sonFrameMain2");
   domoperation.setFrame(sonframe);
   control1.addEventListener("click", (event) => {
     ++id;   
@@ -70,15 +71,20 @@ window.onload = function() {
   interaction.selectable(sonFrameMain, {
     frame:sonframe
     ,selected:(evt) => {
-      if (evt.selectedArr.length !== 0) {
+      if (evt.selectedArr !== void 0 && evt.selectedArr !== null) {
         selectedArr = evt.selectedArr;
-        console.log(evt.selectedArr);
       }   
     }
   })  
 
   control2.addEventListener("click", (event) => {
-    console.log(sonDoc.querySelector("#test" + id));
+    ++id;   
+    let insertStr = `
+                <div id="test${id}" class="testDivClass">
+                </div>`;
+
+    domoperation.insertStr2Dom(insertStr, sonFrameMain2)
+    interaction.dragable("#test" + id, {frame:sonframe});
   })
 
   control3.addEventListener("click", (event) => {

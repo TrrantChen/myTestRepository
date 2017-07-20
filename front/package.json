@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "babel-runtime": "^6.23.0",
     "gulp": "^3.9.1",
     "jquery": "^3.2.1",
