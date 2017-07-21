@@ -625,18 +625,18 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                     ,'sourcecode/lib/sizeof/index.js':['sizeof']
                   }
                 }) 
-                ,rollupbabel({
-                  presets: [
-                    [
-                      "es2015", {
-                        "modules": false
-                      }
-                    ]
-                  ],
-                  plugins: ["transform-regenerator"],
-                  babelrc: false,
-                  exclude: 'node_modules/**'
-                })  
+                // ,rollupbabel({
+                //   presets: [
+                //     [
+                //       "es2015", {
+                //         "modules": false
+                //       }
+                //     ]
+                //   ],
+                //   plugins: ["transform-regenerator"],
+                //   babelrc: false,
+                //   exclude: 'node_modules/**'
+                // })  
                 ,function(){
                   if (process.env.NODE_ENV === 'production') {
                     rollupUglify({}, minify);     

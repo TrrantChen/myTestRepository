@@ -4184,7 +4184,6 @@ var widgetsSelectable = $.widget( "ui.selectable", $.ui.mouse, {
 	},
 
 	_mouseDrag: function( event ) {
-		console.log("drag");
 		this.dragged = true;
 
 		if ( this.options.disabled ) {
@@ -4290,7 +4289,6 @@ var widgetsSelectable = $.widget( "ui.selectable", $.ui.mouse, {
 	},
 
 	_mouseStop: function( event ) {
-		console.log("stop");
 		var that = this;
 
 		this.dragged = false;

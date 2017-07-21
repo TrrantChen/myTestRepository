@@ -1,41 +1,98 @@
 import $ from 'jquery';
 import * as util from '../../js/common/util';  
-import * as interaction from '../../js/common/interaction'; 
+import {dragable, drogable, resizable, selectable, align} from '../../js/common/interaction'; 
+import { buttonShowContent, getElement} from '../../js/common/domoperation';
 import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';
 
+let addButtonShowContent = buttonShowContent();
+
 $(function() {
-    let btnDrag = document.querySelector("#btnDrag")
-      ,btnSelector = document.querySelector("#btnSelector")
-      ,btnSortable = document.querySelector("#btnSortable")
-      ,isDragShow = false
-      ,isSelectorShow = false
-      ,isSortableShow = false
-      ,dragContent = document.querySelector("#dragContent")
-      ,selectorContent = document.querySelector("#selectorContent")
-      ,sortableContent = document.querySelector("#sortableContent");
-    clickAndShow(btnDrag, dragContent, isDragShow);
-    clickAndShow(btnSelector, selectorContent, isSelectorShow);
-    clickAndShow(btnSortable, sortableContent, isSortableShow);
+  addButtonShowContent("#btnDrag", "#dragContent");
+  addButtonShowContent("#btnSelector", "#selectorContent");
+  addButtonShowContent("#btnSortable", "#sortableContent");
+  addButtonShowContent("#btnTestNormal", "#testNormalContent");
+  addButtonShowContent("#btnTestAxis", "#testAxisContent");
+  addButtonShowContent("#btnTestContainment", "#testContainment");
+  addButtonShowContent("#btnTestCancelAndHandle", "#testCancelAndHandle");
+  addButtonShowContent("#btnTestRevert", "#testRevert");
+  addButtonShowContent("#btnTestCssUserDrag", "#TestCssUserDrag");
 
-    dragInterationTest();
-    selectableTest();
-    selectableByJqueryUi();
-    sortableByJqueryUi();
-    
+  testNormal();
+  testNormalByUI();
+  testAxis();
+  testAxisByUI();
+  
+  testContainment();  // 有问题
+  testContainmentUI();
 
+  testContainment();
+  testCancelAndHandleUI();
+
+  testRevert();
+  testRevertUI();
 })
 
-function clickAndShow(button, content, isShow) {
-    button.addEventListener("click", (evt) => {
-        isShow = !isShow;
-        if (isShow) {
-          content.classList.remove("hidden");
-          content.classList.add("show");
-        } else {
-          content.classList.remove("show");
-          content.classList.add("hidden");
-        }
-    })  
+function testNormal() {
+  dragable("#testNormalDiv");
+}
+
+function testNormalByUI() {
+  $( "#testNormalDivUI" ).draggable();
+}
+
+function testAxis() {
+  dragable("#testAxisX", {axis:"x"})
+  dragable("#testAxisY", {axis:"y"})
+  dragable("#testAll", {axis:"all"})
+}
+
+function testAxisByUI() {
+  $( "#testAxisXUI" ).draggable({ axis: "x" });
+  $( "#testAxisYUI" ).draggable({ axis: "y" });
+  $( "#testAllUI" ).draggable();
+}
+
+function testContainment() {
+  try {
+    dragable("#testContainmentDiv", {containment:"#testContent"});
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+function testContainmentUI() {
+  $("#testContainmentDivUI").draggable({containment:"#testContentUI"});
+}
+
+function testCancelAndHandle() {
+  try {
+    dragable("#test4handle", {handle:"#canP"});
+    dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
+    dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});       
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+function testCancelAndHandleUI() {
+  $("#test4handleUI").draggable({handle:"#canPUI"});
+  $("#test4cancelUI").draggable({handle:"#canP2UI", cancel:"#noCanPUI"});
+  $("#test4OnlyCancelUI").draggable({handle:"this", cancel:"#noCanP2UI"});     
+}
+
+function testRevert() {
+  try {
+    dragable("#testReverDiv", {revert:true});
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+function testRevertUI() {
+  $("#testRevertDivUI").draggable({revert:true});
 }
 
 
@@ -52,10 +109,10 @@ function dragByJqueryUi() {
 }
 
 function dragInterationTest() {
-    interaction.dragable("#relative");
-    // interaction.dragable("#testDivByJqueryui", {containment: "#absolute", revert:false});
-    // interaction.dragable("#testDivByJqueryui");
-    // interaction.dragable("#scrollDiv");
+    dragable("#relative");
+    // dragable("#testDivByJqueryui", {containment: "#absolute", revert:false});
+    // dragable("#testDivByJqueryui");
+    // dragable("#scrollDiv");
     
     // let testDivByJqueryui = document.querySelector("#testDivByJqueryui");
     // testDivByJqueryui.addEventListener("transitionrun", function(e){
@@ -68,17 +125,13 @@ function dragInterationTest() {
 
     // testDivByJqueryui.addEventListener("transitionend", function(e){
     //     console.log("transitionend")
-    // })   
-    
-     interaction.dragable("#test4handle", {handle:"#canP"});
-     interaction.dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
-     interaction.dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});                                
+    // })                               
 }
 
 function selectableTest() {
   let filterArr = [].slice.call(document.querySelectorAll(".filter"))
     , selectorContainer = document.querySelector("#selectorContainer")
-  interaction.selectable(selectorContainer, {filterArr:filterArr})
+  selectable(selectorContainer, {filterArr:filterArr})
 }
 
 function selectableByJqueryUi() {
@@ -92,9 +145,6 @@ function sortableByJqueryUi() {
 
 
 
-
-// dragInterationTest();
-// dragByJqueryUi();
 
 
         

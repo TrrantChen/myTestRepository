@@ -1,21 +1,24 @@
 import * as domoperation from './domoperation';
 import * as util from './util';
 
+/*
+ option {
+   axis:x, y, all
+   containment: selector
+   translate:true/false   // 是否使用translate替代position
+   handle: selector
+   cancel:selector
+   revert: true/false 
+   frame: iframe dom  
+ }
+ */
 export function dragable(selector, option) {
-  // axis:x, y
-  // containment: selector
-  // translate:true/false 
-  // handle: selector
-  // cancel:selector
-  // revert: true/false 
-  // frame: iframe dom  
-  option = option || {};
   let target = null,
     mouseDownPage = { x: 0, y: 0 },
     targetComputedStyle = null,
     defaultOption = {
       axis: "all",
-      translate: false,
+      translate: true,
       revert: false
     },
     containment = void 0,
@@ -38,6 +41,7 @@ export function dragable(selector, option) {
     doc = document,
     win = window;
 
+  option = option || {};
   option = Object.assign(defaultOption, option);
 
   if (option.frame !== void 0) {
@@ -46,15 +50,8 @@ export function dragable(selector, option) {
     domoperation.setFrame(option.frame);
   }
 
-  if (typeof selector === "string") {
-    target = doc.querySelector(selector);
-  } else{
-    target = selector;
-  }
-  
-  /*
-      是否使用translate替代position
-   */
+  target = domoperation.getElement(selector);
+  containment = domoperation.getElement(option.containment);
   let isTranslate = domoperation.checkCss3Support("transform");
 
   /*
@@ -70,8 +67,7 @@ export function dragable(selector, option) {
 
   updateTargetPositionInfo();
 
-  if (option.containment !== void 0) {
-    containment = doc.querySelector(option.containment);
+  if (containment !== void 0) {
     // if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
     //     isRangeLimit = false;
     // } else {
@@ -382,10 +378,10 @@ export function dragable(selector, option) {
   }
 }
 
-export function drogable(element) {
+export function drogable(elem) {
 }
 
-export function resizable(element) {
+export function resizable(elem) {
 }
 
 export function selectable(elem, option) {
@@ -442,92 +438,97 @@ export function selectable(elem, option) {
     let elemAndRectArr = null;
 
     target.addEventListener('mousedown', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
+      console.log(event.button);
+      if (event.button === 0) {
+        event.stopPropagation();
+        event.preventDefault();
 
-      selectedArr = [];
+        selectedArr = [];
 
-      let domArr = [].slice.call(target.children)
-        , domArrLength = domArr.length;
+        let domArr = [].slice.call(target.children)
+          , domArrLength = domArr.length;
 
-      if (option.filterArr.length !== 0) {
-        domArr = util.twoArrayUnique(domArr, option.filterArr);
-      };
+        if (option.filterArr.length !== 0) {
+          domArr = util.twoArrayUnique(domArr, option.filterArr);
+        };
 
-      elemAndRectArr = domArr.map((elem) => {
-        elem.classList.remove("selecting");
-        elem.classList.remove("selected");
-        let boundingClientRect = elem.getBoundingClientRect();
+        elemAndRectArr = domArr.map((elem) => {
+          elem.classList.remove("selecting");
+          elem.classList.remove("selected");
+          let boundingClientRect = elem.getBoundingClientRect();
 
-        return {
-          elem: elem,
-          left: boundingClientRect.left,
-          right: boundingClientRect.right,
-          top: boundingClientRect.top,
-          bottom: boundingClientRect.bottom
-        }          
-      });
+          return {
+            elem: elem,
+            left: boundingClientRect.left,
+            right: boundingClientRect.right,
+            top: boundingClientRect.top,
+            bottom: boundingClientRect.bottom
+          }          
+        });
 
-      startMousePosition = { x: event.pageX, y: event.pageY };
-      startDomPosition = { x: event.pageX - win.scrollX, y: event.pageY - win.scrollY }
-      if (selectDiv === null) {
-        selectDiv = doc.createElement("div");
-        selectDiv.classList.add("selectBox");        
-      } else {
-        selectDiv.style.display = "block";
+        startMousePosition = { x: event.pageX, y: event.pageY };
+        startDomPosition = { x: event.pageX - win.scrollX, y: event.pageY - win.scrollY }
+        if (selectDiv === null) {
+          selectDiv = doc.createElement("div");
+          selectDiv.classList.add("selectBox");        
+        } else {
+          selectDiv.style.display = "block";
+        }
+
+        selectDiv.style.left = startDomPosition.x + "px";
+        selectDiv.style.top = startDomPosition.y + "px";
+        target.appendChild(selectDiv);
+        doc.addEventListener('mousemove', mouseMoveHandle);
+        doc.addEventListener('mouseup', mouseUpHandle);
       }
-
-      selectDiv.style.left = startDomPosition.x + "px";
-      selectDiv.style.top = startDomPosition.y + "px";
-      target.appendChild(selectDiv);
-      doc.addEventListener('mousemove', mouseMoveHandle);
-      doc.addEventListener('mouseup', mouseUpHandle);
     })
 
     function mouseMoveHandle(event) {
-      console.log(event.target);
-      event.stopPropagation();
-      event.preventDefault();
-      let width = event.pageX - startMousePosition.x
-        ,height = event.pageY - startMousePosition.y;
-
-      let testLeft = 0;
-
-      if (width < 0) {
-        selectDiv.style.left = (startDomPosition.x + width) + 'px';
+      // 对应场景，如果鼠标移动从sonIframe到parentIframe，然后再回到sonIframe，需要手动执行mouseup事件。
+      if (event.which === 0) {
+        mouseUpHandle(event);
       } else {
-        selectDiv.style.left = startDomPosition.x + 'px';
-      }
+        let width = event.pageX - startMousePosition.x
+          ,height = event.pageY - startMousePosition.y;
 
-      if (height < 0) {
-        selectDiv.style.top = (startDomPosition.y + height) + 'px';
-      } else {
-        selectDiv.style.top = startDomPosition.y + 'px';
-      }
+        let testLeft = 0;
 
-
-      selectDiv.style.width = Math.abs(width) + "px";
-      selectDiv.style.height = Math.abs(height) + "px";
-
-      // 框选覆盖条件判断，判断条件为如果框的clientRect的大小如果和container中child的大小有重叠
-      // 则为其执行覆盖事件
-      let selectDivClientRect = selectDiv.getBoundingClientRect();
-      for(var i = 0; i < elemAndRectArr.length; i++) {
-        let elemAndRect = elemAndRectArr[i];
-
-        if (isRectOverlap(selectDivClientRect, elemAndRect)) {
-          if (!util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
-            selectedArr.push(elemAndRect.elem);
-            elemAndRect.elem.classList.add("selecting");
-          }
+        if (width < 0) {
+          selectDiv.style.left = (startDomPosition.x + width) + 'px';
         } else {
-          if (util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
-
-            elemAndRect.elem.classList.remove("selecting");
-            selectedArr.splice(selectedArr.indexOf(elemAndRect.elem), 1);
-          }
+          selectDiv.style.left = startDomPosition.x + 'px';
         }
-      } 
+
+        if (height < 0) {
+          selectDiv.style.top = (startDomPosition.y + height) + 'px';
+        } else {
+          selectDiv.style.top = startDomPosition.y + 'px';
+        }
+
+
+        selectDiv.style.width = Math.abs(width) + "px";
+        selectDiv.style.height = Math.abs(height) + "px";
+
+        // 框选覆盖条件判断，判断条件为如果框的clientRect的大小如果和container中child的大小有重叠
+        // 则为其执行覆盖事件
+        let selectDivClientRect = selectDiv.getBoundingClientRect();
+        for(var i = 0; i < elemAndRectArr.length; i++) {
+          let elemAndRect = elemAndRectArr[i];
+
+          if (isRectOverlap(selectDivClientRect, elemAndRect)) {
+            if (!util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
+              selectedArr.push(elemAndRect.elem);
+              elemAndRect.elem.classList.add("selecting");
+            }
+          } else {
+            if (util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
+
+              elemAndRect.elem.classList.remove("selecting");
+              selectedArr.splice(selectedArr.indexOf(elemAndRect.elem), 1);
+            }
+          }
+        } 
+      }
     }
 
     function isRectOverlap(selectDivClientRect, elemAndRect) {
@@ -567,7 +568,6 @@ export function selectable(elem, option) {
     5、如果大于这个可视区域，就改变滚动窗体的scrollTop/Left
     6、
  */
-
 
 /*
   option : {

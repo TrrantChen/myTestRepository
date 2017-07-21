@@ -1,22 +1,23 @@
 import $ from 'jquery';
 import  * as util from '../../js/common/util'; 
-import { rainEffect, getDomCount, action4EverySonDom, insertStyle2Head, getAllClassNameArr, ripple} from '../../js/common/domoperation';
+import { rainEffect, getDomCount, action4EverySonDom, insertStyle2Head, getAllClassNameArr, ripple, buttonShowContent} from '../../js/common/domoperation';
 import { getRandomInt, getRandomArbitrary } from '../../js/common/random';
 
 let container = document.querySelector(".container");
 let addRainEffect =  rainEffect(3, {isRandom:true});
 let clearRandomId = null;
 let clearRandomScaleId = null;
+let addButtonShowContent = buttonShowContent();
 
 $(() => {
   let testAttrModifyCssPropertyBtn = document.querySelector("#testAttrModifyCssPropertyBtn");
   let testAttrModifyCssPropertyContent = document.querySelector("#testAttrModifyCssPropertyContent");
 
-  btnControlShow(testAttrModifyCssPropertyBtn, testAttrModifyCssPropertyContent);
+  addButtonShowContent(testAttrModifyCssPropertyBtn, testAttrModifyCssPropertyContent);
 
   let showRainControlBtn = document.querySelector("#showRainControlBtn");
   let showRainControlContent = document.querySelector("#showRainControlContent");
-  btnControlShow(showRainControlBtn, showRainControlContent);
+  addButtonShowContent(showRainControlBtn, showRainControlContent);
   
   showRainControlContent.addEventListener("change", (evt) => {
     let id = evt.target.id
@@ -56,17 +57,17 @@ $(() => {
   let showLineLayoutBtn = document.querySelector("#showLineLayoutBtn");
   let showLineLayoutContent = document.querySelector("#showLineLayoutContent");
 
-  btnControlShow(showLineLayoutBtn, showLineLayoutContent);
+  addButtonShowContent(showLineLayoutBtn, showLineLayoutContent);
 
   let showRepeatLinearGradientBtn = document.querySelector("#showRepeatLinearGradientBtn");
   let showRepeatLinearGradientContent = document.querySelector("#showRepeatLinearGradientContent");
 
-  btnControlShow(showRepeatLinearGradientBtn, showRepeatLinearGradientContent);
+  addButtonShowContent(showRepeatLinearGradientBtn, showRepeatLinearGradientContent);
 
   let showMaterialDesignBtn = document.querySelector("#showMaterialDesignBtn");
   let showMaterialDesignContent = document.querySelector("#showMaterialDesignContent");
 
-  btnControlShow(showMaterialDesignBtn, showMaterialDesignContent);
+  addButtonShowContent(showMaterialDesignBtn, showMaterialDesignContent);
 
   testClick();
   test4CssCustomProp();
@@ -77,7 +78,7 @@ $(() => {
   let showChangeStyleBySheetBtn = document.querySelector("#showChangeStyleBySheetBtn");
   let changeStyleBySheetContent = document.querySelector("#changeStyleBySheetContent");
 
-  btnControlShow(showChangeStyleBySheetBtn, changeStyleBySheetContent);
+  addButtonShowContent(showChangeStyleBySheetBtn, changeStyleBySheetContent);
 
   let changeStyleBtn = document.querySelector("#changeStyleBtn");
   changeStyleBtn.addEventListener("click", (evt) => {
@@ -87,17 +88,10 @@ $(() => {
   let showCssPseudoClassTestBtn = document.querySelector("#showCssPseudoClassTestBtn");
   let cssPseudoClassTestContent = document.querySelector("#cssPseudoClassTestContent");
 
-  btnControlShow(showCssPseudoClassTestBtn, cssPseudoClassTestContent);
+  addButtonShowContent(showCssPseudoClassTestBtn, cssPseudoClassTestContent);
 
   pseudoClassTest();
 })
-
-function btnControlShow(btn, content) {
-  btn.addEventListener("click", (evt) => {
-    content.classList.toggle("show");
-  })
-}
-
 
 function testClick() {
   let testBtn = document.querySelector("#testBtn");

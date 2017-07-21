@@ -26,9 +26,6 @@ window.onload = function() {
 
   getFrame.addEventListener("click", (evt) => {
     let winAndDoc = domoperation.getWinAndDoc();
-
-    console.log(winAndDoc.win);
-    console.log(winAndDoc.doc);
   })
 
   let sonframe = document.querySelector("#sonframe");
@@ -81,10 +78,27 @@ window.onload = function() {
     ++id;   
     let insertStr = `
                 <div id="test${id}" class="testDivClass">
-                </div>`;
+                </div>`
+      , cssObj = {
+        id:"testDiv"
+        , cssArr:[{
+          className:".testDivClass"
+          ,classValue:`
+          {
+            width:100px;
+            height:100px;
+            background:#D9D5A7;
+            position:absolute;
+            left:0;
+            top:0;
+          }`
+        }]
+      };
 
-    domoperation.insertStr2Dom(insertStr, sonFrameMain2)
-    interaction.dragable("#test" + id, {frame:sonframe});
+    domoperation.insertStyle2Head(cssObj, {isCheckRepeat:true, isInsertFirst:true});
+    let dom = domoperation.insertStr2Dom(insertStr, sonFrameMain2)
+    $(dom).draggable();
+
   })
 
   control3.addEventListener("click", (event) => {

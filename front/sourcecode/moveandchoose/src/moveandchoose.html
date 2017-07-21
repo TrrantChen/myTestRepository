@@ -10,6 +10,8 @@
     padding: 0px;
     box-sizing: border-box;
   }
+
+
   
   body,
   input,
@@ -29,6 +31,10 @@
   html {
     width: 100%;
     min-height: 800px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;    
   }
   
   .container {
@@ -213,20 +219,13 @@
   }
 
   .contentBorder {
-    border:solid 1px red;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .show {
-    display: block;
+    outline:solid 1px red;
   }
 
   .buttonStyle {
-    width:100px;
-    height:29px;
+    padding:0 20px;
+    height:30px;
+    line-height: 30px;
     text-align: center;
     background: #49a9ee;
     color:#fff;
@@ -237,6 +236,49 @@
     background: red;
   }
 
+  .selected {
+    outline: solid red 1px;
+  }
+
+  .selecting {
+    outline: solid blue 1px;
+  }  
+
+  .sortDiv {
+    width:var(--test-length);
+    height:var(--test-length);
+    display: inline-block;
+    font-size: 16px;
+    margin:5px;
+    border: solid 1px blue;
+  }
+
+  :root {
+    --test-length:100px;
+  }
+
+  /*==========================================*/
+  .testDiv {
+    width:100px;
+    height:100px;
+    background:#7D5D4E;
+    font-size:16px;
+  }
+
+  .testContent {
+    width:100%;
+    height:600px;
+    background:#BFCDB4;
+    font-size: 0px
+  }
+
+  .testSonContent {
+    width:50%;
+    height:600px;
+    display: inline-block;
+    outline: solid 1px black;
+  }
+
   </style>
 </head>
 
@@ -245,7 +287,84 @@
     <button id="btnDrag" class="buttonStyle">drag</button>
     <button id="btnSelector" class="buttonStyle">selector</button>
     <button id="btnSortable" class="buttonStyle">sortable</button>
-    <div id="dragContent"  class="contentBorder hidden">
+    <div id="dragContent"  class="contentBorder">
+      <button id="btnTestNormal" class="buttonStyle">testNormal</button>
+      <button id="btnTestAxis" class="buttonStyle">testAxis</button>
+      <button id="btnTestContainment" class="buttonStyle">testContainment</button>
+      <button id="btnTestCancelAndHandle" class="buttonStyle">testCancelAndHandle</button>
+      <button id="btnTestRevert" class="buttonStyle">testRevert</button>
+      <button id="btnTestCssUserDrag" class="buttonStyle">testCssUserDrag</button>
+      <div id="testNormalContent" class="testContent">
+        <div class="testSonContent">
+          <div id="testNormalDiv" class="testDiv"></div>
+        </div>
+        <div class="testSonContent">
+          <div id="testNormalDivUI" class="testDiv"></div>
+         </div>          
+        </div>
+      </div>
+      <div id="testAxisContent" class="testContent">
+        <div class="testSonContent">
+          <div id="testAxisX" class="testDiv">axis-x</div>
+          <div id="testAxisY" class="testDiv">axis-y</div>
+          <div id="testAll" class="testDiv">axis-all</div>
+        </div>
+        <div class="testSonContent">
+          <div id="testAxisXUI" class="testDiv">axis-x</div>
+          <div id="testAxisYUI" class="testDiv">axis-y</div>
+          <div id="testAllUI" class="testDiv">axis-all</div>          
+        </div>      
+      </div>
+      <div id="testContainment" class="testContent">
+        <div id="testContent" class="testSonContent">
+          <div id="testContainmentDiv" class="testDiv">
+            containment
+          </div>          
+        </div> 
+        <div id="testContentUI" class="testSonContent">
+          <div id="testContainmentDivUI" class="testDiv">
+            containment
+          </div>              
+        </div>             
+      </div>
+      <div id="testCancelAndHandle" class="testContent">
+        <div class="testSonContent">
+          <div id="test4handle" class="test4handleStyle">
+            <p id="canP" style="font-size: 16px;border: solid 1px black;background: #C8C8A9;">I can be handle and drag</p>
+          </div>
+          <div id="test4cancel" class="test4cancelStyle">
+            <p id="canP2" style="font-size:16px;border:solid 1px black;">I can be handle</p>
+            <p id="noCanP" style="font-size: 16px;border:solid 1px black;background:#FF8A00;">I can not be handle</p>
+          </div>
+          <div id="test4OnlyCancel" class="test4OnlyCancelStyle">
+            <p id="noCanP2" style="font-size:16px;border:solid 1px black;background:#DFECE6;">I can not be handle</p>
+          </div>          
+        </div>
+        <div class="testSonContent">
+          <div id="test4handleUI" class="test4handleStyle">
+            <p id="canPUI" style="font-size: 16px;border: solid 1px black;background: #C8C8A9;">I can be handle and drag</p>
+          </div>
+          <div id="test4cancelUI" class="test4cancelStyle">
+            <p id="canP2UI" style="font-size:16px;border:solid 1px black;">I can be handle</p>
+            <p id="noCanPUI" style="font-size: 16px;border:solid 1px black;background:#FF8A00;">I can not be handle</p>
+          </div>
+          <div id="test4OnlyCancelUI" class="test4OnlyCancelStyle">
+            <p id="noCanP2UI" style="font-size:16px;border:solid 1px black;background:#DFECE6;">I can not be handle</p>
+          </div>             
+        </div>
+      </div>
+      <div id="testRevert" class="testContent">
+        <div class="testSonContent">
+          <div id="testReverDiv" class="testDiv"></div>
+        </div>
+        <div class="testSonContent">
+          <div id="testRevertDivUI" class="testDiv"></div>
+        </div>
+      </div>
+      <div id="TestCssUserDrag" class="testContent">
+        <div id="testCssUserDragDiv" class="testDiv" style="-webkit-user-drag: element;"></div>
+      </div>
+
       <!--          <div id="outDiv" class="outDivStyle">
                   <div id="positionParentDiv" class="positionParentDivStyle">
                       <div id="testDiv" class="testDivStyle">
@@ -257,30 +376,7 @@
                           p<br />                                                                 
                   </div>                
               </div> -->
-      <div id="margin" class="marginStyle">
-        <div id="absolute" class="absulteStyle">
-          <div id="relative" class="relativeStyle">
-            <div id="testDivByJqueryui" class="divStyle">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="scrollDiv" style="width:50px;height:50px;background: #DBD8A2;border: solid 5px;position:relative;-webkit-user-drag: element;">
-      </div>  
-      <div class="handcontent">
-        <div id="test4handle" class="test4handleStyle">
-          <p id="canP" style="font-size: 16px;border: solid 1px black;background: #C8C8A9;">I can be handle and drag</p>
-        </div>
-        <div id="test4cancel" class="test4cancelStyle">
-          <p id="canP2" style="font-size:16px;border:solid 1px black;">I can be handle</p>
-          <p id="noCanP" style="font-size: 16px;border:solid 1px black;background:#FF8A00;">I can not be handle</p>
-        </div>
-        <div id="test4OnlyCancel" class="test4OnlyCancelStyle">
-          <p id="noCanP2" style="font-size:16px;border:solid 1px black;background:#DFECE6;">I can not be handle</p>
-        </div>
-      </div>                
-    </div>
-    <div id="selectorContent" class="contentBorder hidden">
+    <div id="selectorContent" class="contentBorder">
       <div class="selectouter">
         <button class="buttonStyle">horizontal</button>
         <div id="selectorContainer" class="selectorContainerStyle">
@@ -303,7 +399,7 @@
         </div>
       </div>
     </div>
-    <div id="sortableContent" class="contentBorder hidden">
+    <div id="sortableContent" class="contentBorder">
       <div class="selectouter">
         <div id="sortableContainer1" class="selectorContainerStyle">
           <div style="border:solid 1px black">
@@ -316,14 +412,29 @@
         </div>
       </div>
       <div class="selectouter">
-        <div id="sortableContainer2" class="selectorContainerStyle">
-          <li class="liStyle">test1</li>
-          <li class="liStyle">test2</li>
-          <li class="liStyle">test3</li>
-          <li class="liStyle">test4</li>
-          <li class="liStyle">test5</li>
+        <div id="sortableContainer2" class="selectorContainerStyle" style="font-size: 0px;">
+          <div class="sortDiv">1</div>
+          <div class="sortDiv">2</div>
+          <div class="sortDiv">3</div>
+          <div class="sortDiv">4</div>
+          <div class="sortDiv">5</div>
+          <div class="sortDiv">6</div>
         </div>
       </div>
+    </div>              
+
+<!--       <div id="margin" class="marginStyle">
+        <div id="absolute" class="absulteStyle">
+          <div id="relative" class="relativeStyle">
+            <div id="testDivByJqueryui" class="divStyle">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="scrollDiv" style="width:50px;height:50px;background: #DBD8A2;border: solid 5px;position:relative;-webkit-user-drag: element;">
+      </div>  
+
+      </div>    -->             
     </div>
   </div>
 </body>

@@ -956,3 +956,49 @@ export function ripple(container) {
     div.remove();
   }
 }
+
+export function buttonShowContent() {
+  let cssObj = {
+    id:"buttonShowContent"
+    ,cssArr:[{
+      className:".hidden"
+      ,classValue:`
+        {
+          display:none;
+        }
+      `
+    }
+    ,{
+       className:".show"
+       ,classValue:`
+        {
+          display:block;
+        }
+       `
+    }]
+  };
+  insertStyle2Head(cssObj, {isCheckRepeat:true});
+  return function(btn, content) {
+    btn = getElement(btn);
+    content = getElement(content);
+    if (btn !== void 0 && content !== void 0) {
+      content.classList.add("hidden");
+      btn.addEventListener("click", () => {
+        content.classList.toggle("show");
+      })
+    }
+  }
+}
+
+export function getElement(elem) {
+  if (typeof elem === "string") {
+    return document.querySelector(elem);
+  } else if (elem instanceof Node) {
+    return elem;
+  } else {
+    return void 0;
+  }
+}
+
+
+    
