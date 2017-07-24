@@ -154,7 +154,17 @@ function changeStyleUseSheet() {
 }
 
 function pseudoClassTest() {
+  let addHover = document.querySelector("#addHover")
+    , originStyle = null;
+  addHover.addEventListener("mouseover", (evt) => {
+    // console.log("mouseover " + originStyle);
+    evt.target.style.cursor = "move";
+  })
 
+  addHover.addEventListener("mouseout", (evt) => {
+    // console.log("mouseout " + originStyle);
+    // document.documentElement.style.cursor = "default";
+  })
 }
 
 

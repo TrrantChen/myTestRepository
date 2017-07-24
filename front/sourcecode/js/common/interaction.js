@@ -52,17 +52,18 @@ export function dragable(selector, option) {
 
   target = domoperation.getElement(selector);
   containment = domoperation.getElement(option.containment);
-  let isTranslate = domoperation.checkCss3Support("transform");
+
+  let isTranslate = domoperation.checkCss3Support("transform") && option.translate;
 
   /*
       指定可以拖拽的区域
    */
   if (option.handle !== void 0) {
-    handleSelector = doc.querySelector(option.handle === "this" ? selector : option.handle);
+    handleSelector = option.handle === "this" ? target : domoperation.getElement(option.handle);
   }
 
   if (option.cancel !== void 0) {
-    cancelSelector = doc.querySelector(option.cancel);
+    cancelSelector = domoperation.getElement(option.cancel);
   }
 
   updateTargetPositionInfo();
@@ -83,6 +84,7 @@ export function dragable(selector, option) {
       获取滚动的信息
    */
   scrollParent = domoperation.getScrollParent(target);
+
   if (scrollParent !== void 0) {
 
     if (scrollParent !== doc) {
@@ -96,6 +98,7 @@ export function dragable(selector, option) {
       }
     }
   }
+
   let originPageX = 0;
   let scrollLeftAddFunc = _.throttle(function(scrollParent, event) {
     let distance = event.pageX - originPageX;
@@ -103,40 +106,45 @@ export function dragable(selector, option) {
     originPageX = 0;
   }, 100);
 
-
   target.addEventListener("mousedown", mouseDownHandle);
   target.addEventListener("click", clickHandle);
 
-
   if (option.handle !== void 0 && option.handle !== "this") {
-    domoperation.insertStyle2Head(`${selector}:hover{cursor:default}`);
-    domoperation.insertStyle2Head(`${option.handle}:hover{cursor:move}`);
+    // domoperation.insertStyle2Head(`${selector}:hover{cursor:default}`);
+    // domoperation.insertStyle2Head(`${option.handle}:hover{cursor:move}`);
+    target.addEventListener("mousemove", (evt) => {
+      evt.target.style.cursor = "default";
+    })
+
+    handleSelector.addEventListener("mousemove", (evt) => {
+      evt.target.style.cursor = "move";
+    })
   } else {
-    domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
+    // domoperation.insertStyle2Head(`${selector}:hover{cursor:move}`);
+    target.addEventListener("mousemove", (evt) => {
+      evt.target.style.cursor = "move";
+    })    
   }
 
   if (option.cancel !== void 0) {
-    domoperation.insertStyle2Head(`${option.cancel}:hover{cursor:default}`);
+    // domoperation.insertStyle2Head(`${option.cancel}:hover{cursor:default}`);
+    cancelSelector.addEventListener(mousemove, (evt) => {
+      evt.target.style.cursor = "default";
+    })
   }
 
   function mouseDownHandle(event) {
     event.preventDefault();
     event.stopPropagation();
-    if (option.handle !== void 0) {
-      if (handleSelector !== event.target) {
-        return;
-      }
-    }
 
-    if (option.cancel !== void 0) {
-      if (cancelSelector === event.target) {
-        return;
-      }
+    if ((option.handle !== void 0 && handleSelector !== event.target) || (option.cancel !== void 0 && cancelSelector === event.target)) {
+      return;
     }
 
     mouseDownPage.x = event.pageX;
     mouseDownPage.y = event.pageY;
     updateTargetPositionInfo();
+
     if (isTranslate) {
       originTranslate = targetPositionInfo.translate;
     } else {
@@ -149,11 +157,14 @@ export function dragable(selector, option) {
   function mouseMoveHandle(event) {
     event.preventDefault();
     event.stopPropagation();
+
     let x = 0,
       y = 0;
+
     if (isTranslate) {
-      x = originTranslate.x + event.pageX - mouseDownPage.x,
-        y = originTranslate.y + event.pageY - mouseDownPage.y;
+      x = originTranslate.x + event.pageX - mouseDownPage.x;
+      y = originTranslate.y + event.pageY - mouseDownPage.y;
+
       if (isRangeLimit) {
         if (x < containmentPositionRange.left) {
           x = containmentPositionRange.left;
@@ -309,16 +320,10 @@ export function dragable(selector, option) {
 
   }
 
-  function clickHandle(event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
   function getContainmentPositionRange(containment) {
     let distanceBetweenContainmentAndDoc = isGetDistanceByBoundingClientRect ? getElemBoundingClientRect(containment) : calculateDistanceBetweenEleAndDoc(containment),
       distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? getElemBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent),
       containmentPadding = domoperation.getPadding(domoperation.getElementComputedStyle(containment))
-
 
     if (isTranslate) {
       distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.position.left + targetPositionInfo.margin.left + containmentPadding.left);
@@ -333,11 +338,6 @@ export function dragable(selector, option) {
       top: distanceBetweenTargeEleAndDoc.top - distanceBetweenContainmentAndDoc.top
     };
 
-    console.log("distanceBetweenContainmentAndDoc left " + distanceBetweenContainmentAndDoc.left + " distanceBetweenContainmentAndDoc top " + distanceBetweenContainmentAndDoc.top);
-    console.log("distanceBetweenTargeEleAndDoc left " + distanceBetweenTargeEleAndDoc.left + " distanceBetweenTargeEleAndDoc top " + distanceBetweenTargeEleAndDoc.top);
-    console.log("distanceBeteenTargetAndContainment left " + distanceBeteenTargetAndContainment.left + " distanceBeteenTargetAndContainment top " + distanceBeteenTargetAndContainment.top);
-
-
     return {
       left: 0 - distanceBeteenTargetAndContainment.left,
       top: 0 - distanceBeteenTargetAndContainment.top,
@@ -349,10 +349,12 @@ export function dragable(selector, option) {
   function calculateDistanceBetweenEleAndDoc(element) {
     let elementStyle = domoperation.getElementComputedStyle(element),
       elementTranslate = domoperation.getTheTranslate(elementStyle);
+
     if (element === doc.body) {
       return { left: 0, top: 0 };
     } else {
       let result = calculateDistanceBetweenEleAndDoc(element.offsetParent);
+
       return {
         left: element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
         top: element.offsetTop + result.top + element.clientTop + elementTranslate.y
@@ -362,6 +364,7 @@ export function dragable(selector, option) {
 
   function getElemBoundingClientRect(element) {
     let boundingClientRect = element.getBoundingClientRect();
+
     return {
       left: boundingClientRect.left + win.scrollX,
       top: boundingClientRect.top + win.scrollY,
