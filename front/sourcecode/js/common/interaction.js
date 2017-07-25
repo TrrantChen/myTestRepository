@@ -387,18 +387,20 @@ export function drogable(elem) {
 export function resizable(elem) {
 }
 
+/*
+  filterArr:  array elem
+  frame 
+  selected:function()  // event
+  todo
+  tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
+  selected;
+  selecting;
+  start;
+  stop;
+  unselected;
+  unselecting;
+ */
 export function selectable(elem, option) {
-  // filterArr:  array elem
-  // frame 
-  // selected:function()  // event
-  // todo
-  // tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
-  // selected;
-  // selecting;
-  // start;
-  // stop;
-  // unselected;
-  // unselecting;
   let target = elem
     ,selectDiv = null
     ,startMousePosition = null
