@@ -1000,5 +1000,34 @@ export function getElement(elem) {
   }
 }
 
+export function getElemBoundingClientRect(element) {
+  let boundingClientRect = element.getBoundingClientRect();
+
+  return {
+    left: boundingClientRect.left + win.scrollX,
+    top: boundingClientRect.top + win.scrollY,
+    right: boundingClientRect.right + win.scrollX,
+    bottom: boundingClientRect.bottom + win.scrollY
+    ,width:boundingClientRect.width
+    ,height:boundingClientRect.height
+  }
+}
+
+export function calculateDistanceBetweenEleAndDoc(element) {
+  let elementStyle = domoperation.getElementComputedStyle(element),
+    elementTranslate = domoperation.getTheTranslate(elementStyle);
+
+  if (element === doc.body) {
+    return { left: 0, top: 0 };
+  } else {
+    let result = calculateDistanceBetweenEleAndDoc(element.offsetParent);
+
+    return {
+      left: element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
+      top: element.offsetTop + result.top + element.clientTop + elementTranslate.y
+    }
+  }
+}
+
 
     

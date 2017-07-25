@@ -26,12 +26,7 @@ export function dragable(selector, option) {
     originTranslate = null,
     originPosition = null,
     targetPositionInfo = {},
-    isRangeLimit = true
-    /*
-        是否使用getBoundingClientRect去获取元素与边框的距离
-     */
-    ,
-    isGetDistanceByBoundingClientRect = true,
+    isRangeLimit = true,
     scrollParent = void 0,
     scrollParentBoundingClientRect = void 0,
     handleSelector = void 0,
@@ -74,11 +69,10 @@ export function dragable(selector, option) {
     // } else {
     //     isRangeLimit = true;
     // }
-    containmentPositionRange = getContainmentPositionRange(containment);
+    containmentPositionRange = getContainmentPositionRange();
   } else {
     isRangeLimit = false;
   }
-
 
   /*
       获取滚动的信息
@@ -86,9 +80,8 @@ export function dragable(selector, option) {
   scrollParent = domoperation.getScrollParent(target);
 
   if (scrollParent !== void 0) {
-
     if (scrollParent !== doc) {
-      scrollParentBoundingClientRect = getElemBoundingClientRect(scrollParent);
+      scrollParentBoundingClientRect = domoperation.getElemBoundingClientRect(scrollParent);
     } else {
       scrollParentBoundingClientRect = {
         left: win.scrollX,
@@ -106,8 +99,8 @@ export function dragable(selector, option) {
     originPageX = 0;
   }, 100);
 
+
   target.addEventListener("mousedown", mouseDownHandle);
-  target.addEventListener("click", clickHandle);
 
   if (option.handle !== void 0 && option.handle !== "this") {
     // domoperation.insertStyle2Head(`${selector}:hover{cursor:default}`);
@@ -236,7 +229,7 @@ export function dragable(selector, option) {
         自动滚动，思路，
      */
     if (scrollParent !== void 0) {
-      let targetBoundingClientRect = getElemBoundingClientRect(target);
+      let targetBoundingClientRect = domoperation.getElemBoundingClientRect(target);
       let distanceBetweenTargetAndScrollParent = {
         left: targetBoundingClientRect.left - scrollParentBoundingClientRect.left,
         top: targetBoundingClientRect.top - scrollParentBoundingClientRect.top,
@@ -274,35 +267,38 @@ export function dragable(selector, option) {
     }
   }
 
-  // function autoScroll() {
-  //     targetBoundingClientRect =  getElemBoundingClientRect(target);
-  //     distanceBetweenTargetAndScrollParent = {
-  //         left:targetBoundingClientRect.left - scrollParentBoundingClientRect.left,
-  //         top:targetBoundingClientRect.top - scrollParentBoundingClientRect.top,
-  //         right:targetBoundingClientRect.right - scrollParentBoundingClientRect.right,
-  //         bottom:targetBoundingClientRect.bottom - scrollParentBoundingClientRect.bottom
-  //     }
+  /*
+    // function autoScroll() {
+    //     targetBoundingClientRect =  domoperation.getElemBoundingClientRect(target);
+    //     distanceBetweenTargetAndScrollParent = {
+    //         left:targetBoundingClientRect.left - scrollParentBoundingClientRect.left,
+    //         top:targetBoundingClientRect.top - scrollParentBoundingClientRect.top,
+    //         right:targetBoundingClientRect.right - scrollParentBoundingClientRect.right,
+    //         bottom:targetBoundingClientRect.bottom - scrollParentBoundingClientRect.bottom
+    //     }
 
-  //     if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
-  //         // scrollParent.scrollLeft = doc.body.scrollWidth - doc.body.clientWidth;
-  //         // scrollParent.scrollLeft = scrollParent.scrollWidth - scrollParent.clientWidth;
-  //         scrollParent.scrollLeft += scrollLeftAdd;
-  //         // scrollParent.scrollLeft = scrollParent.scrollLeft + event.movementX;
-  //     }
+    //     if (distanceBetweenTargetAndScrollParent.left > scrollParent.clientWidth - target.offsetWidth) {
+    //         // scrollParent.scrollLeft = doc.body.scrollWidth - doc.body.clientWidth;
+    //         // scrollParent.scrollLeft = scrollParent.scrollWidth - scrollParent.clientWidth;
+    //         scrollParent.scrollLeft += scrollLeftAdd;
+    //         // scrollParent.scrollLeft = scrollParent.scrollLeft + event.movementX;
+    //     }
 
 
-  //     if (distanceBetweenTargetAndScrollParent.left < 0)  {
-  //         scrollParent.scrollLeft -= scrollLeftAdd;
-  //     } 
+    //     if (distanceBetweenTargetAndScrollParent.left < 0)  {
+    //         scrollParent.scrollLeft -= scrollLeftAdd;
+    //     } 
 
-  //     if (distanceBetweenTargetAndScrollParent.top > scrollParent.clientHeight - target.offsetHeight) {
-  //         scrollParent.scrollTop += scrollTopAdd;
-  //     } 
+    //     if (distanceBetweenTargetAndScrollParent.top > scrollParent.clientHeight - target.offsetHeight) {
+    //         scrollParent.scrollTop += scrollTopAdd;
+    //     } 
 
-  //     if (distanceBetweenTargetAndScrollParent.top < 0) {
-  //         scrollParent.scrollTop -= scrollTopAdd;
-  //     }              
-  // }
+    //     if (distanceBetweenTargetAndScrollParent.top < 0) {
+    //         scrollParent.scrollTop -= scrollTopAdd;
+    //     }              
+    // }  
+   */
+
 
   function mouseUpHandle(event) {
     event.preventDefault();
@@ -317,13 +313,12 @@ export function dragable(selector, option) {
       })
       target.style.transform = `translate(${originTranslate.x}px, ${originTranslate.y}px)`;
     }
-
   }
 
-  function getContainmentPositionRange(containment) {
-    let distanceBetweenContainmentAndDoc = isGetDistanceByBoundingClientRect ? getElemBoundingClientRect(containment) : calculateDistanceBetweenEleAndDoc(containment),
-      distanceBetweenTargeEleAndDoc = isGetDistanceByBoundingClientRect ? getElemBoundingClientRect(target.offsetParent) : calculateDistanceBetweenEleAndDoc(target.offsetParent),
-      containmentPadding = domoperation.getPadding(domoperation.getElementComputedStyle(containment))
+  function getContainmentPositionRange() {
+    let distanceBetweenContainmentAndDoc = domoperation.getElemBoundingClientRect(containment)
+      ,distanceBetweenTargeEleAndDoc = domoperation.getElemBoundingClientRect(target.offsetParent)
+      ,containmentPadding = domoperation.getPadding(domoperation.getElementComputedStyle(containment))
 
     if (isTranslate) {
       distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.position.left + targetPositionInfo.margin.left + containmentPadding.left);
@@ -343,33 +338,6 @@ export function dragable(selector, option) {
       top: 0 - distanceBeteenTargetAndContainment.top,
       right: 0 - distanceBeteenTargetAndContainment.left + containment.clientWidth - target.offsetWidth,
       bottom: 0 - distanceBeteenTargetAndContainment.top + containment.clientHeight - target.offsetHeight
-    }
-  }
-
-  function calculateDistanceBetweenEleAndDoc(element) {
-    let elementStyle = domoperation.getElementComputedStyle(element),
-      elementTranslate = domoperation.getTheTranslate(elementStyle);
-
-    if (element === doc.body) {
-      return { left: 0, top: 0 };
-    } else {
-      let result = calculateDistanceBetweenEleAndDoc(element.offsetParent);
-
-      return {
-        left: element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
-        top: element.offsetTop + result.top + element.clientTop + elementTranslate.y
-      }
-    }
-  }
-
-  function getElemBoundingClientRect(element) {
-    let boundingClientRect = element.getBoundingClientRect();
-
-    return {
-      left: boundingClientRect.left + win.scrollX,
-      top: boundingClientRect.top + win.scrollY,
-      right: boundingClientRect.right + win.scrollX,
-      bottom: boundingClientRect.bottom + win.scrollY
     }
   }
 
