@@ -8,7 +8,8 @@
 import $ from 'jquery';
 
 $(() => {
-  test4FnInstanceCallPara();
+  let testClass1 = new TestClass();
+  let testClass2 = new TestClass();
 })
 
 
@@ -50,6 +51,10 @@ class Circle {
 class TestClass {
   constructor(value) {
     this.a = value;
+    if (TestClass.first === void 0) {
+      this.fnExOnce();
+      TestClass.first = true;
+    }
   }
 
   static staticFn() {
@@ -59,9 +64,15 @@ class TestClass {
   }
 
   testFn() {
-    console.log("this fn")
-    console.log(this);
-    console.log(this.a);
+    this.anotherFn();
+  }
+
+  anotherFn() {
+    console.log("this is another");
+  }
+
+  fnExOnce() {
+    alert("once function");
   }
 }
 
@@ -241,5 +252,7 @@ function test4FnInstanceCallPara() {
     console.error(err);
   }
 }
+
+
 
 

@@ -631,8 +631,10 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                 //       "es2015", {
                 //         "modules": false
                 //       }
+                      
                 //     ]
-                //   ],
+                //     ,"stage-3"
+                //  ],
                 //   plugins: ["transform-regenerator"],
                 //   babelrc: false,
                 //   exclude: 'node_modules/**'

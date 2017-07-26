@@ -660,7 +660,7 @@ export function rainEffect(effectNum, option) {
       };
 
       if (!option.isRandom) {
-        document.documentElement.style.setProperty("--animation-scale", option.radius); 
+        doc.documentElement.style.setProperty("--animation-scale", option.radius); 
       }
       break;
     case 4:
@@ -777,7 +777,7 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
 function rainEffectRandomByCssProperty(container, startPositionX, startPositionY, option) {
   if (container !== void 0 && container !== null) {
     if (option.isRandom) {
-      document.documentElement.style.setProperty("--animation-scale", getRandomArbitrary(option.randomMin, option.randomMax));      
+      doc.documentElement.style.setProperty("--animation-scale", getRandomArbitrary(option.randomMin, option.randomMax));      
     } 
 
     let outter = doc.createElement("div");
@@ -862,7 +862,7 @@ function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY
     container.append(inner)  
 
     function animationInnerEnd(evt) {
-      document.querySelector("#" + styleId).remove();
+      doc.querySelector("#" + styleId).remove();
       inner.removeEventListener("animationend", animationInnerEnd);
       inner.remove();
     }
@@ -937,10 +937,10 @@ export function ripple(container) {
   function clickHandle(evt) {
     evt.stopPropagation();
     evt.preventDefault();
-    let div = document.createElement("div");
+    let div = doc.createElement("div");
     div.classList.add ("waveDiv");    
-    let width = parseInt(window.getComputedStyle(container).getPropertyValue("width").replace("px", ""))
-      , height = parseInt(window.getComputedStyle(container).getPropertyValue("height").replace("px", ""))
+    let width = parseInt(win.getComputedStyle(container).getPropertyValue("width").replace("px", ""))
+      , height = parseInt(win.getComputedStyle(container).getPropertyValue("height").replace("px", ""))
       , radiu = (width > height ? width : height);
     div.style.width = radiu + "px";
     div.style.height = radiu + "px";
@@ -975,6 +975,14 @@ export function buttonShowContent() {
           display:block;
         }
        `
+    }
+    ,{
+      className:".clicked"
+      ,classValue:`
+      {
+        opacity:0.8
+      }
+      `
     }]
   };
   insertStyle2Head(cssObj, {isCheckRepeat:true});
@@ -985,6 +993,7 @@ export function buttonShowContent() {
       content.classList.add("hidden");
       btn.addEventListener("click", () => {
         content.classList.toggle("show");
+        btn.classList.toggle("clicked");
       })
     }
   }
@@ -992,7 +1001,7 @@ export function buttonShowContent() {
 
 export function getElement(elem) {
   if (typeof elem === "string") {
-    return document.querySelector(elem);
+    return doc.querySelector(elem);
   } else if (elem instanceof Node) {
     return elem;
   } else {

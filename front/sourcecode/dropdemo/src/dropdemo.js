@@ -102,16 +102,28 @@ window.onload = function() {
   })
 
   control3.addEventListener("click", (event) => {
-    let str =   'var sonFrameMain = document.querySelector("#sonFrameMain");'
-              + 'var dom = document.createElement("div");'
-              + 'dom.style.width = "50px";'
-              + 'dom.style.height = "50px";'
-              + 'dom.style.background = "red";'
-              + 'sonFrameMain.append(dom);'
-    let script = document.createElement("script");
-    script.innerText = str
-    let sonframe = document.querySelector("#sonframe");
-    let body = sonframe.contentDocument.body;
-    body.append(script);
+    ++id;   
+    let insertStr = `
+                <div id="test${id}" class="testDivClass1">
+                </div>`
+      , cssObj = {
+        id:"testDiv1"
+        , cssArr:[{
+          className:".testDivClass1"
+          ,classValue:`
+          {
+            width:200px;
+            height:50px;
+            background:#D2D5B5;
+            position:absolute;
+            left:0;
+            top:0;
+          }`
+        }]
+      };
+
+    domoperation.insertStyle2Head(cssObj, {isCheckRepeat:true, isInsertFirst:true});
+    domoperation.insertStr2Dom(insertStr, sonFrameMain)
+    interaction.dragable("#test" + id, {frame:sonframe});
   })
 }

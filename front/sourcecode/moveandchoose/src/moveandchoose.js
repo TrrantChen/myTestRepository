@@ -25,7 +25,7 @@ $(function() {
   testContainment();  // 有问题
   testContainmentUI();
 
-  testContainment();
+  testCancelAndHandle();
   testCancelAndHandleUI();
 
   testRevert();
