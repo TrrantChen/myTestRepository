@@ -1,6 +1,7 @@
 import {getElement, checkCss3Support, setFrame, getScrollParent, getElemBoundingClientRect, 
   getElementComputedStyle, getPosition, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate} from './domoperation';
 import * as util from './util';
+import { MouseButton } from './enum'
 
 /*
  option {
@@ -30,8 +31,8 @@ export function dragable(selector, optionPara) {
     ,mouseDownPage = { x: 0, y: 0 }
     ,containment = getElement(option.containment)
     ,containmentPositionRange = getContainmentPositionRange()
-    ,originTranslate = null
-    ,originPosition = null
+    // ,originTranslate = null
+    ,mosueDownTargetLocationInfo = null
     ,targetPositionInfo = updateTargetPositionInfo(target)
     ,isRangeLimit = containment !== void 0 ? true : false
     ,handleSelector = option.handle !== void 0 ? (option.handle === "this" ? target : getElement(option.handle)) : void 0
@@ -63,7 +64,6 @@ export function dragable(selector, optionPara) {
 
   setFrame(option.frame);
   insertStyle2Head(css, {isCheckRepeat:true});
-
 
   if (containment !== void 0) {
     // if (domoperation.getElementComputedStyle(containment)("overflow").toLowerCase() !== "visible"){
@@ -115,19 +115,15 @@ export function dragable(selector, optionPara) {
     event.preventDefault();
     event.stopPropagation();
 
-    if ((option.handle !== void 0 && handleSelector !== event.target) || (option.cancel !== void 0 && cancelSelector === event.target) || event.button !== 0) {
+    if ((option.handle !== void 0 && handleSelector !== event.target) || (option.cancel !== void 0 && cancelSelector === event.target) || event.button !== MouseButton.left) {
       return;
     }
 
     mouseDownPage.x = event.pageX;
     mouseDownPage.y = event.pageY;
     targetPositionInfo = updateTargetPositionInfo(target);
+    mosueDownTargetLocationInfo = isTranslate ? targetPositionInfo.translate : targetPositionInfo.position;
 
-    if (isTranslate) {
-      originTranslate = targetPositionInfo.translate;
-    } else {
-      originPosition = targetPositionInfo.position;
-    }
     doc.addEventListener("mousemove", mouseMoveHandle);
     doc.addEventListener("mouseup", mouseUpHandle);
   }
@@ -136,82 +132,29 @@ export function dragable(selector, optionPara) {
     event.preventDefault();
     event.stopPropagation();
 
-    let x = 0,
-      y = 0;
+    let mouseMovePoint =  getMouseMovePoint(event)
+      ,x = mouseMovePoint.x
+      ,y = mouseMovePoint.y;
 
-    if (isTranslate) {
-      x = originTranslate.x + event.pageX - mouseDownPage.x;
-      y = originTranslate.y + event.pageY - mouseDownPage.y;
-
-      if (isRangeLimit) {
-        if (x < containmentPositionRange.left) {
-          x = containmentPositionRange.left;
-        }
-
-        if (x > containmentPositionRange.right) {
-          x = containmentPositionRange.right;
-        }
-
-        if (y < containmentPositionRange.top) {
-          y = containmentPositionRange.top;
-        }
-
-        if (y > containmentPositionRange.bottom) {
-          y = containmentPositionRange.bottom;
-        }
+    if (isRangeLimit) {
+      if (x < containmentPositionRange.left) {
+        x = containmentPositionRange.left;
       }
 
-      switch (option.axis.toUpperCase()) {
-        case "X":
-          target.style.transform = `translate(${x}px, 0)`;
-          break;
-        case "Y":
-          target.style.transform = `translate(0, ${y}px)`;
-          break;
-        case "ALL":
-        default:
-          target.style.transform = `translate(${x}px, ${y}px)`;
-          break;
-      }
-    } else {
-      x = originPosition.left + event.pageX - mouseDownPage.x;
-      y = originPosition.top + event.pageY - mouseDownPage.y;
-
-      if (isRangeLimit) {
-        if (x < containmentPositionRange.left) {
-          x = containmentPositionRange.left;
-        }
-
-        if (x > containmentPositionRange.right) {
-          x = containmentPositionRange.right;
-        }
-
-        if (y < containmentPositionRange.top) {
-          y = containmentPositionRange.top;
-        }
-
-        if (y > containmentPositionRange.bottom) {
-          y = containmentPositionRange.bottom;
-        }
+      if (x > containmentPositionRange.right) {
+        x = containmentPositionRange.right;
       }
 
-      switch (option.axis.toUpperCase()) {
-        case "X":
-          target.style.left = x + "px";
-          break;
-        case "Y":
-          target.style.top = y + "px";
-          break;
-        case "ALL":
-        default:
-          target.style.left = x + "px";
-          target.style.top = y + "px";
-          break;
+      if (y < containmentPositionRange.top) {
+        y = containmentPositionRange.top;
       }
-    }
 
+      if (y > containmentPositionRange.bottom) {
+        y = containmentPositionRange.bottom;
+      }
+    }      
 
-
+    setAxis(mouseMovePoint);
     /*
       自动滚动，思路，
       // if (scrollParent !== void 0) {
@@ -286,20 +229,73 @@ export function dragable(selector, optionPara) {
     // }  
    */
 
+  function getMouseMovePoint(event) {
+    let result = {x:0, y:0};
+
+    if (isTranslate) {
+      result.x = mosueDownTargetLocationInfo.x + event.pageX - mouseDownPage.x;
+      result.y = mosueDownTargetLocationInfo.y + event.pageY - mouseDownPage.y;
+    } else {
+      result.x = mosueDownTargetLocationInfo.left + event.pageX - mouseDownPage.x;
+      result.y = mosueDownTargetLocationInfo.top + event.pageY - mouseDownPage.y;
+    }
+
+    return result;
+  }
+
+  function setAxis(mouseMovePoint) {
+    let x = mouseMovePoint.x
+      ,y = mouseMovePoint.y;
+    if (isTranslate) {
+      switch (option.axis.toUpperCase()) {
+        case "X":
+          target.style.transform = `translate(${x}px, 0)`;
+          break;
+        case "Y":
+          target.style.transform = `translate(0, ${y}px)`;
+          break;
+        case "ALL":
+        default:
+          target.style.transform = `translate(${x}px, ${y}px)`;
+          break;
+      }
+    } else {
+      switch (option.axis.toUpperCase()) {
+        case "X":
+          target.style.left = x + "px";
+          break;
+        case "Y":
+          target.style.top = y + "px";
+          break;
+        case "ALL":
+        default:
+          target.style.left = x + "px";
+          target.style.top = y + "px";
+          break;
+      }
+    }
+  }
 
   function mouseUpHandle(event) {
     event.preventDefault();
     event.stopPropagation();
     doc.removeEventListener("mousemove", mouseMoveHandle);
     doc.removeEventListener("mouseup", mouseUpHandle);
+    setRevert();
+  }
 
+  function setRevert() {
     if (option.revert) {
       target.style.transition = "transform 0.5s linear";
-      target.addEventListener("transitionend", (e) => {
+      target.addEventListener("transitionend", transitionendHandle);
+
+      target.style.transform = `translate(${mosueDownTargetLocationInfo.x}px, ${mosueDownTargetLocationInfo.y}px)`;
+
+      function transitionendHandle(evt) {
         target.style.transition = "";
-      })
-      target.style.transform = `translate(${originTranslate.x}px, ${originTranslate.y}px)`;
-    }
+        target.removeEventListener("transitionend", transitionendHandle);
+      }
+    }    
   }
 
   function getContainmentPositionRange() {
@@ -600,8 +596,20 @@ export function align(elemArr, option) {
   }
 }
 
-
 export class Dragable {
+  /*
+   option {
+     axis:x, y, all
+     containment: selector
+     translate:true/false   // 是否使用translate替代position
+     handle: selector
+     cancel:selector
+     revert: true/false 
+     frame: iframe dom  
+   }
+   范围选择
+   自动滚动
+   */  
   constructor(selector, option) {
     let defaultOption = {
       axis: "all"
@@ -616,14 +624,13 @@ export class Dragable {
     this.target = getElement(selector);
     this.option = Object.assign(defaultOption, option);
     this.mouseDownPage = {x:0, y:0};
-    this.containment = getElement(option.containment);
+    this.containment = getElement(this.option.containment);
     this.containmentPositionRange = this.getContainmentPositionRange();
-    this.originTranslate = null;
-    this.originPosition = null;
+    this.mosueDownTargetLocationInfo = {x:0, y:0};
     this.targetPositionInfo = this.updateTargetPositionInfo(this.target);
     this.isRangeLimit = this.containment !== void 0 ? true : false;
-    this.handleSelector = this.option.handle !== void 0 ? (this.option.handle === "this" ? this.target : getElement(this.option.handle)) : void 0;
-    this.cancelSelector = this.option.cancel !== void 0 ? getElement(this.option.cancel) : void 0;
+    this.handleSelector = this.option.handle !== void 0 ? (this.option.handle === "this" ? this.target : getElement(this.option.handle)) : null;
+    this.cancelSelector = this.option.cancel !== void 0 ? getElement(this.option.cancel) : null;
     this.doc = this.option.frame.contentDocument;
     this.win = this.option.frame.contentWindow;
     this.isTranslate = checkCss3Support("transform") && this.option.translate;
@@ -637,6 +644,143 @@ export class Dragable {
       this.initCss();
       Dragable.execOnce = true;
     }
+
+    if (this.option.handle !== void 0 && this.option.handle !== "this") {
+      this.target.classList.add("dragCursorDefault");
+      this.handleSelector.classList.add("dragCursorMove");
+    } else {
+      this.target.classList.add("dragCursorMove");
+    }
+
+    if (this.option.cancel !== void 0) {
+      this.cancelSelector.classList.add("dragCursorDefault");
+    } 
+
+    let that = this;
+    this.target.addEventListener("mousedown", this.mouseDownHandle.bind(that));
+  };
+
+  mouseDownHandle(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+
+    if ((this.handleSelector!== null && this.handleSelector !== evt.target) || (this.cancelSelector !== null && this.cancelSelector === evt.target) || evt.button !== MouseButton.left) {
+      return;
+    }
+
+    this.mouseDownPage.x = evt.pageX;
+    this.mouseDownPage.y = evt.pageY;
+    this.targetPositionInfo = this.updateTargetPositionInfo(this.target);
+    this.mosueDownTargetLocationInfo = this.getMosueDownTargetLocationInfo();
+
+    let that = this;
+
+    this.doc.addEventListener("mousemove", this.mouseMoveHandle.bind(that));
+    this.doc.addEventListener("mouseup", this.mouseUpHandle.bind(that));
+  }
+
+  getMosueDownTargetLocationInfo() {
+    let result = {x:0, y:0};
+
+    if (this.isTranslate) {
+      result.x = this.targetPositionInfo.translate.x;
+      result.y = this.targetPositionInfo.translate.y;
+    } else {
+      result.x = this.targetPositionInfo.position.left;
+      result.y = this.targetPositionInfo.position.top;
+    }
+
+    return result;   
+  }
+
+  mouseMoveHandle(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+
+    let mouseMovePoint =  this.getMouseMovePoint(evt)
+
+    if (this.isRangeLimit) {
+      if (mouseMovePoint.x < containmentPositionRange.left) {
+        mouseMovePoint.x = containmentPositionRange.left;
+      }
+
+      if (mouseMovePoint.x > containmentPositionRange.right) {
+        mouseMovePoint.x = containmentPositionRange.right;
+      }
+
+      if (mouseMovePoint.y < containmentPositionRange.top) {
+        mouseMovePoint.y = containmentPositionRange.top;
+      }
+
+      if (mouseMovePoint.y > containmentPositionRange.bottom) {
+        mouseMovePoint.y = containmentPositionRange.bottom;
+      }
+    }      
+
+    this.setAxis(mouseMovePoint);
+  }
+
+  getMouseMovePoint(evt) {
+    let result = {x:0, y:0};
+    result.x = this.mosueDownTargetLocationInfo.x + evt.pageX - this.mouseDownPage.x;
+    result.y = this.mosueDownTargetLocationInfo.y + evt.pageY - this.mouseDownPage.y;
+    return result;
+  } 
+
+  setAxis(mouseMovePoint) {
+    let x = mouseMovePoint.x
+      ,y = mouseMovePoint.y;
+    if (this.isTranslate) {
+      switch (this.option.axis.toUpperCase()) {
+        case "X":
+          this.target.style.transform = `translate(${x}px, 0)`;
+          break;
+        case "Y":
+          this.target.style.transform = `translate(0, ${y}px)`;
+          break;
+        case "ALL":
+        default:
+          this.target.style.transform = `translate(${x}px, ${y}px)`;
+          break;
+      }
+    } else {
+      switch (this.option.axis.toUpperCase()) {
+        case "X":
+          this.target.style.left = x + "px";
+          break;
+        case "Y":
+          this.target.style.top = y + "px";
+          break;
+        case "ALL":
+        default:
+          this.target.style.left = x + "px";
+          this.target.style.top = y + "px";
+          break;
+      }
+    }    
+  } 
+
+  mouseUpHandle(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    let that = this;
+    this.doc.removeEventListener("mousemove", this.mouseMoveHandle.bind(that));
+    this.doc.removeEventListener("mouseup", this.mouseUpHandle.bind(that));
+    this.setRevert();
+  }
+
+  setRevert() {
+    if (this.option.revert) {
+      this.target.style.transition = "transform 0.5s linear";
+      this.target.addEventListener("transitionend", transitionendHandle);
+
+      this.target.style.transform = `translate(${mosueDownTargetLocationInfo.x}px, ${mosueDownTargetLocationInfo.y}px)`;
+
+      function transitionendHandle(evt) {
+        target.style.transition = "";
+        target.removeEventListener("transitionend", transitionendHandle);
+      }
+    }    
   }
 
   getContainmentPositionRange() {
@@ -651,12 +795,12 @@ export class Dragable {
       ,distanceBetweenTargeEleAndDoc = getElemBoundingClientRect(this.target.offsetParent)
       ,containmentPadding = getPadding(getElementComputedStyle(this.containment))
 
-      if (isTranslate) {
-        distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.position.left + targetPositionInfo.margin.left + containmentPadding.left);
-        distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.position.top + targetPositionInfo.margin.left + containmentPadding.left);
+      if (this.isTranslate) {
+        distanceBetweenTargeEleAndDoc.left += (this.targetPositionInfo.position.left + this.targetPositionInfo.margin.left + containmentPadding.left);
+        distanceBetweenTargeEleAndDoc.top += (this.targetPositionInfo.position.top + this.targetPositionInfo.margin.left + containmentPadding.left);
       } else {
-        distanceBetweenTargeEleAndDoc.left += (targetPositionInfo.translate.x + targetPositionInfo.margin.left + containmentPadding.left);
-        distanceBetweenTargeEleAndDoc.top += (targetPositionInfo.translate.y + targetPositionInfo.margin.top + containmentPadding.top);
+        distanceBetweenTargeEleAndDoc.left += (this.targetPositionInfo.translate.x + this.targetPositionInfo.margin.left + containmentPadding.left);
+        distanceBetweenTargeEleAndDoc.top += (this.targetPositionInfo.translate.y + this.targetPositionInfo.margin.top + containmentPadding.top);
       }
 
       let distanceBeteenTargetAndContainment = {
@@ -707,6 +851,13 @@ export class Dragable {
       }]
     }
     insertStyle2Head(css, {isCheckRepeat:true});
+  };
+
+  removeMouseDownHandle() {
+    this.target.removeEventListener("mousedown", this.mouseDownHandle);
   }
 }
+
+
+
 

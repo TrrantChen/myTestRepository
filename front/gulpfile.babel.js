@@ -616,7 +616,9 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   ,browser: true
                 })             
                 ,rollupCommonjs({
-                  include:['sourcecode/lib/**', 'node_modules/**'],
+                  include:['sourcecode/lib/**'
+                  // , 'node_modules/**'
+                  ],
                   sourceMap:true,
                   nameExports:{
                     jquery:['jQuery']
@@ -727,7 +729,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
     }
   })
 
-  gulp.task('watch-compress', ['browser-sync','cmopressLib', 'replace-hash', 'compressHtml'], (done) => {
+  gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'compressHtml'], (done) => {
     gulp.watch(basePath + '/js/common/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.html', ['compressHtml'])

@@ -473,7 +473,7 @@ export function char2num(ch) {
  */
 export function twoArrayUnique(target, source) {
   let result = []
-    , tmpMap = new Map()
+    , tmpMap = new WeakMap()
     , sourceLength = source.length
     , targetLength = target.length;
 

@@ -440,13 +440,13 @@ export function action4EverySonDom(dom, fn, paraArr) {
 }
 
 /*
-  去除节点的自定义事件
+  禁止节点注册事件
  */
-export function removeElemDefaultEvent(id,addFn) {
+export function preventElemAddEvent(elemOrId, addFn) {
   let originEventListener = EventTarget.prototype.addEventListener
   EventTarget.prototype.addEventListener = function() {
     let args = [].slice.call(arguments);
-    if (this.id === id) {
+    if (this === elemOrId || this.id === elemOrId) {
       if (args.length >= 2) {
         let fn = args[1];
         if (!this.addEventListener[isClear]) {
@@ -1034,6 +1034,75 @@ export function calculateDistanceBetweenEleAndDoc(element) {
     return {
       left: element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
       top: element.offsetTop + result.top + element.clientTop + elementTranslate.y
+    }
+  }
+}
+
+export class ButtonContent {
+  constructor(elem) {
+    this.addButtonShowContent = buttonShowContent();
+    this.container = getElement(elem);
+
+    let css = {
+      id :"buttonContent"
+      , cssArr : [{
+        className:".buttonStyle"
+        ,classValue:`
+        {
+          padding:0 20px;
+          height:30px;
+          line-height: 30px;
+          text-align: center;
+          background: #49a9ee;
+          color:#fff;
+          cursor: pointer;
+          margin:5px 15px;
+        }
+        `
+      }
+      ,{
+        className:".contentStyle"
+        ,classValue:`
+        {
+          width:100%;
+          height:600px;
+          background:#FBEEC2;
+          font-size: 0px
+        }
+        `
+      }]
+    }
+    insertStyle2Head(css, {isCheckRepeat:true});
+    this.btnDiv = document.createElement("div");
+    this.container.appendChild(this.btnDiv);
+  }
+
+  addButtonAndContent(contentInnerHtml, option) {
+    let defaultOption = {
+      btnText:"test"
+      ,contentStyleArr:[]
+    }
+
+    this.option = Object.assign(defaultOption, option);
+
+    if(contentInnerHtml !== void 0) {
+      let button = document.createElement("button")
+        ,content = document.createElement("div");
+      button.innerText = this.option.btnText;
+      button.classList.add("buttonStyle");
+      content.classList.add("contentStyle");
+
+      if (this.option.contentStyleArr.length !== 0) {
+        let length = this.option.contentStyleArr.length
+        for (var i = 0; i < length; i++) {
+          content.classList.add(this.option.contentStyleArr[i]);
+        }
+      }
+
+      content.innerHTML = contentInnerHtml;
+      this.btnDiv.appendChild(button);
+      this.container.appendChild(content);
+      this.addButtonShowContent(button, content);
     }
   }
 }

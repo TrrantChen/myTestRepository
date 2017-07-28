@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import * as util from '../../js/common/util';  
-import {dragable, drogable, resizable, selectable, align} from '../../js/common/interaction'; 
+import {dragable, drogable, resizable, selectable, align, Dragable} from '../../js/common/interaction'; 
 import { buttonShowContent, getElement} from '../../js/common/domoperation';
 import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';
 
@@ -33,7 +33,8 @@ $(function() {
 })
 
 function testNormal() {
-  dragable("#testNormalDiv");
+  let dragable = new Dragable("#testNormalDiv");
+  // dragable("#testNormalDiv");
 }
 
 function testNormalByUI() {
@@ -41,9 +42,13 @@ function testNormalByUI() {
 }
 
 function testAxis() {
-  dragable("#testAxisX", {axis:"x"})
-  dragable("#testAxisY", {axis:"y"})
-  dragable("#testAll", {axis:"all"})
+  // dragable("#testAxisX", {axis:"x"})
+  // dragable("#testAxisY", {axis:"y"})
+  // dragable("#testAll", {axis:"all"})
+  
+  let dragableX = new Dragable("#testAxisX", {axis:"x"});
+  let dragableY = new Dragable("#testAxisY", {axis:"y"});
+  let dragableAll = new Dragable("#testAll", {axis:"all"});
 }
 
 function testAxisByUI() {
@@ -54,7 +59,8 @@ function testAxisByUI() {
 
 function testContainment() {
   try {
-    dragable("#testContainmentDiv", {containment:"#testContent"});
+    let dragable = new Dragable("#testContainmentDiv", {containment:"#testContent"});
+    // dragable("#testContainmentDiv", {containment:"#testContent"});
   }
   catch(err) {
     console.log(err);
@@ -67,9 +73,14 @@ function testContainmentUI() {
 
 function testCancelAndHandle() {
   try {
-    dragable("#test4handle", {handle:"#canP"});
-    dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
-    dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});       
+
+    let dragable1 = new Dragable("#test4handle", {handle:"#canP"});
+    let dragable2 = new Dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
+    let dragable3 = new Dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});
+
+    // dragable("#test4handle", {handle:"#canP"});
+    // dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
+    // dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});       
   }
   catch(err) {
     console.log(err);
@@ -84,7 +95,8 @@ function testCancelAndHandleUI() {
 
 function testRevert() {
   try {
-    dragable("#testReverDiv", {revert:true});
+    let dragable1 = new Dragable("#testReverDiv", {revert:true});
+    // dragable("#testReverDiv", {revert:true});
   }
   catch(err) {
     console.log(err);

@@ -7,12 +7,53 @@
 
 import $ from 'jquery';
 import * as util from '../../js/common/util'; 
-import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
+import { getDomCount, action4EverySonDom, preventElemAddEvent, ButtonContent} from '../../js/common/domoperation';
 
 $(() => {
+  let buttonContent = new ButtonContent(".container");
+  buttonContent.addButtonAndContent(`
+      <div class="buttom">
+          <div class="son">
+            
+          </div>
+      </div>
+      <div class="shade">
+        
+      </div>    
+      `, {
+        btnText:"mouseEnterHandle"
+        , contentStyleArr:["mouseEnterHandle"]
+      });
+
+  buttonContent.addButtonAndContent(`
+    <button id="button1">button1</button>
+    <button id="button2">button2</button>  
+    `
+    , {
+      btnText:"selfEventTest"
+      , contentStyleArr:["selfEventTest"]
+    });
+
+  buttonContent.addButtonAndContent(`
+      <button id="customEventBtn">customEventBtn</button>
+    `
+    , {
+      btnText:"customEventTest"
+      , contentStyleArr:["customEventTest"]
+    });
+
+  buttonContent.addButtonAndContent(`
+      <button id="removeElemDefaultEventBtn" class="buttonStyle">test</button>
+    `
+    , {
+      btnText:"removeElemDefaultEventTest"
+    });    
+
+
   mouseEventThroughDiv();
   selfEventTest();
   customEventTest();
+  removeElemDefaultEventTest();
 })
 
 function mouseEventThroughDiv() {
@@ -81,6 +122,15 @@ function customEventTest() {
   });
 
   customEventBtn.dispatchEvent(event);
+}
+
+function removeElemDefaultEventTest() {
+  preventElemAddEvent("removeElemDefaultEventBtn");
+
+  let btn = document.querySelector("#removeElemDefaultEventBtn");
+  btn.addEventListener("click", (evt) => {
+    alert("test");
+  }); 
 }
 
 

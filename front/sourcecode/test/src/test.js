@@ -1,22 +1,17 @@
 import $ from 'jquery';
 import  * as util from '../../js/common/util'; 
 // import * as objectSizeof  from '../../lib/sizeof/index';
-import { getDomCount, action4EverySonDom } from '../../js/common/domoperation';
+import { getDomCount, action4EverySonDom, ButtonContent } from '../../js/common/domoperation';
 import * as named from '../../lib/commonjsTest';
 import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
 $(() => {
-  // console.log("container " + objectSizeof.default(container));
-  // console.log("$ " + objectSizeof.default($));
-  // console.log("$ " + sizeof($));
-    var gen = myGenerator();
-    function* myGenerator() {
-        var a = yield "aaa";
-        console.log(a);
-        console.log("hh");
-    }
-    console.log(gen.next().value);
+  let buttonContent = new ButtonContent(container);
+  buttonContent.addButtonAndContent(`
+  <div style="width:100px;height:100px;background:black;">
+  </div>
+    `)
 })
 
 

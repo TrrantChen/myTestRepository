@@ -10,6 +10,7 @@ import $ from 'jquery';
 $(() => {
   let testClass1 = new TestClass();
   let testClass2 = new TestClass();
+  testClass1.testFn();
 })
 
 
@@ -65,6 +66,11 @@ class TestClass {
 
   testFn() {
     this.anotherFn();
+    innerFn();
+
+    function innerFn() {
+      alert("this is inner fn");
+    }
   }
 
   anotherFn() {
