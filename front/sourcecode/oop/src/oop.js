@@ -8,9 +8,7 @@
 import $ from 'jquery';
 
 $(() => {
-  let testClass1 = new TestClass();
-  let testClass2 = new TestClass();
-  testClass1.testFn();
+test4FnAndParaInFn()
 })
 
 

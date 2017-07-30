@@ -1,5 +1,5 @@
 import {getElement, checkCss3Support, setFrame, getScrollParent, getElemBoundingClientRect, 
-  getElementComputedStyle, getPosition, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate} from './domoperation';
+  getElementComputedStyle, getPosition, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate, initGetAllElementEventFn, getAllEvent, getElemAllEvent} from './domoperation';
 import * as util from './util';
 import { MouseButton } from './enum'
 
@@ -155,6 +155,8 @@ export function dragable(selector, optionPara) {
     }      
 
     setAxis(mouseMovePoint);
+
+
     /*
       自动滚动，思路，
       // if (scrollParent !== void 0) {
@@ -620,7 +622,7 @@ export class Dragable {
         ,contentWindow:window
       }     
     };
-
+    this.that = this;
     this.target = getElement(selector);
     this.option = Object.assign(defaultOption, option);
     this.mouseDownPage = {x:0, y:0};
@@ -656,8 +658,7 @@ export class Dragable {
       this.cancelSelector.classList.add("dragCursorDefault");
     } 
 
-    let that = this;
-    this.target.addEventListener("mousedown", this.mouseDownHandle.bind(that));
+    this.target.addEventListener("mousedown", this.mouseDownHandle.bind(this));
   };
 
   mouseDownHandle(evt) {
@@ -673,10 +674,12 @@ export class Dragable {
     this.targetPositionInfo = this.updateTargetPositionInfo(this.target);
     this.mosueDownTargetLocationInfo = this.getMosueDownTargetLocationInfo();
 
-    let that = this;
 
-    this.doc.addEventListener("mousemove", this.mouseMoveHandle.bind(that));
-    this.doc.addEventListener("mouseup", this.mouseUpHandle.bind(that));
+    // this.doc.addEventListener("mousemove", this.mouseMoveHandle);
+    // this.doc.addEventListener("mouseup", this.mouseUpHandle);    
+    document.addEventListener("mousemove", this.mouseMoveHandle.bind(this));
+    document.addEventListener("mouseup", this.mouseUpHandle.bind(this));
+
   }
 
   getMosueDownTargetLocationInfo() {
@@ -717,7 +720,7 @@ export class Dragable {
       }
     }      
 
-    this.setAxis(mouseMovePoint);
+    this.setAxis(mouseMovePoint); 
   }
 
   getMouseMovePoint(evt) {
@@ -728,6 +731,7 @@ export class Dragable {
   } 
 
   setAxis(mouseMovePoint) {
+    console.log("is true ? " + (this === this))
     let x = mouseMovePoint.x
       ,y = mouseMovePoint.y;
     if (this.isTranslate) {
@@ -761,11 +765,15 @@ export class Dragable {
   } 
 
   mouseUpHandle(evt) {
+    console.log("up");
     evt.preventDefault();
     evt.stopPropagation();
-    let that = this;
-    this.doc.removeEventListener("mousemove", this.mouseMoveHandle.bind(that));
-    this.doc.removeEventListener("mouseup", this.mouseUpHandle.bind(that));
+
+    // this.doc.removeEventListener("mousemove", this.mouseMoveHandle);
+    // this.doc.removeEventListener("mouseup", this.mouseUpHandle);
+    document.removeEventListener("mousemove", this.mouseMoveHandle.bind(this));
+    document.removeEventListener("mouseup", this.mouseUpHandle.bind(this));
+
     this.setRevert();
   }
 
@@ -774,11 +782,11 @@ export class Dragable {
       this.target.style.transition = "transform 0.5s linear";
       this.target.addEventListener("transitionend", transitionendHandle);
 
-      this.target.style.transform = `translate(${mosueDownTargetLocationInfo.x}px, ${mosueDownTargetLocationInfo.y}px)`;
+      this.target.style.transform = `translate(${this.mosueDownTargetLocationInfo.x}px, ${this.mosueDownTargetLocationInfo.y}px)`;
 
       function transitionendHandle(evt) {
-        target.style.transition = "";
-        target.removeEventListener("transitionend", transitionendHandle);
+        this.target.style.transition = "";
+        this.target.removeEventListener("transitionend", transitionendHandle);
       }
     }    
   }

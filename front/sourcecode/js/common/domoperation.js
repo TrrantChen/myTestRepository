@@ -1,5 +1,5 @@
 import * as util from './util';
-import { isClear } from './symbolManage';
+import { isClear, eventObj } from './symbolManage';
 import { getRandomInt, getRandomArbitrary } from './random';
 
 let win = window,
@@ -464,6 +464,87 @@ export function preventElemAddEvent(elemOrId, addFn) {
       }
     }
     originEventListener.apply(this, args);    
+  }
+}
+
+export function initGetAllElementEventFn() {
+  if(EventTarget[eventObj] === void 0) {
+    EventTarget[eventObj] = {};
+    let originAddEventListener = EventTarget.prototype.addEventListener
+
+    EventTarget.prototype.addEventListener = function() {
+      let that = this;
+      let args = [].slice.call(arguments);
+      let isRepeat = false;
+      if (that.id !== "" && that.id !== void 0) {
+        if (EventTarget[eventObj][that.id] === void 0) {
+          EventTarget[eventObj][that.id] = {}
+          EventTarget[eventObj][that.id][args[0]] = [];
+        } else {
+          if (EventTarget[eventObj][that.id][args[0]] !== void 0 && EventTarget[eventObj][that.id][args[0]].length !== 0) {
+            let length = EventTarget[eventObj][that.id][args[0]].length;
+            for(var i = 0; i < length; i++) {
+              if (EventTarget[eventObj][that.id][args[0]][i] === args[1]) {
+                isRepeat = true;
+                break;
+              }
+            }
+          } else {
+            EventTarget[eventObj][that.id][args[0]] = [];
+          }
+        }
+
+        if (!isRepeat) {
+          try {
+            EventTarget[eventObj][that.id][args[0]].push(args[1]);
+          }
+          catch(err) {
+            debugger
+          }
+          
+        }     
+      } 
+
+      originAddEventListener.apply(this, args);    
+    } 
+
+    let originRemoveEventListener = EventTarget.prototype.removeEventListener
+
+    EventTarget.prototype.removeEventListener = function() {
+      let that = this;
+      let args = [].slice.call(arguments);
+      if ((that.id !== "" && that.id !== void 0 && EventTarget[eventObj][that.id] !== void 0 && EventTarget[eventObj][that.id][args[0]] !== void 0)) {
+        EventTarget[eventObj][that.id][args[0]].pop(args[1]);
+        if (EventTarget[eventObj][that.id][args[0]].length === 0) {
+          EventTarget[eventObj][that.id][args[0]] = void 0;
+          delete  EventTarget[eventObj][that.id][args[0]];
+        }
+
+        if (util.isEmptyObject(EventTarget[eventObj][that.id])) {
+          EventTarget[eventObj][that.id] = void 0;
+          delete EventTarget[eventObj][that.id]
+        }
+      }
+
+      originRemoveEventListener.apply(this, args);    
+    }        
+  }
+}
+
+export function getElemAllEvent(id) {
+  if(EventTarget[eventObj] !== void 0) {
+    return EventTarget[eventObj][id];
+  } else {
+    console.error("eventObj not init");
+    return void 0;
+  }
+}
+
+export function getAllEvent() {
+  if(EventTarget[eventObj] !== void 0) {
+    return EventTarget[eventObj];
+  } else {
+    return void 0;
   }
 }
 

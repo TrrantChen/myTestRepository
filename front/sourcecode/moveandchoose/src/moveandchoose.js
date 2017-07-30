@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import * as util from '../../js/common/util';  
 import {dragable, drogable, resizable, selectable, align, Dragable} from '../../js/common/interaction'; 
-import { buttonShowContent, getElement} from '../../js/common/domoperation';
+import { buttonShowContent, getElement,  initGetAllElementEventFn, getAllEvent, getElemAllEvent} from '../../js/common/domoperation';
 import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';
-
+document.id = "testDc";
 let addButtonShowContent = buttonShowContent();
 
 $(function() {
@@ -33,6 +33,7 @@ $(function() {
 })
 
 function testNormal() {
+
   let dragable = new Dragable("#testNormalDiv");
   // dragable("#testNormalDiv");
 }

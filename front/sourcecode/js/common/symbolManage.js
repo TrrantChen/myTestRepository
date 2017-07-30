@@ -6,3 +6,18 @@
  */
 export let getAllObjPara = Symbol();
 export let isClear = Symbol();
+
+/*
+  eventObj = {
+    id1: {
+      eventType1:[callback1, callback2]
+      ,eventType2:[callback1, callback2]
+    }
+    , id2 : {
+      eventType1:[callback1, callback2]
+      ,eventType2:[callback1, callback2]  
+    }
+  }
+ */
+export let eventObj = Symbol();
+

@@ -607,8 +607,8 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                 multiEntry()
 
                 // 用于将nodejs的模块转换到浏览器端使用
-                ,rollupGlobals()
-                ,rollupBuiltins()
+                // ,rollupGlobals()
+                // ,rollupBuiltins()
 
                 ,rollupNodeResolve({
                   jsnext: true
@@ -624,7 +624,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                     jquery:['jQuery']
                     ,underscore:['_']
                     // ,'sourcecode/lib/commonjsTest.js':['named']
-                    ,'sourcecode/lib/sizeof/index.js':['sizeof']
+                    // ,'sourcecode/lib/sizeof/index.js':['sizeof']
                   }
                 }) 
                 // ,rollupbabel({

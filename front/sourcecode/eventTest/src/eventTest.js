@@ -7,7 +7,8 @@
 
 import $ from 'jquery';
 import * as util from '../../js/common/util'; 
-import { getDomCount, action4EverySonDom, preventElemAddEvent, ButtonContent} from '../../js/common/domoperation';
+import { getDomCount, action4EverySonDom, preventElemAddEvent, ButtonContent, initGetAllElementEventFn, getElemAllEvent, getAllEvent} from '../../js/common/domoperation';
+import { isClear, eventObj } from '../../js/common/symbolManage';
 
 $(() => {
   let buttonContent = new ButtonContent(".container");
@@ -35,7 +36,7 @@ $(() => {
     });
 
   buttonContent.addButtonAndContent(`
-      <button id="customEventBtn">customEventBtn</button>
+    <button id="customEventBtn">customEventBtn</button>
     `
     , {
       btnText:"customEventTest"
@@ -43,18 +44,40 @@ $(() => {
     });
 
   buttonContent.addButtonAndContent(`
-      <button id="removeElemDefaultEventBtn" class="buttonStyle">test</button>
+    <button id="removeElemDefaultEventBtn" class="buttonStyle">test</button>
     `
     , {
       btnText:"removeElemDefaultEventTest"
-    });    
+    }
+  );  
 
+  buttonContent.addButtonAndContent(`
+    <button id="showElemEvent" class="buttonStyle">showElemEvent</button>
+    <button id="removeClickEvent" class="buttonStyle">removeClickEvent</button>
+    <button id="addClickEvent" class="buttonStyle">addClickEvent</button>
+    <div id="testDiv" style="width:100px;height:100px;background:black;"></div>
+    `
+    , {
+      btnText:"elemEventTest"
+    }
+  )  
 
-  mouseEventThroughDiv();
-  selfEventTest();
-  customEventTest();
-  removeElemDefaultEventTest();
+  buttonContent.addButtonAndContent(`
+    <div id="eventClassThisTestDiv" style="width:100px;height:100px;background:black;"></div>
+    `
+    , {
+      btnText:"eventClassThisTest"
+    }
+  )  
+
+  // mouseEventThroughDiv();
+  // selfEventTest();
+  // customEventTest();
+  // removeElemDefaultEventTest();
+  // showElemEventTest();
+  eventClassThis();
 })
+
 
 function mouseEventThroughDiv() {
   let buttom = document.querySelector(".buttom");
@@ -133,8 +156,86 @@ function removeElemDefaultEventTest() {
   }); 
 }
 
+function showElemEventTest() {
+  initGetAllElementEventFn();
+  let showElemEvent = document.querySelector("#showElemEvent");
+  let removeClickEvent = document.querySelector("#removeClickEvent");
+  let addClickEvent = document.querySelector("#addClickEvent");
+  let testDiv = document.querySelector("#testDiv");
 
+  showElemEvent.addEventListener("click", (evt) => {
+    console.log(getElemAllEvent("testDiv"));
+  })
 
+  addClickEvent.addEventListener("click", (evt) => {
+    testDiv.addEventListener("click", clickHandle);
+  })
+  
+  removeClickEvent.addEventListener("click", (evt) => {
+    testDiv.removeEventListener("click", clickHandle);
+  })
 
+  function clickHandle() {
+    console.log("this is click");
+  }
+}
+
+function eventClassThis() {
+  let eventClassThisTestDiv = document.querySelector("#eventClassThisTestDiv");
+  // let eventClass = new EventClass(eventClassThisTestDiv);
+  let eventFn = new EventFn(eventClassThisTestDiv);
+}
+
+class EventClass {
+  constructor(elem) {
+    this.target = elem;
+    this.target.addEventListener("mousedown", this.mousedownHandle.bind(this));
+    this.value = 1
+  }
+
+  mousedownHandle(evt) {
+    console.log("this is mousedown");
+    console.log(this.value)
+    document.addEventListener("mousemove", this.mousemoveHandle.bind(this));
+    document.addEventListener("mouseup", this.mouseupHandle.bind(this));
+  }
+
+  mousemoveHandle(evt) {
+    console.log(this.value)
+    console.log("this is mousemove");
+  }
+
+  mouseupHandle(evt) {
+    console.log("this is mouseup");
+    console.log(this.value)
+    document.removeEventListener("mousemove", this.mousemoveHandle);
+    document.removeEventListener("mouseup", this.mouseupHandle);
+  }
+}
+
+function EventFn(elem) {
+  this.target = elem;
+  this.value = 1
+  this.target.addEventListener("mousedown", EventFn.prototype.mousedownHandle.bind(this));
+}
+
+EventFn.prototype.mousedownHandle = function(evt){
+  console.log("this is mousedown");
+  console.log(this.value)
+  document.addEventListener("mousemove", EventFn.prototype.mousemoveHandle.bind(this));
+  document.addEventListener("mouseup", EventFn.prototype.mouseupHandle.bind(this));
+}
+
+EventFn.prototype.mousemoveHandle = function(evt) {
+    console.log(this.value)
+    console.log("this is mousemove");
+  }
+
+EventFn.prototype.mouseupHandle = function(evt) {
+    console.log("this is mouseup");
+    console.log(this.value)
+    document.removeEventListener("mousemove", EventFn.prototype.mousemoveHandle);
+    document.removeEventListener("mouseup", EventFn.prototype.mouseupHandle);
+}
 
 
