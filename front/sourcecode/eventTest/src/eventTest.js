@@ -182,13 +182,16 @@ function showElemEventTest() {
 
 function eventClassThis() {
   let eventClassThisTestDiv = document.querySelector("#eventClassThisTestDiv");
-  // let eventClass = new EventClass(eventClassThisTestDiv);
-  let eventFn = new EventFn(eventClassThisTestDiv);
+  let eventClass = new EventClass(eventClassThisTestDiv);
+  // let eventFn = new EventFn(eventClassThisTestDiv);
 }
 
 class EventClass {
   constructor(elem) {
     this.target = elem;
+    // this.mousedownTest = this.mousedownHandle.bind(this);
+    this.mousemoveTest = this.mousemoveHandle.bind(this);
+    this.mouseupTest = this.mouseupHandle.bind(this);
     this.target.addEventListener("mousedown", this.mousedownHandle.bind(this));
     this.value = 1
   }
@@ -196,8 +199,8 @@ class EventClass {
   mousedownHandle(evt) {
     console.log("this is mousedown");
     console.log(this.value)
-    document.addEventListener("mousemove", this.mousemoveHandle.bind(this));
-    document.addEventListener("mouseup", this.mouseupHandle.bind(this));
+    document.addEventListener("mousemove", this.mousemoveTest);
+    document.addEventListener("mouseup", this.mouseupTest);
   }
 
   mousemoveHandle(evt) {
@@ -208,8 +211,8 @@ class EventClass {
   mouseupHandle(evt) {
     console.log("this is mouseup");
     console.log(this.value)
-    document.removeEventListener("mousemove", this.mousemoveHandle);
-    document.removeEventListener("mouseup", this.mouseupHandle);
+    document.removeEventListener("mousemove", this.mousemoveTest);
+    document.removeEventListener("mouseup", this.mouseupTest);
   }
 }
 
@@ -229,13 +232,13 @@ EventFn.prototype.mousedownHandle = function(evt){
 EventFn.prototype.mousemoveHandle = function(evt) {
     console.log(this.value)
     console.log("this is mousemove");
-  }
+}
 
 EventFn.prototype.mouseupHandle = function(evt) {
     console.log("this is mouseup");
     console.log(this.value)
-    document.removeEventListener("mousemove", EventFn.prototype.mousemoveHandle);
-    document.removeEventListener("mouseup", EventFn.prototype.mouseupHandle);
+    document.removeEventListener("mousemove", EventFn.prototype.mousemoveHandle.bind(this));
+    document.removeEventListener("mouseup", EventFn.prototype.mouseupHandle.bind(this));
 }
 
 

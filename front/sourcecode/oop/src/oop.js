@@ -8,7 +8,10 @@
 import $ from 'jquery';
 
 $(() => {
-test4FnAndParaInFn()
+  let a = new Circle(5).getThis();
+  let b = new Circle(5).getThis();
+
+  debugger;
 })
 
 
@@ -45,6 +48,10 @@ class Circle {
         
     this._radius = radius;
   };
+
+  getThis() {
+    return this;
+  }
 }
 
 class TestClass {
@@ -256,6 +263,8 @@ function test4FnInstanceCallPara() {
     console.error(err);
   }
 }
+
+
 
 
 

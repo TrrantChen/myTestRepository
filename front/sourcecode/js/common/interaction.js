@@ -657,7 +657,6 @@ export class Dragable {
     if (this.option.cancel !== void 0) {
       this.cancelSelector.classList.add("dragCursorDefault");
     } 
-
     this.target.addEventListener("mousedown", this.mouseDownHandle.bind(this));
   };
 
