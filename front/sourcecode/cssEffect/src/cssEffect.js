@@ -89,8 +89,10 @@ $(() => {
   let cssPseudoClassTestContent = document.querySelector("#cssPseudoClassTestContent");
 
   addButtonShowContent(showCssPseudoClassTestBtn, cssPseudoClassTestContent);
-
   pseudoClassTest();
+
+
+  addButtonShowContent(document.querySelector("#showClassPriorityBtn"), document.querySelector("#showClassPriorityContent"))
 })
 
 function testClick() {

@@ -28,12 +28,14 @@ export function dragable(selector, optionPara) {
     }
     ,target = getElement(selector)
     ,option = Object.assign(defaultOption, optionPara)
+    ,isTranslate = checkCss3Support("transform") && option.translate
+    ,targetPositionInfo = updateTargetPositionInfo(target)
     ,mouseDownPage = { x: 0, y: 0 }
     ,containment = getElement(option.containment)
     ,containmentPositionRange = getContainmentPositionRange()
     // ,originTranslate = null
     ,mosueDownTargetLocationInfo = null
-    ,targetPositionInfo = updateTargetPositionInfo(target)
+    
     ,isRangeLimit = containment !== void 0 ? true : false
     ,handleSelector = option.handle !== void 0 ? (option.handle === "this" ? target : getElement(option.handle)) : void 0
     ,cancelSelector = option.cancel !== void 0 ? getElement(option.cancel) : void 0
@@ -43,7 +45,7 @@ export function dragable(selector, optionPara) {
     // ,scrollParentBoundingClientRect = void 0    
     ,doc = option.frame.contentDocument
     ,win = option.frame.contentWindow
-    ,isTranslate = checkCss3Support("transform") && option.translate
+    
     ,css = {
       id :"dragCss"
       , cssArr : [{
@@ -137,20 +139,20 @@ export function dragable(selector, optionPara) {
       ,y = mouseMovePoint.y;
 
     if (isRangeLimit) {
-      if (x < containmentPositionRange.left) {
-        x = containmentPositionRange.left;
+      if (mouseMovePoint.x < containmentPositionRange.left) {
+        mouseMovePoint.x = containmentPositionRange.left;
       }
 
-      if (x > containmentPositionRange.right) {
-        x = containmentPositionRange.right;
+      if (mouseMovePoint.x > containmentPositionRange.right) {
+        mouseMovePoint.x = containmentPositionRange.right;
       }
 
-      if (y < containmentPositionRange.top) {
-        y = containmentPositionRange.top;
+      if (mouseMovePoint.y < containmentPositionRange.top) {
+        mouseMovePoint.y = containmentPositionRange.top;
       }
 
-      if (y > containmentPositionRange.bottom) {
-        y = containmentPositionRange.bottom;
+      if (mouseMovePoint.y > containmentPositionRange.bottom) {
+        mouseMovePoint.y = containmentPositionRange.bottom;
       }
     }      
 
@@ -235,11 +237,11 @@ export function dragable(selector, optionPara) {
     let result = {x:0, y:0};
 
     if (isTranslate) {
-      result.x = mosueDownTargetLocationInfo.x + event.pageX - mouseDownPage.x;
-      result.y = mosueDownTargetLocationInfo.y + event.pageY - mouseDownPage.y;
+      result.x = parseInt(mosueDownTargetLocationInfo.x + event.pageX - mouseDownPage.x);
+      result.y = parseInt(mosueDownTargetLocationInfo.y + event.pageY - mouseDownPage.y);
     } else {
-      result.x = mosueDownTargetLocationInfo.left + event.pageX - mouseDownPage.x;
-      result.y = mosueDownTargetLocationInfo.top + event.pageY - mouseDownPage.y;
+      result.x = parseInt(mosueDownTargetLocationInfo.left + event.pageX - mouseDownPage.x);
+      result.y = parseInt(mosueDownTargetLocationInfo.top + event.pageY - mouseDownPage.y);
     }
 
     return result;
@@ -622,28 +624,27 @@ export class Dragable {
         ,contentWindow:window
       }     
     };
-    this.that = this;
     this.target = getElement(selector);
     this.option = Object.assign(defaultOption, option);
+    this.isTranslate = checkCss3Support("transform") && this.option.translate;
     this.mouseDownPage = {x:0, y:0};
+    this.targetPositionInfo = this._updateTargetPositionInfo(this.target);
     this.containment = getElement(this.option.containment);
-    this.containmentPositionRange = this.getContainmentPositionRange();
+    this.containmentPositionRange = this._getContainmentPositionRange();
     this.mosueDownTargetLocationInfo = {x:0, y:0};
-    this.targetPositionInfo = this.updateTargetPositionInfo(this.target);
     this.isRangeLimit = this.containment !== void 0 ? true : false;
     this.handleSelector = this.option.handle !== void 0 ? (this.option.handle === "this" ? this.target : getElement(this.option.handle)) : null;
     this.cancelSelector = this.option.cancel !== void 0 ? getElement(this.option.cancel) : null;
     this.doc = this.option.frame.contentDocument;
     this.win = this.option.frame.contentWindow;
-    this.isTranslate = checkCss3Support("transform") && this.option.translate;
-
+    
     setFrame(this.option.frame);
 
     /*
       初始化样式，只执行一次。
      */
     if (Dragable.execOnce === void 0) {
-      this.initCss();
+      this._initCss();
       Dragable.execOnce = true;
     }
 
@@ -657,10 +658,13 @@ export class Dragable {
     if (this.option.cancel !== void 0) {
       this.cancelSelector.classList.add("dragCursorDefault");
     } 
-    this.target.addEventListener("mousedown", this.mouseDownHandle.bind(this));
+
+    this._mouseMove = this._mouseMoveHandle.bind(this);
+    this._mouseUp = this._mouseUpHandle.bind(this);
+    this.target.addEventListener("mousedown", this._mouseDownHandle.bind(this));
   };
 
-  mouseDownHandle(evt) {
+  _mouseDownHandle(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
@@ -670,18 +674,17 @@ export class Dragable {
 
     this.mouseDownPage.x = evt.pageX;
     this.mouseDownPage.y = evt.pageY;
-    this.targetPositionInfo = this.updateTargetPositionInfo(this.target);
-    this.mosueDownTargetLocationInfo = this.getMosueDownTargetLocationInfo();
+    this.targetPositionInfo = this._updateTargetPositionInfo(this.target);
+    this.mosueDownTargetLocationInfo = this._getMosueDownTargetLocationInfo();
 
+    console.log(this.mosueDownTargetLocationInfo);
 
-    // this.doc.addEventListener("mousemove", this.mouseMoveHandle);
-    // this.doc.addEventListener("mouseup", this.mouseUpHandle);    
-    document.addEventListener("mousemove", this.mouseMoveHandle.bind(this));
-    document.addEventListener("mouseup", this.mouseUpHandle.bind(this));
+    this.doc.addEventListener("mousemove", this._mouseMove);
+    this.doc.addEventListener("mouseup", this._mouseUp);    
 
   }
 
-  getMosueDownTargetLocationInfo() {
+  _getMosueDownTargetLocationInfo() {
     let result = {x:0, y:0};
 
     if (this.isTranslate) {
@@ -695,42 +698,41 @@ export class Dragable {
     return result;   
   }
 
-  mouseMoveHandle(evt) {
+  _mouseMoveHandle(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
-    let mouseMovePoint =  this.getMouseMovePoint(evt)
+    let mouseMovePoint =  this._getMouseMovePoint(evt)
 
     if (this.isRangeLimit) {
-      if (mouseMovePoint.x < containmentPositionRange.left) {
-        mouseMovePoint.x = containmentPositionRange.left;
+      if (mouseMovePoint.x < this.containmentPositionRange.left) {
+        mouseMovePoint.x = this.containmentPositionRange.left;
       }
 
-      if (mouseMovePoint.x > containmentPositionRange.right) {
-        mouseMovePoint.x = containmentPositionRange.right;
+      if (mouseMovePoint.x > this.containmentPositionRange.right) {
+        mouseMovePoint.x = this.containmentPositionRange.right;
       }
 
-      if (mouseMovePoint.y < containmentPositionRange.top) {
-        mouseMovePoint.y = containmentPositionRange.top;
+      if (mouseMovePoint.y < this.containmentPositionRange.top) {
+        mouseMovePoint.y = this.containmentPositionRange.top;
       }
 
-      if (mouseMovePoint.y > containmentPositionRange.bottom) {
-        mouseMovePoint.y = containmentPositionRange.bottom;
+      if (mouseMovePoint.y > this.containmentPositionRange.bottom) {
+        mouseMovePoint.y = this.containmentPositionRange.bottom;
       }
     }      
 
-    this.setAxis(mouseMovePoint); 
+    this._setAxis(mouseMovePoint); 
   }
 
-  getMouseMovePoint(evt) {
+  _getMouseMovePoint(evt) {
     let result = {x:0, y:0};
     result.x = this.mosueDownTargetLocationInfo.x + evt.pageX - this.mouseDownPage.x;
     result.y = this.mosueDownTargetLocationInfo.y + evt.pageY - this.mouseDownPage.y;
     return result;
   } 
 
-  setAxis(mouseMovePoint) {
-    console.log("is true ? " + (this === this))
+  _setAxis(mouseMovePoint) {
     let x = mouseMovePoint.x
       ,y = mouseMovePoint.y;
     if (this.isTranslate) {
@@ -763,20 +765,17 @@ export class Dragable {
     }    
   } 
 
-  mouseUpHandle(evt) {
-    console.log("up");
+  _mouseUpHandle(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
-    // this.doc.removeEventListener("mousemove", this.mouseMoveHandle);
-    // this.doc.removeEventListener("mouseup", this.mouseUpHandle);
-    document.removeEventListener("mousemove", this.mouseMoveHandle.bind(this));
-    document.removeEventListener("mouseup", this.mouseUpHandle.bind(this));
+    this.doc.removeEventListener("mousemove", this._mouseMove);
+    this.doc.removeEventListener("mouseup", this._mouseUp);
 
-    this.setRevert();
+    this._setRevert();
   }
 
-  setRevert() {
+  _setRevert() {
     if (this.option.revert) {
       this.target.style.transition = "transform 0.5s linear";
       this.target.addEventListener("transitionend", transitionendHandle);
@@ -784,13 +783,13 @@ export class Dragable {
       this.target.style.transform = `translate(${this.mosueDownTargetLocationInfo.x}px, ${this.mosueDownTargetLocationInfo.y}px)`;
 
       function transitionendHandle(evt) {
-        this.target.style.transition = "";
-        this.target.removeEventListener("transitionend", transitionendHandle);
+        evt.target.style.transition = "";
+        evt.target.removeEventListener("transitionend", transitionendHandle);
       }
     }    
   }
 
-  getContainmentPositionRange() {
+  _getContainmentPositionRange() {
     let result = {
       left:0
       ,top:0
@@ -826,7 +825,7 @@ export class Dragable {
     return result;
   };  
 
-  updateTargetPositionInfo(elem) {
+  _updateTargetPositionInfo(elem) {
     let result = {};
 
     if (elem !== void 0) {
@@ -839,7 +838,7 @@ export class Dragable {
     return result;
   }; 
 
-  initCss() {
+  _initCss() {
     let css = {
       id :"dragCss"
       , cssArr : [{
@@ -861,7 +860,7 @@ export class Dragable {
   };
 
   removeMouseDownHandle() {
-    this.target.removeEventListener("mousedown", this.mouseDownHandle);
+    this.target.removeEventListener("mousedown", this._mouseDownHandle);
   }
 }
 

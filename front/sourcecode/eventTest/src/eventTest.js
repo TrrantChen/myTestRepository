@@ -74,7 +74,7 @@ $(() => {
   // selfEventTest();
   // customEventTest();
   // removeElemDefaultEventTest();
-  // showElemEventTest();
+  showElemEventTest();
   eventClassThis();
 })
 
@@ -157,14 +157,14 @@ function removeElemDefaultEventTest() {
 }
 
 function showElemEventTest() {
-  initGetAllElementEventFn();
+  // initGetAllElementEventFn();
   let showElemEvent = document.querySelector("#showElemEvent");
   let removeClickEvent = document.querySelector("#removeClickEvent");
   let addClickEvent = document.querySelector("#addClickEvent");
   let testDiv = document.querySelector("#testDiv");
 
   showElemEvent.addEventListener("click", (evt) => {
-    console.log(getElemAllEvent("testDiv"));
+    // console.log(getElemAllEvent("testDiv"));
   })
 
   addClickEvent.addEventListener("click", (evt) => {
@@ -189,56 +189,56 @@ function eventClassThis() {
 class EventClass {
   constructor(elem) {
     this.target = elem;
-    // this.mousedownTest = this.mousedownHandle.bind(this);
     this.mousemoveTest = this.mousemoveHandle.bind(this);
     this.mouseupTest = this.mouseupHandle.bind(this);
     this.target.addEventListener("mousedown", this.mousedownHandle.bind(this));
     this.value = 1
+    EventClass.self = this;
   }
 
   mousedownHandle(evt) {
     console.log("this is mousedown");
     console.log(this.value)
+    console.log(EventClass.self === this)
     document.addEventListener("mousemove", this.mousemoveTest);
-    document.addEventListener("mouseup", this.mouseupTest);
+    document.addEventListener("mouseup", this.mouseupTest); 
   }
 
   mousemoveHandle(evt) {
-    console.log(this.value)
+    console.log(EventClass.self === this)
     console.log("this is mousemove");
   }
 
   mouseupHandle(evt) {
+    console.log(EventClass.self === this)
     console.log("this is mouseup");
-    console.log(this.value)
     document.removeEventListener("mousemove", this.mousemoveTest);
-    document.removeEventListener("mouseup", this.mouseupTest);
+    document.removeEventListener("mouseup", this.mouseupTest); 
   }
 }
 
 function EventFn(elem) {
   this.target = elem;
   this.value = 1
-  this.target.addEventListener("mousedown", EventFn.prototype.mousedownHandle.bind(this));
+  this.mouseMove = this.mousemoveHandle.bind(this);
+  this.mouseUp = this.mouseupHandle.bind(this)
+  this.target.addEventListener("mousedown", this.mousedownHandle.bind(this));
 }
 
 EventFn.prototype.mousedownHandle = function(evt){
   console.log("this is mousedown");
-  console.log(this.value)
-  document.addEventListener("mousemove", EventFn.prototype.mousemoveHandle.bind(this));
-  document.addEventListener("mouseup", EventFn.prototype.mouseupHandle.bind(this));
+  document.addEventListener("mousemove", this.mouseMove);
+  document.addEventListener("mouseup", this.mouseUp);
 }
 
 EventFn.prototype.mousemoveHandle = function(evt) {
-    console.log(this.value)
     console.log("this is mousemove");
 }
 
 EventFn.prototype.mouseupHandle = function(evt) {
     console.log("this is mouseup");
-    console.log(this.value)
-    document.removeEventListener("mousemove", EventFn.prototype.mousemoveHandle.bind(this));
-    document.removeEventListener("mouseup", EventFn.prototype.mouseupHandle.bind(this));
+    document.removeEventListener("mousemove", this.mouseMove);
+    document.removeEventListener("mouseup", this.mouseUp);
 }
 
 

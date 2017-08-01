@@ -8,10 +8,7 @@
 import $ from 'jquery';
 
 $(() => {
-  let a = new Circle(5).getThis();
-  let b = new Circle(5).getThis();
-
-  debugger;
+  testClassBind();
 })
 
 
@@ -89,6 +86,20 @@ class TestClass {
 
 TestClass.testPara = 10
 
+function TestGlobalFn() {
+  let privatePara = "a";
+
+  this.thisPara = "thisPara";
+  this.thisFn = function() {}
+
+  function privateFn() {}
+}
+
+TestGlobalFn.prototype.proFn = function() {}
+TestGlobalFn.prototype.proPara = "proPara";
+
+TestGlobalFn.staticPara = "staticPara";
+TestGlobalFn.staticFn = function() {}
 
 /*
   测试this，原型链和静态上的方法和参数的互相调用情况
@@ -262,6 +273,27 @@ function test4FnInstanceCallPara() {
     console.error("istance call static para fail");
     console.error(err);
   }
+}
+
+function testClassBind() {
+  class bindClass {
+    constructor(value) {
+      this.value = value || 0;
+    }
+
+    bindFn() {
+      console.log(this.value);
+    }
+  }
+
+  let a = new bindClass("a");
+  let objA = {
+    value:"objA"
+  };
+  let bindA = a.bindFn.bind(objA);
+  let bindB = a.bindFn.bind(objA);
+  debugger;
+  console.log(bindA === bindB);
 }
 
 

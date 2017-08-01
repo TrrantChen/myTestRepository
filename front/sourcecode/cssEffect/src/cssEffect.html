@@ -5,6 +5,59 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <link rel="stylesheet" href="./testCss.css">
+</head>
+
+<body>
+  <div class="container">
+    <button id="testBtn" class="btnStyle">test</button>
+    <button id="testAttrModifyCssPropertyBtn" class="btnStyle">testAttrModifyCssPropertyBtn</button>
+    <button id="showRainControlBtn" class="btnStyle">showRainControlBtn</button>
+    <button id="showLineLayoutBtn" class="btnStyle">showLineLayoutBtn</button>
+    <button id="showRepeatLinearGradientBtn" class="btnStyle">showRepeatLinearGradient</button>
+    <button id="showMaterialDesignBtn" class="btnStyle">showMaterialDesignBtn</button>
+    <button id="showChangeStyleBySheetBtn" class="btnStyle">showChangeStyleBySheet</button>
+    <button id="showCssPseudoClassTestBtn" class="btnStyle">showCssPseudoClassTest</button>
+    <button id="showClassPriorityBtn" class="btnStyle">showClassPriorityTest</button>
+    <div id="testAttrModifyCssPropertyContent" class="hidden">
+      <button id="changeCssCustomPropBtn" class="btnStyle">changeCssCustomPropBtn</button>
+      <div class="testCssDiv" data-attr="100px">
+      </div>
+    </div>
+    <div id="showRainControlContent" class="showRainControlContentStyle">
+      <div class="rainDivStyle">
+        <input id="rainMouseDown" type="checkbox">
+        <label for="">mouse down</label>
+      </div>
+      <div class="rainDivStyle">
+        <input id="rainMouseMove" type="checkbox">
+        <label for="">mouse move</label>
+      </div>
+      <div class="rainDivStyle">
+        <input id="autoRandom" type="checkbox">
+        <label for="">auto random</label>
+      </div>
+      <div class="rainDivStyle">
+        <input id="autoRandomScale" type="checkbox">
+        <label for="">auto random scale</label>
+      </div>
+    </div>
+    <div id="showLineLayoutContent" class="lineLayoutContent">
+    </div>
+    <div id="showRepeatLinearGradientContent" class="repeatLinearGradientContent">
+    </div>
+    <div id="showMaterialDesignContent">
+      <button id="materialDesignBtn" class="btnStyle">materialDesignBtn</button>
+    </div>
+    <div id="changeStyleBySheetContent" class="changeStyleBySheetContent">
+      <button id="changeStyleBtn" class="btnStyle">changeStyle</button>
+    </div>
+    <div id="cssPseudoClassTestContent">
+      <button id="addHover" class="btnStyle">addHover</button>
+    </div>
+    <div id="showClassPriorityContent">
+      <div id="showClassPriorityTestDiv" class="showClassPriorityTestDivStyle styleTwo styleOne"></div>
+    </div>
+  </div>
   <style type="text/css">
     * {
       margin: 0px;
@@ -134,57 +187,22 @@
       height:300px;
       background:#FDE6BD;
     }
-  </style>
-</head>
 
-<body>
-  <div class="container">
-    <button id="testBtn" class="btnStyle">test</button>
-    <button id="testAttrModifyCssPropertyBtn" class="btnStyle">testAttrModifyCssPropertyBtn</button>
-    <button id="showRainControlBtn" class="btnStyle">showRainControlBtn</button>
-    <button id="showLineLayoutBtn" class="btnStyle">showLineLayoutBtn</button>
-    <button id="showRepeatLinearGradientBtn" class="btnStyle">showRepeatLinearGradient</button>
-    <button id="showMaterialDesignBtn" class="btnStyle">showMaterialDesignBtn</button>
-    <button id="showChangeStyleBySheetBtn" class="btnStyle">showChangeStyleBySheet</button>
-    <button id="showCssPseudoClassTestBtn" class="btnStyle">showCssPseudoClassTest</button>
-    <div id="testAttrModifyCssPropertyContent" class="hidden">
-      <button id="changeCssCustomPropBtn" class="btnStyle">changeCssCustomPropBtn</button>
-      <div class="testCssDiv" data-attr="100px">
-      </div>
-    </div>
-    <div id="showRainControlContent" class="showRainControlContentStyle">
-      <div class="rainDivStyle">
-        <input id="rainMouseDown" type="checkbox">
-        <label for="">mouse down</label>
-      </div>
-      <div class="rainDivStyle">
-        <input id="rainMouseMove" type="checkbox">
-        <label for="">mouse move</label>
-      </div>
-      <div class="rainDivStyle">
-        <input id="autoRandom" type="checkbox">
-        <label for="">auto random</label>
-      </div>
-      <div class="rainDivStyle">
-        <input id="autoRandomScale" type="checkbox">
-        <label for="">auto random scale</label>
-      </div>
-    </div>
-    <div id="showLineLayoutContent" class="lineLayoutContent">
-    </div>
-    <div id="showRepeatLinearGradientContent" class="repeatLinearGradientContent">
-    </div>
-    <div id="showMaterialDesignContent">
-      <button id="materialDesignBtn" class="btnStyle">materialDesignBtn</button>
-    </div>
-    <div id="changeStyleBySheetContent" class="changeStyleBySheetContent">
-      <button id="changeStyleBtn" class="btnStyle">changeStyle</button>
-    </div>
-    <div id="cssPseudoClassTestContent">
-      <button id="addHover" class="btnStyle">addHover</button>
-    </div>
-    <div class="testClass1"></div>
-  </div>
+    .showClassPriorityTestDivStyle {
+      width:100px;
+      height:100px;
+      background: red;
+    }
+
+    .styleOne {
+      border:solid 5px blue;
+    }
+
+    .styleTwo {
+      border:solid 5px green;
+    }
+
+  </style>  
   <script src=../../lib/build/lib.js></script>
   <script src='./cssEffect.js'></script>
 </body>

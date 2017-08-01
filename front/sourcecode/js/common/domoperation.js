@@ -1041,14 +1041,15 @@ export function ripple(container) {
 export function buttonShowContent() {
   let cssObj = {
     id:"buttonShowContent"
-    ,cssArr:[{
+    ,cssArr:[
+    {
       className:".hidden"
       ,classValue:`
         {
           display:none;
         }
       `
-    }
+    }    
     ,{
        className:".show"
        ,classValue:`
