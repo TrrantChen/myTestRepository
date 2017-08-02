@@ -3,32 +3,28 @@ import * as util from '../../js/common/util';
 import {dragable, drogable, resizable, selectable, align, Dragable} from '../../js/common/interaction'; 
 import { buttonShowContent, getElement,  initGetAllElementEventFn, getAllEvent, getElemAllEvent} from '../../js/common/domoperation';
 import '../../lib/jquery-ui-1.12.1.custom/jquery-ui.js';
-document.id = "testDc";
+
 let addButtonShowContent = buttonShowContent();
 
 $(function() {
+
   addButtonShowContent("#btnDrag", "#dragContent");
   addButtonShowContent("#btnSelector", "#selectorContent");
   addButtonShowContent("#btnSortable", "#sortableContent");
-  addButtonShowContent("#btnTestNormal", "#testNormalContent");
-  addButtonShowContent("#btnTestAxis", "#testAxisContent");
+  addButtonShowContent("#btnTestNormal", "#testNormalContent", testNormal);
+  addButtonShowContent("#btnTestAxis", "#testAxisContent", testAxis);
   addButtonShowContent("#btnTestContainment", "#testContainment");
-  addButtonShowContent("#btnTestCancelAndHandle", "#testCancelAndHandle");
-  addButtonShowContent("#btnTestRevert", "#testRevert");
+
+    addButtonShowContent("#btnContainmentNormal", "#containmentNormalContent", testContainment);
+
+  addButtonShowContent("#btnTestCancelAndHandle", "#testCancelAndHandle", testCancelAndHandle);
+  addButtonShowContent("#btnTestRevert", "#testRevert", testRevert);
   addButtonShowContent("#btnTestCssUserDrag", "#TestCssUserDrag");
 
-  testNormal();
   testNormalByUI();
-  testAxis();
-  testAxisByUI();
-  
-  testContainment();  // 有问题
+  testAxisByUI(); 
   testContainmentUI();
-
-  testCancelAndHandle();
   testCancelAndHandleUI();
-
-  testRevert();
   testRevertUI();
 })
 
@@ -60,7 +56,7 @@ function testAxisByUI() {
 
 function testContainment() {
   try {
-    let dragable = new Dragable("#testContainmentDiv", {containment:"#testContent"});
+      let dragable = new Dragable("#testContainmentDiv", {containment:"#testContent"});    
     // dragable("#testContainmentDiv", {containment:"#testContent"});
   }
   catch(err) {

@@ -1038,49 +1038,6 @@ export function ripple(container) {
   }
 }
 
-export function buttonShowContent() {
-  let cssObj = {
-    id:"buttonShowContent"
-    ,cssArr:[
-    {
-      className:".hidden"
-      ,classValue:`
-        {
-          display:none;
-        }
-      `
-    }    
-    ,{
-       className:".show"
-       ,classValue:`
-        {
-          display:block;
-        }
-       `
-    }
-    ,{
-      className:".clicked"
-      ,classValue:`
-      {
-        opacity:0.8
-      }
-      `
-    }]
-  };
-  insertStyle2Head(cssObj, {isCheckRepeat:true});
-  return function(btn, content) {
-    btn = getElement(btn);
-    content = getElement(content);
-    if (btn !== void 0 && content !== void 0) {
-      content.classList.add("hidden");
-      btn.addEventListener("click", () => {
-        content.classList.toggle("show");
-        btn.classList.toggle("clicked");
-      })
-    }
-  }
-}
-
 export function getElement(elem) {
   if (typeof elem === "string") {
     return doc.querySelector(elem);
@@ -1116,6 +1073,58 @@ export function calculateDistanceBetweenEleAndDoc(element) {
     return {
       left: element.offsetLeft + result.left + element.clientLeft + elementTranslate.x,
       top: element.offsetTop + result.top + element.clientTop + elementTranslate.y
+    }
+  }
+}
+
+export function buttonShowContent() {
+  let cssObj = {
+    id:"buttonShowContent"
+    ,cssArr:[
+    {
+      className:".hidden"
+      ,classValue:`
+        {
+          display:none;
+        }
+      `
+    }    
+    ,{
+       className:".show"
+       ,classValue:`
+        {
+          display:block;
+        }
+       `
+    }
+    ,{
+      className:".clicked"
+      ,classValue:`
+      {
+        opacity:0.8
+      }
+      `
+    }]
+  };
+  insertStyle2Head(cssObj, {isCheckRepeat:true});
+  return function(btn, content, execOnceFn) {
+    btn = getElement(btn);
+    content = getElement(content);
+    let execOnce = true;
+    if (btn !== void 0 && content !== void 0) {
+      content.classList.add("hidden");
+      btn.addEventListener("click", () => {
+        if (execOnce) {
+          if (execOnceFn !== void 0) {
+            setTimeout(() => {
+              execOnceFn();
+            }, 0)
+          }
+          execOnce = false;
+        }
+        content.classList.toggle("show");
+        btn.classList.toggle("clicked");
+      })
     }
   }
 }

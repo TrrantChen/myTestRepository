@@ -44,53 +44,14 @@
     left: 0;
     top: 0;
   }
-  
-  .testDivStyle {
-    width: 50px;
-    height: 50px;
-    background: #2E0D23;
-    position: relative;
-    /*left:100px;*/
-    /*margin-left: 100px; */
-    /*padding: 100px;*/
-    /*border: solid 10px #6BACBF;*/
-    /*transform: translate(10px, 10px);*/
-  }
-  
-  .positionParentDivStyle {
-    position: relative;
-    background: #FFB238;
-    left: 50px;
-    top: 50px;
-    /*left:300px;*/
-    /*margin-left:300px;*/
-    height: 400px;
-    width: 400px;
-    /*overflow-y: auto;*/
-  }
-  
-  .testDivByJqueryuiStyle {
-    width: 50px;
-    height: 50px;
-    background: red;
-  }
-  
+      
   #block {
     width: 50px;
     height: 50px;
     background-color: yellow;
     position: absolute;
   }
-  
-  .outDivStyle {
-    width: 600px;
-    height: 600px;
-    background: #E5F04C;
-    position: relative;
-    left: 50px;
-    top: 50px;
-  }
-  
+    
   .marginStyle {
     width: 300px;
     height: 300px;
@@ -276,11 +237,53 @@
     height:600px;
     display: inline-block;
     outline: solid 1px black;
+    position:relative;
+    top:0px;
+    left:0px;
   }
+
+  .outDivStyle {
+    width: 600px;
+    height: 600px;
+    background: #E5F04C;
+    position: relative;
+    left: 50px;
+    top: 50px;
+  }  
+
+  .positionParentDivStyle {
+    position: relative;
+    background: #FFB238;
+    left: 50px;
+    top: 50px;
+    /*left:300px;*/
+    /*margin-left:300px;*/
+    height: 400px;
+    width: 400px;
+    /*overflow-y: auto;*/
+  }
+
+  .testDivByJqueryuiStyle {
+    width: 50px;
+    height: 50px;
+    background: red;
+  }
+
+  .testDivStyle {
+    width: 50px;
+    height: 50px;
+    background: #2E0D23;
+    position: relative;
+    /*left:100px;*/
+    /*margin-left: 100px; */
+    /*padding: 100px;*/
+    /*border: solid 10px #6BACBF;*/
+    /*transform: translate(10px, 10px);*/
+  }
+
 
   </style>
 </head>
-
 <body>
   <div class="container"> 
     <button id="btnDrag" class="buttonStyle">drag</button>
@@ -315,16 +318,40 @@
         </div>      
       </div>
       <div id="testContainment" class="testContent">
-        <div id="testContent" class="testSonContent">
-          <div id="testContainmentDiv" class="testDiv">
-            containment
-          </div>          
+        <button id="btnContainmentNormal" class="buttonStyle">containmentNormal</button>
+        <button id="btnContainment" class="buttonStyle"></button>
+        <div id ="containmentNormalContent" class="testContent">
+          <div id="testContent" class="testSonContent">
+            <div id="testContainmentDiv" class="testDiv">
+              containment
+            </div>          
+          </div> 
+          <div id="testContentUI" class="testSonContent">
+            <div id="testContainmentDivUI" class="testDiv">
+              containment
+            </div>              
+          </div>           
         </div> 
-        <div id="testContentUI" class="testSonContent">
-          <div id="testContainmentDivUI" class="testDiv">
-            containment
-          </div>              
-        </div>             
+        <div class="testContent">
+          <div class="testSonContent">
+            <div class="outDivStyle">
+                <div class="positionParentDivStyle">
+                    <div id="testDiv" class="testDivStyle">
+                        
+                    </div>                                                         
+                </div>                
+            </div>              
+          </div>
+          <div class="testSonContent">
+            <div  class="outDivStyle">
+                <div  class="positionParentDivStyle">
+                    <div id="testDivByJqueryui" class="testDivByJqueryuiStyle">
+                        
+                    </div>                                                        
+                </div>                
+            </div>       
+          </div>          
+        </div>        
       </div>
       <div id="testCancelAndHandle" class="testContent">
         <div class="testSonContent">
@@ -364,17 +391,7 @@
         <div id="testCssUserDragDiv" class="testDiv" style="-webkit-user-drag: element;"></div>
       </div>
 
-      <!--          <div id="outDiv" class="outDivStyle">
-                  <div id="positionParentDiv" class="positionParentDivStyle">
-                      <div id="testDiv" class="testDivStyle">
-                          
-                      </div>  
-                      <div id="testDivByJqueryui" class="testDivByJqueryuiStyle">
-                          
-                      </div>
-                          p<br />                                                                 
-                  </div>                
-              </div> -->
+
     <div id="selectorContent" class="contentBorder">
       <div class="selectouter">
         <button class="buttonStyle">horizontal</button>
@@ -434,7 +451,7 @@
       </div>  
 
       </div>    -->             
-    </div>
+    </div>  
   </div>
 </body>
 <script src='../../lib/jquery/jquery-2.2.3.js'></script>

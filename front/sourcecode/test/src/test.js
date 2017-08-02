@@ -7,11 +7,7 @@ import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
 $(() => {
-  let buttonContent = new ButtonContent(container);
-  buttonContent.addButtonAndContent(`
-  <div style="width:100px;height:100px;background:black;">
-  </div>
-    `)
+  
 })
 
 

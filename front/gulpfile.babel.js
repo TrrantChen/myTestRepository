@@ -543,8 +543,11 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
       glob(projectDoc, (err, files) => {
         let taskLst = files.map((file, index) => {
           return gulp.src(file + '/src/*.html')
-              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:false}))  
-              .pipe(gulp.dest(file + '/build/')) 
+              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:false})) 
+              .on('error', (error) => {
+                console.log(this);
+              })                
+              .pipe(gulp.dest(file + '/build/'))
         });
         es.merge(taskLst).on('end', () => {
           reloadPage();
@@ -564,6 +567,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest(basePath + '/lib/build/'))  
+    .pipe(browsersync.stream())
   })
 
   gulp.task('processBusinessJS', ['get-extern-lst'], (done) => {
@@ -729,10 +733,11 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
     }
   })
 
-  gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'compressHtml'], (done) => {
+  gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'cmopressLib', 'compressHtml'], (done) => {
+    gulp.watch(libArr, ['cmopressLib']);
     gulp.watch(basePath + '/js/common/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
-    gulp.watch(projectDoc + '/src/*.html', ['compressHtml'])
+    gulp.watch(projectDoc + '/src/*.html', ['compressHtml']);
   })
 /*------------publish------------*/
 
