@@ -51,57 +51,9 @@
     background-color: yellow;
     position: absolute;
   }
-    
-  .marginStyle {
-    width: 300px;
-    height: 300px;
-    /*border:solid 20px black;*/
-    border: solid 2px black;
-    /*margin-top:50px;*/
-    margin-left: 50px;
-    position: relative;
-  }
+
   
-  .absulteStyle {
-    width: 200px;
-    height: 200px;
-    border: solid 2px black;
-    /*border:solid 5px black;*/
-    /*position:absolute;*/
-    position: static;
-    left: 80px;
-    top: 50px;
-    overflow-x: auto;
-    margin-top: 30px;
-    margin-left: 30px;
-  }
   
-  .relativeStyle {
-    width: 400px;
-    /*overflow-x: scroll;*/
-    /*width:100px;*/
-    height: 100px;
-    border: solid 2px black;
-    position: relative;
-    /*position:static;*/
-    left: 30px;
-    top: 40px;
-    margin-top: 20px;
-    margin-left: 20px;
-    /*padding:10px;*/
-  }
-  
-  .divStyle {
-    width: 30px;
-    height: 30px;
-    border: solid 1px black;
-    position: relative;
-    /*position:absolute;*/
-    left: 50px;
-    top: 50px;
-    /*margin-left:30px;*/
-    /*transform: translate(30px, 0);*/
-  }
   
   .handcontent {
     display: inline-flex;
@@ -182,16 +134,6 @@
     outline:solid 1px red;
   }
 
-  .buttonStyle {
-    padding:0 20px;
-    height:30px;
-    line-height: 30px;
-    text-align: center;
-    background: #49a9ee;
-    color:#fff;
-    cursor: pointer;
-  }
-
   .select {
     background: red;
   }
@@ -242,43 +184,61 @@
     left:0px;
   }
 
-  .outDivStyle {
-    width: 600px;
-    height: 600px;
+  .secondContentStyle {
+    width: 450px;
+    height: 450px;
     background: #E5F04C;
-    position: relative;
-    left: 50px;
-    top: 50px;
   }  
 
-  .positionParentDivStyle {
-    position: relative;
+  .firstContentStyle {
     background: #FFB238;
-    left: 50px;
-    top: 50px;
-    /*left:300px;*/
-    /*margin-left:300px;*/
-    height: 400px;
-    width: 400px;
-    /*overflow-y: auto;*/
-  }
-
-  .testDivByJqueryuiStyle {
-    width: 50px;
-    height: 50px;
-    background: red;
+    height: 300px;
+    width: 300px;   
   }
 
   .testDivStyle {
-    width: 50px;
-    height: 50px;
-    background: #2E0D23;
+    width: 100px;
+    height: 100px;
+    background: red;    
+  }
+
+  .borderStyle {
+    border:solid 5px black;
+  }  
+
+  .paddingStyle {
+    padding:10px;    
+  }
+
+  .marginStyle {
+    margin:15px;    
+  }
+
+  .translateStyle {
+    transform: translate(20px, 20px);
+  }
+
+  .relativeStyle {
     position: relative;
-    /*left:100px;*/
-    /*margin-left: 100px; */
-    /*padding: 100px;*/
-    /*border: solid 10px #6BACBF;*/
-    /*transform: translate(10px, 10px);*/
+    left: 25px;
+    top: 25px;     
+  }
+
+  .absoluteStyle {
+    position:absolute;
+    left:30px;
+    top:30px;
+  }
+
+  .buttonStyle {
+    padding:0 20px;
+    height:30px;
+    line-height: 30px;
+    text-align: center;
+    background: #49a9ee;
+    color:#fff;
+    cursor: pointer;
+    margin:5px;
   }
 
 
@@ -289,6 +249,7 @@
     <button id="btnDrag" class="buttonStyle">drag</button>
     <button id="btnSelector" class="buttonStyle">selector</button>
     <button id="btnSortable" class="buttonStyle">sortable</button>
+    <button id="setting" class="buttonStyle">setting</button>
     <div id="dragContent"  class="contentBorder">
       <button id="btnTestNormal" class="buttonStyle">testNormal</button>
       <button id="btnTestAxis" class="buttonStyle">testAxis</button>
@@ -318,40 +279,10 @@
         </div>      
       </div>
       <div id="testContainment" class="testContent">
-        <button id="btnContainmentNormal" class="buttonStyle">containmentNormal</button>
-        <button id="btnContainment" class="buttonStyle"></button>
-        <div id ="containmentNormalContent" class="testContent">
-          <div id="testContent" class="testSonContent">
-            <div id="testContainmentDiv" class="testDiv">
-              containment
-            </div>          
-          </div> 
-          <div id="testContentUI" class="testSonContent">
-            <div id="testContainmentDivUI" class="testDiv">
-              containment
-            </div>              
-          </div>           
-        </div> 
-        <div class="testContent">
-          <div class="testSonContent">
-            <div class="outDivStyle">
-                <div class="positionParentDivStyle">
-                    <div id="testDiv" class="testDivStyle">
-                        
-                    </div>                                                         
-                </div>                
-            </div>              
-          </div>
-          <div class="testSonContent">
-            <div  class="outDivStyle">
-                <div  class="positionParentDivStyle">
-                    <div id="testDivByJqueryui" class="testDivByJqueryuiStyle">
-                        
-                    </div>                                                        
-                </div>                
-            </div>       
-          </div>          
-        </div>        
+        <div id="btnGroup">
+        </div>
+        <div id="contentGroup">     
+        </div>   
       </div>
       <div id="testCancelAndHandle" class="testContent">
         <div class="testSonContent">

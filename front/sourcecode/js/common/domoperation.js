@@ -276,7 +276,7 @@ export function setTheTranslate(elem, point) {
   elem.style.transform = `translate(${x}px, ${y}px)`;
 }
 
-export function getBorderWidth(elementComputedStyles) {
+export function getBorder(elementComputedStyles) {
   return getBox(elementComputedStyles, "border");
 }
 
@@ -1117,7 +1117,7 @@ export function buttonShowContent() {
         if (execOnce) {
           if (execOnceFn !== void 0) {
             setTimeout(() => {
-              execOnceFn();
+              execOnceFn(btn);
             }, 0)
           }
           execOnce = false;

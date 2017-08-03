@@ -1,5 +1,5 @@
 import {getElement, checkCss3Support, setFrame, getScrollParent, getElemBoundingClientRect, 
-  getElementComputedStyle, getPosition, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate, initGetAllElementEventFn, getAllEvent, getElemAllEvent} from './domoperation';
+  getElementComputedStyle, getPosition, getBorder, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate, initGetAllElementEventFn, getAllEvent, getElemAllEvent} from './domoperation';
 import * as util from './util';
 import { MouseButton } from './enum'
 
@@ -687,11 +687,9 @@ export class Dragable {
     if (this.execOnce) {
       this.targetMoveRange = this._getTargetMoveRange();
       this.execOnce = false;
+      console.log(this.targetMoveRange);
     }
     
-
-    console.log(this.targetMoveRange);
-
     this.doc.addEventListener("mousemove", this._mouseMove);
     this.doc.addEventListener("mouseup", this._mouseUp);    
 
@@ -718,39 +716,39 @@ export class Dragable {
     evt.preventDefault();
     evt.stopPropagation();
 
-    let mouseMovePoint =  this._getMouseMovePoint(evt)
+    let mouseMoveTargetOffsetInfo =  this._getMouseMoveTargetOffsetInfo(evt)
 
     if (this.isRangeLimit) {
-      if (mouseMovePoint.x < this.targetMoveRange.left) {
-        mouseMovePoint.x = this.targetMoveRange.left;
+      if (mouseMoveTargetOffsetInfo.x < this.targetMoveRange.left) {
+        mouseMoveTargetOffsetInfo.x = this.targetMoveRange.left;
       }
 
-      if (mouseMovePoint.x > this.targetMoveRange.right) {
-        mouseMovePoint.x = this.targetMoveRange.right;
+      if (mouseMoveTargetOffsetInfo.x > this.targetMoveRange.right) {
+        mouseMoveTargetOffsetInfo.x = this.targetMoveRange.right;
       }
 
-      if (mouseMovePoint.y < this.targetMoveRange.top) {
-        mouseMovePoint.y = this.targetMoveRange.top;
+      if (mouseMoveTargetOffsetInfo.y < this.targetMoveRange.top) {
+        mouseMoveTargetOffsetInfo.y = this.targetMoveRange.top;
       }
 
-      if (mouseMovePoint.y > this.targetMoveRange.bottom) {
-        mouseMovePoint.y = this.targetMoveRange.bottom;
+      if (mouseMoveTargetOffsetInfo.y > this.targetMoveRange.bottom) {
+        mouseMoveTargetOffsetInfo.y = this.targetMoveRange.bottom;
       }
     }      
 
-    this._setAxis(mouseMovePoint); 
+    this._setAxis(mouseMoveTargetOffsetInfo); 
   }
 
-  _getMouseMovePoint(evt) {
+  _getMouseMoveTargetOffsetInfo(evt) {
     let result = {x:0, y:0};
     result.x = this.targetOffsetInfo.x + evt.pageX - this.mouseDownCoord.x;
     result.y = this.targetOffsetInfo.y + evt.pageY - this.mouseDownCoord.y;
     return result;
   } 
 
-  _setAxis(mouseMovePoint) {
-    let x = mouseMovePoint.x
-      ,y = mouseMovePoint.y;
+  _setAxis(mouseMoveTargetOffsetInfo) {
+    let x = mouseMoveTargetOffsetInfo.x
+      ,y = mouseMoveTargetOffsetInfo.y;
     if (this.isTranslate) {
       switch (this.option.axis.toUpperCase()) {
         case "X":
@@ -814,13 +812,13 @@ export class Dragable {
     }
     if (this.containment !== void 0) {
       let distanceBetweenContainmentAndDoc = getElemBoundingClientRect(this.containment)
-      // ,distanceBetweenTargeEleAndDoc = getElemBoundingClientRect(this.target.offsetParent)
       ,distanceBetweenTargeEleAndDoc = getElemBoundingClientRect(this.target)
       ,containmentPadding = getPadding(getElementComputedStyle(this.containment))
-      ,targetMargin = getMargin(getElementComputedStyle(this.target));
+      ,targetMargin = getMargin(getElementComputedStyle(this.target))
+      ,containmentBorder = getBorder(getElementComputedStyle(this.containment));
 
-      distanceBetweenTargeEleAndDoc.left += (this.targetOffsetInfo.x + targetMargin.left + containmentPadding.left);
-      distanceBetweenTargeEleAndDoc.top += (this.targetOffsetInfo.y + targetMargin.left + containmentPadding.left);
+      distanceBetweenTargeEleAndDoc.left;
+      distanceBetweenTargeEleAndDoc.top;
 
       let distanceBeteenTargetAndContainment = {
         left: distanceBetweenTargeEleAndDoc.left - distanceBetweenContainmentAndDoc.left,
@@ -828,10 +826,10 @@ export class Dragable {
       };
 
       result = {
-        left: 0 - distanceBeteenTargetAndContainment.left,
-        top: 0 - distanceBeteenTargetAndContainment.top,
-        right: 0 - distanceBeteenTargetAndContainment.left + this.containment.clientWidth - this.target.offsetWidth,
-        bottom: 0 - distanceBeteenTargetAndContainment.top + this.containment.clientHeight - this.target.offsetHeight
+        left: 0 - distanceBeteenTargetAndContainment.left + containmentPadding.left + containmentBorder.left + this.targetOffsetInfo.x,
+        top: 0 - distanceBeteenTargetAndContainment.top + containmentPadding.top + containmentBorder.top + this.targetOffsetInfo.y,
+        right: 0 - distanceBeteenTargetAndContainment.left + this.containment.clientWidth - this.target.offsetWidth - containmentPadding.right + containmentBorder.right + this.targetOffsetInfo.x,
+        bottom: 0 - distanceBeteenTargetAndContainment.top + this.containment.clientHeight - this.target.offsetHeight - containmentPadding.bottom + containmentBorder.top + this.targetOffsetInfo.y
       }    
     } 
 
