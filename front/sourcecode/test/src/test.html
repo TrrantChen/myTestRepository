@@ -83,45 +83,6 @@
       height:50px;
       background:#C5CEAE;
     }
-
-/*  .container {
-    width: 100%;
-    min-height:800px;
-    background: #F5ECB7;
-    position: relative;
-    left: 0;
-    top: 0;
-  }
-
-  .testContent {
-    width:100%;
-    height:600px;
-    background:#BFCDB4;
-    font-size: 0px
-  }
-
-  .testSonContent {
-    width:50%;
-    height:600px;
-    display: inline-block;
-    outline: solid 1px black;
-  }
-
-  .testDiv {
-    width:100px;
-    height:100px;
-    background:#7D5D4E;
-    font-size:16px;
-  }  
-
-  .hidden {
-    display:none;
-  }
-
-  .show {
-    display:block;
-  } */ 
-
     </style>
 </head>
 
@@ -130,67 +91,13 @@
   <div class="content">
     <div class="sonContent left">
       <div class="sonDiv leftSon">
-        <div class="sonsonDiv"></div>
+        <div class="sonsonDiv" style="position:absolute;left:300px;top:200px;"></div>
+        <div style="width:100px;height:1px;position:absolute;left:200px;top:100px;background:red;text-align: center;">test</div>
       </div>
-    </div>
-    <div class="sonContent right">
-      <div class="sonDiv rightSon">
-        <div class="sonsonDiv">ccc</div>
-      </div>
-    </div>        
+    </div>      
   </div>
 </div>
-
-<!-- <div class="container">  
-  <div class="testContent">
-    <div class="testSonContent">
-      <div class="testDiv dragCursorMove" style="position: absolute; transform: translate(0px, 0px);">containment</div>
-      <div class="testDiv dragCursorMove" style="position: absolute;">containment</div>
-    </div>
-    <div class="testSonContent">
-      <div class="testDiv" style="position: relative;left: 0;top: 0;">containment</div>
-    </div>
-  </div> 
-</div>   -->
 </body>
   <script src=../../lib/build/lib.js></script>
   <script src='./test.js?f4fd7edb8c1c129d1855792cc7f3932b'></script>
-
-<!-- <script>
-  class EventClass {
-    constructor(elem) {
-      this.target = elem;
-      this.target.addEventListener("mousedown", this.mousedownHandle.bind(this));
-      this.value = 1
-    }
-
-    mousedownHandle(evt) {
-      console.log("this is mousedown");
-      let div = document.createElement("div");
-    }
-
-  }
-
-  class EventClass2 {
-    constructor(elem) {
-      this.target = elem;
-      this.target.addEventListener("mousedown", evt => this.mousedownHandle(evt));
-      this.value = 1
-    }
-
-    mousedownHandle(evt) {
-      console.log("this is mousedown");
-      let div = document.createElement("div");
-    }
-  }
-
-
-  for(var i = 0; i < 100000; i++) {
-    let div = document.createElement("div");
-    let eventClass = new EventClass2(div);
-  }
-
-  console.log("end");
-</script> -->
-
 </html>

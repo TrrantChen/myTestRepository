@@ -37,22 +37,22 @@ $(function() {
   // p-pddding m-margin t-translate r-relative a-absolute b-border 
   // Spmtr|FPpmtrb|C
   
-  // createContaimentDemo("S|FP|C")
+  createContaimentDemo("S|FP|C")
   
-  // createContaimentDemo("S|FPp|C")
-  // createContaimentDemo("S|FPm|C")
-  // createContaimentDemo("S|FPt|C")
-  // createContaimentDemo("S|FPr|C")
-  // createContaimentDemo("S|FPb|C")
-  // createContaimentDemo("S|FPa|C")
+  createContaimentDemo("S|FPp|C")
+  createContaimentDemo("S|FPm|C")
+  createContaimentDemo("S|FPt|C")
+  createContaimentDemo("S|FPr|C")
+  createContaimentDemo("S|FPb|C")
+  createContaimentDemo("S|FPa|C")
 
-  // createContaimentDemo("S|FP|Cp")
-  // createContaimentDemo("S|FP|Cm")
-  // createContaimentDemo("S|FP|Ct")
-  // createContaimentDemo("S|FP|Cr")
-  // createContaimentDemo("S|FP|Cb")
-  // createContaimentDemo("S|FP|Ca")    
-  // 
+  createContaimentDemo("S|FP|Cp")
+  createContaimentDemo("S|FP|Cm")
+  createContaimentDemo("S|FP|Ct")
+  createContaimentDemo("S|FP|Cr")
+  createContaimentDemo("S|FP|Cb")
+  createContaimentDemo("S|FP|Ca")    
+  
   createContaimentDemo("SP|F|C")
 
   createContaimentDemo("SPp|F|Cp")
@@ -75,7 +75,6 @@ function getButton(btn) {
 }
 
 function testNormal(btn) {
-
   let dragable = new Dragable("#testNormalDiv");
   globalButton = btn;
 }
@@ -88,7 +87,6 @@ function testAxis(btn) {
   // dragable("#testAxisX", {axis:"x"})
   // dragable("#testAxisY", {axis:"y"})
   // dragable("#testAll", {axis:"all"})
-  
   let dragableX = new Dragable("#testAxisX", {axis:"x"});
   let dragableY = new Dragable("#testAxisY", {axis:"y"});
   let dragableAll = new Dragable("#testAll", {axis:"all"});
@@ -119,7 +117,6 @@ function testContainmentUI() {
 
 function testCancelAndHandle(btn) {
   try {
-
     let dragable1 = new Dragable("#test4handle", {handle:"#canP"});
     let dragable2 = new Dragable("#test4cancel", {handle:"#canP2", cancel:"#noCanP"});
     let dragable3 = new Dragable("#test4OnlyCancel", {handle:"this", cancel:"#noCanP2"});

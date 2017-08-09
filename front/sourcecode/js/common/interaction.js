@@ -364,7 +364,6 @@ export function resizable(elem) {
   selected:function()  // event
   todo
   tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
-  selected;
   selecting;
   start;
   stop;
@@ -600,7 +599,6 @@ export function align(elemArr, option) {
   }
 }
 
-
 export class Dragable {
   /*
    option {
@@ -610,7 +608,9 @@ export class Dragable {
      handle: selector
      cancel:selector
      revert: true/false 
-     frame: iframe dom  
+     frame: iframe dom
+     position:定位方式 absolute 或者 relative
+     mousedown:function //   
    }
    范围选择
    自动滚动
@@ -623,7 +623,8 @@ export class Dragable {
       ,frame:{
         contentDocument:document
         ,contentWindow:window
-      }     
+      } 
+      ,position:"absolute"    
     };
     
     this.target = getElement(selector);
@@ -633,7 +634,7 @@ export class Dragable {
       return;
     }
 
-    this.target.style.position = "relative";
+
 
     this.option = Object.assign(defaultOption, option);
     this.isTranslate = checkCss3Support("transform") && this.option.translate;
@@ -646,17 +647,24 @@ export class Dragable {
     this.cancelSelector = this.option.cancel !== void 0 ? getElement(this.option.cancel) : null;
     this.doc = this.option.frame.contentDocument;
     this.win = this.option.frame.contentWindow;
-    this.execOnce = true;
+    this.isGetTargetMoveRange = false;
+    this.target.style.position = this.option.position; 
     setFrame(this.option.frame);
 
     /*
       初始化样式，只执行一次。
      */
-    if (Dragable.execOnce === void 0) {
+    if (Dragable.isInitCss === void 0) {
       this._initCss();
-      Dragable.execOnce = true;
+      Dragable.isInitCss = true;
     }
+    this._setCursorPoint();
+    this._mouseMove = this._mouseMoveHandle.bind(this);
+    this._mouseUp = this._mouseUpHandle.bind(this);
+    this.target.addEventListener("mousedown", this._mouseDownHandle.bind(this));
+  };
 
+  _setCursorPoint() {
     if (this.option.handle !== void 0 && this.option.handle !== "this") {
       this.target.classList.add("dragCursorDefault");
       this.handleSelector.classList.add("dragCursorMove");
@@ -667,10 +675,6 @@ export class Dragable {
     if (this.option.cancel !== void 0) {
       this.cancelSelector.classList.add("dragCursorDefault");
     } 
-
-    this._mouseMove = this._mouseMoveHandle.bind(this);
-    this._mouseUp = this._mouseUpHandle.bind(this);
-    this.target.addEventListener("mousedown", this._mouseDownHandle.bind(this));
   };
 
   _mouseDownHandle(evt) {
@@ -681,19 +685,21 @@ export class Dragable {
       return;
     }
 
+    if (this.option.mousedown !== void 0) {
+      this.option.mousedown(evt);
+    }
+
     this.mouseDownCoord.x = evt.pageX;
     this.mouseDownCoord.y = evt.pageY;
     this.targetOffsetInfo = this._getTargetOffsetInfo();
-    if (this.execOnce) {
+    if (!this.isGetTargetMoveRange) {
       this.targetMoveRange = this._getTargetMoveRange();
-      this.execOnce = false;
-      console.log(this.targetMoveRange);
+      this.isGetTargetMoveRange = true;
     }
     
     this.doc.addEventListener("mousemove", this._mouseMove);
     this.doc.addEventListener("mouseup", this._mouseUp);    
-
-  }
+  };
 
   _getTargetOffsetInfo() {
     let result = {x:0, y:0};
@@ -737,14 +743,14 @@ export class Dragable {
     }      
 
     this._setAxis(mouseMoveTargetOffsetInfo); 
-  }
+  };
 
   _getMouseMoveTargetOffsetInfo(evt) {
     let result = {x:0, y:0};
     result.x = this.targetOffsetInfo.x + evt.pageX - this.mouseDownCoord.x;
     result.y = this.targetOffsetInfo.y + evt.pageY - this.mouseDownCoord.y;
     return result;
-  } 
+  }; 
 
   _setAxis(mouseMoveTargetOffsetInfo) {
     let x = mouseMoveTargetOffsetInfo.x
@@ -777,7 +783,7 @@ export class Dragable {
           break;
       }
     }    
-  } 
+  }; 
 
   _mouseUpHandle(evt) {
     evt.preventDefault();
@@ -787,7 +793,7 @@ export class Dragable {
     this.doc.removeEventListener("mouseup", this._mouseUp);
 
     this._setRevert();
-  }
+  };
 
   _setRevert() {
     if (this.option.revert) {
@@ -801,7 +807,7 @@ export class Dragable {
         evt.target.removeEventListener("transitionend", transitionendHandle);
       }
     }    
-  }
+  };
 
   _getTargetMoveRange() {
     let result = {
@@ -826,10 +832,10 @@ export class Dragable {
       };
 
       result = {
-        left: 0 - distanceBeteenTargetAndContainment.left + containmentPadding.left + containmentBorder.left + this.targetOffsetInfo.x,
-        top: 0 - distanceBeteenTargetAndContainment.top + containmentPadding.top + containmentBorder.top + this.targetOffsetInfo.y,
-        right: 0 - distanceBeteenTargetAndContainment.left + this.containment.clientWidth - this.target.offsetWidth - containmentPadding.right + containmentBorder.right + this.targetOffsetInfo.x,
-        bottom: 0 - distanceBeteenTargetAndContainment.top + this.containment.clientHeight - this.target.offsetHeight - containmentPadding.bottom + containmentBorder.top + this.targetOffsetInfo.y
+        left: 0 - distanceBeteenTargetAndContainment.left + containmentPadding.left + containmentBorder.left + this.targetOffsetInfo.x + targetMargin.left,
+        top: 0 - distanceBeteenTargetAndContainment.top + containmentPadding.top + containmentBorder.top + this.targetOffsetInfo.y + targetMargin.top,
+        right: 0 - distanceBeteenTargetAndContainment.left + this.containment.clientWidth - this.target.offsetWidth - containmentPadding.right + containmentBorder.right + this.targetOffsetInfo.x - targetMargin.right,
+        bottom: 0 - distanceBeteenTargetAndContainment.top + this.containment.clientHeight - this.target.offsetHeight - containmentPadding.bottom + containmentBorder.top + this.targetOffsetInfo.y - targetMargin.bottom
       }    
     } 
 
@@ -859,8 +865,27 @@ export class Dragable {
 
   removeMouseDownHandle() {
     this.target.removeEventListener("mousedown", this._mouseDownHandle);
+  };
+}
+
+export class DynamicReferenceLine {
+  constructor(elem, option) {
+    this.target = getElement(elem);
+
+    if (this.target === null) {
+      console.error("DynamicReferenceLine target is null");
+      return;
+    } 
+
+    let defaultOption = {   
+    };
+
+    this.option = Object.assign(defaultOption, option);
   }
 }
+
+
+
 
 
 

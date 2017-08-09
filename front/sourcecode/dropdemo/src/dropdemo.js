@@ -61,8 +61,16 @@ window.onload = function() {
       };
 
     domoperation.insertStyle2Head(cssObj, {isCheckRepeat:true, isInsertFirst:true});
-    domoperation.insertStr2Dom(insertStr, sonFrameMain)
-    interaction.dragable("#test" + id, {frame:sonframe});
+    let div = domoperation.insertStr2Dom(insertStr, sonFrameMain)
+    let dragable = new interaction.Dragable(div, {
+      frame:sonframe
+      ,mousedown:(evt) => {
+        [].slice.call(sonFrameMain.querySelectorAll(".selected")).forEach((div) => {
+          div.classList.remove("selected");
+        })
+        evt.target.classList.add("selected");         
+      }
+    });
   })
 
   interaction.selectable(sonFrameMain, {
@@ -124,6 +132,6 @@ window.onload = function() {
 
     domoperation.insertStyle2Head(cssObj, {isCheckRepeat:true, isInsertFirst:true});
     domoperation.insertStr2Dom(insertStr, sonFrameMain)
-    interaction.dragable("#test" + id, {frame:sonframe});
+    let dragable = new interaction.Dragable("#test" + id, {frame:sonframe});
   })
 }

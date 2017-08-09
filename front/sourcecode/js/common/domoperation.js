@@ -1041,7 +1041,7 @@ export function ripple(container) {
 export function getElement(elem) {
   if (typeof elem === "string") {
     return doc.querySelector(elem);
-  } else if (elem instanceof Node) {
+  } else if (elem instanceof win.Node) {
     return elem;
   } else {
     return void 0;
