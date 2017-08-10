@@ -35,10 +35,19 @@ window.onload = function() {
   let control2 = document.querySelector("#control2");
   let control3 = document.querySelector("#control3");
   let selectedArr = [];
+  let selectedArrObj = [{
+    elem:null
+    ,targetOffsetInfo:{
+      x:0
+      ,y:0
+    }
+  }];
   var id = 0;
   let sonFrameMain = sonDoc.querySelector("#sonFrameMain");
   let sonFrameMain2 = sonDoc.querySelector("#sonFrameMain2");
   domoperation.setFrame(sonframe);
+  let dynamicReferenceLine = new interaction.DynamicReferenceLine(sonFrameMain, { frame:sonframe });
+
   control1.addEventListener("click", (event) => {
     ++id;   
     let insertStr = `
@@ -64,20 +73,67 @@ window.onload = function() {
     let div = domoperation.insertStr2Dom(insertStr, sonFrameMain)
     let dragable = new interaction.Dragable(div, {
       frame:sonframe
+      ,containment:"#sonFrameMain"
       ,mousedown:(evt) => {
-        [].slice.call(sonFrameMain.querySelectorAll(".selected")).forEach((div) => {
-          div.classList.remove("selected");
+        [].slice.call(sonFrameMain.querySelectorAll(".clicked")).forEach((div) => {
+          div.classList.remove("clicked");
         })
-        evt.target.classList.add("selected");         
+
+        div.classList.add("clicked");
+        selectedArrObj = [];
+        let length = selectedArr.length
+        if (length > 1) {
+          if (selectedArr.indexOf(div) !== -1) {
+            for (var i = 0; i < length; i++) {
+              if (selectedArr[i] === div) {
+                continue;
+              }
+
+              let elementComputedStyle = domoperation.getElementComputedStyle(selectedArr[i])
+              ,translate = domoperation.getTheTranslate(elementComputedStyle);
+              selectedArrObj.push({
+                elem:selectedArr[i]
+                ,targetOffsetInfo:{
+                  x:translate.x
+                  ,y:translate.y
+                }              
+              })
+            }
+          }
+          else {
+
+          }
+        }
+
+        dynamicReferenceLine.show();
+        setDynamicReferenceLine(div, dynamicReferenceLine)
+      },mousemove:(evt, moveDistance) => {
+        if (selectedArrObj.length !== 0) {
+          selectedArrObj.forEach((selectedItem) => {
+            selectedItem.elem.style.transform = `translate(${selectedItem.targetOffsetInfo.x + moveDistance.x}px, ${selectedItem.targetOffsetInfo.y + moveDistance.y}px)`;
+          })
+        }
+        setDynamicReferenceLine(div, dynamicReferenceLine)
+      },mouseup:(evt) => {
+        setDynamicReferenceLine(div, dynamicReferenceLine)
       }
     });
   })
 
+
   interaction.selectable(sonFrameMain, {
     frame:sonframe
+    ,filterArr:[].slice.call(sonFrameMain.querySelectorAll(".dynamicReferenceLineStyle"))
+    ,mousedown:(evt) => {
+      [].slice.call(sonFrameMain.querySelectorAll(".clicked")).forEach((div) => {
+        div.classList.remove("clicked");
+      })      
+      dynamicReferenceLine.hide();
+    }
     ,selected:(evt) => {
       if (evt.selectedArr !== void 0 && evt.selectedArr !== null) {
         selectedArr = evt.selectedArr;
+        console.log(selectedArr);
       }   
     }
   })  
@@ -135,3 +191,14 @@ window.onload = function() {
     let dragable = new interaction.Dragable("#test" + id, {frame:sonframe});
   })
 }
+
+function setDynamicReferenceLine(target, dynamicReferenceLine) {
+    let elementComputedStyle = domoperation.getElementComputedStyle(target)
+    ,translate = domoperation.getTheTranslate(elementComputedStyle);
+    dynamicReferenceLine.setHorizontalLinePosition({x:0, y:translate.y});
+    dynamicReferenceLine.setVerticalLinePosition({x:translate.x , y:0});
+    dynamicReferenceLine.setHorizontalLineWidthAndLabel(translate.x);
+    dynamicReferenceLine.setVerticalLineHeightAndLabel(translate.y);     
+}
+
+

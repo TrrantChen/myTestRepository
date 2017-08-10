@@ -268,7 +268,7 @@ export function setTheTranslate(elem, point) {
   } else if(point.x === void 0 && point.y !== void 0) {
     x = translate.x;
     y = point.y; 
-  } else if (point.x !== void 0 && pointy !== void 0) {
+  } else if (point.x !== void 0 && point.y !== void 0) {
     x = point.x;
     y = point.y;
   }

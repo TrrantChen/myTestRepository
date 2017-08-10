@@ -362,10 +362,10 @@ export function resizable(elem) {
   filterArr:  array elem
   frame 
   selected:function()  // event
+  mousedown:function() // event
   todo
   tolerance: fit or touch  fit的话需要把整个item都框住，才会提示被选中， touch就是有一点接触都会提示被选中
   selecting;
-  start;
   stop;
   unselected;
   unselecting;
@@ -377,7 +377,6 @@ export function selectable(elem, option) {
     ,startDomPosition = null
     ,defaultOption = {
       filterArr: []
-      ,selected:(evt) => {}
     }
     ,selectedArr = []
     ,doc = document
@@ -453,6 +452,10 @@ export function selectable(elem, option) {
         target.appendChild(selectDiv);
         doc.addEventListener('mousemove', mouseMoveHandle);
         doc.addEventListener('mouseup', mouseUpHandle);
+
+        if (option.mousedown !== void 0) {
+          option.mousedown(event);
+        }
       }
     })
 
@@ -610,7 +613,9 @@ export class Dragable {
      revert: true/false 
      frame: iframe dom
      position:定位方式 absolute 或者 relative
-     mousedown:function //   
+     mousedown:function // 
+     mousemove:function //
+     mouseup:function // 
    }
    范围选择
    自动滚动
@@ -629,7 +634,7 @@ export class Dragable {
     
     this.target = getElement(selector);
 
-    if (this.target === null) {
+    if (this.target === void 0) {
       console.error("drag target is null");
       return;
     }
@@ -721,8 +726,8 @@ export class Dragable {
   _mouseMoveHandle(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-
-    let mouseMoveTargetOffsetInfo =  this._getMouseMoveTargetOffsetInfo(evt)
+    let moveDistance = this._getMoveDistance(evt)
+      ,mouseMoveTargetOffsetInfo =  this._getMouseMoveTargetOffsetInfo(moveDistance);
 
     if (this.isRangeLimit) {
       if (mouseMoveTargetOffsetInfo.x < this.targetMoveRange.left) {
@@ -740,15 +745,26 @@ export class Dragable {
       if (mouseMoveTargetOffsetInfo.y > this.targetMoveRange.bottom) {
         mouseMoveTargetOffsetInfo.y = this.targetMoveRange.bottom;
       }
-    }      
+    } 
+
+    if (this.option.mousemove !== void 0) {
+      this.option.mousemove(evt, moveDistance); 
+    }
 
     this._setAxis(mouseMoveTargetOffsetInfo); 
   };
 
-  _getMouseMoveTargetOffsetInfo(evt) {
+  _getMoveDistance(evt) {
     let result = {x:0, y:0};
-    result.x = this.targetOffsetInfo.x + evt.pageX - this.mouseDownCoord.x;
-    result.y = this.targetOffsetInfo.y + evt.pageY - this.mouseDownCoord.y;
+    result.x = evt.pageX - this.mouseDownCoord.x;
+    result.y = evt.pageY - this.mouseDownCoord.y;
+    return result;
+  }
+
+  _getMouseMoveTargetOffsetInfo(moveDistance) {
+    let result = {x:0, y:0};
+    result.x = this.targetOffsetInfo.x + moveDistance.x;
+    result.y = this.targetOffsetInfo.y + moveDistance.y;
     return result;
   }; 
 
@@ -791,6 +807,10 @@ export class Dragable {
 
     this.doc.removeEventListener("mousemove", this._mouseMove);
     this.doc.removeEventListener("mouseup", this._mouseUp);
+
+    if (this.option.mouseup !== void 0) {
+      this.option.mouseup(evt);
+    }
 
     this._setRevert();
   };
@@ -845,7 +865,7 @@ export class Dragable {
   _initCss() {
     let css = {
       id :"dragCss"
-      , cssArr : [{
+      ,cssArr:[{
         className:".dragCursorMove:hover"
         ,classValue:`{
           cursor:move
@@ -870,19 +890,111 @@ export class Dragable {
 
 export class DynamicReferenceLine {
   constructor(elem, option) {
-    this.target = getElement(elem);
+    this.containment = getElement(elem);
 
-    if (this.target === null) {
-      console.error("DynamicReferenceLine target is null");
+    if (this.containment === void 0) {
+      console.error("DynamicReferenceLine containment is null");
       return;
     } 
 
     let defaultOption = {   
+      frame:{
+        contentDocument:document
+        ,contentWindow:window
+      } 
     };
 
     this.option = Object.assign(defaultOption, option);
+    setFrame(this.option.frame);
+
+    if (DynamicReferenceLine.isInitCss === void 0) {
+      this._initCss();
+      DynamicReferenceLine.isInitCss = true;
+    }
+
+    this._createDynamicReferenceLine();
+  }
+
+  _initCss() {
+    let css = {
+      id:"DynamicReferenceLineCss"
+      ,cssArr:[{
+        className:".dynamicReferenceLineStyle"
+        ,classValue:`
+        {
+          background:#5CACC4;
+          text-align:center;
+          display:none;
+          font-size:14px;
+        }
+        `
+      }
+      ,{
+        className:".horizontalLineStyle"
+        ,classValue:`
+        {
+          height:1px;
+        }
+        `
+      }
+      ,{
+        className:".verticalLineStyle"
+        ,classValue:`
+        {
+          width:1px;
+        }
+        `
+      }]
+    };
+    insertStyle2Head(css, {isCheckRepeat:true});
+  }
+
+  _createDynamicReferenceLine() {
+    this.horizontalLine = document.createElement("div");
+    this.horizontalLine.classList.add("dynamicReferenceLineStyle");
+    this.horizontalLine.classList.add("horizontalLineStyle");
+    this.horizontalLine.textContent = "0";
+
+    this.verticalLine = document.createElement("div");
+    this.verticalLine.classList.add("dynamicReferenceLineStyle");
+    this.verticalLine.classList.add("verticalLineStyle");
+    this.verticalLine.textContent = "0";
+
+    this.containment.appendChild(this.horizontalLine);
+    this.containment.appendChild(this.verticalLine);
+  }
+
+  setHorizontalLinePosition(point) {
+    setTheTranslate(this.horizontalLine, point);
+  }
+
+  setVerticalLinePosition(point) {
+    setTheTranslate(this.verticalLine, point)
+  }
+
+  setHorizontalLineWidthAndLabel(width) {
+    this.horizontalLine.style.width = width + "px";
+    this.horizontalLine.textContent = width;
+  }
+
+  setVerticalLineHeightAndLabel(height) {
+    this.verticalLine.style.height = height +  "px";
+    this.verticalLine.textContent = height;
+    this.verticalLine.style.lineHeight = height + "px";
+  }
+
+  show() {
+    this.horizontalLine.style.display = "block";
+    this.verticalLine.style.display = "block";
+  }
+
+  hide() {
+    this.horizontalLine.style.display = "none";
+    this.verticalLine.style.display = "none";
   }
 }
+
+
 
 
 
