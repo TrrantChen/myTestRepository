@@ -1,14 +1,59 @@
 import $ from 'jquery';
 import  * as util from '../../js/common/util'; 
 // import * as objectSizeof  from '../../lib/sizeof/index';
-import { getDomCount, action4EverySonDom, ButtonContent } from '../../js/common/domoperation';
+import { getDomCount, action4EverySonDom, ButtonContent, setFrame} from '../../js/common/domoperation';
+import { selectable } from '../../js/common/interaction';
+interaction
 import * as named from '../../lib/commonjsTest';
 import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
-$(() => {
+// $(() => {
+//   let sonDiv = document.querySelector(".sonDiv");
+//   sonDiv.addEventListener("mousedown", (evt) => {
+//     evt.stopPropagation();
+//     evt.preventDefault();
+//     console.log("this is mousedown");
+//   })
+
+//   document.body.addEventListener("keydown", (evt) => {
+//     console.log("this is keydown");
+//   })
+// })
+
+window.onload = () => {
+
+  let sonframe = document.querySelector("#sonframe");
+  let sonDoc = sonframe.contentDocument;
+  let sonWin = sonframe.contentWindow;
+  let sonFrameMain = sonDoc.querySelector("#sonFrameMain");
+  setFrame(sonframe);
+
+  // selectable(sonFrameMain, {
+  //   frame:sonframe
+  // })  
+
+  // sonFrameMain.addEventListener("mousedown", (evt) => {
+  //   evt.stopPropagation();
+  //   evt.preventDefault();
+  //   console.log("this is mousedown");
+  //   console.log(evt);
+  // })
   
-})
+  $(sonFrameMain).on("mousedown", (evt) => {
+    evt.preventDefault();
+    console.log("this is mousedown");
+  })
+
+  $(sonDoc.body).on("keyup", (evt) => {
+    console.log("this is keypress")
+  })
+  
+  // sonDoc.body.addEventListener("keydown", (evt) => {
+  //   console.log("this is keydown")
+  // })
+
+}
 
 
 

@@ -5,24 +5,35 @@ import * as util from '../../js/common/util';
 import * as domoperation from '../../js/common/domoperation';
 import * as interaction from '../../js/common/interaction';
 
+let align = void 0;
+
 window.onload = function() {
   let getFrame = document.querySelector("#getFrame");
   let hBtn = document.querySelector("#hBtn");
   let vBtn = document.querySelector("#vBtn");
+  let revocationBtn = document.querySelector("#revocationBtn");
 
   hBtn.addEventListener("click", (evt) => {
     let domArrLength = selectedArr.length;
     if (domArrLength !== 0) {
-      interaction.align(selectedArr, {align:"h"});
+      // interaction.align(selectedArr, {align:"h"});
+      align = new interaction.Align(selectedArr, {align:"h"});
     }
   })
 
   vBtn.addEventListener("click", (evt) => {
     let domArrLength = selectedArr.length;
     if (domArrLength !== 0) {
-      interaction.align(selectedArr, {align:"v"});
+      // interaction.align(selectedArr, {align:"v"});
+      align = new interaction.Align(selectedArr, {align:"v"});
     }
   })  
+
+  revocationBtn.addEventListener("click", (evt) => {
+    if (align !== void 0) {
+      align.revocation();
+    }
+  })
 
   getFrame.addEventListener("click", (evt) => {
     let winAndDoc = domoperation.getWinAndDoc();
@@ -74,10 +85,14 @@ window.onload = function() {
     let dragable = new interaction.Dragable(div, {
       frame:sonframe
       ,containment:"#sonFrameMain"
-      ,mousedown:(evt) => {
+      ,mousedown:(evt, targetOffsetInfo) => {
         [].slice.call(sonFrameMain.querySelectorAll(".clicked")).forEach((div) => {
           div.classList.remove("clicked");
         })
+
+        if (align !== void 0) {
+          align.clearOriginOffsetInfo();
+        }
 
         div.classList.add("clicked");
         selectedArrObj = [];
@@ -106,20 +121,19 @@ window.onload = function() {
         }
 
         dynamicReferenceLine.show();
-        setDynamicReferenceLine(div, dynamicReferenceLine)
-      },mousemove:(evt, moveDistance) => {
+        setDynamicReferenceLine(dynamicReferenceLine, targetOffsetInfo)
+      },mousemove:(evt, moveDistance, mouseMoveTargetOffsetInfo) => {
         if (selectedArrObj.length !== 0) {
           selectedArrObj.forEach((selectedItem) => {
             selectedItem.elem.style.transform = `translate(${selectedItem.targetOffsetInfo.x + moveDistance.x}px, ${selectedItem.targetOffsetInfo.y + moveDistance.y}px)`;
           })
         }
-        setDynamicReferenceLine(div, dynamicReferenceLine)
+        setDynamicReferenceLine(dynamicReferenceLine, mouseMoveTargetOffsetInfo)
       },mouseup:(evt) => {
-        setDynamicReferenceLine(div, dynamicReferenceLine)
+        dynamicReferenceLine.hide();
       }
     });
   })
-
 
   interaction.selectable(sonFrameMain, {
     frame:sonframe
@@ -129,11 +143,13 @@ window.onload = function() {
         div.classList.remove("clicked");
       })      
       dynamicReferenceLine.hide();
+      if (align !== void 0) {
+        align.clearOriginOffsetInfo();
+      }      
     }
     ,selected:(evt) => {
       if (evt.selectedArr !== void 0 && evt.selectedArr !== null) {
         selectedArr = evt.selectedArr;
-        console.log(selectedArr);
       }   
     }
   })  
@@ -192,13 +208,11 @@ window.onload = function() {
   })
 }
 
-function setDynamicReferenceLine(target, dynamicReferenceLine) {
-    let elementComputedStyle = domoperation.getElementComputedStyle(target)
-    ,translate = domoperation.getTheTranslate(elementComputedStyle);
-    dynamicReferenceLine.setHorizontalLinePosition({x:0, y:translate.y});
-    dynamicReferenceLine.setVerticalLinePosition({x:translate.x , y:0});
-    dynamicReferenceLine.setHorizontalLineWidthAndLabel(translate.x);
-    dynamicReferenceLine.setVerticalLineHeightAndLabel(translate.y);     
+function setDynamicReferenceLine(dynamicReferenceLine, translate) {
+  dynamicReferenceLine.setHorizontalLinePosition({x:0, y:translate.y});
+  dynamicReferenceLine.setVerticalLinePosition({x:translate.x , y:0});
+  dynamicReferenceLine.setHorizontalLineWidthAndLabel(translate.x);
+  dynamicReferenceLine.setVerticalLineHeightAndLabel(translate.y);     
 }
 
 

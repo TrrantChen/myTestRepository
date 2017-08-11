@@ -527,7 +527,9 @@ export function selectable(elem, option) {
       selectDiv.style.height = "0px";
       selectDiv.style.display = "none";
       event.selectedArr = selectedArr;
-      option.selected(event);
+      if (option.selected !== void 0) {
+        option.selected(event);
+      }
       doc.removeEventListener('mousemove', mouseMoveHandle);
       doc.removeEventListener('mouseup', mouseUpHandle);
     }      
@@ -602,24 +604,24 @@ export function align(elemArr, option) {
   }
 }
 
+/*
+ option {
+   axis:x, y, all
+   containment: selector
+   translate:true/false   // 是否使用translate替代position
+   handle: selector
+   cancel:selector
+   revert: true/false 
+   frame: iframe dom
+   position:定位方式 absolute 或者 relative
+   mousedown:function // 
+   mousemove:function //
+   mouseup:function // 
+ }
+ 范围选择
+ 自动滚动
+ */  
 export class Dragable {
-  /*
-   option {
-     axis:x, y, all
-     containment: selector
-     translate:true/false   // 是否使用translate替代position
-     handle: selector
-     cancel:selector
-     revert: true/false 
-     frame: iframe dom
-     position:定位方式 absolute 或者 relative
-     mousedown:function // 
-     mousemove:function //
-     mouseup:function // 
-   }
-   范围选择
-   自动滚动
-   */  
   constructor(selector, option) {
     let defaultOption = {
       axis: "all"
@@ -638,8 +640,6 @@ export class Dragable {
       console.error("drag target is null");
       return;
     }
-
-
 
     this.option = Object.assign(defaultOption, option);
     this.isTranslate = checkCss3Support("transform") && this.option.translate;
@@ -690,10 +690,6 @@ export class Dragable {
       return;
     }
 
-    if (this.option.mousedown !== void 0) {
-      this.option.mousedown(evt);
-    }
-
     this.mouseDownCoord.x = evt.pageX;
     this.mouseDownCoord.y = evt.pageY;
     this.targetOffsetInfo = this._getTargetOffsetInfo();
@@ -703,7 +699,12 @@ export class Dragable {
     }
     
     this.doc.addEventListener("mousemove", this._mouseMove);
-    this.doc.addEventListener("mouseup", this._mouseUp);    
+    this.doc.addEventListener("mouseup", this._mouseUp); 
+
+    if (this.option.mousedown !== void 0) {
+      this.option.mousedown(evt, this.targetOffsetInfo);
+    }
+
   };
 
   _getTargetOffsetInfo() {
@@ -748,7 +749,7 @@ export class Dragable {
     } 
 
     if (this.option.mousemove !== void 0) {
-      this.option.mousemove(evt, moveDistance); 
+      this.option.mousemove(evt, moveDistance, mouseMoveTargetOffsetInfo); 
     }
 
     this._setAxis(mouseMoveTargetOffsetInfo); 
@@ -926,6 +927,8 @@ export class DynamicReferenceLine {
           text-align:center;
           display:none;
           font-size:14px;
+          position:absolute;
+          z-index:100;
         }
         `
       }
@@ -993,6 +996,115 @@ export class DynamicReferenceLine {
     this.verticalLine.style.display = "none";
   }
 }
+
+/*
+  option : {
+    align: h/v
+    standardIndex: 0
+  }
+ */
+export class Align {
+  constructor(elemArr, option) {
+    let defaultOption = {
+      align:"h"
+      ,standardIndex:0
+    };  
+
+    this.option = option || {}; 
+    this.option = Object.assign(defaultOption, this.option);
+
+    if (Array.isArray(elemArr) && elemArr.length > 1) {
+      this.elemArr = elemArr.map((elem) => {
+        return getElement(elem);
+      }).filter((elem) => {
+        return elem !== void 0;
+      });
+    } else {
+      console.warn("align para is not array or length < 2");
+      return;
+    }
+
+    if (Array.isArray(this.elemArr) && this.elemArr.length > 1) {
+      this.standardDom = this.elemArr[this.option.standardIndex];
+      if (this.standardDom !== void 0) {
+        this._align(this.standardDom, this.elemArr);
+      } else {
+        console.warn("standardDom is undefined");
+      }
+    } else {
+      console.warn("align para is not array or length < 2");
+      return;      
+    }
+  };
+
+  _align(standardDom, elemArr) {
+    let elemArrLength = elemArr.length
+    ,standardDomComputedStyles = getElementComputedStyle(standardDom)
+    ,standardDomWidth = parseInt(standardDomComputedStyles("width"))
+    ,standardDomHeight = parseInt(standardDomComputedStyles("height"))
+    ,translate = getTheTranslate(standardDomComputedStyles)
+    ,position = getPosition(standardDomComputedStyles);
+
+    this.clearOriginOffsetInfo();
+     
+    for (var i = 1; i < elemArrLength; i++) {
+      let elemComputedStyle = getElementComputedStyle(elemArr[i])
+        ,originPosition = getPosition(elemComputedStyle)
+        ,originTranslate = getTheTranslate(elemComputedStyle);
+
+      this.originOffsetInfoArr.push({
+        elem:elemArr[i]
+        ,position:originPosition
+        ,translate:originTranslate
+      });
+
+      switch(this.option.align.toLowerCase()) {
+        case "h":
+          let elemHeight = parseInt(elemComputedStyle("height"))
+            ,adjustmentHeight = Math.abs(elemHeight - standardDomHeight) / 2;
+          if (elemHeight > standardDomHeight) {
+            elemArr[i].style.top = position.top + "px";
+            setTheTranslate(elemArr[i], { y : translate.y - adjustmentHeight} );
+          } else {
+            elemArr[i].style.top = position.top + "px";
+            setTheTranslate(elemArr[i], { y : translate.y + adjustmentHeight});
+          }
+          break;
+        case "v":
+          let elemWidth = parseInt(elemComputedStyle("width"))
+            ,adjustmentWidth = Math.abs(elemWidth - standardDomWidth) / 2;
+
+          if (elemWidth > standardDomWidth) {
+            elemArr[i].style.left = position.left + "px";
+            setTheTranslate(elemArr[i], { x : translate.x - adjustmentWidth});
+          } else {
+            elemArr[i].style.left = position.left + "px";
+            setTheTranslate(elemArr[i], { x : translate.x + adjustmentWidth});
+          }
+          break;
+      }      
+    };
+  }
+
+  revocation() {
+    if (Array.isArray(this.originOffsetInfoArr)) {
+      let length = this.originOffsetInfoArr.length;
+
+      for (var i = 0; i < length; i++) {
+        let originOffsetInfo = this.originOffsetInfoArr[i];
+
+        originOffsetInfo.elem.style.left = originOffsetInfo.position.left;
+        originOffsetInfo.elem.style.top = originOffsetInfo.position.top;
+        setTheTranslate(originOffsetInfo.elem, {x:originOffsetInfo.translate.x, y:originOffsetInfo.translate.y});
+      }
+    }
+    this.clearOriginOffsetInfo();
+  };
+
+  clearOriginOffsetInfo() {
+    this.originOffsetInfoArr = [];
+  }
+} 
 
 
 
