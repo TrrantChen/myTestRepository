@@ -16,16 +16,14 @@ window.onload = function() {
   hBtn.addEventListener("click", (evt) => {
     let domArrLength = selectedArr.length;
     if (domArrLength !== 0) {
-      // interaction.align(selectedArr, {align:"h"});
-      align = new interaction.Align(selectedArr, {align:"h"});
+      align = new interaction.Align(selectedArr, {alignType:"h"});
     }
   })
 
   vBtn.addEventListener("click", (evt) => {
     let domArrLength = selectedArr.length;
     if (domArrLength !== 0) {
-      // interaction.align(selectedArr, {align:"v"});
-      align = new interaction.Align(selectedArr, {align:"v"});
+      align = new interaction.Align(selectedArr, {alignType:"v"});
     }
   })  
 

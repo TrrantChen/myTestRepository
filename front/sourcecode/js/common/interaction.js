@@ -1006,7 +1006,8 @@ export class DynamicReferenceLine {
 export class Align {
   constructor(elemArr, option) {
     let defaultOption = {
-      align:"h"
+      alignType:"h"
+      ,alignCriterion:"middle"
       ,standardIndex:0
     };  
 
@@ -1032,7 +1033,7 @@ export class Align {
         console.warn("standardDom is undefined");
       }
     } else {
-      console.warn("align para is not array or length < 2");
+      console.warn("align element para is not array or length < 2");
       return;      
     }
   };
@@ -1042,49 +1043,68 @@ export class Align {
     ,standardDomComputedStyles = getElementComputedStyle(standardDom)
     ,standardDomWidth = parseInt(standardDomComputedStyles("width"))
     ,standardDomHeight = parseInt(standardDomComputedStyles("height"))
-    ,translate = getTheTranslate(standardDomComputedStyles)
-    ,position = getPosition(standardDomComputedStyles);
+    ,standardDomTranslate = getTheTranslate(standardDomComputedStyles)
+    ,standardDomPosition = getPosition(standardDomComputedStyles);
 
     this.clearOriginOffsetInfo();
      
     for (var i = 1; i < elemArrLength; i++) {
       let elemComputedStyle = getElementComputedStyle(elemArr[i])
-        ,originPosition = getPosition(elemComputedStyle)
-        ,originTranslate = getTheTranslate(elemComputedStyle);
+        ,originElemPosition = getPosition(elemComputedStyle)
+        ,originElemTranslate = getTheTranslate(elemComputedStyle);
 
       this.originOffsetInfoArr.push({
         elem:elemArr[i]
-        ,position:originPosition
-        ,translate:originTranslate
+        ,position:originElemPosition
+        ,translate:originElemTranslate
       });
 
-      switch(this.option.align.toLowerCase()) {
+      switch(this.option.alignType.toLowerCase()) {
         case "h":
           let elemHeight = parseInt(elemComputedStyle("height"))
-            ,adjustmentHeight = Math.abs(elemHeight - standardDomHeight) / 2;
+            ,adjustmentHeight = this._getAlignCriterion(elemHeight, standardDomHeight);
+
           if (elemHeight > standardDomHeight) {
-            elemArr[i].style.top = position.top + "px";
-            setTheTranslate(elemArr[i], { y : translate.y - adjustmentHeight} );
+            elemArr[i].style.top = standardDomPosition.top + "px";
+            setTheTranslate(elemArr[i], { y : standardDomTranslate.y - adjustmentHeight} );
           } else {
-            elemArr[i].style.top = position.top + "px";
-            setTheTranslate(elemArr[i], { y : translate.y + adjustmentHeight});
+            elemArr[i].style.top = standardDomPosition.top + "px";
+            setTheTranslate(elemArr[i], { y : standardDomTranslate.y + adjustmentHeight});
           }
           break;
         case "v":
           let elemWidth = parseInt(elemComputedStyle("width"))
-            ,adjustmentWidth = Math.abs(elemWidth - standardDomWidth) / 2;
+            ,adjustmentWidth = this._getAlignCriterion(elemWidth, standardDomWidth);
 
           if (elemWidth > standardDomWidth) {
-            elemArr[i].style.left = position.left + "px";
-            setTheTranslate(elemArr[i], { x : translate.x - adjustmentWidth});
+            elemArr[i].style.left = standardDomPosition.left + "px";
+            setTheTranslate(elemArr[i], { x : standardDomTranslate.x - adjustmentWidth});
           } else {
-            elemArr[i].style.left = position.left + "px";
-            setTheTranslate(elemArr[i], { x : translate.x + adjustmentWidth});
+            elemArr[i].style.left = standardDomPosition.left + "px";
+            setTheTranslate(elemArr[i], { x : standardDomTranslate.x + adjustmentWidth});
           }
           break;
       }      
     };
-  }
+  };
+
+  _getAlignCriterion(elemEdge, standardEdge) {
+    let result = 0;
+
+    switch(this.option.alignCriterion.toLowerCase()) {
+      case "middle":
+        result = Math.abs(elemEdge - standardEdge) / 2
+        break;
+      case "top":
+        result = Math.abs(elemEdge - standardEdge)
+        break;
+      case "bottom": 
+        result = 0
+        break;    
+    } 
+
+    return result;  
+  };
 
   revocation() {
     if (Array.isArray(this.originOffsetInfoArr)) {
@@ -1103,7 +1123,7 @@ export class Align {
 
   clearOriginOffsetInfo() {
     this.originOffsetInfoArr = [];
-  }
+  };
 } 
 
 
