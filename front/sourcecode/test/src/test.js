@@ -3,7 +3,6 @@ import  * as util from '../../js/common/util';
 // import * as objectSizeof  from '../../lib/sizeof/index';
 import { getDomCount, action4EverySonDom, ButtonContent, setFrame} from '../../js/common/domoperation';
 import { selectable, align, Align } from '../../js/common/interaction';
-interaction
 import * as named from '../../lib/commonjsTest';
 import '../../../node_modules/babel-polyfill/browser'
 

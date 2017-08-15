@@ -736,6 +736,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
   gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'cmopressLib', 'compressHtml'], (done) => {
     gulp.watch(libArr, ['cmopressLib']);
     gulp.watch(basePath + '/js/common/*.js', ['replace-hash']);
+    gulp.watch(basePath + '/js/module/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
     gulp.watch(projectDoc + '/src/*.html', ['compressHtml']);
   })

@@ -1,4 +1,4 @@
-import * as ajax from '../common/ajax.js';
+import {generalAjax} from '../common/ajax.js';
 import $ from 'jquery';
 
 export function originXmlHttpRequestTestReadyStateChange() {
@@ -7,6 +7,7 @@ export function originXmlHttpRequestTestReadyStateChange() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
             console.log(xhr.response);
+            console.log(xhr.responseText);
         } 
     }           
     xhr.send(null);              
@@ -39,23 +40,46 @@ export function fetchTest() {
 }
 
 export function jqueryAjaxTest() {
-    $.ajax({
-        url: "http://" + document.domain  + ":8088/delayloadtest",
-        type: 'post',
-        async : true,
-        datatype: "json",
-        contentType:"application/json",
-        data:JSON.stringify({para0:1000}),
-        success:function(data) {
-            console.log(data);
-        },
-        error:function(data) {
-            console.error(data);
-        }
-    })  
+    function postTest() {
+      $.ajax({
+          url: "http://" + document.domain  + ":8088/delayloadtest",
+          type: 'post',
+          async : true,
+          datatype: "json",
+          contentType:"application/json",
+          data:JSON.stringify({para0:1000}),
+          success:function(data) {
+              console.log("post " + data);
+          },
+          error:function(data) {
+              console.error(data);
+          }
+      })        
+    }
+
+    function getTest() {
+      $.ajax({
+          url: "http://" + document.domain  + ":8088/delayloadtest",
+          type: 'get',
+          async : true,
+          datatype: "json",
+          contentType:"application/json",
+          data:{para0:1000},
+          success:function(data) {
+              console.log("get " + data);
+          },
+          error:function(data) {
+              console.error(data);
+          }
+      })        
+    }
+
+    postTest();
+    getTest();
 }
 
 export function mySelfAjaxTest() {
+  function getTest() {
     var option = {
         url:"http://" + document.domain  + ":8088/delayloadtest",
         data:{para0:1000},
@@ -67,7 +91,29 @@ export function mySelfAjaxTest() {
         }
     }   
 
-    ajax.generalAjax(option);
+    generalAjax(option);        
+  }
+
+  function postTest() {
+    var option = {
+        url:"http://" + document.domain  + ":8088/delayloadtest"
+        ,data:JSON.stringify({para0:1000})
+        ,type:"post"
+        ,contentType:"application/json"
+        ,datatype: "json"
+        ,success:function(result) {
+            console.log("self ajax post " + result);
+        }
+        ,error:function(readyState, status) {
+            console.error(readyState + " " + status);
+        }
+    }   
+
+    generalAjax(option);    
+  }
+
+  getTest();
+  postTest();
 }
 
 

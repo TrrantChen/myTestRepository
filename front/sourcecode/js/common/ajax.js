@@ -1,12 +1,29 @@
 import * as util from "./util";
-import _ from "underscore";
 
-// option httpmethod async contentType data dataType url isUpload 
+/*
+option = {
+  url
+  ,type
+  ,async
+  ,contentType
+  ,data
+  ,dataType
+  ,isUpload
+  ,success:callback
+  ,error:callback
+  ,onabort:callback
+  ,onerror:callback
+  ,onloadend:callback
+  ,onloadstart:callback
+  ,onprogress:callback
+  ,ontimeout:callback
+}
+ */
 export function generalAjax(option) {
     var xhr = new XMLHttpRequest();
     option = option || {};
     var defaultOption = {
-        httpmethod: "get",
+        type: "get",
         async: true,
         contentType: "",
         data: null,
@@ -19,18 +36,14 @@ export function generalAjax(option) {
         return
     }
 
-    if (Object.assign != void 0) {
-        option = Object.assign(defaultOption, option)
-    } else {
-        option = _.assign(defaultOption, option)
-    }
+    option = Object.assign(defaultOption, option)
 
 
-    if (option.httpmethod.toLowerCase() == "get" && option.data !== null && !util.isEmptyObject(option.data)) {
+    if (option.type.toLowerCase() == "get" && option.data !== null && !util.isEmptyObject(option.data)) {
         option.url += ("?" + util.obj2keyValueString(option.data))
     }
 
-    xhr.open(option.httpmethod, option.url, option.async);
+    xhr.open(option.type, option.url, option.async);
 
     if (option.contentType !== "") {
         xhr.setRequestHeader("Content-type", option.contentType);
@@ -60,11 +73,28 @@ export function generalAjax(option) {
 
     registerEvent(xhr, option)
 
-    if (option.httpmethod.toLowerCase() == "post") {
-        xhr.send(option.data);
-    } else {
-        xhr.send(null);
-    }
+      if (option.type.toLowerCase() == "post") {
+        try {
+          xhr.send(option.data); 
+        }
+        catch(err) {
+          console.error(err);
+          if (option.error != void 0) {
+              option.error(xhr.readyState, xhr.status);
+          }             
+        }
+          
+      } else {
+        try {
+          xhr.send(null);
+        }
+        catch(err) {
+          console.error(err);
+          if (option.error != void 0) {
+              option.error(xhr.readyState, xhr.status);
+          }           
+        }        
+      }        
 
     if (option.dataType !== "") {
         xhr.responseType = option.dataType;
