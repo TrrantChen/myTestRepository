@@ -1,4 +1,6 @@
 import * as util from '../../js/common/util'  
+import { autoDownloadUrl } from '../../js/common/domoperation'  
+import { downloadFile, uploadFile } from '../../js/module/filemodule'
 
 let path = util.getHost();
 $(function(){
@@ -11,12 +13,12 @@ $(function(){
     function fileDownUseCreateObjectURL() {
         var downloadlabel = document.querySelector("#downloadlabel");
         downloadlabel.onclick = function() { 
-            filemodule.downloadFile(
+            downloadFile(
                     "./output/test1.txt", 
                     path + "downLoadFileWithStream", 
                     function(result) {
                         console.log("onload")
-                        common.autoDownloadUrl("output.zip", result);
+                        autoDownloadUrl("output.txt", result);
                     },
                     false      
             );                                       
@@ -24,7 +26,7 @@ $(function(){
     }
 
     function fileDownUseBase64() {
-        filemodule.downloadFile(
+        downloadFile(
                 "./output/test1.txt", 
                 path + "downLoadFileWithBuffer", 
                 function(result) {
@@ -44,7 +46,7 @@ $(function(){
     function fileUpload(url) {
         url = url || "upLoadFile"
         $("#inputFile").on("change", function(event) {
-            filemodule.uploadFile(this.files, path + url);
+            uploadFile(this.files, path + url);
             this.value = "";
         })  
     }

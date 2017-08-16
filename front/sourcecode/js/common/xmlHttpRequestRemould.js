@@ -3,27 +3,27 @@
 })(this, function() {
     function XmlHttpRequestRemould() {
         var that = this;
-        var fnBeforeOpen = void 0,
-        fnAfterOpen = void 0,
-        fnBeforeDataReturn = void 0,
-        fnAfterDataReturn = void 0;
+        var fnBeforeOpen = [],
+        fnAfterOpen = [],
+        fnBeforeDataReturn = [],
+        fnAfterDataReturn = [];
 
         this.tmpObj = {};
 
         this.setFnBeforeOpen = function(fn) {
-            fnBeforeOpen = fn;
+            fnBeforeOpen.push(fn);
         };
 
         this.setFnAfterOpen = function(fn) {
-            fnAfterOpen = fn;
+            fnAfterOpen.push(fn);
         };
 
         this.setFnBeforeDataReturn = function(fn) {
-            fnBeforeDataReturn = fn;
+            fnBeforeDataReturn.push(fn);
         };
 
         this.setFnAfterDataReturn = function(fn) {
-            fnAfterDataReturn = fn
+            fnAfterDataReturn.push(fn);
         };
 
         var open = XMLHttpRequest.prototype.open;
@@ -35,7 +35,7 @@
             var paras = Array.prototype.slice.call(arguments, 0);
 
             if (fnBeforeOpen != void 0) {
-                fnBeforeOpen(paras, this);
+              applyFun(fnBeforeOpen, [paras, this])
             }
 
             open.apply(this, arguments);
@@ -56,11 +56,11 @@
                             function closure() {
                                 if (this.readyState == 4 && this.status.toString() == "200") {
                                     if (fnBeforeDataReturn != void 0) {
-                                        fnBeforeDataReturn(this);
+                                      applyFun(fnBeforeDataReturn, [this]);
                                     }  
                                     value();                           
                                     if (fnAfterDataReturn != void 0) {
-                                        fnAfterDataReturn(this);
+                                        applyFun(fnAfterDataReturn, [this]);
                                     } 
                                 }                                                     
                             }
@@ -82,7 +82,7 @@
             }
 
             if (fnAfterOpen != void 0) {
-                fnAfterOpen(paras, this);
+              applyFun(fnAfterOpen, [this])
             }
 
             return send.apply(this, arguments);
@@ -91,7 +91,7 @@
         function replaceOnReadyChange() {;
             if (this.readyState == 4 && this.status.toString() == "200") {
                 if (fnBeforeDataReturn != void 0) {
-                    fnBeforeDataReturn(this);
+                  applyFun(fnBeforeDataReturn, [this]);
                 }  
                 console.log("onreadychange when readyState is 4");
             }
@@ -100,7 +100,7 @@
 
             if (this.readyState == 4 && this.status.toString() == "200") { 
                 if (fnAfterDataReturn != void 0) {
-                    fnAfterDataReturn(this);
+                  applyFun(fnAfterDataReturn, [this]);
                 }                
             }
 
@@ -109,13 +109,13 @@
 
         function replaceOnLoad() {
             if (fnBeforeDataReturn != void 0) {
-                fnBeforeDataReturn(this);
+              applyFun(fnBeforeDataReturn, [this]);
             }  
 
             var tmponload = this.tmponload.apply(this, arguments);
 
             if (fnAfterDataReturn != void 0) {
-                fnAfterDataReturn(this);
+              applyFun(fnAfterDataReturn, [this]);
             }      
 
             return tmponload
@@ -125,6 +125,20 @@
             var tmponerror = this.tmponerror.apply(this, arguments);
             return tmponerror
         }
+
+        function applyFun(fnArr, paraArr) {
+          if (Array.isArray(fnArr)) {
+            let length = fnArr.length;
+            for (var i = 0;  i < length; i++) {
+              let fn = fnArr[i];
+
+              if (fn !== void 0) {
+                fn.apply(this, paraArr);
+              }
+            }
+          }
+        }
+
         XMLHttpRequest.prototype.open = replaceOpen;
         XMLHttpRequest.prototype.send = replaceSend;
     }

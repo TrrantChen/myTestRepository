@@ -18,6 +18,8 @@
           that = this;
 
       this.show = function() {
+          console.log("show");
+          console.log(loadingNum);
           loadingNum++;
           if (!isShow && loadingNum > 1) {
               showloading();
@@ -32,6 +34,8 @@
 
       this.hideOnce = function() {
           loadingNum--;
+          console.log("hideOnce");
+          console.log(loadingNum)
           if (loadingNum <= 0 && isShow) {
               hideLoading();
           }
@@ -169,8 +173,8 @@
       function init() {
           createLoading();
           // xmlHttpRequestRemould();
-          xmlHttpRequestRemould.setFnBeforeOpen(that.show());
-          xmlHttpRequestRemould.setFnAfterDataReturn(that.hideOnce());       
+          xmlHttpRequestRemould.setFnBeforeOpen(that.show);
+          xmlHttpRequestRemould.setFnAfterDataReturn(that.hideOnce);       
           iframeRemould();
           showloading();
       };

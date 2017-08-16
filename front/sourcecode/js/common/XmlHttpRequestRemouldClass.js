@@ -7,10 +7,10 @@
 
 export class XmlHttpRequestRemould {
   constructor() {
-    this.fnBeforeOpen = void 0;
-    this.fnAfterOpen = void 0,
-    this.fnBeforeDataReturn = void 0,
-    this.fnAfterDataReturn = void 0;
+    this.fnBeforeOpen = [];
+    this.fnAfterOpen = [],
+    this.fnBeforeDataReturn = [],
+    this.fnAfterDataReturn = [];
 
 
     let open = XMLHttpRequest.prototype.open
@@ -22,7 +22,7 @@ export class XmlHttpRequestRemould {
       let paras = Array.prototype.slice.call(arguments, 0);
 
       if (that.fnBeforeOpen != void 0) {
-          that.fnBeforeOpen(paras, this);
+        applyFun(that.fnBeforeOpen, this, [paras, this])
       }
 
       open.apply(this, arguments);
@@ -44,11 +44,11 @@ export class XmlHttpRequestRemould {
             function closure() {
               if (this.readyState == 4 && this.status.toString() == "200") {
                 if (that.fnBeforeDataReturn != void 0) {
-                  that.fnBeforeDataReturn(this);
+                  applyFun(that.fnBeforeDataReturn, this, this);
                 }  
                 value();                           
                 if (that.fnAfterDataReturn != void 0) {
-                  that.fnAfterDataReturn(this);
+                  applyFun(that.fnAfterDataReturn, this, this);
                 } 
               }                                                     
             }
@@ -70,7 +70,7 @@ export class XmlHttpRequestRemould {
       }
 
       if (that.fnAfterOpen != void 0) {
-        that.fnAfterOpen(paras, this);
+        applyFun(that.fnAfterOpen, this, this);
       }
 
       return send.apply(this, arguments);
@@ -79,7 +79,7 @@ export class XmlHttpRequestRemould {
     function replaceOnReadyChange() {;
       if (this.readyState == 4 && this.status.toString() == "200") {
         if (that.fnBeforeDataReturn != void 0) {
-            that.fnBeforeDataReturn(this);
+          applyFun(that.fnBeforeDataReturn, this, this);
         }  
         console.log("onreadychange when readyState is 4");
       }
@@ -88,7 +88,7 @@ export class XmlHttpRequestRemould {
 
       if (this.readyState == 4 && this.status.toString() == "200") { 
         if (that.fnAfterDataReturn != void 0) {
-            that.fnAfterDataReturn(this);
+          applyFun(that.fnAfterDataReturn, this, this);
         }                
       }
 
@@ -97,13 +97,13 @@ export class XmlHttpRequestRemould {
 
     function replaceOnLoad() {
       if (that.fnBeforeDataReturn != void 0) {
-        that.fnBeforeDataReturn(this);
+        applyFun(that.fnBeforeDataReturn, this, this);
       }  
 
       var tmponload = this.tmponload.apply(this, arguments);
 
       if (that.fnAfterDataReturn != void 0) {
-        that.fnAfterDataReturn(this);
+        applyFun(that.fnAfterDataReturn, this, this);
       }      
 
       return tmponload
@@ -114,23 +114,36 @@ export class XmlHttpRequestRemould {
       return tmponerror
     }
 
+    function applyFun(fnArr, that, paraArr) {
+      paraArr = Array.isArray(paraArr) ? paraArr : [paraArr];
+      if (Array.isArray(fnArr)) {
+        let length = fnArr.length;
+        for(var i = 0; i < length; i++) {
+          let fn = fnArr[i];
+          if (fn !== void 0) {
+            fn.apply(that, paraArr);
+          }
+        }
+      }
+    }
+
     XMLHttpRequest.prototype.open = replaceOpen;
     XMLHttpRequest.prototype.send = replaceSend;
   }
 
   setFnBeforeOpen(fn) {
-    this.fnBeforeOpen = fn;
+    this.fnBeforeOpen.push(fn);
   };
 
   setFnAfterOpen(fn) {
-    this.fnAfterOpen = fn;
+    this.fnAfterOpen.push(fn);
   };
 
   setFnBeforeDataReturn(fn) {
-    this.fnBeforeDataReturn = fn;
+    this.fnBeforeDataReturn.push(fn);
   };
 
   setFnAfterDataReturn(fn) {
-    this.fnAfterDataReturn = fn
+    this.fnAfterDataReturn.push(fn)
   };
 }
