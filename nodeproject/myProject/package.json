@@ -9,22 +9,22 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.17.2",
     "bufferhelper": "^0.2.1",
-    "busboy": "^0.2.13",
+    "busboy": "^0.2.14",
     "co": "^4.6.0",
     "connect-multiparty": "^2.0.0",
-    "express": "^4.14.0",
-    "formidable": "^1.0.17",
-    "iconv-lite": "^0.4.13",
-    "jquery": "^3.1.1",
-    "jsdom": "^9.12.0",
-    "log4js": "^0.6.38",
-    "multiparty": "^4.1.2",
+    "express": "^4.15.4",
+    "formidable": "^1.1.1",
+    "iconv-lite": "^0.4.18",
+    "jquery": "^3.2.1",
+    "jsdom": "^11.1.0",
+    "log4js": "^2.3.3",
+    "multiparty": "^4.1.3",
     "node-arp": "^1.0.5",
     "thunkify": "^2.1.2"
   },
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "*"
   }
 }
