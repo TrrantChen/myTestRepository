@@ -4,12 +4,12 @@ let MouseButton = {
   ,right:2
 },
 
-AjaxAopFn = {
+AjaxAopFnType = {
   fnBeforeOpen:0
   ,fnAfterOpen:1
   ,fnBeforeDataReturn:2
   ,fnAfterDataReturn:3
 }
 
-export { MouseButton, AjaxAopFn };
+export { MouseButton, AjaxAopFnType };
 

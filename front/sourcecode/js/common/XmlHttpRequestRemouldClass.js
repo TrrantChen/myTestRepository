@@ -5,16 +5,21 @@
  * @version $Id$
  */
 
-import { AjaxAopFn } from "./enum"
+import { AjaxAopFnType } from "./enum"
 import { removeArrayItem } from "./util"
 
 export class XmlHttpRequestRemould {
   constructor() {
     this.fnBeforeOpenArr = [];
-    this.fnAfterOpenArr = [],
-    this.fnBeforeDataReturnArr = [],
+    this.fnAfterOpenArr = [];
+    this.fnBeforeDataReturnArr = [];
     this.fnAfterDataReturnArr = [];
-
+    this.fnArr = [
+      this.fnBeforeOpenArr
+      ,this.fnAfterOpenArr
+      ,this.fnBeforeDataReturnArr
+      ,this.fnAfterDataReturnArr
+    ];
 
     let open = XMLHttpRequest.prototype.open
       ,send = XMLHttpRequest.prototype.send
@@ -136,35 +141,16 @@ export class XmlHttpRequestRemould {
     XMLHttpRequest.prototype.send = replaceSend;
   }
 
-  setFnBeforeOpen(fn) {
-    this.fnBeforeOpenArr.push(fn);
-  };
-
-  setFnAfterOpen(fn) {
-    this.fnAfterOpenArr.push(fn);
-  };
-
-  setFnBeforeDataReturn(fn) {
-    this.fnBeforeDataReturnArr.push(fn);
-  };
-
-  setFnAfterDataReturn(fn) {
-    this.fnAfterDataReturnArr.push(fn)
-  };
-
-  clearFnBeforeOpen() {
-    this.fnBeforeOpenArr = [];
+  addFn2Arr(fn, ajaxAopFnType) {
+    this.fnArr[ajaxAopFnType].push(fn);
   }
 
-  clearFnAfterOpen() {
-    this.fnAfterOpenArr = [];
-  };
+  clearFnArr(ajaxAopFnType) {
+    this.fnArr[ajaxAopFnType] = [];
+  }
 
-  clearFnBeforeDataReturn() {
-    this.fnBeforeDataReturnArr = [];
-  };
-
-  clearFnAfterDataReturn() {
-    this.fnAfterDataReturnArr = [];
-  };  
+  removeFnArrItem(fn, ajaxAopFnType) {
+    removeArrayItem(this.fnArr[ajaxAopFnType] , fn);
+  }
 }
+

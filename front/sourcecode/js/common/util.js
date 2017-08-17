@@ -507,6 +507,13 @@ export function setOption(defaultOption, option) {
   return Object.assign(defaultOption, option);
 }
 
+export function removeArrayItem(arr, para) {
+  let index = arr.indexOf(para);
+  if (index !== -1) {
+    arr.splice(index, 1);
+  }
+}
+
 Function.prototype.before = function(fn) {
   let args = [],
     length = arguments.length,
@@ -565,9 +572,4 @@ Date.prototype.format = function(str) {
             .replace("ffff", milliseconds)
 }
 
-export function removeArrayItem(arr, para) {
-  let index = arr.indexOf(para);
-  if (index !== -1) {
-    arr.splice(index, 1);
-  }
-}
+
