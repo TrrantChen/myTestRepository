@@ -5,12 +5,15 @@
  * @version $Id$
  */
 
+import { AjaxAopFn } from "./enum"
+import { removeArrayItem } from "./util"
+
 export class XmlHttpRequestRemould {
   constructor() {
-    this.fnBeforeOpen = [];
-    this.fnAfterOpen = [],
-    this.fnBeforeDataReturn = [],
-    this.fnAfterDataReturn = [];
+    this.fnBeforeOpenArr = [];
+    this.fnAfterOpenArr = [],
+    this.fnBeforeDataReturnArr = [],
+    this.fnAfterDataReturnArr = [];
 
 
     let open = XMLHttpRequest.prototype.open
@@ -21,13 +24,12 @@ export class XmlHttpRequestRemould {
     function replaceOpen() {
       let paras = Array.prototype.slice.call(arguments, 0);
 
-      if (that.fnBeforeOpen != void 0) {
-        applyFun(that.fnBeforeOpen, this, [paras, this])
+      if (Array.isArray(that.fnBeforeOpenArr)) {
+        applyFun(that.fnBeforeOpenArr, this, [paras, this])
       }
 
       open.apply(this, arguments);
     };
-
 
     function replaceSend() {
       if (this.onload) {
@@ -43,12 +45,12 @@ export class XmlHttpRequestRemould {
           set:function(value) {
             function closure() {
               if (this.readyState == 4 && this.status.toString() == "200") {
-                if (that.fnBeforeDataReturn != void 0) {
-                  applyFun(that.fnBeforeDataReturn, this, this);
+                if (Array.isArray(that.fnBeforeDataReturnArr)) {
+                  applyFun(that.fnBeforeDataReturnArr, this, this);
                 }  
                 value();                           
-                if (that.fnAfterDataReturn != void 0) {
-                  applyFun(that.fnAfterDataReturn, this, this);
+                if (Array.isArray(that.fnAfterDataReturnArr)) {
+                  applyFun(that.fnAfterDataReturnArr, this, this);
                 } 
               }                                                     
             }
@@ -69,8 +71,8 @@ export class XmlHttpRequestRemould {
         this.onerror = replaceOnError;
       }
 
-      if (that.fnAfterOpen != void 0) {
-        applyFun(that.fnAfterOpen, this, this);
+      if (Array.isArray(that.fnAfterOpenArr)) {
+        applyFun(that.fnAfterOpenArr, this, this);
       }
 
       return send.apply(this, arguments);
@@ -78,8 +80,8 @@ export class XmlHttpRequestRemould {
 
     function replaceOnReadyChange() {;
       if (this.readyState == 4 && this.status.toString() == "200") {
-        if (that.fnBeforeDataReturn != void 0) {
-          applyFun(that.fnBeforeDataReturn, this, this);
+        if (Array.isArray(that.fnBeforeDataReturnArr)) {
+          applyFun(that.fnBeforeDataReturnArr, this, this);
         }  
         console.log("onreadychange when readyState is 4");
       }
@@ -87,8 +89,8 @@ export class XmlHttpRequestRemould {
       var tmponreadystatechange = this.tmponreadystatechange.apply(this, arguments);
 
       if (this.readyState == 4 && this.status.toString() == "200") { 
-        if (that.fnAfterDataReturn != void 0) {
-          applyFun(that.fnAfterDataReturn, this, this);
+        if (!Array.isArray(that.fnAfterDataReturnArr)) {
+          applyFun(that.fnAfterDataReturnArr, this, this);
         }                
       }
 
@@ -96,20 +98,23 @@ export class XmlHttpRequestRemould {
     }
 
     function replaceOnLoad() {
-      if (that.fnBeforeDataReturn != void 0) {
-        applyFun(that.fnBeforeDataReturn, this, this);
+      if (Array.isArray(that.fnBeforeDataReturnArr)) {
+        applyFun(that.fnBeforeDataReturnArr, this, this);
       }  
 
       var tmponload = this.tmponload.apply(this, arguments);
 
-      if (that.fnAfterDataReturn != void 0) {
-        applyFun(that.fnAfterDataReturn, this, this);
+      if (Array.isArray(that.fnAfterDataReturnArr)) {
+        applyFun(that.fnAfterDataReturnArr, this, this);
       }      
 
       return tmponload
     }
 
     function replaceOnError() {
+      if (Array.isArray(that.fnAfterDataReturnArr)) {
+        applyFun(that.fnAfterDataReturnArr, this, this);
+      }  
       var tmponerror = this.tmponerror.apply(this, arguments);
       return tmponerror
     }
@@ -132,18 +137,34 @@ export class XmlHttpRequestRemould {
   }
 
   setFnBeforeOpen(fn) {
-    this.fnBeforeOpen.push(fn);
+    this.fnBeforeOpenArr.push(fn);
   };
 
   setFnAfterOpen(fn) {
-    this.fnAfterOpen.push(fn);
+    this.fnAfterOpenArr.push(fn);
   };
 
   setFnBeforeDataReturn(fn) {
-    this.fnBeforeDataReturn.push(fn);
+    this.fnBeforeDataReturnArr.push(fn);
   };
 
   setFnAfterDataReturn(fn) {
-    this.fnAfterDataReturn.push(fn)
+    this.fnAfterDataReturnArr.push(fn)
   };
+
+  clearFnBeforeOpen() {
+    this.fnBeforeOpenArr = [];
+  }
+
+  clearFnAfterOpen() {
+    this.fnAfterOpenArr = [];
+  };
+
+  clearFnBeforeDataReturn() {
+    this.fnBeforeDataReturnArr = [];
+  };
+
+  clearFnAfterDataReturn() {
+    this.fnAfterDataReturnArr = [];
+  };  
 }

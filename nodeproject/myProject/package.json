@@ -25,6 +25,6 @@
     "thunkify": "^2.1.2"
   },
   "devDependencies": {
-    "gulp": "*"
+    "gulp": "^3.9.1"
   }
 }

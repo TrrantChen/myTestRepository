@@ -1,6 +1,6 @@
 import {getElement, checkCss3Support, setFrame, getScrollParent, getElemBoundingClientRect, 
   getElementComputedStyle, getPosition, getBorder, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate, initGetAllElementEventFn, getAllEvent, getElemAllEvent} from './domoperation';
-import * as util from './util';
+import { setOption, twoArrayUnique, isArrayContain } from './util';
 import { MouseButton } from './enum'
 
 /*
@@ -398,7 +398,7 @@ export function selectable(elem, option) {
     }`;
 
   insertStyle2Head(cssString);
-  option = Object.assign(defaultOption, option);
+  option = setOption(defaultOption, option);
 
 
   if (option.frame !== void 0) {
@@ -421,7 +421,7 @@ export function selectable(elem, option) {
           , domArrLength = domArr.length;
 
         if (option.filterArr.length !== 0) {
-          domArr = util.twoArrayUnique(domArr, option.filterArr);
+          domArr = twoArrayUnique(domArr, option.filterArr);
         };
 
         elemAndRectArr = domArr.map((elem) => {
@@ -492,12 +492,12 @@ export function selectable(elem, option) {
           let elemAndRect = elemAndRectArr[i];
 
           if (isRectOverlap(selectDivClientRect, elemAndRect)) {
-            if (!util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
+            if (!isArrayContain(elemAndRect.elem.classList, "selecting")) {
               selectedArr.push(elemAndRect.elem);
               elemAndRect.elem.classList.add("selecting");
             }
           } else {
-            if (util.isArrayContain(elemAndRect.elem.classList, "selecting")) {
+            if (isArrayContain(elemAndRect.elem.classList, "selecting")) {
 
               elemAndRect.elem.classList.remove("selecting");
               selectedArr.splice(selectedArr.indexOf(elemAndRect.elem), 1);
@@ -554,7 +554,6 @@ export function selectable(elem, option) {
  */
 export function align(elemArr, option) {
   if (elemArr !== void 0 && elemArr !== null && elemArr.length > 1) {
-    option = option || {};
     let defaultOption = {
       align:"h"
     }
@@ -566,7 +565,7 @@ export function align(elemArr, option) {
     ,translate = getTheTranslate(standardDomComputedStyles)
     ,position = getPosition(standardDomComputedStyles);
 
-    option = Object.assign(defaultOption, option);
+    option = setOption(defaultOption, option);
 
     switch(option.align.toLowerCase()) {
       case "h":
@@ -641,7 +640,7 @@ export class Dragable {
       return;
     }
 
-    this.option = Object.assign(defaultOption, option);
+    this.option = setOption(defaultOption, option);
     this.isTranslate = checkCss3Support("transform") && this.option.translate;
     this.mouseDownCoord = {x:0, y:0};
     this.targetOffsetInfo = {x:0, y:0};
@@ -905,7 +904,7 @@ export class DynamicReferenceLine {
       } 
     };
 
-    this.option = Object.assign(defaultOption, option);
+    this.option = setOption(defaultOption, option);
     setFrame(this.option.frame);
 
     if (DynamicReferenceLine.isInitCss === void 0) {
@@ -1011,8 +1010,7 @@ export class Align {
       ,standardIndex:0
     };  
 
-    this.option = option || {}; 
-    this.option = Object.assign(defaultOption, this.option);
+    this.option = setOption(defaultOption, option);
 
     if (Array.isArray(elemArr) && elemArr.length > 1) {
       this.elemArr = elemArr.map((elem) => {

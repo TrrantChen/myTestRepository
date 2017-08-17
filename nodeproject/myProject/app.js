@@ -10,30 +10,33 @@ const arp = require('node-arp');
 const gulp = require('gulp');
 
 
-
 log4js.configure({
-    appenders: [{
-        type: 'file',
-        maxLogSize: (20 * 1000 * 1000).toString(),
-        filename: ("./logs/" + commomProcess.dateFormate(new Date(), "yyyyMMdd").toString() + ".log")
-    }, {
-        type: 'console'
-    }]
+  appenders:{
+    everything:{
+      type:'file'
+      ,filename:("./logs/" + commomProcess.dateFormate(new Date(), "yyyyMMdd").toString() + ".log")
+      ,maxLogSize:20 * 1000 * 1000
+    }
+  }
+  , categories:{
+    default:{appenders:['everything'], level:'debug'}
+  }
 })
 
 var logger = log4js.getLogger("app");
 
 process.on('uncaughtException', (err) => {
-    logger.error("error", err);
-});
+  logger.error("error", err);
+})
+;
 
 app.use('/static', express.static('public'));
 
-const server = app.listen(8088, function() {
-    const host = server.address().address;
-    console.log("server is " + server.address());
-    const port = server.address().port;
-    console.log('Example app listening at http://%s:%s', host, port);
+const server = app.listen(8088, function () {
+  const host = server.address().address;
+  console.log("server is " + server.address());
+  const port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
 });
 
 bodyPostRoute.functionRoute(app);

@@ -500,7 +500,12 @@ export function createUuid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
- 
+
+export function setOption(defaultOption, option) {
+  defaultOption = defaultOption || {};
+  option = option || {};
+  return Object.assign(defaultOption, option);
+}
 
 Function.prototype.before = function(fn) {
   let args = [],
@@ -560,4 +565,9 @@ Date.prototype.format = function(str) {
             .replace("ffff", milliseconds)
 }
 
-
+export function removeArrayItem(arr, para) {
+  let index = arr.indexOf(para);
+  if (index !== -1) {
+    arr.splice(index, 1);
+  }
+}
