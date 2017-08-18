@@ -8,7 +8,7 @@
 import $ from 'jquery';
 
 $(() => {
-  testClassBind();
+  test4SingleFn();
 })
 
 
@@ -294,6 +294,45 @@ function testClassBind() {
   let bindB = a.bindFn.bind(objA);
   debugger;
   console.log(bindA === bindB);
+}
+
+
+
+// 如果已经实例化 就直接返回保存的实例 如果没有 就初始化实例 并返回
+
+// let getInstance = (function() {
+//   let _instance;
+//   return function(newInstanceType) {
+//     if (typeof _instance !== newInstanceType) {
+//       _instance = new newInstanceType();
+//     } 
+//     return _instance;
+//   }
+// })()
+
+
+function test4SingleFn() {
+  class Test4Single {
+    constructor(para) {
+      this.para = para || "name";
+
+      if (Test4Single.single === void 0) {
+        Test4Single.single = this;
+      }
+
+      return Test4Single.single;
+    }
+
+    print() {
+      console.log(this.para);
+    }
+  }
+
+  let test4Single1 = new Test4Single("aa");
+  let test4Single2 = new Test4Single("bb");
+  test4Single1.print();
+  test4Single2.print();
+  console.log(test4Single1 === test4Single2);
 }
 
 

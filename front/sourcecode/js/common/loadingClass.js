@@ -1,37 +1,38 @@
 import { setOption } from './util'
+import { AjaxAopFnType } from "./enum"
 import { insertStyle2Head, insertStr2Dom} from './domoperation'
 import { XmlHttpRequestRemould } from './XmlHttpRequestRemouldClass'
 
+
 /*
  option:{
-  minSpan
-  ,maxSpan
+  minTimeSpan
+  ,maxTimeSpan
   ,execOnce // 是否只执行一次，对应场景为需要轮询的监控场景
+  ,externUrlArr // 需要除外的url
  }
  */
 export class Loading {
   constructor(option) {
     let defaultOption = {
-      minSpan:1500
-      ,maxSpan:3000
-      ,execOnce:false
+      minTimeSpan:0
+      ,maxTimeSpan:3000
+      ,execOnce:true
     };
 
     this.option = setOption(defaultOption, option);
+    if (this.option.minTimeSpan > this.option.maxTimeSpan) {
+      console.warn("minTimeSpan is larger than maxTimeSpan");
+      this.option.maxTimeSpan = this.option.minTimeSpan + 1000;
+    }
     this.count = 0;
     this.isShow = false;
     this.autoHideLoading = null;
     this.startTime = null;
     this.xmlHttpRequestRemould = new XmlHttpRequestRemould();
 
-    if (Loading.runOnece === void 0) {
-      Loading.runOnece = true;
-      _createLoading();
-    }
-
-    _init();
-
-    function _createLoading() {
+    if (Loading.runOnce === void 0) {
+      Loading.runOnce = true;
       let css = `
                 .loadingContent { 
                   position: fixed; 
@@ -110,35 +111,37 @@ export class Loading {
                   100% { stroke-dasharray: 80, 300; } 
                 }`;
       insertStyle2Head(css);
-
       let insertStr = `
-      <div class="loadingProcess">
-        <svg class="circleContainer" viewBox="0 0 100 100">
-          <circle class="circle circleGreen"  cx="50" cy="50" r="25"></circle>
-          <circle class="circle circleYellow" cx="50" cy="50" r="25"></circle>
-          <circle class="circle circleWhite"  cx="50" cy="50" r="25"></circle>
-        </svg>
-      </div>
-      `
+        <div class="loadingContent">
+          <div class="loadingProcess">
+            <svg class="circleContainer" viewBox="0 0 100 100">
+              <circle class="circle circleGreen"  cx="50" cy="50" r="25"></circle>
+              <circle class="circle circleYellow" cx="50" cy="50" r="25"></circle>
+              <circle class="circle circleWhite"  cx="50" cy="50" r="25"></circle>
+            </svg>
+          </div>      
+        </div>`
       insertStr2Dom(insertStr);
-    } 
-
-    function _init() {
-      this.xmlHttpRequestRemould.setFnBeforeOpen(this.show.bind(this));
-      this.xmlHttpRequestRemould.setFnAfterDataReturn(this.hideOnce.bind(this));
-      this._showLoading();        
     }
+
+    this.showBindThis = this.show.bind(this)
+    this.hideOnceBindThis = this.hideOnce.bind(this) 
+    this.xmlHttpRequestRemould.addFn2Arr(this.showBindThis, AjaxAopFnType.fnBeforeOpen);
+    this.xmlHttpRequestRemould.addFn2Arr(this.hideOnceBindThis, AjaxAopFnType.fnAfterDataReturn);
+    this._showLoading();        
   }
 
   show() {
     this.count++;
-    if (!isShow && this.count > 1) {
+    console.log("show " + this.count);
+    if (!this.isShow && this.count > 1) {
       this._showLoading();
     }
   }
 
   hideOnce() {
     this.count--;
+    console.log("hide " + this.count);
     if (this.count <= 0 && this.isShow) {
       this._hideLoading();
     }
@@ -149,23 +152,26 @@ export class Loading {
   }
 
   _showLoading() {
+    console.log("show");
     this.startTime = new Date().getTime();
     this.isShow = true;
     document.querySelector(".loadingContent").style.display = "block";
-    autoHideLoading = setTimeout(this.hideLoading, this.option.maxSpan);
+    this.autoHideLoading = setTimeout(this._hideLoading.bind(this), this.option.maxTimeSpan);
   }
 
   _hideLoading() {
+    console.log("hide outter")
     let endTime = parseInt(new Date().getTime());
-    if (endTime - this.startTime > this.option.minSpan) {
+    if (endTime - this.startTime > this.option.minTimeSpan) {
+      console.log("hide inner")
       this.count = 0;
       this.isShow = false;
       document.querySelector(".loadingContent").style.display = "none";
       clearTimeout(this.autoHideLoading);
 
       if (this.option.execOnce) { 
-        this.xmlHttpRequestRemould.clearFnBeforeOpen();
-        this.xmlHttpRequestRemould.clearFnAfterDataReturn();         
+        this.xmlHttpRequestRemould.removeFnArrItem(this.showBindThis, AjaxAopFnType.fnBeforeOpen);
+        this.xmlHttpRequestRemould.removeFnArrItem(this.hideOnceBindThis, AjaxAopFnType.fnAfterDataReturn);         
       }
     }
   }
