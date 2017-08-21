@@ -6,18 +6,20 @@
  */
 
 import { AjaxAopFnType } from "./enum"
-import { removeArrayItem, setOption} from "./util"
+import { removeArrayItem, assignOption, } from "./util"
+import { getProtocolAndHost } from "./domoperation"
 
 /*
+  todo
   externUrlArr 需要除外的url
  */
 export class XmlHttpRequestRemould {
-  constructor(option) {
+  constructor() {
     let defaultOption = {
       externUrlArr:[]
     }
 
-    this.option = setOption(defaultOption, option);
+    this.option = assignOption(defaultOption, {});
     this.fnBeforeOpenArr = [];
     this.fnAfterOpenArr = [];
     this.fnBeforeDataReturnArr = [];
@@ -28,10 +30,9 @@ export class XmlHttpRequestRemould {
       ,this.fnBeforeDataReturnArr
       ,this.fnAfterDataReturnArr
     ];
+    this.protocolAndHost = getProtocolAndHost();
 
-    if (XmlHttpRequestRemould.runOnce === void 0) {
-      XmlHttpRequestRemould.runOnce = true;
-
+    if (XmlHttpRequestRemould.Single === void 0) {
       let open = XMLHttpRequest.prototype.open
         ,send = XMLHttpRequest.prototype.send
         ,onreadystatechangeDescriptor = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "onreadystatechange")
@@ -40,7 +41,7 @@ export class XmlHttpRequestRemould {
       function replaceOpen() {
         let paras = Array.prototype.slice.call(arguments, 0);
 
-        if (Array.isArray(that.fnBeforeOpenArr)) {
+        if (Array.isArray(that.fnBeforeOpenArr) && !that._isExternUrl(paras[1])) {
           applyFun(that.fnBeforeOpenArr, this, [paras, this])
         }
 
@@ -61,11 +62,11 @@ export class XmlHttpRequestRemould {
             set:function(value) {
               function closure() {
                 if (this.readyState == 4 && this.status.toString() == "200") {
-                  if (Array.isArray(that.fnBeforeDataReturnArr)) {
+                  if (Array.isArray(that.fnBeforeDataReturnArr) && !that._isExternUrl(this.responseURL)) {
                     applyFun(that.fnBeforeDataReturnArr, this, this);
                   }  
                   value();                           
-                  if (Array.isArray(that.fnAfterDataReturnArr)) {
+                  if (Array.isArray(that.fnAfterDataReturnArr) && !that._isExternUrl(this.responseURL)) {
                     applyFun(that.fnAfterDataReturnArr, this, this);
                   } 
                 }                                                     
@@ -87,7 +88,7 @@ export class XmlHttpRequestRemould {
           this.onerror = replaceOnError;
         }
 
-        if (Array.isArray(that.fnAfterOpenArr)) {
+        if (Array.isArray(that.fnAfterOpenArr) && !that._isExternUrl(this.responseURL)) {
           applyFun(that.fnAfterOpenArr, this, this);
         }
 
@@ -96,7 +97,7 @@ export class XmlHttpRequestRemould {
 
       function replaceOnReadyChange() {;
         if (this.readyState == 4 && this.status.toString() == "200") {
-          if (Array.isArray(that.fnBeforeDataReturnArr)) {
+          if (Array.isArray(that.fnBeforeDataReturnArr) && !that._isExternUrl(this.responseURL)) {
             applyFun(that.fnBeforeDataReturnArr, this, this);
           }  
           console.log("onreadychange when readyState is 4");
@@ -105,7 +106,7 @@ export class XmlHttpRequestRemould {
         var tmponreadystatechange = this.tmponreadystatechange.apply(this, arguments);
 
         if (this.readyState == 4 && this.status.toString() == "200") { 
-          if (Array.isArray(that.fnAfterDataReturnArr)) {
+          if (Array.isArray(that.fnAfterDataReturnArr) && !that._isExternUrl(this.responseURL)) {
             applyFun(that.fnAfterDataReturnArr, this, this);
           }                
         }
@@ -114,13 +115,13 @@ export class XmlHttpRequestRemould {
       }
 
       function replaceOnLoad() {
-        if (Array.isArray(that.fnBeforeDataReturnArr)) {
+        if (Array.isArray(that.fnBeforeDataReturnArr) && !that._isExternUrl(this.responseURL)) {
           applyFun(that.fnBeforeDataReturnArr, this, this);
         }  
 
         var tmponload = this.tmponload.apply(this, arguments);
 
-        if (Array.isArray(that.fnAfterDataReturnArr)) {
+        if (Array.isArray(that.fnAfterDataReturnArr) && !that._isExternUrl(this.responseURL)) {
           applyFun(that.fnAfterDataReturnArr, this, this);
         }      
 
@@ -128,7 +129,7 @@ export class XmlHttpRequestRemould {
       }
 
       function replaceOnError() {
-        if (Array.isArray(that.fnAfterDataReturnArr)) {
+        if (Array.isArray(that.fnAfterDataReturnArr) && !that._isExternUrl(this.responseURL)) {
           applyFun(that.fnAfterDataReturnArr, this, this);
         }  
         var tmponerror = this.tmponerror.apply(this, arguments);
@@ -150,7 +151,17 @@ export class XmlHttpRequestRemould {
 
       XMLHttpRequest.prototype.open = replaceOpen;
       XMLHttpRequest.prototype.send = replaceSend;
+
+      XmlHttpRequestRemould.Single = this;
+    } else {
+      console.warn(" XmlHttpRequestRemould class has initializion");
     }
+
+    return XmlHttpRequestRemould.Single;
+  }
+
+  setOption(option) {
+    this.option = assignOption(this.option, option);
   }
 
   addFn2Arr(fn, ajaxAopFnType) {
@@ -163,6 +174,11 @@ export class XmlHttpRequestRemould {
 
   removeFnArrItem(fn, ajaxAopFnType) {
     removeArrayItem(this.fnArr[ajaxAopFnType] , fn);
+  }
+
+  _isExternUrl(url) {
+    let filterUrl = url.split("?")[0].replace(this.protocolAndHost, "");
+    return this.option.externUrlArr.indexOf(filterUrl) === -1 ? false : true;
   }
 }
 

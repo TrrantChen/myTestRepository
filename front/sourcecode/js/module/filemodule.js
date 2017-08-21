@@ -15,7 +15,7 @@ export function uploadFile(files, url, successCallback, isWithProcess) {
     }
 
     var option = {
-        httpmethod: "post",
+        type: "post",
         async: true,
         data: formData,
         url: url,
@@ -31,7 +31,7 @@ export function downloadFile(filePaths, url, successCallback, isWithProcess) {
     isWithProcess = isWithProcess || false;
     successCallback = successCallback || function() { console.log("download file success;") };
     var option = {
-        httpmethod: "get",
+        type: "get",
         url: url,
         dataType: "blob",
         success: successCallback

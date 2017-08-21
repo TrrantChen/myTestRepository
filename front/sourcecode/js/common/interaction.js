@@ -1,6 +1,6 @@
 import {getElement, checkCss3Support, setFrame, getScrollParent, getElemBoundingClientRect, 
   getElementComputedStyle, getPosition, getBorder, getTheTranslate, getMargin, getPadding, insertStyle2Head, setTheTranslate, initGetAllElementEventFn, getAllEvent, getElemAllEvent} from './domoperation';
-import { setOption, twoArrayUnique, isArrayContain } from './util';
+import { assignOption, twoArrayUnique, isArrayContain } from './util';
 import { MouseButton } from './enum'
 
 /*
@@ -398,7 +398,7 @@ export function selectable(elem, option) {
     }`;
 
   insertStyle2Head(cssString);
-  option = setOption(defaultOption, option);
+  option = assignOption(defaultOption, option);
 
 
   if (option.frame !== void 0) {
@@ -565,7 +565,7 @@ export function align(elemArr, option) {
     ,translate = getTheTranslate(standardDomComputedStyles)
     ,position = getPosition(standardDomComputedStyles);
 
-    option = setOption(defaultOption, option);
+    option = assignOption(defaultOption, option);
 
     switch(option.align.toLowerCase()) {
       case "h":
@@ -640,7 +640,7 @@ export class Dragable {
       return;
     }
 
-    this.option = setOption(defaultOption, option);
+    this.option = assignOption(defaultOption, option);
     this.isTranslate = checkCss3Support("transform") && this.option.translate;
     this.mouseDownCoord = {x:0, y:0};
     this.targetOffsetInfo = {x:0, y:0};
@@ -904,7 +904,7 @@ export class DynamicReferenceLine {
       } 
     };
 
-    this.option = setOption(defaultOption, option);
+    this.option = assignOption(defaultOption, option);
     setFrame(this.option.frame);
 
     if (DynamicReferenceLine.isInitCss === void 0) {
@@ -1010,7 +1010,7 @@ export class Align {
       ,standardIndex:0
     };  
 
-    this.option = setOption(defaultOption, option);
+    this.option = assignOption(defaultOption, option);
 
     if (Array.isArray(elemArr) && elemArr.length > 1) {
       this.elemArr = elemArr.map((elem) => {

@@ -6,7 +6,7 @@
  */
 var commonProcess = require('./commonProcess');
 var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json()
+var jsonParser = bodyParser.json();
 var txtParser = bodyParser.text();
 var bufferHelper = require('./bufferHelper');
 var iconv = require('iconv-lite');

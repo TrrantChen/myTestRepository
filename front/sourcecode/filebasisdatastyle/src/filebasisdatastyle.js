@@ -1,10 +1,11 @@
 import * as util from '../../js/common/util'
-import * as httpdatatransitionmodule from '../../js/module/httpdatatransitionmodule'
+import {postJsonWithContentype, postJsonWithoutContentype, formPost, postString, postMulFormText, postMulFormFormData, postXml} from '../../js/module/httpdatatransitionmodule'
    
 var path = util.getHost();
 
 $(function(){
-    httpdatatransitionmodule.postMulFormFormData("multiparty");
+    // httpdatatransitionmodule.postMulFormFormData("multiparty");
+    postString();
 }) 
 
     

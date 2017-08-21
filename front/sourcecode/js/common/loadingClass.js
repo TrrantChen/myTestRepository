@@ -1,4 +1,4 @@
-import { setOption } from './util'
+import { assignOption } from './util'
 import { AjaxAopFnType } from "./enum"
 import { insertStyle2Head, insertStr2Dom} from './domoperation'
 import { XmlHttpRequestRemould } from './XmlHttpRequestRemouldClass'
@@ -19,8 +19,8 @@ export class Loading {
       ,maxTimeSpan:3000
       ,execOnce:true
     };
-
-    this.option = setOption(defaultOption, option);
+    
+    this.option = assignOption(defaultOption, option);
     if (this.option.minTimeSpan > this.option.maxTimeSpan) {
       console.warn("minTimeSpan is larger than maxTimeSpan");
       this.option.maxTimeSpan = this.option.minTimeSpan + 1000;

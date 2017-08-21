@@ -1198,5 +1198,9 @@ export class ButtonContent {
   }
 }
 
+export function getProtocolAndHost() {
+  return win.location.protocol + "//" + win.location.host
+}
+
 
     

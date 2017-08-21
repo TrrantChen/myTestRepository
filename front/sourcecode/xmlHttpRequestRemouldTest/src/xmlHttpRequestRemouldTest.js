@@ -9,7 +9,13 @@ import { Loading } from '../../js/common/loadingClass'
 
 $(() => {
   let xmlHttpRequestRemould = new XmlHttpRequestRemould()
-  
+
+  xmlHttpRequestRemould.setOption({
+    externUrlArr:[
+    "/browser-sync/socket.io/"
+    ]
+  })
+
   xmlHttpRequestRemould.addFn2Arr((para, that) => {
     console.log("before this is one");
   }, AjaxAopFnType.fnBeforeOpen)
@@ -18,24 +24,24 @@ $(() => {
   xmlHttpRequestRemould.addFn2Arr((that) => {
     console.log("after this is one")
   }, AjaxAopFnType.fnAfterDataReturn)
+  
 
-let xmlHttpRequestRemould2 = new XmlHttpRequestRemould() 
+// let xmlHttpRequestRemould2 = new XmlHttpRequestRemould() 
 
-  xmlHttpRequestRemould2.addFn2Arr((para, that) => {
-    console.log("before this is two");
-  }, AjaxAopFnType.fnBeforeOpen)
+//   xmlHttpRequestRemould2.addFn2Arr((para, that) => {
+//     console.log("before this is two");
+//   }, AjaxAopFnType.fnBeforeOpen)
 
 
-  xmlHttpRequestRemould2.addFn2Arr((that) => {
-    console.log("after this is two")
-  }, AjaxAopFnType.fnAfterDataReturn)
+//   xmlHttpRequestRemould2.addFn2Arr((that) => {
+//     console.log("after this is two")
+//   }, AjaxAopFnType.fnAfterDataReturn)
 
 
 
 
 
   // jqueryAjaxTest();
-  debugger;
     var xhr = new XMLHttpRequest();
     xhr.open("get", "http://" + document.domain  + ":8088/delayloadtest" + "?para0=1000");
     xhr.onreadystatechange = function() {

@@ -9,7 +9,7 @@ export function postJsonWithContentype() {
     xhr.setRequestHeader("Content-type", "application/json");
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
         }
     }
     var sendJson = {
@@ -23,7 +23,7 @@ export function postJsonWithoutContentype() {
     xhr.open("post", path + "sendJsonWithoutContentype", false);
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
         }
     }
     var sendJson = {
@@ -40,7 +40,7 @@ export function formPost() {
     xhr.open("post", path + "getFormClient", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
         }
     }
 
@@ -48,13 +48,13 @@ export function formPost() {
     xhr.send(formData);
 }
 
-export function postText() {
+export function postString() {
     var xhr = new XMLHttpRequest();
     xhr.open("post", path + "sendTextClient", true);
     xhr.setRequestHeader("Content-type", "text/plain");
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
         }
     }
     xhr.send("test=8");
@@ -67,7 +67,7 @@ export function postMulFormText() {
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
         }
     }
     xhr.send("test=name");
@@ -92,7 +92,7 @@ export function postMulFormFormData(parseType) {
     formData.append("num", "1");
     xhr.onreadystatechange = function() {
         if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
-            alert(xhr.responseText);
+            console.log(xhr.responseText);
         }
     }
     xhr.send(formData);

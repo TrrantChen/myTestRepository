@@ -10,7 +10,7 @@ function fileTest() {
             fileProcess(fileLst[i]);
         }
         this.value = "";
-    })  
+    })
 }
 
 function fileProcess(file) {
@@ -29,7 +29,7 @@ function upLoadFile2Server(file) {
         }
     }
     formData.append("fileTest", file);
-    xhr.send(formData);              
+    xhr.send(formData);
 }
 
 function processBase64String(file) {
@@ -38,10 +38,10 @@ function processBase64String(file) {
     var canvasContainer = document.querySelector(".canvasContainer");
     var img = document.createElement("img");
     img.classList.add("obj");
-    img.file = file;  
+    img.file = file;
     imgContainer.appendChild(img);
     var img2 = new Image();
-    reader.addEventListener("loadend", function(){
+    reader.addEventListener("loadend", function() {
         var imgUrl = reader.result;
         $("#inputBase64").html(reader.result);
         img.src = reader.result;
@@ -59,18 +59,19 @@ function processBase64String(file) {
             }
         }
     })
-    reader.addEventListener("error", function(){
+    reader.addEventListener("error", function() {
         reader.abort();
         console.log("file read fail");
     })
     reader.readAsDataURL(file)
+
     function drawCanvas() {
         var imgCanvas = document.createElement("canvas");
         imgCanvas.width = img2.width * 0.3
         imgCanvas.height = img2.height * 0.3
-        var myctx = imgCanvas.getContext("2d"); 
+        var myctx = imgCanvas.getContext("2d");
         myctx.drawImage(img2, 0, 0, img2.width * 0.3, img2.height * 0.3);
         canvasContainer.appendChild(imgCanvas);
-    }                 
+    }
 }
     

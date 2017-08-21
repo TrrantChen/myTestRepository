@@ -501,7 +501,7 @@ export function createUuid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
-export function setOption(defaultOption, option) {
+export function assignOption(defaultOption, option) {
   defaultOption = defaultOption || {};
   option = option || {};
   return Object.assign(defaultOption, option);
