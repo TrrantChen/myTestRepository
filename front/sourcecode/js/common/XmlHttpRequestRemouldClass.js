@@ -35,7 +35,6 @@ export class XmlHttpRequestRemould {
     if (XmlHttpRequestRemould.Single === void 0) {
       let open = XMLHttpRequest.prototype.open
         ,send = XMLHttpRequest.prototype.send
-        ,onreadystatechangeDescriptor = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "onreadystatechange")
         ,that = this;
   
       function replaceOpen() {
@@ -52,12 +51,31 @@ export class XmlHttpRequestRemould {
         if (this.onload) {
           this.tmponload = this.onload;
           this.onload = replaceOnLoad;
+        } else {
+          let onloadDescriptor = Object.getOwnPropertyDescriptor(XMLHttpRequestEventTarget.prototype, "onload");
+          Object.defineProperty(this, "onload", {
+            set:function(value) {
+              function closure() {
+                if (this.readyState == 4 && this.status.toString() == "200") {
+                  if (Array.isArray(that.fnBeforeDataReturnArr) && !that._isExternUrl(this.responseURL)) {
+                    applyFun(that.fnBeforeDataReturnArr, this, this);
+                  }  
+                  value();                           
+                  if (Array.isArray(that.fnAfterDataReturnArr) && !that._isExternUrl(this.responseURL)) {
+                    applyFun(that.fnAfterDataReturnArr, this, this);
+                  } 
+                }                                                     
+              }
+              onloadDescriptor.set.call(this, closure);           
+            }
+          }) 
         }
 
         if (this.onreadystatechange) {
           this.tmponreadystatechange = this.onreadystatechange;
           this.onreadystatechange = replaceOnReadyChange;
         } else {
+          let onreadystatechangeDescriptor = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "onreadystatechange");
           Object.defineProperty(this, "onreadystatechange", {
             set:function(value) {
               function closure() {

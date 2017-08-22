@@ -25,18 +25,29 @@ export function originXmlHttpRequestTestOnLoad() {
 }
 
 export function fetchTest() {
-    var fetchThen = fetch("http://" + document.domain  + ":8088/delayloadtest?para0=1000", { method: 'get' })
-    fetchThen.then(function(response) {
-        console.log("this is response");
-        return response.text()
-     })
-    .then(function(result) {
-        console.log("this is result");
-        console.log(result);
+  let oldFetch = window.fetch;
+  function fetch() {
+    console.log("before1")
+    return oldFetch.apply(this, arguments).then(function(response) {
+      console.log("before2");
+      return response;
     })
-    .catch(function(err) {
-        console.log(err);
-     });        
+  }
+
+  window.fetch = fetch;
+
+  var fetchThen = fetch("http://" + document.domain  + ":8088/delayloadtest?para0=1000", { method: 'get' })
+  fetchThen.then(function(response) {
+      console.log("this is response");
+      return response.text()
+   })
+  .then(function(result) {
+      console.log("this is result");
+      console.log(result);
+  })
+  .catch(function(err) {
+      console.log(err);
+  });        
 }
 
 export function jqueryAjaxTest() {
