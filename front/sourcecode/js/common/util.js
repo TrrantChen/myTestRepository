@@ -216,6 +216,10 @@ export function isArray(obj) {
   }
 }
 
+export function isFunction(fn) {
+  return Object.prototype.toString.call(fn) === "[object Function]";
+}
+
 export function initGetUid() {
   let uid = 0;
 

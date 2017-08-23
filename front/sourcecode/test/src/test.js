@@ -8,64 +8,11 @@ import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
 $(() => {
-  functionAndClassPerformanceTest()
+  
 })
 
-function functionAndClassPerformanceTest() {
-  var testDivArr = [].slice.call(document.querySelectorAll(".test4Align"));
-  for(var i = 0; i < 100000; i++) {
-    var test = new Align(testDivArr);
-    // align(testDivArr);
-  }
-}
 
 
-function mousedownAndkeydownConflict() {
-  let sonDiv = document.querySelector(".sonDiv");
-  sonDiv.addEventListener("mousedown", (evt) => {
-    evt.stopPropagation();
-    evt.preventDefault();
-    console.log("this is mousedown");
-  })
-
-  document.body.addEventListener("keydown", (evt) => {
-    console.log("this is keydown");
-  })  
-}
-
-// window.onload = () => {
-
-//   let sonframe = document.querySelector("#sonframe");
-//   let sonDoc = sonframe.contentDocument;
-//   let sonWin = sonframe.contentWindow;
-//   let sonFrameMain = sonDoc.querySelector("#sonFrameMain");
-//   setFrame(sonframe);
-
-//   // selectable(sonFrameMain, {
-//   //   frame:sonframe
-//   // })  
-
-//   // sonFrameMain.addEventListener("mousedown", (evt) => {
-//   //   evt.stopPropagation();
-//   //   evt.preventDefault();
-//   //   console.log("this is mousedown");
-//   //   console.log(evt);
-//   // })
-  
-//   $(sonFrameMain).on("mousedown", (evt) => {
-//     evt.preventDefault();
-//     console.log("this is mousedown");
-//   })
-
-//   $(sonDoc.body).on("keyup", (evt) => {
-//     console.log("this is keypress")
-//   })
-  
-//   // sonDoc.body.addEventListener("keydown", (evt) => {
-//   //   console.log("this is keydown")
-//   // })
-
-// }
 
 
 

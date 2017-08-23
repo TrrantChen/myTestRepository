@@ -52,6 +52,7 @@ import md5 from 'md5'
 import pump from 'pump'
 import stream from 'stream'
 import * as util from './sourcecode/js/common/util.js'
+import combiner from 'stream-combiner2'
 
 // solve MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase l imit
 events.EventEmitter.defaultMaxListeners = 0;
@@ -517,6 +518,17 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
 /*------------重写文件------------*/
 
 /*------------publish------------*/
+
+  // let logError = (stream) => {
+  //   stream.on("error", (error) => {
+  //     console.error(error);
+  //   })
+  //   console.log(this);
+  //   // this.emit("end");
+  //   return stream;
+  // }
+
+
   gulp.task('get-extern-lst', (done) => {
     return new Promise((resolve) => {
       glob(basePath + '/js/!(other)/*.js').on('end', (files) => {
@@ -543,10 +555,12 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
       glob(projectDoc, (err, files) => {
         let taskLst = files.map((file, index) => {
           return gulp.src(file + '/src/*.html')
-              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:false})) 
-              .on('error', (error) => {
-                console.log(this);
-              })                
+              .pipe(htmlmin({minifyCSS:true, collapseWhitespace:true, minifyJS:true, removeComments:false}))
+              .on("error", (err) => {
+                console.log(err.toString());
+                reject();
+                // this.emit("end");
+              })             
               .pipe(gulp.dest(file + '/build/'))
         });
         es.merge(taskLst).on('end', () => {
@@ -556,7 +570,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
       })         
     }) 
   })
-  
+
   gulp.task('cmopressLib', () => {
     return gulp.src(libArr, (err, files) => {
       console.log(files)

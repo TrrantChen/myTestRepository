@@ -59,7 +59,7 @@ export class XmlHttpRequestRemould {
                 if (this.readyState == 4 && this.status.toString() == "200") {
                   if (Array.isArray(that.fnBeforeDataReturnArr) && !that._isExternUrl(this.responseURL)) {
                     applyFun(that.fnBeforeDataReturnArr, this, this);
-                  }  
+                    }  
                   value();                           
                   if (Array.isArray(that.fnAfterDataReturnArr) && !that._isExternUrl(this.responseURL)) {
                     applyFun(that.fnAfterDataReturnArr, this, this);

@@ -1203,4 +1203,24 @@ export function getProtocolAndHost() {
 }
 
 
+export function windowonloadaop(beforeFn, afterFn) {
+  beforeFn = util.isFunction(beforeFn) ? beforeFn : function() {
+    console.log("before");
+  }
+
+  afterFn = util.isFunction(afterFn) ? afterFn : function() {
+    console.log("after")
+  }
+  let loadDescriptor = Object.getOwnPropertyDescriptor(win, "onload");
+  Object.defineProperty(win, "onload", {
+    set:function(value) {
+          function closure() {
+            beforeFn();
+            value();  
+            afterFn();                      
+          }  
+          loadDescriptor.set.call(this, closure);                                                            
+        }  
+  })  
+}
     
