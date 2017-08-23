@@ -1,4 +1,5 @@
 import {generalAjax} from '../common/ajax.js';
+import { autoDownloadUrl } from '../../js/common/domoperation' 
 import $ from 'jquery';
 
 export function originXmlHttpRequestTestReadyStateChange() {
@@ -48,45 +49,6 @@ export function fetchTest() {
       console.log(err);
   });        
 }
-
-// export function jqueryAjaxTest() {
-//     function postTest() {
-//       $.ajax({
-//           url: "http://" + document.domain  + ":8088/delayloadtest",
-//           type: 'post',
-//           async : true,
-//           datatype: "json",
-//           contentType:"application/json",
-//           data:JSON.stringify({para0:1000}),
-//           success:function(data) {
-//               console.log("post " + data);
-//           },
-//           error:function(data) {
-//               console.error(data);
-//           }
-//       })        
-//     }
-
-//     function getTest() {
-//       $.ajax({
-//           url: "http://" + document.domain  + ":8088/delayloadtest",
-//           type: 'get',
-//           async : true,
-//           datatype: "json",
-//           contentType:"application/json",
-//           data:{para0:1000},
-//           success:function(data) {
-//               console.log("get " + data);
-//           },
-//           error:function(data) {
-//               console.error(data);
-//           }
-//       })        
-//     }
-
-//     postTest();
-//     getTest();
-// }
 
 let jqueryAjaxTest = {
   postTest:function() {
@@ -161,6 +123,32 @@ export function mySelfAjaxTest() {
 
   getTest();
   postTest();
+}
+
+// responseType的老式兼容方法，用于获取文件
+export function getFileWithOverrideMimeType() {
+  let client = new XMLHttpRequest();
+  client.open("get", "http://" + document.domain  + ":8088/img/test.png");
+  client.overrideMimeType('text/plain; charset=x-user-defined');
+  client.onreadystatechange = function() {
+    if (client.readyState.toString() === "4" && client.status.toString() === "200") {
+      let tmp = [];
+      let binStr = this.responseText;
+
+      for (var i = 0, len = binStr.length; i < len; ++i) {
+        var c = binStr.charCodeAt(i);
+        // String.fromCharCode(c & 0xff);
+        // var byte = c & 0xff;
+        tmp.push(c); 
+      };
+
+      let u8 = new Uint8Array(tmp);
+      let ab = u8.buffer;
+      let blob = new Blob([ab]) 
+      autoDownloadUrl("output.png", blob);     
+    }
+  }
+  client.send(null);
 }
 
 
