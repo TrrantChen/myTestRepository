@@ -85,10 +85,8 @@ let jqueryAjaxTest = {
   }
 }
 
-export { jqueryAjaxTest };
-
-export function mySelfAjaxTest() {
-  function getTest() {
+let mySelfAjaxTest = {
+  getTest: function() {
     var option = {
         url:"http://" + document.domain  + ":8088/delayloadtest",
         data:{para0:1000},
@@ -101,9 +99,8 @@ export function mySelfAjaxTest() {
     }   
 
     generalAjax(option);        
-  }
-
-  function postTest() {
+  },
+  postTest:function() {
     var option = {
         url:"http://" + document.domain  + ":8088/delayloadtest"
         ,data:JSON.stringify({para0:1000})
@@ -119,11 +116,11 @@ export function mySelfAjaxTest() {
     }   
 
     generalAjax(option);    
-  }
-
-  getTest();
-  postTest();
+  } 
 }
+
+export { mySelfAjaxTest, jqueryAjaxTest };
+
 
 // responseType的老式兼容方法，用于获取文件
 export function getFileWithOverrideMimeType() {
@@ -149,6 +146,53 @@ export function getFileWithOverrideMimeType() {
     }
   }
   client.send(null);
+}
+
+// 新的方法，使用responseType设置为blob
+export function getFileWithResponceTyle() {
+  let client = new XMLHttpRequest();
+  client.open("get", "http://" + document.domain  + ":8088/img/test.png");
+  client.responseType = "blob";
+  client.onreadystatechange = function() {
+    if (client.readyState.toString() === "4" && client.status.toString() === "200") {
+      let blob = client.response;
+      autoDownloadUrl("output.png", blob);     
+    }
+  }
+  client.send(null); 
+}
+
+// 测试各种发送数据的
+export function test4SendDataAndDefaultContentTyle() {
+  let ab = new ArrayBuffer(32);
+  let blob = new Blob([ab]); 
+  let formData = new FormData();
+  let str = "test";
+
+  let testObj = {
+    "ArrayBuffer": ab
+    ,"Blob":blob
+    ,"Document":document
+    ,"String":str
+    ,"FormData":formData
+  };
+
+  for (var key in testObj) {
+    let value = testObj[key];
+    let keyName = key;
+    let option = {
+      url:"http://" + document.domain  + ":8088/test4DefaultContentType"
+      ,data:value
+      ,type:"post"
+      ,success:function(result) {
+        console.log(keyName + " " + result);
+      }
+      ,error:function(readyState, status) {
+        console.error(readyState + " " + status);
+      }
+    }   
+    generalAjax(option);    
+  }
 }
 
 

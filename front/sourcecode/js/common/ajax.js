@@ -73,31 +73,30 @@ export function generalAjax(option) {
 
     registerEvent(xhr, option)
 
-      if (option.type.toLowerCase() == "post") {
-        try {
-          xhr.send(option.data); 
-        }
-        catch(err) {
-          console.error(err);
-          if (option.error != void 0) {
-              option.error(xhr.readyState, xhr.status);
-          }             
-        }
-          
-      } else {
-        try {
-          xhr.send(null);
-        }
-        catch(err) {
-          console.error(err);
-          if (option.error != void 0) {
-              option.error(xhr.readyState, xhr.status);
-          }           
-        }        
-      }        
+    let sendData = null;
 
+    switch(option.type.toLowerCase()) {
+      case "post":
+        sendData = option.data;
+        break;
+      case "get":
+      default:
+        sendData = null;
+        break;
+    }   
+
+    try {
+      xhr.send(sendData);
+    }
+    catch(err) {
+      console.error(err);
+      if (option.error != void 0) {
+        option.error(xhr.readyState, xhr.status);
+      }       
+    }
+      
     if (option.dataType !== "") {
-        xhr.responseType = option.dataType;
+      xhr.responseType = option.dataType;
     }
 }
 

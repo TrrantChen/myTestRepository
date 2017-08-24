@@ -10,7 +10,7 @@ var path = require("path");
 var commonProcess = require("./commonProcess");
 var randomProcess = require("./randomProcess");
 var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json()
+var jsonParser = bodyParser.json();
 var txtParser = bodyParser.text();
 
 exports.functionRoute = function(app) {
@@ -24,7 +24,8 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "post", "/delayloadtest", delayloadtestPost, jsonParser);
     commonProcess.preProcessHttpMethods(app, "get", "/getArrayResut", getArrayResut);
     commonProcess.preProcessHttpMethods(app, "get", "/getRandomTableData", getRandomTableData);
-}
+    commonProcess.preProcessHttpMethods(app, "post", "/test4DefaultContentType", test4DefaultContentType);
+};
 
 function getRandomTableData(req, res) {
     res.send(JSON.stringify(randomProcess.createRandomTwoDimensionalArray(req.query.rows, req.query.cells, true)));
@@ -39,7 +40,6 @@ function testUrlAndpath(req, res) {
     var pathname = url.parse(req.url).pathname;
     res.send("pathname is " + pathname)
 }
-
 
 function delayloadtestGet(req, res) {
     var delaytime = req.query.para0 || 2000 
@@ -98,4 +98,16 @@ function test4Jsonp(req, res) {
     var callback = req.query.callback;
     var obj = {name:"yc", num:"1", test:"true"}
     res.send(callback + "(" + JSON.stringify(obj) + ")");
+}
+
+function test4DefaultContentType(req, res) {
+  try {
+    debugger;
+    console.log(req.headers["content-type"]);
+    res.send(req.headers["content-type"]);
+  }
+  catch(err) {
+    console.log(err);
+    res.send(err);
+  }
 }
