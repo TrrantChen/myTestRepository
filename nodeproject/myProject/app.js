@@ -1,13 +1,14 @@
 const express = require('express');
-const app = express();
+const log4js = require('log4js');
+const arp = require('node-arp');
+const gulp = require('gulp');
+
 const bodyPostRoute = require('./bodyPostRoute');
 const httpRoute = require('./httpRoute');
 const fileOperationRoute = require('./fileOperationRoute');
 const connectRoute = require('./connectRoute');
 const commomProcess = require('./commonProcess');
-const log4js = require('log4js')
-const arp = require('node-arp');
-const gulp = require('gulp');
+const app = express();
 
 
 log4js.configure({
@@ -21,14 +22,13 @@ log4js.configure({
   , categories:{
     default:{appenders:['everything'], level:'debug'}
   }
-})
+});
 
-var logger = log4js.getLogger("app");
+const logger = log4js.getLogger("app");
 
 process.on('uncaughtException', (err) => {
   logger.error("error", err);
-})
-;
+});
 
 app.use('/static', express.static('public'));
 

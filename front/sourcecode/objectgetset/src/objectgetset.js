@@ -6,7 +6,7 @@
  */
 
 import $ from 'jquery';
-import  * as util from '../../js/common/util'; 
+import * as util from '../../js/common/util';
 
 $(() => {
   existObjgetset();
@@ -14,16 +14,16 @@ $(() => {
 
 function simpleObjgetset() {
   let testObj = {
-    para:1
+    para: 1
   };
 
   Object.defineProperty(testObj, "fn", {
-    set:function(value) {
+    set: function(value) {
       console.log("set before")
       this.tmp = value;
       console.log("set after");
     },
-    get:function() {
+    get: function() {
       console.log("get before");
       return this.tmp;
     }
@@ -33,5 +33,5 @@ function simpleObjgetset() {
     console.log(num);
   }
 
-  testObj.fn(1);  
+  testObj.fn(1);
 }

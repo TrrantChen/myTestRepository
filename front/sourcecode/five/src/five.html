@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style type="text/css">
+  * {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+     user-select: none;     
+  }
+
+  body,
+  input,
+  select,
+  button,
+  textarea {
+    font-size: 14px;
+    font-family: 'Microsoft YaHei', Tahoma, Geneva, sans-serif;
+  }
+
+  button {
+    border-width: 0px;
+    outline: none;
+  }
+
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+  }
+
+  iframe {
+    display: block;
+  }
+
+
+  .btnStyle {
+    padding: 0 20px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background: #49a9ee;
+    color: #fff;
+    cursor: pointer;
+    margin: 5px;
+  }
+
+  .btnStyle:active {
+    opacity: 0.8;
+  }
+
+  .container {
+    background:#D5BA9D;
+    width:640px;
+    height:640px;
+    background-image:linear-gradient(rgba(255,255,255,.3) 1px, transparent 0),
+        linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 0),
+        linear-gradient(black 1px, transparent 0),
+        linear-gradient(90deg, black 1px, transparent 0);
+    background-size:40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chessboard {
+    background: (0, 0);
+    width:600px;
+    height:600px;
+    font-size: 0;
+  }
+
+  .chessGrid {
+    width:40px;
+    height:40px;
+    display: inline-block;
+    border-radius: 50%;
+  }
+
+  .white {
+    background: white;
+  }
+
+  .black {
+    background: black;
+  }
+
+  </style>
+</head>
+<body>
+  <button id ="undo" class="btnStyle">悔棋</button> 
+  <button id ="undoundo" class="btnStyle">撤销</button>
+  <div class="container">
+    <div class="chessboard">
+      
+    </div>
+  </div>
+</body>
+<script type="text/javascript">
+
+  let chessCoordinateArr = [] // 记录棋盘落子 -1 未落子， 0， 白落， 1， 黑落
+   ,whosTurn = true           // 轮到谁  0，白  1，黑
+   ,isUndo = true          // 是否能悔棋
+   ,isUndoUndo = false     // 是否能撤销悔棋
+   ,chessboard = document.querySelector(".chessboard")
+   ,btnUndo = document.querySelector("#undo")
+   ,btnUndoUndo = document.querySelector("#undoundo");
+
+  initChessboard();
+
+  btnUndo.addEventListener("click", (evt) => {
+    
+  })
+
+  btnUndoUndo.addEventListener("click", (evt) => {
+    
+  })
+
+  chessboard.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    let chessGrid = evt.target
+    if (chessGrid !== chessboard) {
+      let chessCoordinate = chessGrid.dataset.coordinate.split(",")
+        ,i = chessCoordinate[0]
+        ,j = chessCoordinate[1]
+
+      if (chessCoordinateArr[i][j] === -1) {
+        chessCoordinateArr[i][j] = (+whosTurn);
+        
+        if (whosTurn) {
+          chessGrid.classList.add("white");
+        } else {
+          chessGrid.classList.add("black");
+        }
+
+      if (isWin(+i, +j, +whosTurn)) {
+        setTimeout(() => {
+          alert((whosTurn ? "white" : "black") + " win")
+        }, 0);
+      }
+
+        whosTurn = !whosTurn;
+      } else {
+        console.warn("该格子已被下");
+      }
+    }
+  })
+
+  function initChessboard() {
+    for (var i = 0; i < 15; i++) {
+      chessCoordinateArr[i] = [];
+      for (var j = 15; j > -1; j--) {
+        chessCoordinateArr[i][j] = -1;
+        let div = document.createElement("div");
+        div.classList.add("chessGrid");
+        div.dataset.coordinate = `${i},${j}`;
+        chessboard.appendChild(div);
+      }
+    }
+  }
+
+  function isWin(i, j, standard) {
+    // return horizontal(i, j, standard) || vertical(i, j, standard) || rightSlant(i, j, standard) || leftSlant(i, j, standard);
+    // return rightSlant(i, j, standard);
+    return horizontal(i, j, standard) || vertical(i, j, standard);
+  }
+
+  function horizontal(i, j, standard) {
+    let result = false
+      ,count = 0;
+
+    for (var n = i; n > -1; n--) {
+      if (chessCoordinateArr[n][j] !== standard) {
+        break;
+      }
+      console.log(n);
+      count++;
+    } 
+
+    for (var n = i + 1; n < 16; n++) {
+      if (chessCoordinateArr[n][j] !== standard) {
+        break;
+      }
+      console.log(n);
+      count++;
+    }
+
+    if (count === 5) {
+      result = true;
+    }
+    
+    return result;
+  }
+
+  function vertical(i, j, standard) {
+    let result = false
+      ,count = 0;
+
+    for (var n = j; n > -1; n--) {
+      if (chessCoordinateArr[i][n] !== standard) {
+        break;
+      }
+      count++;
+    } 
+
+    for (var n = j + 1; n < 16; n++) {
+      if (chessCoordinateArr[i][n] !== standard) {
+        break;
+      }
+      count++;
+    }
+
+    if (count === 5) {
+      result = true;
+    }
+    
+    return result;
+  }
+
+  function rightSlant(i, j, standard) {
+    let result = false
+      ,count = 0;
+
+
+    for (var n = i, k = j; n > -1 && k > -1; ) {
+      if (chessCoordinateArr[n][k] !== standard) {
+        break;
+      }
+      console.log("----------------------------------")
+      console.log(n + " " + k);
+      count++;
+      n--;
+      k--;
+    }
+
+    for (var n = i, k = j; n < 16 && k < 16; ) {
+      if (chessCoordinateArr[n][k] !== standard) {
+        break;
+      }
+      console.log("+++++++++++++++++++++++++++++++++++")
+      console.log(n + " " + k);
+      count++;  
+      n++; 
+      k++; 
+    }
+
+    if (count === 5) {
+      result = true;
+    }
+
+    return result;
+  }
+
+  function leftSlant(i, j, standard) {
+    let result = false
+      ,count = 0;
+
+    for (var n = i, k = j; n > -1 && k < 16; n--, k++) {
+      if (chessCoordinateArr[n][k] !== standard) {
+        break;
+      }
+      console.log(n + " " + k);
+      count++;
+    }
+
+    for (var n = i, k = j; n < 16 && k > -1; n++, k--) {
+      if (chessCoordinateArr[n][k] !== standard) {
+        break;
+      }
+      console.log(n + " " + k);
+      count++;    
+    }
+
+    if (count === 5) {
+      result = true;
+    }
+
+    return result;
+  }
+
+  function undo() {
+
+  }
+
+  function undoundo() {
+
+  }
+
+</script>
+</html>
