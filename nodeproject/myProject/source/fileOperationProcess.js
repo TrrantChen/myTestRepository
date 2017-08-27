@@ -1,14 +1,16 @@
- var fs = require('fs');
- var bufferHelper = require('./bufferHelper');
- var iconv = require('iconv-lite');
+ const fs = require('fs');
+ const iconv = require('iconv-lite');
+
+ const bufferHelper = require('./common/bufferHelper');
+
 
  // 处理前端传过来的formData或者文件图片 处理formData
- var connectMultiparty = require('connect-multiparty');
- var multipartMiddleware = connectMultiparty();
+ const connectMultiparty = require('connect-multiparty');
+ const multipartMiddleware = connectMultiparty();
  //  同上
- var multiparty = require('multiparty');
+ const multiparty = require('multiparty');
  // 同上
- var busboy = require('busboy');
+ const busboy = require('busboy');
 
  // 使用iconv将buffer，按gbk编码转成utf-8字符串, 转成utf-8文件会变大
  exports.copyGbk = function(inputFilePath, outputFilePath) {

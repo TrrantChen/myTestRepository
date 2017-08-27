@@ -1,6 +1,6 @@
-import * as util from '../common/util.js';
-import * as ajax from '../common/ajax.js';
-import * as domoperation from '../common/domoperation.js';
+import * as util from './util.js';
+import * as ajax from './ajax.js';
+import * as domoperation from './domoperation.js';
 
 var path = util.getHost();
 

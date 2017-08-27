@@ -4,26 +4,28 @@
  * @date    2016-09-26 10:20:59
  * @version $Id$
  */
-var commonProcess = require('./commonProcess');
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var txtParser = bodyParser.text();
-var bufferHelper = require('./bufferHelper');
-var iconv = require('iconv-lite');
-var fileOperationProcess = require('./fileOperationProcess');
+
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
+const txtParser = bodyParser.text();
+const iconv = require('iconv-lite');
+
+const commonProcess = require('./common/commonProcess');
+const bufferHelper = require('./common/bufferHelper');
+const fileOperationProcess = require('./fileOperationProcess');
 
 // create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({
+const urlencodedParser = bodyParser.urlencoded({
     extended: false
 })
 
 // 处理前端传过来的formData或者文件图片 处理formData
-var connectMultiparty = require('connect-multiparty');
-var multipartMiddleware = connectMultiparty();
+const connectMultiparty = require('connect-multiparty');
+const multipartMiddleware = connectMultiparty();
 //  同上
-var multiparty = require('multiparty');
+const multiparty = require('multiparty');
 // 同上
-var busboy = require('busboy');
+const busboy = require('busboy');
 
 exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "post", "/sendJsonWithoutContentype", parseJsonWithoutContentType);

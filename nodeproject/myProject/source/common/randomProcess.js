@@ -1,12 +1,17 @@
 /**
  * 
  * @authors Your Name (you@example.org)
+ * @date    2017-08-27 16:51:49
+ * @version $Id$
+ */
+/**
+ * 
+ * @authors Your Name (you@example.org)
  * @date    2016-10-27 15:59:03
  * @version $Id$
  */
 
-var arrayProcess = require("./arrayProcess");
-var converProcess = require("./converProcess");
+const util = require("./util");
 
 // Returns a random number between 0 (inclusive) and 1 (exclusive)
 exports.getRandom = function() {
@@ -53,14 +58,14 @@ exports.createRandomArray = function(length, min, max, isSort) {
     for (var i = 0; i < length; i++) {
         array[i] = exports.getRandomInt(min, max);
     }
-    return  isSort ? arrayProcess.arraySort(array) : array;
+    return  isSort ? util.arraySort(array) : array;
 }
 
 exports.createRandomString = function(length) {
     length = length || 10;
     var str = "";
     for (var i = 0; i < length; i++) {
-        str +=  converProcess.num2char(exports.getRandomIntInclusive(97, 122));
+        str +=  util.num2char(exports.getRandomIntInclusive(97, 122));
     }
     return str;
 }

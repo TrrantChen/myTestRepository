@@ -6,7 +6,6 @@
  */
 
 const fs = require("fs");
-const common = require("./commonProcess");
 
  /*
  最简单的demo，gen定义的时候helloGenerator内部是不会执行的，函数每次执行到yield处，都会停住，

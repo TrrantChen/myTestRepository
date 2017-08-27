@@ -1,6 +1,6 @@
     import * as util from '../../js/common/util'  
 import { autoDownloadUrl } from '../../js/common/domoperation'  
-import { downloadFile, uploadFile } from '../../js/module/filemodule'
+import { downloadFile, uploadFile } from '../../js/common/filemodule'
 
 let path = util.getHost();
 $(function(){

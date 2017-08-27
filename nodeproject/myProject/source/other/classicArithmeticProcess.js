@@ -5,10 +5,7 @@
  * @version $Id$
  */
 
-var randomProcess = require("./randomProcess");
-var arrayProcess = require("./arrayProcess");
-var converProcess = require("./converProcess");
-var commonProcess = require("./commonProcess");
+const randomProcess = require("../common/randomProcess");
 
 exports.shuffle = function(array) {
     var length = array.length

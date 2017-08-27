@@ -5,7 +5,7 @@
  * @version $Id$
  */
 const fs = require("fs");
-const commonProcess = require('./commonProcess');
+const commonProcess = require('./common/commonProcess');
 
 // exports.createHttpServer = function() {
 //     var http = require("http");

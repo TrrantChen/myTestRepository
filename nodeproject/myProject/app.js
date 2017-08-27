@@ -3,11 +3,11 @@ const log4js = require('log4js');
 const arp = require('node-arp');
 const gulp = require('gulp');
 
-const bodyPostRoute = require('./bodyPostRoute');
-const httpRoute = require('./httpRoute');
-const fileOperationRoute = require('./fileOperationRoute');
-const connectRoute = require('./connectRoute');
-const commomProcess = require('./commonProcess');
+const bodyPostRoute = require('./source/bodyPostRoute');
+const httpRoute = require('./source/httpRoute');
+const fileOperationRoute = require('./source/fileOperationRoute');
+const connectRoute = require('./source/connectRoute');
+const commomProcess = require('./source/common/commonProcess');
 const app = express();
 
 

@@ -5,13 +5,15 @@
  * @version $Id$
  */
 
-var url = require("url");
-var path = require("path");
-var commonProcess = require("./commonProcess");
-var randomProcess = require("./randomProcess");
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var txtParser = bodyParser.text();
+const url = require("url");
+const path = require("path");
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
+const txtParser = bodyParser.text();
+
+const commonProcess = require("./common/commonProcess");
+const randomProcess = require("./common/randomProcess");
+
 
 exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/", defaultConnect);

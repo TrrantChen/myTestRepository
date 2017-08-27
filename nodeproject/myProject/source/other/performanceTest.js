@@ -4,10 +4,10 @@
  * @date    2017-03-13 11:05:43
  * @version $Id$
  */
-var commonProcess = require('./commonProcess');
-var classicArithmeticProcess = require('./classicArithmeticProcess');
-var randomProcess = require("./randomProcess");
-var arrayProcess = require("./arrayProcess");
+const commonProcess = require('../common/commonProcess');
+const classicArithmeticProcess = require('./classicArithmeticProcess');
+const randomProcess = require("../common/randomProcess");
+const util = require("../common/util");
 
 /*
     sort的效果要比quicksort好
@@ -15,7 +15,7 @@ var arrayProcess = require("./arrayProcess");
 function quickSortVsArraySort() {
     var randomArray = randomProcess.createRandomArray(10000000, 1, 100000000);
     console.time("arraySort");
-    var arraySortResult = arrayProcess.arraySort(randomArray);
+    var arraySortResult = util.arraySort(randomArray);
     console.timeEnd("arraySort");
 
     console.time("quickSort");

@@ -5,9 +5,8 @@
  * @version $Id$
  */
 
-var commonProcess = require('./commonProcess');
-var classicArithmeticProcess = require('./classicArithmeticProcess');
-var randomProcess = require("./randomProcess");
+const commonProcess = require('../common/commonProcess');
+const randomProcess = require("../common/randomProcess");
 
 /* Two Sum
  * Given an array of integers, return indices of the two numbers such that they add up to a specific target.

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
@@ -51,22 +50,36 @@
     margin: 5px;
   }
 
+  .btnStyle:disabled {
+    cursor:not-allowed;
+    opacity:0.5;
+  }
+
   .btnStyle:active {
     opacity: 0.8;
   }
 
   .container {
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+  }
+
+  .chessboardContainer {
     background:#D5BA9D;
     width:640px;
     height:640px;
-    background-image:linear-gradient(rgba(255,255,255,.3) 1px, transparent 0),
-        linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 0),
-        linear-gradient(black 1px, transparent 0),
-        linear-gradient(90deg, black 1px, transparent 0);
-    background-size:40px;
+    background-image:
+      linear-gradient(270deg, black 1px,transparent 0),
+      linear-gradient(360deg, black 1px,transparent 0),
+      linear-gradient(black 1px,transparent 0),
+      linear-gradient(90deg,black 1px,transparent 0);
+    background-size:40px 40px;
     display: flex;
     justify-content: center;
     align-items: center;
+    outline:solid 1px black;  
   }
 
   .chessboard {
@@ -80,126 +93,338 @@
     width:40px;
     height:40px;
     display: inline-block;
-    border-radius: 50%;
+    
   }
 
   .white {
     background: white;
+    border-radius: 50%;
   }
 
   .black {
     background: black;
+    border-radius: 50%;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .chessboradCanvas {
+    background:#D5BA9D;
+    width:640px;
+    height:640px;
+    outline:solid 1px black;    
+  }
+
+  .labelContent {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    left: 20px;
+    top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: solid 1px #000;
+    flex-direction: column; 
+    background: gray; 
+  }
+
+  .labelWhite {
+    color:white;
+  }
+
+  .labelBlack {
+    color:black;
   }
 
   </style>
 </head>
 <body>
   <button id ="undo" class="btnStyle">悔棋</button> 
-  <button id ="undoundo" class="btnStyle">撤销</button>
-  <div class="container">
-    <div class="chessboard">
-      
-    </div>
+  <button id ="todo" class="btnStyle">撤销</button>
+  <button id="change" class="btnStyle">切换</button>
+  <div class="labelContent">
+    <label>轮到谁下</label>
+    <h1 id="whosTurnFont">黑</h1>
   </div>
+  <div class="container">
+    <div class="chessboardContainer hidden">
+      <div class="chessboard">
+        
+      </div>
+    </div>
+    <canvas class="chessboradCanvas"></canvas>    
+  </div>
+
 </body>
 <script type="text/javascript">
 
-  let chessCoordinateArr = [] // 记录棋盘落子 -1 未落子， 0， 白落， 1， 黑落
-   ,whosTurn = true           // 轮到谁  0，白  1，黑
-   ,isUndo = true          // 是否能悔棋
-   ,isUndoUndo = false     // 是否能撤销悔棋
+  let chessCoordinateArr = [] // 记录棋盘落子 -1 未落,  黑 0,  白 1
+   ,whosTurn = true           // 轮到谁  0，黑 1，白 
+   ,isCanUndo = false          // 是否能悔棋
+   ,isCanTodo = false     // 是否能撤销悔棋
+   ,isByDom = true        // 用Dom还是Canvas
    ,chessboard = document.querySelector(".chessboard")
+   ,chessboardContainer = document.querySelector(".chessboardContainer")
+   ,canvas = document.querySelector("canvas")
    ,btnUndo = document.querySelector("#undo")
-   ,btnUndoUndo = document.querySelector("#undoundo");
+   ,btnTodo = document.querySelector("#todo")
+   ,btnChange = document.querySelector("#change")
+   ,whosTurnFont = document.querySelector("#whosTurnFont")
+   ,lastChessCoordinate = {i:-1, j:-1}
+   ,defineObj = {}
+   ,dis = 40
+   ,num = 15;
+
+  Object.defineProperty(defineObj, "isCanUndo", {
+    set:function(value) {
+      if (value) {
+        btnUndo.removeAttribute("disabled");
+      } else {
+        btnUndo.setAttribute("disabled", "disabled");
+      };
+
+      isCanUndo = value;
+    },
+    get:function() {
+      return isCanUndo;
+    }
+  })
+
+  Object.defineProperty(defineObj, "isCanTodo", {
+    set:function(value) {
+      if (value) {
+        btnTodo.removeAttribute("disabled");
+      } else {
+        btnTodo.setAttribute("disabled", "disabled");
+      };
+
+      isCanTodo  = value;
+    },
+    get:function() {
+      return isCanTodo;
+    }
+  })
+
+  Object.defineProperty(defineObj, "isByDom", {
+    set:function(value) {
+        chessboardContainer.classList.toggle("hidden");
+        canvas.classList.toggle("hidden");
+        isByDom  = value;
+    },
+    get:function() {
+      return isByDom;
+    }
+  })  
+
+  Object.defineProperty(defineObj, "whosTurn", {
+    set:function(value) {
+      if (value) {
+        whosTurnFont.innerText = "白";
+        whosTurnFont.classList.remove("labelBlack");
+        whosTurnFont.classList.add("labelWhite");
+      } else {
+        whosTurnFont.innerText = "黑";
+        whosTurnFont.classList.add("labelBlack");
+        whosTurnFont.classList.remove("labelWhite");        
+      };
+
+      whosTurn  = value;
+    },
+    get:function() {
+      return whosTurn;
+    }
+  })
+
+  defineObj.isCanUndo = isCanUndo;
+  defineObj.isCanTodo = isCanTodo;
+  defineObj.isByDom = isByDom;
+  defineObj.whosTurn = whosTurn;
 
   initChessboard();
 
   btnUndo.addEventListener("click", (evt) => {
-    
-  })
+    if (defineObj.isCanUndo) {
+      defineObj.isCanUndo = false;
+      defineObj.isCanTodo = true;
+      defineObj.whosTurn = !defineObj.whosTurn;
+      chessCoordinateArr[lastChessCoordinate.i][lastChessCoordinate.j] = -1;
 
-  btnUndoUndo.addEventListener("click", (evt) => {
-    
-  })
-
-  chessboard.addEventListener("click", (evt) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    let chessGrid = evt.target
-    if (chessGrid !== chessboard) {
-      let chessCoordinate = chessGrid.dataset.coordinate.split(",")
-        ,i = chessCoordinate[0]
-        ,j = chessCoordinate[1]
-
-      if (chessCoordinateArr[i][j] === -1) {
-        chessCoordinateArr[i][j] = (+whosTurn);
-        
-        if (whosTurn) {
-          chessGrid.classList.add("white");
-        } else {
-          chessGrid.classList.add("black");
-        }
-
-      if (isWin(+i, +j, +whosTurn)) {
-        setTimeout(() => {
-          alert((whosTurn ? "white" : "black") + " win")
-        }, 0);
-      }
-
-        whosTurn = !whosTurn;
+      if (defineObj.isByDom) {
+        let lastChessGrid = document.querySelector(`#_${lastChessCoordinate.i}_${lastChessCoordinate.j}`);
+        lastChessGrid.classList.remove( defineObj.whosTurn ? "white" : "black");
       } else {
-        console.warn("该格子已被下");
-      }
+        recoverChessByCanvas();
+      } 
     }
   })
 
+  btnTodo.addEventListener("click", (evt) => {
+    if (defineObj.isCanTodo) {
+      defineObj.isCanTodo = false;
+      defineObj.isCanUndo = true;
+
+      if (defineObj.isByDom) {
+        let lastChessGrid = document.querySelector(`#_${lastChessCoordinate.i}_${lastChessCoordinate.j}`);
+        lastChessGrid.classList.add(defineObj.whosTurn ? "white" : "black");        
+      } else {  
+        drawChessByCanvas(lastChessCoordinate.i, lastChessCoordinate.j, defineObj.whosTurn);     
+      }
+
+      chessCoordinateArr[lastChessCoordinate.i][lastChessCoordinate.j] = (+defineObj.whosTurn);
+      defineObj.whosTurn = !defineObj.whosTurn;
+    }    
+  })
+
+  btnChange.addEventListener("click", (evt) => {
+    defineObj.isByDom = !defineObj.isByDom;
+
+    if(defineObj.isByDom) {
+      for (var i = 0; i < num; i++) {
+        for (var j = 0; j < num; j++) {
+          let chessGrid = null;
+          switch(chessCoordinateArr[i][j]) {
+            case 0:
+              chessGrid = document.querySelector(`#_${i}_${j}`);
+              chessGrid.classList.add("black");
+              break;
+            case 1:
+              chessGrid = document.querySelector(`#_${i}_${j}`);
+              chessGrid.classList.add("white");            
+              break; 
+            case -1:
+              chessGrid = document.querySelector(`#_${i}_${j}`);
+              chessGrid.classList.remove("black");     
+              chessGrid.classList.remove("white");                
+              break;                     
+            default:
+              break;
+          }                     
+        }
+      }
+    } else {
+      recoverChessByCanvas();
+    }    
+  })
+
+  chessboard.addEventListener("mousedown", (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    let chessGrid = evt.target;
+    if (chessGrid !== chessboard) {
+      let chessCoordinate = chessGrid.dataset.coordinate.split(",")
+        ,i = chessCoordinate[0]
+        ,j = chessCoordinate[1];
+
+      playChess(i, j);
+    }
+  })
+
+  canvas.addEventListener("mousedown", (evt) => {
+    let canvasBoundingClientRect = canvas.getBoundingClientRect()
+    ,canvasLeft = canvasBoundingClientRect.left
+    ,canvasTop = canvasBoundingClientRect.top  
+    ,cvsX = evt.pageX - canvasLeft
+    ,cvsY = evt.pageY - canvasTop;
+
+    if ( cvsX < dis / 2 || cvsX > dis * (num + 1) - dis / 2 || cvsY < dis / 2 || cvsY > dis * (num + 1) - dis / 2) {
+      return 
+    };
+
+    // 需要颠倒一下
+    let i = Math.round(cvsY / dis) - 1
+      ,j = Math.round(cvsX / dis) - 1;
+
+    playChess(i, j);
+  })
+
   function initChessboard() {
-    for (var i = 0; i < 15; i++) {
+    initChessCoordinateArr();
+    drawChessborad();
+    drawChessboardByCanvas();
+  }
+
+  function initChessCoordinateArr() {
+    for (var i = 0; i < num; i++) {
       chessCoordinateArr[i] = [];
-      for (var j = 15; j > -1; j--) {
+      for (var j = 0; j < num; j++) {
         chessCoordinateArr[i][j] = -1;
+      }
+    }
+  }
+
+  function drawChessborad() {
+    chessboard.innerHTML = "";
+    for (var i = 0; i < num; i++) {
+      for (var j = 0; j < num; j++) {
         let div = document.createElement("div");
         div.classList.add("chessGrid");
         div.dataset.coordinate = `${i},${j}`;
+        div.id = `_${i}_${j}`;
         chessboard.appendChild(div);
       }
+    }    
+  }
+
+  function drawChessboardByCanvas() {
+    canvas.width = 640;
+    canvas.height = 640;
+    let ctx = canvas.getContext("2d");
+    for (var i = 1; i < num + 1; i++) {
+      ctx.moveTo(0, i * dis);
+      ctx.lineTo(640, i * dis);
+      ctx.stroke();
+      ctx.moveTo(i * dis, 0);
+      ctx.lineTo(i * dis, 640);
+      ctx.stroke();
+    }
+  }
+
+  function playChess(i, j) {
+    if (chessCoordinateArr[i][j] === -1) {
+      chessCoordinateArr[i][j] = (+defineObj.whosTurn);       
+
+      changeChessGrid(i, j);
+
+      if (isWin(+i, +j, +defineObj.whosTurn)) {
+        let whosTurn4Callback = defineObj.whosTurn;
+        setTimeout(() => {
+          alert((whosTurn4Callback ? "白" : "黑") + "赢了！重开！");
+          restart();
+        }, 100);
+      }
+
+      defineObj.whosTurn = !defineObj.whosTurn;
+      defineObj.isCanUndo = true;
+      defineObj.isCanTodo = false;
+      lastChessCoordinate.i = i;
+      lastChessCoordinate.j = j;
+    } else {
+      console.warn("该格子已被下");
+    }
+  }
+
+  function changeChessGrid(i, j) {
+    if (defineObj.isByDom) {
+      let id = `_${i}_${j}`
+        ,chessGrid = document.querySelector("#" + id);
+      if (defineObj.whosTurn) {
+        chessGrid.classList.add("white");
+      } else {
+        chessGrid.classList.add("black");
+      }        
+    } else {
+      drawChessByCanvas(i, j, defineObj.whosTurn);
     }
   }
 
   function isWin(i, j, standard) {
-    // return horizontal(i, j, standard) || vertical(i, j, standard) || rightSlant(i, j, standard) || leftSlant(i, j, standard);
-    // return rightSlant(i, j, standard);
-    return horizontal(i, j, standard) || vertical(i, j, standard);
+    return horizontal(i, j, standard) || vertical(i, j, standard) || rightSlant(i, j, standard) || leftSlant(i, j, standard);
   }
 
   function horizontal(i, j, standard) {
-    let result = false
-      ,count = 0;
-
-    for (var n = i; n > -1; n--) {
-      if (chessCoordinateArr[n][j] !== standard) {
-        break;
-      }
-      console.log(n);
-      count++;
-    } 
-
-    for (var n = i + 1; n < 16; n++) {
-      if (chessCoordinateArr[n][j] !== standard) {
-        break;
-      }
-      console.log(n);
-      count++;
-    }
-
-    if (count === 5) {
-      result = true;
-    }
-    
-    return result;
-  }
-
-  function vertical(i, j, standard) {
     let result = false
       ,count = 0;
 
@@ -210,14 +435,39 @@
       count++;
     } 
 
-    for (var n = j + 1; n < 16; n++) {
+    for (var n = j + 1; n < num; n++) {
       if (chessCoordinateArr[i][n] !== standard) {
         break;
       }
       count++;
     }
 
-    if (count === 5) {
+    if (count >= 5) {
+      result = true;
+    }
+    
+    return result;
+  }
+
+  function vertical(i, j, standard) {
+    let result = false
+      ,count = 0;
+
+    for (var n = i; n > -1; n--) {
+      if (chessCoordinateArr[n][j] !== standard) {
+        break;
+      }
+      count++;
+    } 
+
+    for (var n = i + 1; n < num; n++) {
+      if (chessCoordinateArr[n][j] !== standard) {
+        break;
+      }
+      count++;
+    }
+
+    if (count >= 5) {
       result = true;
     }
     
@@ -228,30 +478,21 @@
     let result = false
       ,count = 0;
 
-
-    for (var n = i, k = j; n > -1 && k > -1; ) {
-      if (chessCoordinateArr[n][k] !== standard) {
+    for (var n = i, m = j; n > -1 && m < num; n--, m++) {
+      if (chessCoordinateArr[n][m] !== standard) {
         break;
       }
-      console.log("----------------------------------")
-      console.log(n + " " + k);
       count++;
-      n--;
-      k--;
     }
 
-    for (var n = i, k = j; n < 16 && k < 16; ) {
-      if (chessCoordinateArr[n][k] !== standard) {
+    for (var n = i + 1, m = j - 1; n < num && m > -1; n++, m--) {
+      if (chessCoordinateArr[n][m] !== standard) {
         break;
       }
-      console.log("+++++++++++++++++++++++++++++++++++")
-      console.log(n + " " + k);
-      count++;  
-      n++; 
-      k++; 
+      count++;
     }
 
-    if (count === 5) {
+    if (count >= 5) {
       result = true;
     }
 
@@ -262,35 +503,61 @@
     let result = false
       ,count = 0;
 
-    for (var n = i, k = j; n > -1 && k < 16; n--, k++) {
-      if (chessCoordinateArr[n][k] !== standard) {
+    for (var n = i, m = j; n > -1 && m > -1; n--, m--) {
+      if (chessCoordinateArr[n][m] !== standard) {
         break;
       }
-      console.log(n + " " + k);
       count++;
     }
 
-    for (var n = i, k = j; n < 16 && k > -1; n++, k--) {
-      if (chessCoordinateArr[n][k] !== standard) {
+    for (var n = i + 1, m = j + 1; n < num && m < num; n++, m++) {
+      if (chessCoordinateArr[n][m] !== standard) {
         break;
       }
-      console.log(n + " " + k);
-      count++;    
+      count++;  
     }
 
-    if (count === 5) {
+    if (count >= 5) {
       result = true;
     }
 
     return result;
   }
 
-  function undo() {
-
+  function drawChessByCanvas(i, j, whiteOrblack) {
+    let ctx = canvas.getContext("2d");
+    ctx.fillStyle = whiteOrblack ? "white" : "black";
+    ctx.beginPath();
+    // 这里需要颠倒还原。
+    ctx.arc((parseInt(j) + 1) * dis, (parseInt(i) + 1) * dis, dis/2-3, 0, 2*Math.PI);
+    ctx.fill();
   }
 
-  function undoundo() {
+  function recoverChessByCanvas() {
+    drawChessboardByCanvas();
+    for (var i = 0; i < num; i++) {
+      for (var j = 0; j < num; j++) {
+        switch(chessCoordinateArr[i][j]) {
+          case 0:
+            drawChessByCanvas(i, j, false);
+            break;
+          case 1: 
+            drawChessByCanvas(i, j, true);         
+            break; 
+          case -1:              
+            break;                     
+          default:
+            break;
+        }                     
+      }
+    }    
+  }
 
+  function restart() {
+    defineObj.isCanUndo = false;
+    defineObj.isCanTodo = false;
+    lastChessCoordinate = {i:-1, j:-1};
+    initChessboard();
   }
 
 </script>

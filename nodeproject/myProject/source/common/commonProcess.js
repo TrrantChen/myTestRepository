@@ -5,7 +5,6 @@
  * @version $Id$
  */
 var os = require('os');
-var app =  null;  
 
 // var accessPath = "http://" +  ((process.platform == "win32") ? os.networkInterfaces()["本地连接"][1].address : "") + ":8099";
 exports.setAccess = function(req, res) {
@@ -105,22 +104,11 @@ exports.dateFormate = function(dateTime, format) {
     return format;
 }
 
-exports.throwErr = () => {
-    let error = new Error();
-    throw error;
-}
 
-exports.noop= () => {};
 
-exports.initGetUid = function() {
-    let uid = 0;
-    function incrementUid() {
-        return uid++;
-    }
-    return function() {
-        return incrementUid();
-    }    
-}
+
+
+
 
 
 

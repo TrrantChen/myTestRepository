@@ -5,10 +5,10 @@
  * @version $Id$
  */
 
- var commonProcess = require("./commonProcess");
- var bufferProcess = require("./bufferProcess");
+const commonProcess = require("./common/commonProcess");
+const util = require("./common/util");
 
- var copeTypeArray = ["utf8", "ascii", "utf16le", "ucs2", "base64", "hex"];
+const copeTypeArray = ["utf8", "ascii", "utf16le", "ucs2", "base64", "hex"];
 
 exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/getBufferFromServer", getBufferFromServer);
@@ -30,11 +30,11 @@ function testByteLength(req, res) {
     commonProcess.setAccess(req, res)
     var result = "testByteLength \n";
     for (var i = 0; i < copeTypeArray.length; i++) {
-        result += (" 蛤 " + copeTypeArray[i] + " " + bufferProcess.getByteLength("蛤", copeTypeArray[i]) + "\n")
+        result += (" 蛤 " + copeTypeArray[i] + " " + util.getByteLength("蛤", copeTypeArray[i]) + "\n")
     }
 
     for (var i = 0; i < copeTypeArray.length; i++) {
-        result += (" A " + copeTypeArray[i] + " " + bufferProcess.getByteLength("A", copeTypeArray[i]) + "\n")
+        result += (" A " + copeTypeArray[i] + " " + util.getByteLength("A", copeTypeArray[i]) + "\n")
     }   
 
     res.send(result)
@@ -45,7 +45,7 @@ function string2Buffer(req, res) {
     var result = "string2Buffer \n"
     copeTypeArray.forEach(function (copeType) {
         try {
-            result += ("A " + copeType + " " + bufferProcess.string2Buffer("A", copeType) + "\n")
+            result += ("A " + copeType + " " + util.string2Buffer("A", copeType) + "\n")
         }
         catch(e){
             result += ("A " + copeType + " error "  + "\n")
@@ -54,7 +54,7 @@ function string2Buffer(req, res) {
     })
     copeTypeArray.forEach(function (copeType) {
         try {
-            result += ("蛤 " + copeType + " " + bufferProcess.string2Buffer("蛤", copeType) + "\n")
+            result += ("蛤 " + copeType + " " + util.string2Buffer("蛤", copeType) + "\n")
         }
         catch(e) {
             result += ("蛤 " + copeType + " error "  + "\n")
@@ -68,7 +68,7 @@ function buffer2String(req, res) {
     var result = "buffer2String \n"
     copeTypeArray.forEach(function (copeType) {
         try {
-            result += ("A " + copeType + " " + bufferProcess.buffer2String(bufferProcess.string2Buffer("A", copeType), copeType)+ "\n")
+            result += ("A " + copeType + " " + util.buffer2String(util.string2Buffer("A", copeType), copeType)+ "\n")
         }
         catch(e){
             result += ("A " + copeType + " error "  + "\n")
@@ -77,7 +77,7 @@ function buffer2String(req, res) {
     })
     copeTypeArray.forEach(function (copeType) {
         try {
-            result += ("蛤 " + copeType + " " + bufferProcess.buffer2String(bufferProcess.string2Buffer("蛤", copeType), copeType) + "\n")
+            result += ("蛤 " + copeType + " " + util.buffer2String(util.string2Buffer("蛤", copeType), copeType) + "\n")
         }
         catch(e) {
             result += ("蛤 " + copeType + " error "  + "\n")
