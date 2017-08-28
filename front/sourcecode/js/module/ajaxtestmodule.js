@@ -1,6 +1,9 @@
+import {getHost} from '../common/util.js';
 import {generalAjax} from '../common/ajax.js';
 import { autoDownloadUrl } from '../../js/common/domoperation' 
 import $ from 'jquery';
+
+const path = getHost();
 
 export function originXmlHttpRequestTestReadyStateChange() {
     var xhr = new XMLHttpRequest();
@@ -162,7 +165,7 @@ export function getFileWithResponceTyle() {
   client.send(null); 
 }
 
-// 测试各种发送数据的
+// 测试各种发送数据的默认content-type；
 export function test4SendDataAndDefaultContentTyle() {
   let ab = new ArrayBuffer(32);
   let blob = new Blob([ab]); 
@@ -170,11 +173,11 @@ export function test4SendDataAndDefaultContentTyle() {
   let str = "test";
 
   let testObj = {
-    "ArrayBuffer": ab
-    ,"Blob":blob
-    ,"Document":document
-    ,"String":str
-    ,"FormData":formData
+    // "ArrayBuffer": ab,
+    // "Blob":blob,
+    // "Document":document,
+    // "String":str,
+    "FormData":formData
   };
 
   for (var key in testObj) {
@@ -194,6 +197,104 @@ export function test4SendDataAndDefaultContentTyle() {
     generalAjax(option);    
   }
 }
+
+// 向后端跨域传json的两种方式，区别只在于后端的处理，前端只是在于有没有添加消息头。
+export function postJsonWithContentype() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("post", path + "uploadJsonClientCROS", true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+            console.log(xhr.responseText);
+        }
+    }
+    var sendJson = {
+        "num": "1"
+    };
+    xhr.send(JSON.stringify(sendJson));
+}
+
+export function postJsonWithoutContentype() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("post", path + "uploadJsonWithoutContentype", false);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+            console.log(xhr.responseText);
+        }
+    }
+    var sendJson = {
+        "num": "1"
+    };
+    xhr.send(JSON.stringify(sendJson));
+}
+
+// 使用formData进行传输，content-type会默认变为multipart/form-data，但如果在requestHeader进行设置，还是会改变content-type的
+export function formPost() {
+    var formData = new FormData(),
+        xhr = new XMLHttpRequest();
+    formData.append("test", "name");
+    xhr.open("post", path + "getFormClient", true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+            console.log(xhr.responseText);
+        }
+    }
+
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(formData);
+}
+
+export function postString() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("post", path + "uploadText", true);
+    xhr.setRequestHeader("Content-type", "text/plain");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+            console.log(xhr.responseText);
+        }
+    }
+    xhr.send("test=8");
+}
+
+export function postDefaultFormText() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("post", path + "uploadForm", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+            console.log(xhr.responseText);
+        }
+    }
+    xhr.send("test=name");
+}
+
+export function postMulFormFormData(parseType) {
+    var xhr = new XMLHttpRequest();
+    var formData = new FormData();
+    switch (parseType) {
+        case "multiparty":
+            xhr.open("post", path + "uploadFormDataParseByMultiparty", true);
+            break;
+        case "busboy":
+            xhr.open("post", path + "uploadFormDataParseByBusboy", true);
+            break;
+        case "connect-multiparty":
+            xhr.open("post", path + "uploadFormDataParseByConnectMultiparty", true);
+            break;
+    }
+
+    formData.append("中文", "联通");
+    formData.append("num", "1");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+            console.log(xhr.responseText);
+        }
+    }
+    xhr.send(formData);
+}
+
+export function postXml() {}
+
 
 
 

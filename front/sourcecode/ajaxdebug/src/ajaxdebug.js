@@ -2,12 +2,12 @@ import $ from 'jquery';
 import _ from 'underscore'
 import * as util from '../../js/common/util'
 import {generalAjax} from '../../js/common/ajax'
-import { mySelfAjaxTest, jqueryAjaxTest, originXmlHttpRequestTestReadyStateChange } from '../../js/module/ajaxtestmodule'
+import { mySelfAjaxTest, jqueryAjaxTest, originXmlHttpRequestTestReadyStateChange, test4SendDataAndDefaultContentTyle } from '../../js/module/ajaxtestmodule'
 
 $(() => {
   // mySelfAjaxTest();
   // jqueryAjaxTest();
-  originXmlHttpRequestTestReadyStateChange();
+  test4SendDataAndDefaultContentTyle();
 })
 
 // let oldFetch = window.fetch;

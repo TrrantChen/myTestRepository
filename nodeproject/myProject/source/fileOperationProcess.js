@@ -313,7 +313,6 @@
     //     readerStream.pipe(res);
     // })
 
-
  exports.readFile = function(filePath, option) {
     fileExistPromise(filePath).then(function(stats){
          var readerStream = fs.createReadStream(path);

@@ -8,10 +8,8 @@
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const txtParser = bodyParser.text();
-const iconv = require('iconv-lite');
 
 const commonProcess = require('./common/commonProcess');
-const bufferHelper = require('./common/bufferHelper');
 const fileOperationProcess = require('./fileOperationProcess');
 
 // create application/x-www-form-urlencoded parser
@@ -28,13 +26,13 @@ const multiparty = require('multiparty');
 const busboy = require('busboy');
 
 exports.functionRoute = function(app) {
-    commonProcess.preProcessHttpMethods(app, "post", "/sendJsonWithoutContentype", parseJsonWithoutContentType);
-    commonProcess.preProcessHttpMethods(app, "post", "/sendJsonClientCROS", parseJsonCROSPost, jsonParser);
-    commonProcess.preProcessHttpMethods(app, "post", "/sendTextClient", parseText, txtParser);
-    commonProcess.preProcessHttpMethods(app, "post", "/sendFormClient", urlencodedParser, parseForm);
-    commonProcess.preProcessHttpMethods(app, "post", "/sendFormDataParseByConnectMultiparty", parseFormDataByConnectMultiparty, multipartMiddleware);
-    commonProcess.preProcessHttpMethods(app, "post", "/sendFormDataParseByBusboy", parseFormDataByBusboy);
-    commonProcess.preProcessHttpMethods(app, "post", "/sendFormDataParseByMultiparty", parseFormDataByMultiparty);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadJsonWithoutContentype", parseJsonWithoutContentType);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadJsonClientCROS", parseJsonCROSPost, jsonParser);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadText", parseText, txtParser);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadForm", urlencodedParser, parseForm);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadFormDataParseByConnectMultiparty", parseFormDataByConnectMultiparty, multipartMiddleware);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadFormDataParseByBusboy", parseFormDataByBusboy);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadFormDataParseByMultiparty", parseFormDataByMultiparty);
     commonProcess.preProcessHttpMethods(app, "post", "/upLoadFileByConnectMultiparty", parseFileByConnectMultiparty);
     commonProcess.preProcessHttpMethods(app, "post", "/upLoadFileByMultiparty", parseFileByMultiparty);
     commonProcess.preProcessHttpMethods(app, "post", "/upLoadFileByBusboy", parseFileByBusboy);
@@ -52,7 +50,6 @@ function downLoadFileWithBuffer(req, res) {
 function downLoadFileWithStream(req, res) {
     fileOperationProcess.downloadWidthStream(req, res);
 }
-
 
 // 解析json
 // 不需要在客户端添加content-type
@@ -86,7 +83,6 @@ function parseText(req, res) {
         res.send("body undefined");
     }
 }
-
 
 // 解析默认表单数据application/x-www-form-urlencoded
 function parseForm(req, res) {
@@ -142,7 +138,6 @@ function parseFormDataByBusboy(req, res) {
     fileOperationProcess.uploadWithThirdPart(req, res);
     res.send("success");
 }
-
 
 // 处理文件，通过第三方插件
 function parseFileByConnectMultiparty(req, res) {
