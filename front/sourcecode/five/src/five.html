@@ -396,6 +396,7 @@
 
       canvas.width = lengthOfSide;
       canvas.height = lengthOfSide;
+      ctx.lineWidth = 1;
 
       for (var i = 1; i < size + 1; i++) {
         ctx.moveTo(border + dis / 2, i * dis);
@@ -403,7 +404,7 @@
         ctx.stroke();
         ctx.moveTo(i * dis, border + dis / 2);
         ctx.lineTo(i * dis, lengthOfSide - border - dis / 2);
-        ctx.stroke();
+        ctx.stroke();      
       }
     }  
   /*------------初始化------------*/
