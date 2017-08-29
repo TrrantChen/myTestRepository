@@ -66,7 +66,15 @@
     align-items: center;    
   }
 
-  .chessboardContainer {
+  .subContainer {
+    width:720px;
+    height:720px;
+    position: relative;
+    background:#D5BA9D;
+    outline:solid 1px black;      
+  }
+
+  .chessboardAppearance {
     background:#D5BA9D;
     width:640px;
     height:640px;
@@ -76,17 +84,20 @@
       linear-gradient(black 1px,transparent 0),
       linear-gradient(90deg,black 1px,transparent 0);
     background-size:40px 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    outline:solid 1px black;  
+    outline:solid 1px black;   
+    position: absolute;
+    top:40px;
+    left:40px;  
   }
 
   .chessboard {
-    background: (0, 0);
-    width:600px;
-    height:600px;
+    width:700px;
+    height:700px;
     font-size: 0;
+    position:absolute;
+    top:20px;
+    left:20px;
+    z-index: 1000;
   }
 
   .chessGrid {
@@ -112,9 +123,9 @@
 
   .chessboradCanvas {
     background:#D5BA9D;
-    width:640px;
-    height:640px;
-    outline:solid 1px black;    
+    width:720px;
+    height:720px;
+    outline:solid 1px black;  
   }
 
   .labelContent {
@@ -150,12 +161,16 @@
     <h1 id="whosTurnFont">黑</h1>
   </div>
   <div class="container">
-    <div class="chessboardContainer hidden">
+    <div id="chessboardContainer" class="subContainer hidden">
+      <div class="chessboardAppearance">
+        
+      </div>
       <div class="chessboard">
         
       </div>
     </div>
     <canvas class="chessboradCanvas"></canvas>    
+    
   </div>
 
 </body>
@@ -167,7 +182,7 @@
    ,isCanTodo = false     // 是否能撤销悔棋
    ,isByDom = true        // 用Dom还是Canvas
    ,chessboard = document.querySelector(".chessboard")
-   ,chessboardContainer = document.querySelector(".chessboardContainer")
+   ,chessboardContainer = document.querySelector("#chessboardContainer")
    ,canvas = document.querySelector("canvas")
    ,btnUndo = document.querySelector("#undo")
    ,btnTodo = document.querySelector("#todo")
@@ -176,7 +191,7 @@
    ,lastChessCoordinate = {i:-1, j:-1}
    ,defineObj = {}
    ,dis = 40
-   ,num = 15;
+   ,num = 17;
 
   Object.defineProperty(defineObj, "isCanUndo", {
     set:function(value) {
@@ -210,9 +225,9 @@
 
   Object.defineProperty(defineObj, "isByDom", {
     set:function(value) {
-        chessboardContainer.classList.toggle("hidden");
-        canvas.classList.toggle("hidden");
-        isByDom  = value;
+      chessboardContainer.classList.toggle("hidden");
+      canvas.classList.toggle("hidden");
+      isByDom  = value;
     },
     get:function() {
       return isByDom;
@@ -369,15 +384,17 @@
   }
 
   function drawChessboardByCanvas() {
-    canvas.width = 640;
-    canvas.height = 640;
+    let lengthOfSide = dis * (num + 1);
+    canvas.width = lengthOfSide;
+    canvas.height = lengthOfSide;
     let ctx = canvas.getContext("2d");
+
     for (var i = 1; i < num + 1; i++) {
-      ctx.moveTo(0, i * dis);
-      ctx.lineTo(640, i * dis);
+      ctx.moveTo(dis, i * dis);
+      ctx.lineTo(lengthOfSide - dis, i * dis);
       ctx.stroke();
-      ctx.moveTo(i * dis, 0);
-      ctx.lineTo(i * dis, 640);
+      ctx.moveTo(i * dis, dis);
+      ctx.lineTo(i * dis, lengthOfSide - dis);
       ctx.stroke();
     }
   }
@@ -529,7 +546,7 @@
     ctx.fillStyle = whiteOrblack ? "white" : "black";
     ctx.beginPath();
     // 这里需要颠倒还原。
-    ctx.arc((parseInt(j) + 1) * dis, (parseInt(i) + 1) * dis, dis/2-3, 0, 2*Math.PI);
+    ctx.arc((parseInt(j) + 1) * dis, (parseInt(i) + 1) * dis, dis/2, 0, 2*Math.PI);
     ctx.fill();
   }
 

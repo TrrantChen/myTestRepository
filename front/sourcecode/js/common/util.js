@@ -37,71 +37,8 @@ export function obj2keyValueString(obj) {
   }
 }
 
-export function ab2string8(arrayBuffer) {
-  return String.fromCharCode.apply(null, new Uint8Array(arrayBuffer))
-}
-
-export function ab2string16(arrayBuffer) {
-  return String.fromCharCode.apply(null, new Uint16Array(arrayBuffer))
-}
-
-export function string2ab16(str) {
-  var arrayBuffer = new ArrayBuffer(str.length * 2)
-  var charBuf = new Uint16Array(arrayBuffer);
-  for (var i = 0; i < str.length; i++) {
-    charBuf[i] = str.charCodeAt(i)
-  }
-  return arrayBuffer;
-}
-
-export function string2ab8(str) {
-  var arrayBuffer = new ArrayBuffer(str.length)
-  var charBuf = new Uint8Array(arrayBuffer);
-  for (var i = 0; i < str.length; i++) {
-    charBuf[i] = str.charCodeAt(i)
-  }
-  return arrayBuffer;
-}
-
 export function getHost() {
   return isServerDebug() ? "http://10.9.233.35:" + (isByNginx() ? 12306 : 8088) + "/" : "http://" + document.domain + ":8088/";
-}
-
-export function blob2arrayBuffer(blob) {
-  var result = null;
-  var fileReader = new FileReader()
-  fileReader.readAsArrayBuffer(blob);
-  fileReader.addEventListener("loadend", function() {
-    result = fileReader.result;
-    return result;
-  })
-}
-
-export function arrayBuffer2blob(arrayBuffer) {
-  var blob = new Blob([arrayBuffer]);
-  return blob;
-}
-
-export function arraryBuffer2TypedArray(arrayBuffer) {
-  var int8 = new Int8Array(arrayBuffer);
-  return int8;
-}
-
-export function typedArray2arrayBuffer(int8) {
-  return int8.buffer;
-}
-
-export function typedArray2Array(int8) {
-  var array = [];
-  for (var i = 0; i < int8.length; i++) {
-    array[i] = int8[i];
-  }
-  return array;
-}
-
-export function array2TypedArray(array) {
-  var int8 = new Int8Array(array);
-  return int8;
 }
 
 export function logTime(timString, func, process, length) {
@@ -428,11 +365,11 @@ export function completionZero(num) {
   将string转换为可以pipe的stream
  */
 export function str2stream(str) {
-    let s = new Readable();
-    s._read = function noop() {};
-    s.push(str);
-    s.push(null); 
-    return s;
+  let s = new Readable();
+  s._read = function noop() {};
+  s.push(str);
+  s.push(null);
+  return s;
 }
 
 export function isArrayContain(set, ele) {
@@ -440,46 +377,46 @@ export function isArrayContain(set, ele) {
 }
 
 export function arraySort(array, desc) {
-    desc = desc || false;
-    if (desc) {
-        return array.sort(desSort)
-    } else {
-        return array.sort(ascSort)
-    } 
+  desc = desc || false;
+  if (desc) {
+    return array.sort(desSort)
+  } else {
+    return array.sort(ascSort)
+  }
 }
 
 // ascSort(a,b)传给sort()，数字数组作升序排列
-function ascSort (a, b) {  // a和b是数组中相邻的两个数组项
-    return a - b; 
-    // 如果 return -1, 表示a小于b，a排列在b的前面
-    // 如果 return 1, 表示a大于b,a排列在b的后面
-    // 如果 return 0, 表示a等于b,a和b的位置保持不变
+function ascSort(a, b) { // a和b是数组中相邻的两个数组项
+  return a - b;
+  // 如果 return -1, 表示a小于b，a排列在b的前面
+  // 如果 return 1, 表示a大于b,a排列在b的后面
+  // 如果 return 0, 表示a等于b,a和b的位置保持不变
 }
 
 // desSort(a,b)传给sort()，数字数组作降序排列
-function desSort (a, b) { // a和b是数组中相邻的两个数组项
-    return b - a;
-    // 如果 return -1, 表示b小于a，b排列在a的前面
-    // 如果 return 1, 表示b大于a, b排列在a的后面
-    // 如果 return 0, 表示 b等于a, b和a的位置保持不变
+function desSort(a, b) { // a和b是数组中相邻的两个数组项
+  return b - a;
+  // 如果 return -1, 表示b小于a，b排列在a的前面
+  // 如果 return 1, 表示b大于a, b排列在a的后面
+  // 如果 return 0, 表示 b等于a, b和a的位置保持不变
 }
 
 export function num2char(num) {
-    return String.fromCharCode(num);
+  return String.fromCharCode(num);
 }
 
 export function char2num(ch) {
-    return ch.charCodeAt(0);
+  return ch.charCodeAt(0);
 }
 
 /*
   数组去重
  */
 export function twoArrayUnique(target, source) {
-  let result = []
-    , tmpMap = new WeakMap()
-    , sourceLength = source.length
-    , targetLength = target.length;
+  let result = [],
+    tmpMap = new WeakMap(),
+    sourceLength = source.length,
+    targetLength = target.length;
 
   for (var i = 0; i < sourceLength; i++) {
     tmpMap.set(source[i], true);
@@ -500,7 +437,7 @@ export function createUuid() {
       .toString(16)
       .substring(1);
   }
-  
+
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
@@ -551,13 +488,13 @@ Function.prototype.after = function(fn) {
 // "yyyy MM dd HH mm ss ffff"
 Date.prototype.format = function(str) {
   console.log(this);
-  let year = completionZero(this.getFullYear())
-     ,month = completionZero(this.getMonth())
-     ,date = completionZero(this.getDate())
-     ,hour = completionZero(this.getHours())
-     ,min = completionZero(this.getMinutes())
-     ,second = completionZero(this.getSeconds())
-     ,milliseconds = this.getMilliseconds(); 
+  let year = completionZero(this.getFullYear()),
+    month = completionZero(this.getMonth()),
+    date = completionZero(this.getDate()),
+    hour = completionZero(this.getHours()),
+    min = completionZero(this.getMinutes()),
+    second = completionZero(this.getSeconds()),
+    milliseconds = this.getMilliseconds();
 
   if (milliseconds >= 100 && milliseconds < 1000) {
     milliseconds = "0" + milliseconds.toString();
@@ -568,12 +505,10 @@ Date.prototype.format = function(str) {
   }
 
   return str.replace("yyyy", year)
-            .replace("MM", month)
-            .replace("dd", date)
-            .replace("HH", hour)
-            .replace("mm", min)
-            .replace("ss", second)
-            .replace("ffff", milliseconds)
+    .replace("MM", month)
+    .replace("dd", date)
+    .replace("HH", hour)
+    .replace("mm", min)
+    .replace("ss", second)
+    .replace("ffff", milliseconds)
 }
-
-

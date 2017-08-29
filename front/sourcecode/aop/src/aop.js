@@ -69,6 +69,7 @@ function myFirstAopTest() {
     testFunc.doSomething("something test");                           
 }
 
+
 function aopOnlineTestBySiTu() {
     function Person() {
         this.say = function(name, lang) {

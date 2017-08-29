@@ -38,6 +38,9 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "post", "/upLoadFileByBusboy", parseFileByBusboy);
     commonProcess.preProcessHttpMethods(app, "get", "/downLoadFileWithBuffer", downLoadFileWithBuffer);
     commonProcess.preProcessHttpMethods(app, "get", "/downLoadFileWithStream", downLoadFileWithStream);
+
+  commonProcess.preProcessHttpMethods(app, "post", "/uploadFormDataWithoutThirdPart", uploadFormDataWithoutThirdPart);
+  commonProcess.preProcessHttpMethods(app, "post", "/uploadFileWithoutThirdPart", uploadFileWithoutThirdPart);
 }
 
 
@@ -158,6 +161,16 @@ function parseFileByBusboy(req, res) {
 function parseFileWithoutThridPart(req, res) {
     fileOperationProcess.parseFileWithoutThridPart(req, res);
     res.send("success");
+}
+
+// 直接解析FormData数据
+function uploadFormDataWithoutThirdPart(req, res) {
+
+}
+
+// 直接解析文件
+function uploadFileWithoutThirdPart(req, res) {
+
 }
 
 
