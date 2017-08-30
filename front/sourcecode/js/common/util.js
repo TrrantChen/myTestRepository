@@ -512,3 +512,4 @@ Date.prototype.format = function(str) {
     .replace("ss", second)
     .replace("ffff", milliseconds)
 }
+

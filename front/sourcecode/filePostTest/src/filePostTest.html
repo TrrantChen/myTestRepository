@@ -1,169 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <style type="text/css">
-            * {
-                margin:0px;
-                padding:0px;
-                box-sizing: border-box;
-            }
-    
-            body, input, select, button, textarea {
-                font-size: 14px;
-                font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
-            }   
-            
-            body, html {
-                width:100%;
-                height:100%;
-            } 
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style type="text/css">
+  * {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+  }
 
-            a {
-                display: block;
-                white-space: nowrap;
-            }
+  body,
+  input,
+  select,
+  button,
+  textarea {
+    font-size: 14px;
+    font-family: 'Microsoft YaHei', Tahoma, Geneva, sans-serif;
+  }
 
-            .container {
-                width:100%;
-                height:100%;
-                display: flex;
-                flex-direction:column;
-                justify-content:center;
-                align-items:center;
-                background: #EFF3CD;
-            }
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+  }
 
-            .mainContainer {
-                width:500px;
-                height:30px;
-                display: flex;
-                flex-direction:column;
-                justify-content:flex-start;             
-            }
+  a {
+    display: block;
+    white-space: nowrap;
+  }
 
-            .inputContainer {
-                width:100%;
-                height:30px;
-                display: flex;
-                flex-direction:row;
-                justify-content:flex-start;                              
-            }
+  .container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #EFF3CD;
+  }
 
-            .base64Container {
-                width:100%;
-                height: 100%;
-                display: flex;
-                flex-direction:column;
-                justify-content:flex-start;                
+  .mainContainer {
+    width: 500px;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
 
-            }  
+  .inputContainer {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
 
-            .borderStyle {
-                border: 1px solid #605063;
-                border-radius: 5px;                
-            }          
+  .base64Container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
 
-            .inputLabelStyle {
-                margin:2px 0;
-                line-height: 22px;
-                width:100px;
-                color:#EFF3CD;
-                background:-webkit-gradient(linear, 0 0, 0 100%, from(#61ADA0), to(#248F8D));
-                display: block;
-                text-align: center;
-                cursor:pointer;
-            }
+  .borderStyle {
+    border: 1px solid #605063;
+    border-radius: 5px;
+  }
 
-            .inputStyle {
-                position: absolute;
-                clip:rect(0 0 0 0);
-                font-size: 0px;
-            }
+  .inputLabelStyle {
+    margin: 2px 0;
+    line-height: 22px;
+    width: 100px;
+    color: #EFF3CD;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#61ADA0), to(#248F8D));
+    display: block;
+    text-align: center;
+    cursor: pointer;
+  }
 
-            .fileNameStyle {
-                width: 100%;
-                margin: 2px 0px 2px 2px;                
-            }
+  .inputStyle {
+    position: absolute;
+    clip: rect(0 0 0 0);
+    font-size: 0px;
+  }
 
-            .imgContainer {
-                width:100%;
-                height:50%;
-                border-bottom:1px solid #DBDBDB;
-            }
+  .fileNameStyle {
+    width: 100%;
+    margin: 2px 0px 2px 2px;
+  }
 
-            .txtContainer {
-                width:100%;
-                height:50%;
-            }
+  .imgContainer {
+    width: 100%;
+    height: 50%;
+    border-bottom: 1px solid #DBDBDB;
+  }
 
-            .canvasStyle {
-                width:100%;
-                height:100%;
-            }
+  .txtContainer {
+    width: 100%;
+    height: 50%;
+  }
 
-            .progressContainer {
-                width:500px;
-                height:130px;
-                border:1px solid #DBDBDB;
-                position: absolute;
-                top:0;
-                bottom:0;
-                left:0;
-                right:0;
-                margin:auto;
-                z-index: 1000;
-                background: #F6F6F6;
-                display: none;
-                flex-direction:column;
-                justify-content:center;
-                align-items:center;
-                font-size:0px; 
+  .canvasStyle {
+    width: 100%;
+    height: 100%;
+  }
 
-            }
+  .progressContainer {
+    width: 500px;
+    height: 130px;
+    border: 1px solid #DBDBDB;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1000;
+    background: #F6F6F6;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0px;
+  }
 
-            .progressStyle {
-                width:400px;
-                height:30px;
-                background: #E4CAB9;
-                display: inline-block;
-            }
+  .progressStyle {
+    width: 400px;
+    height: 30px;
+    background: #E4CAB9;
+    display: inline-block;
+  }
 
-            .progressBar {
-                width:0px;
-                height:30px;
-                background:#4BC3E6;
-            }
+  .progressBar {
+    width: 0px;
+    height: 30px;
+    background: #4BC3E6;
+  }
 
-            .progressNum {
-                font-size:14px;
-                display: inline-block;
-            }
+  .progressNum {
+    font-size: 14px;
+    display: inline-block;
+  }
 
-            .downloadContainer {
-                width:100px;
-                height:22px;
-            }
-        </style>
+  .downloadContainer {
+    width: 100px;
+    height: 22px;
+  }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="mainContainer">
-            <div class="inputContainer">
-                <label class="inputLabelStyle borderStyle" for="inputFile">上传文件</label>
-                <form>
-                    <input id="inputFile" type="file" class="inputStyle" multiple="multiple"></form>
-                <div id="inputFileName" class="fileNameStyle borderStyle"></div>
-            </div>
-        </div>
-        <div class="downloadContainer">
-            <label id="downloadlabel" class="inputLabelStyle borderStyle">下载</label>
-            <a id="testA" href="./proce.txt" download="proce.txt">Download By Url</a>
-            <a id="testC">fileDownload Use Base64</a>
-        </div>
+  <div class="container">
+    <div class="mainContainer">
+      <div class="inputContainer">
+        <label class="inputLabelStyle borderStyle" for="inputFile">上传文件</label>
+        <form>
+          <input id="inputFile" type="file" class="inputStyle" multiple="multiple">
+        </form>
+        <div id="inputFileName" class="fileNameStyle borderStyle"></div>
+      </div>
     </div>
+    <div class="downloadContainer">
+      <label id="downloadlabel" class="inputLabelStyle borderStyle">下载</label>
+      <a id="testA" href="./proce.txt" download="proce.txt">Download By Url</a>
+      <a id="testC">fileDownload Use Base64</a>
+    </div>
+  </div>
 </body>
-  <script src='../../lib/build/lib.js'></script>
-  <script src='./filePostTest.js?f4fd7edb8c1c129d1855792cc7f3932b'></script>
+<script src='../../lib/build/lib.js'></script>
+<script src='./filePostTest.js?f4fd7edb8c1c129d1855792cc7f3932b'></script>
+
 </html>

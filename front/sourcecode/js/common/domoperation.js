@@ -1,6 +1,6 @@
 import * as util from './util';
 import { isClear, eventObj } from './symbolManage';
-import { getRandomInt, getRandomArbitrary } from './random';
+import { getRandomInt, getRandomArbitrary, createRandomString } from './random';
 
 let win = window,
   doc = document;
@@ -1222,5 +1222,61 @@ export function windowonloadaop(beforeFn, afterFn) {
           loadDescriptor.set.call(this, closure);                                                            
         }  
   })  
+}
+
+export function createOpenFileInput(container, option) {
+  let defaultOption = {
+    text:"上传文件"
+  };
+
+  container = getElement(container) || doc.body;
+  option = util.assignOption(defaultOption, option);
+
+  let cssStr =`
+                .openFileLabel {
+                  padding:5px 10px;
+                  width: 100%;
+                  background:#108ee9;
+                  color: #fff;
+                  text-align: center;
+                  cursor: pointer;
+                  font-size: 14px;
+
+                }
+                .openFileInput {
+                  position: absolute;
+                  font-size: 0px;
+                  clip: rect(0 0 0 0);
+                  width:0;
+                  height:0;
+                }
+                .openFileContent {
+                  position: relative;
+                  width:80px;
+                  display:flex;
+                  justify-content:center;
+                  border:solid 1px #49a9ee;
+                }`;
+
+  insertStyle2Head(cssStr);
+
+  let id =" inputFile" + createRandomString(5) + new Date().format("ffff")
+    ,openFileContent = document.createElement("div")
+    ,openFileLabel = document.createElement("label")
+    ,openFileInput = document.createElement("input");
+
+  openFileContent.classList.add("openFileContent");
+  openFileLabel.classList.add("openFileLabel");
+  openFileLabel.htmlFor = id;
+  openFileLabel.innerText = option.text;
+  openFileInput.id = id;
+  openFileInput.type = "file";
+  openFileInput.multiple = true;
+  openFileInput.classList.add("openFileInput");
+  openFileContent.appendChild(openFileLabel);
+  openFileContent.appendChild(openFileInput);
+  container.appendChild(openFileContent);
+  
+  return openFileInput;
 }
     

@@ -1,6 +1,7 @@
 import {getHost} from '../common/util.js';
 import {generalAjax} from '../common/ajax.js';
 import { autoDownloadUrl } from '../../js/common/domoperation' 
+import {string2ab8} from '../../js/common/filedataconvert'
 import $ from 'jquery';
 
 const path = getHost();
@@ -167,16 +168,17 @@ export function getFileWithResponceTyle() {
 
 // 测试各种发送数据的默认content-type；
 export function test4SendDataAndDefaultContentTyle() {
-  let ab = new ArrayBuffer(32);
+  let testStr = "this is test";
+  let ab = string2ab8(testStr)
   let blob = new Blob([ab]); 
-  let formData = new FormData();
-  let str = "test";
+  let formData = new FormData("");
+  formData.append("testStrKey", testStr);
 
   let testObj = {
-    // "ArrayBuffer": ab,
-    // "Blob":blob,
-    // "Document":document,
-    // "String":str,
+    "ArrayBuffer": ab,
+    "Blob":blob,
+    "Document":document,
+    "String":testStr,
     "FormData":formData
   };
 

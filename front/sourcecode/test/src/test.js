@@ -8,64 +8,17 @@ import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
 $(() => {
-  // for (var i = 0; i < 10000; i++) {
-  //   var div = document.createElement("div");
-  //   container.appendChild(div);
-  // }
-  remove1();
+  let blob = new Blob(["Hello world!"], {type: 'text/plain'});
+  let fileReader = new FileReader();
+  fileReader.addEventListener("loadend", (evt) => {
+    console.log(fileReader.result);
+  })
+
+  fileReader.readAsDataURL(blob);
+
+  console.log(window.URL.createObjectURL(blob));
 })
 
-function remove1() {
-  console.time("remove1");
-  while(container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
-  console.timeEnd("remove1");
-}
-
-function remove2() {
-  console.time("remove2");
-  container.innerHTML = "";
-  console.timeEnd("remove2");
-}
-
-
-
-
-  // 备用
-  function clearChessByCanvas(i, j) {
-    let ctx = canvas.getContext("2d")
-      ,x = (parseInt(lastChessCoordinate.j) + 1) * dis
-      ,y = (parseInt(lastChessCoordinate.i) + 1) * dis;
-
-    clearArc(x, y, 20, 1, ctx);
-    ctx.beginPath();
-    ctx.closePath();
-    ctx.moveTo(x - dis / 2, y);
-    ctx.lineTo(x + dis / 2, y);
-    ctx.stroke();
-    ctx.moveTo(x, y - dis / 2);
-    ctx.lineTo(x, y + dis / 2);
-    ctx.stroke();
-  }
-
-  // 备用
-  function clearArc(x, y, radius, stepClear, ctx){//圆心(x,y)，半径radius  
-      var calcWidth=radius-stepClear;  
-      var calcHeight=Math.sqrt(radius*radius-calcWidth*calcWidth);  
-        
-      var posX=x-calcWidth;  
-      var posY=y-calcHeight;  
-        
-      var widthX=2*calcWidth;  
-      var heightY=2*calcHeight;  
-        
-      if(stepClear<=radius){  
-          ctx.clearRect(posX, posY, widthX, heightY);  
-          stepClear+=1;  
-          clearArc(x, y, radius, stepClear, ctx);  
-      }  
-  } 
 
 
 

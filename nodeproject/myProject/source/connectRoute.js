@@ -104,12 +104,37 @@ function test4Jsonp(req, res) {
 
 function test4DefaultContentType(req, res) {
   try {
-    debugger;
-    console.log(req.headers["content-type"]);
+    getReqDataAwait(req).then((result) => {
+      console.log("===============================================")
+      console.log("content-type");
+      console.log(req.headers["content-type"]);
+      console.log("result");
+      console.log(result);
+      console.log("===============================================")
+    })
+
     res.send(req.headers["content-type"]);
   }
   catch(err) {
     console.log(err);
     res.send(err);
   }
+}
+
+async function getReqDataAwait(req) {
+  return getReqData(req);
+}
+
+function getReqData(req) {
+  let data = "";
+  req.setEncoding('utf8');
+  return new Promise((resolve, reject) => {
+    req.on("data" , (chunk) => {
+       data += chunk;
+    });
+
+    req.on("end", () => {
+      resolve(data);
+    })
+  })
 }
