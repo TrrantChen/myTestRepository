@@ -6,7 +6,7 @@ let path = util.getHost();
 $(function(){
     fileDownUseBase64();
     fileDownUseCreateObjectURL();
-    fileUpload("parseFileByBusboy");
+    fileUpload("upLoadFileByBusboy");
 })
 
 /*------------download------------*/

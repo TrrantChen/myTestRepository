@@ -193,13 +193,11 @@ export function createAndGetProgress() {
 export function setAjaxWithProcess(option, isWithProcess) {
   var progressContainer = createAndGetProgress();
   option.onloadend = function() {
-    console.log("end")
     if (isWithProcess) {
       progressContainer.style.display = "none"
     }
   };
   option.onloadstart = function() {
-    console.log("start")
     if (isWithProcess) {
       progressContainer.style.display = "flex"
     }

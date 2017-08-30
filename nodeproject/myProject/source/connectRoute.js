@@ -27,6 +27,7 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/getArrayResut", getArrayResut);
     commonProcess.preProcessHttpMethods(app, "get", "/getRandomTableData", getRandomTableData);
     commonProcess.preProcessHttpMethods(app, "post", "/test4DefaultContentType", test4DefaultContentType);
+    commonProcess.preProcessHttpMethods(app, "post", "/test4PostWithoutThridPart", test4PostWithoutThridPart);
 };
 
 function getRandomTableData(req, res) {
@@ -104,21 +105,19 @@ function test4Jsonp(req, res) {
 
 function test4DefaultContentType(req, res) {
   try {
-    getReqDataAwait(req).then((result) => {
-      console.log("===============================================")
-      console.log("content-type");
-      console.log(req.headers["content-type"]);
-      console.log("result");
-      console.log(result);
-      console.log("===============================================")
-    })
-
     res.send(req.headers["content-type"]);
   }
   catch(err) {
     console.log(err);
     res.send(err);
   }
+}
+
+function test4PostWithoutThridPart(req, res) {
+    getReqDataAwait(req).then((data) => {
+        console.log(data);
+        res.send(data);
+    });
 }
 
 async function getReqDataAwait(req) {
@@ -130,6 +129,8 @@ function getReqData(req) {
   req.setEncoding('utf8');
   return new Promise((resolve, reject) => {
     req.on("data" , (chunk) => {
+      console.log("data----");
+       console.log(chunk);
        data += chunk;
     });
 

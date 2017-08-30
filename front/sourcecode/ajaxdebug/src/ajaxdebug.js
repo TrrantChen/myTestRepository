@@ -1,25 +1,32 @@
 import $ from 'jquery';
 import _ from 'underscore'
 import * as util from '../../js/common/util'
-import {generalAjax} from '../../js/common/ajax'
-import {createOpenFileInput} from '../../js/common/domoperation'
+import { generalAjax } from '../../js/common/ajax'
+import { createOpenFileInput } from '../../js/common/domoperation'
+import { uploadFile } from '../../js/common/filemodule'
 import { mySelfAjaxTest, jqueryAjaxTest, originXmlHttpRequestTestReadyStateChange, test4SendDataAndDefaultContentTyle } from '../../js/module/ajaxtestmodule'
 
-let container = document.querySelector(".container");
+let container = document.querySelector(".container")
+  ,path = util.getHost();
 
 $(() => {
-  let n = 0;
-  slicePromise(getPromise(n), n);
+  testBlob();
 })
 
 function testBlob() {
   let input = createOpenFileInput(container);
   input.addEventListener("change", (evt) => {
     let file = evt.target.files[0]
-      , result = sliceBlob(file, 40)
-      , length = result.length;
+      ,result = sliceBlob(file, 40)
+      ,length = result.length;
 
-    slicePromise(getPromise(0), 0, length);
+    // slicePromise(getPromise(0), 0, length);
+    
+    for (var i = 0; i < length; i++) {
+      uploadFile(result[i], path + "test4PostWithoutThridPart", (result) => {
+        console.log(result);
+      });
+    };
 
     evt.target.value = "";
   })
@@ -42,19 +49,21 @@ function sliceBlob(blob, size) {
   return result;
 }
 
-function getPromise(i) {
+function getPromise(i, blobArr) {
   return new Promise((resolve, reject) => {
-    resolve(i)
+    uploadFile(blobArr[i], path + "upLoadFileByBusboy", (result) => {
+      resolve(i)
+    });    
   })
 }
 
-function slicePromise(promise, i, max) {
+function slicePromise(promise, i, max, blobArr) {
   ++i;
   if (i < max) {
     promise.then((result) => {
       console.log(result);
-      let promise  = getPromise(i)
-      slicePromise(promise, i, max);
+      let promise  = getPromise(i, blobArr)
+      slicePromise(promise, i, max, blobArr);
     })
   }
 }

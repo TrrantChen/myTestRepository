@@ -8,17 +8,14 @@ import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
 $(() => {
-  let blob = new Blob(["Hello world!"], {type: 'text/plain'});
-  let fileReader = new FileReader();
-  fileReader.addEventListener("loadend", (evt) => {
-    console.log(fileReader.result);
-  })
-
-  fileReader.readAsDataURL(blob);
-
-  console.log(window.URL.createObjectURL(blob));
+  console.log(mul(2));
 })
 
+function mul(num1) {
+  console.log(this);
+}
+
+// mul(2)(3)(4)
 
 
 
