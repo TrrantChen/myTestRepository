@@ -1,5 +1,5 @@
 import * as util from '../../js/common/util'
-import { blob2DataUrl } from '../../js/common/filedataconvert'
+import { blob2DataUrl } from '../../js/common/filedataoperation'
 import { uploadFile } from '../../js/common/filemodule'
 let path = util.getHost();
 

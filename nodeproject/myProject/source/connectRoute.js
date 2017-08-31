@@ -113,15 +113,11 @@ function test4DefaultContentType(req, res) {
   }
 }
 
-function test4PostWithoutThridPart(req, res) {
-    getReqDataAwait(req).then((data) => {
-        console.log(data);
-        res.send(data);
-    });
-}
-
-async function getReqDataAwait(req) {
-  return getReqData(req);
+async function test4PostWithoutThridPart(req, res) {
+  let data = await getReqData(req);
+  console.log("this is data---------")
+  console.log(data);
+  res.send(data);
 }
 
 function getReqData(req) {
@@ -129,13 +125,11 @@ function getReqData(req) {
   req.setEncoding('utf8');
   return new Promise((resolve, reject) => {
     req.on("data" , (chunk) => {
-      console.log("data----");
-       console.log(chunk);
        data += chunk;
     });
 
     req.on("end", () => {
       resolve(data);
-    })
+    });
   })
 }

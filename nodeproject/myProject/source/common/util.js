@@ -83,3 +83,14 @@ exports.initGetUid = function() {
         return incrementUid();
     }
 }
+
+/*
+  将string转换为可以pipe的stream
+ */
+exports.str2stream = function(str) {
+  let s = new Readable();
+  s._read = function noop() {};
+  s.push(str);
+  s.push(null);
+  return s;
+}

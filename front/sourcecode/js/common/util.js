@@ -361,17 +361,6 @@ export function completionZero(num) {
   return num > 10 ? num : "0" + num;
 }
 
-/*
-  将string转换为可以pipe的stream
- */
-export function str2stream(str) {
-  let s = new Readable();
-  s._read = function noop() {};
-  s.push(str);
-  s.push(null);
-  return s;
-}
-
 export function isArrayContain(set, ele) {
   return [].indexOf.call(set, ele) !== -1 ? true : false;
 }

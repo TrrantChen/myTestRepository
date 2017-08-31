@@ -102,3 +102,20 @@ export function blob2DataUrl(blob) {
   reader.readAsDataURL(blob);
   return promise; 
 }
+
+export function sliceBlob(blob, size) {
+  let result = []
+    ,n = Math.ceil(blob.size / size);
+
+  for (var i = 0; i < n; i++) {
+    let tmp = null
+    if (i === n - 1) {
+      tmp = blob.slice(i * size, blob.size - 1);
+    } else {
+      tmp = blob.slice(i * size, i * size + size - 1);
+    }
+    result.push(tmp);
+  }
+
+  return result;
+}

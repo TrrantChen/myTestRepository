@@ -1,7 +1,7 @@
 import {getHost} from '../common/util.js';
 import {generalAjax} from '../common/ajax.js';
 import { autoDownloadUrl } from '../../js/common/domoperation' 
-import {string2ab8} from '../../js/common/filedataconvert'
+import {string2ab8} from '../../js/common/filedataoperation'
 import $ from 'jquery';
 
 const path = getHost();
@@ -296,6 +296,44 @@ export function postMulFormFormData(parseType) {
 }
 
 export function postXml() {}
+
+/*------------通过promise或者async解决异步+for循环嵌套问题------------*/
+  /*
+    问题原型为
+    for (i) {
+      异步发送文件切割片到后端(i)
+    }
+    为了保证发送到后端的文件切割片顺序是一致，异步回调需要嵌套。
+    解决方案为使用promise或者async + 递归来解决。
+   */
+  function getPromise(i, blobArr) {
+    return new Promise((resolve, reject) => {
+      uploadFile(blobArr[i], path + "test4PostWithoutThridPart", (result) => {
+        console.log(result);  
+        resolve(i)
+      });    
+    })
+  }
+
+  function slicePromise(promise, i, max, blobArr) {
+    promise.then((result) => {
+      console.log(result);
+      ++i;
+      if (i < max) { 
+        let promise  = getPromise(i, blobArr)
+        slicePromise(promise, i, max, blobArr);
+      }
+    })
+  }
+
+  async function slicePromise(i, blobArr, max) {
+    let result = await getPromise(i, blobArr);
+    ++i;
+    if (i < max) {
+      slicePromise(i, blobArr, max);
+    }
+  }
+/*------------通过promise或者async解决异步+for循环嵌套问题------------*/
 
 
 

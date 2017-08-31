@@ -175,6 +175,7 @@
      }
      var form = new multiparty.Form(multipartyOption);
      form.parse(req, function(err, fields, files) {
+         console.log("error:" + err);
          console.log("fields");
          for (var i = 0; i < fields.length; i++) {
              console.log(fields[i]);
@@ -188,6 +189,10 @@
              fs.renameSync(path, form.uploadDir + "/" + fileName);
          }
          res.send("success")
+     })
+
+     form.on('error', (err) =>  {
+         res.send("error:" + err);
      })
  }
 
