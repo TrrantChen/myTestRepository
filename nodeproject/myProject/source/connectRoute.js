@@ -115,16 +115,16 @@ function test4DefaultContentType(req, res) {
 
 async function test4PostWithoutThridPart(req, res) {
   let data = await getReqData(req);
-  console.log("this is data---------")
-  console.log(data);
   res.send(data);
 }
 
 function getReqData(req) {
   let data = "";
   req.setEncoding('utf8');
+  let i = 0;
   return new Promise((resolve, reject) => {
     req.on("data" , (chunk) => {
+       console.log(++i);
        data += chunk;
     });
 

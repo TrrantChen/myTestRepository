@@ -157,20 +157,14 @@ function parseFileByBusboy(req, res) {
 }
 
 
-// todo 不通过第三方插件直接存储文件
-function parseFileWithoutThridPart(req, res) {
-    fileOperationProcess.parseFileWithoutThridPart(req, res);
-    res.send("success");
-}
-
-// 直接解析FormData数据
+// 直接解析FormData数据, 不通过第三方
 function uploadFormDataWithoutThirdPart(req, res) {
 
 }
 
-// 直接解析文件
+// 直接解析文件， 不通过第三方
 function uploadFileWithoutThirdPart(req, res) {
-
+  fileOperationProcess.uploadFileWithoutThirdPart(req, res);
 }
 
 

@@ -225,21 +225,7 @@
  }
 
  // 
- exports.parseFileWithoutThridPart = function(req, res) {
-     // var result = "";
-     // // req.setEncoding('utf8');    
-
-     // req.on('data', function(chunk) {
-     //     Buffer.isBuffer(chunk);
-     //     bufferHelper.concat(chunk);
-     //     // result += chunk
-     //     // result += iconv.decode(chunk, 'GBK');
-     // });
-     // req.on('end', function() {
-     //     result = bufferHelper.toString()
-     //     bufferHelper.clear();
-     //     res.send(result);
-     // })
+ exports.uploadFileWithoutThirdPart = function(req, res) {
      var outputPath = "./output/output.txt";
      var writeStream = fs.createWriteStream(outputPath);
      req.pipe(writeStream);
