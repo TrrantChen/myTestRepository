@@ -1,63 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Document</title>
-        <style type="text/css">
-            * {
-                margin:0px;
-                padding:0px;
-                box-sizing: border-box;
-            }
-    
-            body, input, select, button, textarea {
-                font-size: 14px;
-                font-family: 'Microsoft YaHei',Tahoma, Geneva, sans-serif;
-            }
 
-            input {
-                border:0;
-            }
-            
-            input:focus {
-                    outline-offset: 0px;
-                    outline:0px;
-            }
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style type="text/css">
+  * {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+  }
 
-            button {
-                border-width: 0px;
-                outline: none;
-            } 
+  body,
+  input,
+  select,
+  button,
+  textarea {
+    font-size: 14px;
+    font-family: 'Microsoft YaHei', Tahoma, Geneva, sans-serif;
+  }
 
-            
-            body, html {
-                width:100%;
-                height:100%;
-            }   
-            .container {
-                width:100%;
-                height:100%;
-                background: #26251C;
-            }         
+  input {
+    border: 0;
+  }
 
-            .inputStyle {
-                margin-left:10px;
-                margin-top:10px;
-                width:200px;
-                height:40px;
-                border-radius: 50px;
-                background: rgba(255, 255, 255, 0.4);
-                padding-left:25px;
-                color: #ffffff;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <input id="input1" type="text" class="inputStyle">
-            <button id="btnTest">test</button>
-        </div>
-    </body>
-  <script src='../../lib/build/lib.js'></script>
-  <script src='./xsstest.js?f4fd7edb8c1c129d1855792cc7f3932b'></script>
+  input:focus {
+    outline-offset: 0px;
+    outline: 0px;
+  }
+
+  button {
+    border-width: 0px;
+    outline: none;
+  }
+
+
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+  }
+
+  .container {
+    width: 100%;
+    height: 100%;
+    background: #26251C;
+  }
+
+  .textAreaStyle {
+    display: block;
+  }
+
+  .btnStyle {
+    display: block;
+  }
+
+  .showContent {
+    width:500px;
+    height:200px;
+    border:solid 1px black;
+    background: white;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <textarea id="textareaTest" cols="30" rows="10" class="textAreaStyle"></textarea>
+    <button id="btnTest" class="btnStyle">send</button>
+    <div id="showContent" class="showContent">
+    </div>
+  </div>
+</body>
+<script src='../../lib/build/lib.js'></script>
+<script src='./xsstest.js?f4fd7edb8c1c129d1855792cc7f3932b'></script>
 </html>

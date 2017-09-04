@@ -13,7 +13,7 @@ const txtParser = bodyParser.text();
 
 const commonProcess = require("./common/commonProcess");
 const randomProcess = require("./common/randomProcess");
-
+const safeProcess = require("./common/safeProcess");
 
 exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/", defaultConnect);
@@ -28,6 +28,7 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/getRandomTableData", getRandomTableData);
     commonProcess.preProcessHttpMethods(app, "post", "/test4DefaultContentType", test4DefaultContentType);
     commonProcess.preProcessHttpMethods(app, "post", "/test4PostWithoutThridPart", test4PostWithoutThridPart);
+    commonProcess.preProcessHttpMethods(app, "post", "/downloadHtml", downloadHtml);
 };
 
 function getRandomTableData(req, res) {
@@ -121,10 +122,8 @@ async function test4PostWithoutThridPart(req, res) {
 function getReqData(req) {
   let data = "";
   req.setEncoding('utf8');
-  let i = 0;
   return new Promise((resolve, reject) => {
     req.on("data" , (chunk) => {
-       console.log(++i);
        data += chunk;
     });
 
@@ -132,4 +131,9 @@ function getReqData(req) {
       resolve(data);
     });
   })
+}
+
+async function downloadHtml(req, res) {
+  let data = await getReqData(req);
+  res.send(safeProcess.preventXss(data));
 }

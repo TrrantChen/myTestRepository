@@ -1,15 +1,25 @@
 import * as util from '../../js/common/util'
+import {generalAjax} from '../../js/common/ajax'
     
 let path = util.getHost();
-$("#btnTest").click(function(){
-    var input1 = document.querySelector("#input1");
-    var input = document.createElement("input");
-    input.classList.add("inputStyle");
-    input.setAttribute("type", "text")
-    // input.value = input1.value;
-    input.setAttribute("value", input1.value)
-    var container = document.querySelector(".container");
-    container.appendChild(input);
-    // debugger
-})
-      
+
+let btnTest = document.querySelector("#btnTest");
+let textareaTest = document.querySelector("#textareaTest");
+let showContent = document.querySelector("#showContent");
+
+// 输入值可以是<img src='abc' onerror ='alert(1)' >"
+btnTest.addEventListener("click", (evt) => {
+  // let option = {
+  //     url:"http://" + document.domain  + ":8088/downloadHtml"
+  //     ,data:textareaTest.value
+  //     ,type:"post"
+  //     ,contentType:"text/javascript"
+  //     ,datatype: "document"
+  //     ,success:function(result) {
+  //       showContent.innerHTML = result;
+  //     }
+  //     ,error:function(readyState, status) {
+  //     }
+  // }   
+  // generalAjax(option);  
+}) 
