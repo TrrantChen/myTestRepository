@@ -42,6 +42,3 @@ exports.quickSort = function(arr) {
     //递归
     return exports.quickSort(left).concat([pivot], exports.quickSort(right));
 }
- 
-
-

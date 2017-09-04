@@ -32,7 +32,38 @@ writable._write = function(chunk, enc, next) {
   next();
 }
 
+let transform2 = stream.Transform();
 
+function simpleTest() {
+  let readStream = fs.createReadStream("./nodeproject/myProject/output/test.txt");
+  let writeStream = fs.createWriteStream("./nodeproject/myProject/output/out.txt")
+
+  transform2._transform = function(chunk, encoding, callback) {
+    let length = chunk.length;
+
+    for (var i = 0; i < length; i++) {
+      chunk[i] += 1;
+    }
+    this.push(chunk);
+    callback();
+  }
+  readStream.pipe(transform2).pipe(writeStream);
+}
+
+function writeStreamTest() {
+  let readStream = fs.createReadStream("./nodeproject/myProject/output/test.txt");
+  readStream.pipe(writable);
+  writable._write = function(chunk, enc, next) {
+    let length = chunk.length;
+
+    for (var i = 0; i < length; i++) {
+      chunk[i] += 1;
+    }
+
+    console.log(chunk.toString('utf8'));
+    next();
+  }
+}
 
 
 
