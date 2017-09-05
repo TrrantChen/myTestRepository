@@ -444,6 +444,20 @@ export function removeArrayItem(arr, para) {
   }
 }
 
+export function htmlCode2Str(value) {
+  value = "" || value;
+  let div = document.createElement("div");
+  div.innerHTML = value;
+  return div.innerText;
+}
+
+export function htmlStr2Code(value) {
+  value = "" || value;
+  let div = document.createElement("div");
+  div.innerText = value;
+  return div.innerHTML;
+}
+
 Function.prototype.before = function(fn) {
   let args = [],
     length = arguments.length,

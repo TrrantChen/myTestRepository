@@ -8,14 +8,9 @@ import '../../../node_modules/babel-polyfill/browser'
 
 let container = document.querySelector(".container");
 $(() => {
-  console.log(mul(2));
+  console.log(util.htmlCode2Str("%6A%61%76%61%73%63%72%69%70%74:%61%6C%65%72%74%28%31%29"));
 })
 
-function mul(num1) {
-  console.log(this);
-}
-
-// mul(2)(3)(4)
 
 
 
