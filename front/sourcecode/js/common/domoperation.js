@@ -17,8 +17,8 @@ export function setFrame(frame) {
 
 export function getWinAndDoc() {
   return {
-    doc:doc
-    ,win:win
+    doc: doc,
+    win: win
   }
 }
 
@@ -81,11 +81,11 @@ export function getElementComputedStyle(element) {
   }
  */
 export function insertStyle2Head(cssObj, option) {
-  let cssString = ""
-    , defaultOption = {
-      isInsertFirst:false
-      ,isCheckRepeat:false
-      ,isCreateStyle:true
+  let cssString = "",
+    defaultOption = {
+      isInsertFirst: false,
+      isCheckRepeat: false,
+      isCreateStyle: true
     };
 
   // 为了兼容老的接口
@@ -96,19 +96,19 @@ export function insertStyle2Head(cssObj, option) {
   }
 
   option = Object.assign(defaultOption, option);
-  
-  if (typeof cssObj !== "string"){
+
+  if (typeof cssObj !== "string") {
     if (option.isCheckRepeat) {
-      if ( cssObj.id !== void 0) {
+      if (cssObj.id !== void 0) {
         let style = doc.querySelector("#" + cssObj.id)
         if (style !== void 0 && style != null) {
           return;
         }
       } else {
-        let classNameArr = getAllClassNameArr()
-          ,classNameArrLength = classNameArr.length;
+        let classNameArr = getAllClassNameArr(),
+          classNameArrLength = classNameArr.length;
         cssObj.cssArr.filter((obj) => {
-          for(var i = 0; i < classNameArrLength; i++) {
+          for (var i = 0; i < classNameArrLength; i++) {
             if (classNameArr[i] === obj.className) {
               return false;
             }
@@ -124,7 +124,7 @@ export function insertStyle2Head(cssObj, option) {
           return obj1 + obj2.className + obj2.classValue;
         } else {
           return obj1.className + obj1.classValue + obj2.className + obj2.classValue;
-        }  
+        }
       })
     } else {
       cssString = cssObj.cssArr[0].className + cssObj.cssArr[0].classValue;
@@ -139,9 +139,9 @@ export function insertStyle2Head(cssObj, option) {
     if (option.isInsertFirst) {
       doc.styleSheets[0].insertRule(cssString);
     } else {
-      let styleSheetsLength = doc.styleSheets.length
-        , cssRuleLst = doc.styleSheets[styleSheetsLength - 1]
-        , cssRuleLstLength = cssRuleLst.length;
+      let styleSheetsLength = doc.styleSheets.length,
+        cssRuleLst = doc.styleSheets[styleSheetsLength - 1],
+        cssRuleLstLength = cssRuleLst.length;
       cssRuleLst.insertRule(cssString, cssRuleLstLength);
     }
   } else {
@@ -152,9 +152,9 @@ export function insertStyle2Head(cssObj, option) {
       headLength = headChildren.length;
 
     if (cssObj.id !== void 0) {
-      style.id =  cssObj.id;
+      style.id = cssObj.id;
     }
-    
+
     style.type = "text/css";
     style.innerHTML = cssString;
     if (option.isInsertFirst) {
@@ -256,16 +256,16 @@ export function getTheTranslate(elementComputedStyles) {
   }
  */
 export function setTheTranslate(elem, point) {
-  let elementComputedStyle = getElementComputedStyle(elem)
-    ,translate = getTheTranslate(elementComputedStyle)
-    ,x = translate.x
-    ,y = translate.y;
-  if(point.x !== void 0 && point.y === void 0) {
+  let elementComputedStyle = getElementComputedStyle(elem),
+    translate = getTheTranslate(elementComputedStyle),
+    x = translate.x,
+    y = translate.y;
+  if (point.x !== void 0 && point.y === void 0) {
     x = point.x;
     y = translate.y;
-  } else if(point.x === void 0 && point.y !== void 0) {
+  } else if (point.x === void 0 && point.y !== void 0) {
     x = translate.x;
-    y = point.y; 
+    y = point.y;
   } else if (point.x !== void 0 && point.y !== void 0) {
     x = point.x;
     y = point.y;
@@ -427,13 +427,47 @@ export function getDomCount(dom, isOnlyElement) {
 
 export function action4EverySonDom(dom, fn, paraArr) {
   if (dom !== void 0 && dom !== null) {
-    let domLst = dom.children
-        ,domLstLength = domLst.length
-        ,newPara = [dom].concat(paraArr);
-        fn.apply(null, newPara);
+    let domLst = dom.children,
+      domLstLength = domLst.length,
+      newPara = [dom].concat(paraArr);
+    fn.apply(null, newPara);
     for (var i = 0; i < domLstLength; i++) {
       action4EverySonDom(domLst[i], fn, paraArr);
     }
+  }
+}
+
+export function printDomTree(dom, isOnlyElement) {
+  if (dom !== void 0 && dom !== null) {
+    if (isOnlyElement === void 0) {
+      isOnlyElement = true;
+    }
+    var str = "-"
+    if (isOnlyElement) {
+      printDomTreeSelf(dom.firstElementChild, isOnlyElement, str);
+    } else {
+      printDomTreeSelf(dom.firstChild, isOnlyElement, str);
+    }
+  }
+}
+
+function printDomTreeSelf(dom, isOnlyElement, str) {
+  if (dom !== void 0 && dom !== null) {
+    let startElement = dom;
+
+    if (isOnlyElement) {
+      while (startElement) {
+        console.log(str + startElement.tagName);
+        printDomTreeSelf(startElement.firstElementChild, isOnlyElement, " " + str)
+        startElement = startElement.nextElementSibling;
+      }
+    } else {
+      while (startElement) {
+        console.log(str + startElement.tagName);
+        printDomTreeSelf(startElement.firstChild, isOnlyElement, " " + str)
+        startElement = startElement.nextSibling; 
+      }
+    }    
   }
 }
 
@@ -448,7 +482,7 @@ export function preventElemAddEvent(elemOrId, addFn) {
       if (args.length >= 2) {
         let fn = args[1];
         if (!this.addEventListener[isClear]) {
-          fn = function(){};
+          fn = function() {};
         } else {
           let oldFn = fn;
           fn = function() {
@@ -456,17 +490,17 @@ export function preventElemAddEvent(elemOrId, addFn) {
               addFn.apply(this, arguments);
             }
             oldFn.apply(this, arguments);
-          }        
+          }
         }
         args[1] = fn;
       }
     }
-    originEventListener.apply(this, args);    
+    originEventListener.apply(this, args);
   }
 }
 
 export function initGetAllElementEventFn() {
-  if(EventTarget[eventObj] === void 0) {
+  if (EventTarget[eventObj] === void 0) {
     EventTarget[eventObj] = {};
     let originAddEventListener = EventTarget.prototype.addEventListener
 
@@ -481,7 +515,7 @@ export function initGetAllElementEventFn() {
         } else {
           if (EventTarget[eventObj][that.id][args[0]] !== void 0 && EventTarget[eventObj][that.id][args[0]].length !== 0) {
             let length = EventTarget[eventObj][that.id][args[0]].length;
-            for(var i = 0; i < length; i++) {
+            for (var i = 0; i < length; i++) {
               if (EventTarget[eventObj][that.id][args[0]][i] === args[1]) {
                 isRepeat = true;
                 break;
@@ -495,16 +529,15 @@ export function initGetAllElementEventFn() {
         if (!isRepeat) {
           try {
             EventTarget[eventObj][that.id][args[0]].push(args[1]);
-          }
-          catch(err) {
+          } catch (err) {
             debugger
           }
-          
-        }     
-      } 
 
-      originAddEventListener.apply(this, args);    
-    } 
+        }
+      }
+
+      originAddEventListener.apply(this, args);
+    }
 
     let originRemoveEventListener = EventTarget.prototype.removeEventListener
 
@@ -515,7 +548,7 @@ export function initGetAllElementEventFn() {
         EventTarget[eventObj][that.id][args[0]].pop(args[1]);
         if (EventTarget[eventObj][that.id][args[0]].length === 0) {
           EventTarget[eventObj][that.id][args[0]] = void 0;
-          delete  EventTarget[eventObj][that.id][args[0]];
+          delete EventTarget[eventObj][that.id][args[0]];
         }
 
         if (util.isEmptyObject(EventTarget[eventObj][that.id])) {
@@ -524,13 +557,13 @@ export function initGetAllElementEventFn() {
         }
       }
 
-      originRemoveEventListener.apply(this, args);    
-    }        
+      originRemoveEventListener.apply(this, args);
+    }
   }
 }
 
 export function getElemAllEvent(id) {
-  if(EventTarget[eventObj] !== void 0) {
+  if (EventTarget[eventObj] !== void 0) {
     return EventTarget[eventObj][id];
   } else {
     console.error("eventObj not init");
@@ -539,7 +572,7 @@ export function getElemAllEvent(id) {
 }
 
 export function getAllEvent() {
-  if(EventTarget[eventObj] !== void 0) {
+  if (EventTarget[eventObj] !== void 0) {
     return EventTarget[eventObj];
   } else {
     return void 0;
@@ -560,26 +593,25 @@ export function rainEffect(effectNum, option) {
   option = option || {};
 
   let defaultOption = {
-    radius:2
-    ,isRandom:false
-    ,index:0 
-    ,randomMin:1
-    ,randomMax:8
+    radius: 2,
+    isRandom: false,
+    index: 0,
+    randomMin: 1,
+    randomMax: 8
   }
 
   option = Object.assign(defaultOption, option);
-  
+
 
   let css = ""
 
   switch (effectNum) {
     case 1:
       css = {
-        id:"rainAnimation"
-        ,cssArr:[
-          {
-            className:".outterDiv"
-            ,classValue:`
+        id: "rainAnimation",
+        cssArr: [{
+            className: ".outterDiv",
+            classValue: `
               {
                 width:0px;
                 height:0px;
@@ -590,11 +622,11 @@ export function rainEffect(effectNum, option) {
                 transition-delay:0.3s;
                 opacity: 1;
               }
-            ` 
-          }, 
+            `
+          },
           {
-            className:".innerDiv"
-            ,classValue:`
+            className: ".innerDiv",
+            classValue: `
             {
               width:0px;
               height:0px;
@@ -607,15 +639,14 @@ export function rainEffect(effectNum, option) {
             `
           }
         ]
-      };  
+      };
       break;
     case 2:
       css = {
-        id:"rainAnimation"
-        ,cssArr:[
-          {
-            className:".outterDiv"
-            , classValue:`
+        id: "rainAnimation",
+        cssArr: [{
+          className: ".outterDiv",
+          classValue: `
               {
                 width:1px;
                 height:1px;
@@ -629,10 +660,9 @@ export function rainEffect(effectNum, option) {
                 animation-iteration-count:1;             
               }            
             `
-          }
-          , {
-            className:".innerDiv"
-            , classValue:`
+        }, {
+          className: ".innerDiv",
+          classValue: `
              {
               width:1px;
               height:1px;
@@ -647,10 +677,9 @@ export function rainEffect(effectNum, option) {
               animation-iteration-count:1;          
             } 
             `
-          }
-          , {
-            className:"@keyframes circleExtend"
-            , classValue:`
+        }, {
+          className: "@keyframes circleExtend",
+          classValue: `
              {
               0% {
                 transform:scale(0, 0);
@@ -666,21 +695,19 @@ export function rainEffect(effectNum, option) {
               }
             } 
             `
-          }
-        ]
+        }]
       };
 
       if (!option.isRandom) {
-       doc.documentElement.style.setProperty("--animation-scale", option.radius); 
+        doc.documentElement.style.setProperty("--animation-scale", option.radius);
       }
       break;
     case 3:
       css = {
-        id:"rainAnimation"
-        ,cssArr:[
-          {
-            className:".outterDiv"
-            ,classValue:`
+        id: "rainAnimation",
+        cssArr: [{
+            className: ".outterDiv",
+            classValue: `
               {
                 width:50px;
                 height:50px;
@@ -694,11 +721,11 @@ export function rainEffect(effectNum, option) {
                 animation-iteration-count:1;
                 transform: scale(0);             
               }
-            ` 
-          }, 
+            `
+          },
           {
-            className:".innerDiv"
-            ,classValue:`
+            className: ".innerDiv",
+            classValue: `
               {
                 width:50px;
                 height:50px;
@@ -716,8 +743,8 @@ export function rainEffect(effectNum, option) {
             `
           },
           {
-            className:"@keyframes circleExtend"
-            ,classValue:`
+            className: "@keyframes circleExtend",
+            classValue: `
             {
              to {
                 transform:scale(var(--animation-scale), var(--animation-scale));
@@ -728,8 +755,8 @@ export function rainEffect(effectNum, option) {
             `
           },
           {
-            className:":root"
-            ,classValue:`
+            className: ":root",
+            classValue: `
             {
               --animation-scale:3;
             }
@@ -739,16 +766,15 @@ export function rainEffect(effectNum, option) {
       };
 
       if (!option.isRandom) {
-        doc.documentElement.style.setProperty("--animation-scale", option.radius); 
+        doc.documentElement.style.setProperty("--animation-scale", option.radius);
       }
       break;
     case 4:
       css = {
-        id:"rainAnimation"
-        ,cssArr:[
-          {
-            className:".outterDiv"
-            ,classValue:`
+        id: "rainAnimation",
+        cssArr: [{
+            className: ".outterDiv",
+            classValue: `
               {
                 width:50px;
                 height:50px;
@@ -761,11 +787,11 @@ export function rainEffect(effectNum, option) {
                 animation-iteration-count:1;
                 transform: scale(0);             
               }
-            ` 
-          }, 
+            `
+          },
           {
-            className:".innerDiv"
-            ,classValue:`
+            className: ".innerDiv",
+            classValue: `
               {
                 width:50px;
                 height:50px;
@@ -782,11 +808,11 @@ export function rainEffect(effectNum, option) {
             `
           }
         ]
-      }    
+      }
     default:
       break;
   }
-  insertStyle2Head(css, {isCheckRepeat:true});
+  insertStyle2Head(css, { isCheckRepeat: true });
   return function(container, startPositionX, startPositionY) {
     option.index += 1;
     switch (effectNum) {
@@ -813,7 +839,7 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
 
     outter.className = "outterDiv";
     outter.style.left = startPositionX + "px";
-    outter.style.top = startPositionY + "px"; 
+    outter.style.top = startPositionY + "px";
     container.append(outter);
 
     let computedStyleOutter = win.getComputedStyle(outter);
@@ -822,13 +848,13 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
     outter.style.height = (parseInt(computedStyleOutter.getPropertyValue("height").replace("px", "")) + radius * 2) + "px";
     outter.style.left = (parseInt(computedStyleOutter.getPropertyValue("left").replace("px", "")) - radius) + "px";
     outter.style.top = (parseInt(computedStyleOutter.getPropertyValue("top").replace("px", "")) - radius) + "px";
-    outter.addEventListener('transitionend',transitionOutterFn) 
+    outter.addEventListener('transitionend', transitionOutterFn)
     outter.style.opacity = 0;
 
     function transitionOutterFn(evt) {
       outter.removeEventListener('transitionend', transitionOutterFn)
       outter.remove();
-    }  
+    }
 
     let inner = doc.createElement("div");
 
@@ -843,27 +869,27 @@ function rainEffectRealizeOne(container, startPositionX, startPositionY, radius)
     inner.style.height = (parseInt(computedStyleInner.getPropertyValue("height").replace("px", "")) + radius * 2) + "px";
     inner.style.left = (parseInt(computedStyleInner.getPropertyValue("left").replace("px", "")) - radius) + "px";
     inner.style.top = (parseInt(computedStyleInner.getPropertyValue("top").replace("px", "")) - radius) + "px";
-    inner.addEventListener('transitionend',transitionInnerFn) 
+    inner.addEventListener('transitionend', transitionInnerFn)
     inner.style.opacity = 0;
 
     function transitionInnerFn(evt) {
       inner.removeEventListener('transitionend', transitionInnerFn)
       inner.remove();
-    }   
-  }  
+    }
+  }
 }
 
 function rainEffectRandomByCssProperty(container, startPositionX, startPositionY, option) {
   if (container !== void 0 && container !== null) {
     if (option.isRandom) {
-      doc.documentElement.style.setProperty("--animation-scale", getRandomArbitrary(option.randomMin, option.randomMax));      
-    } 
+      doc.documentElement.style.setProperty("--animation-scale", getRandomArbitrary(option.randomMin, option.randomMax));
+    }
 
     let outter = doc.createElement("div");
 
     outter.classList.add("outterDiv");
     outter.style.left = startPositionX + "px";
-    outter.style.top = startPositionY + "px"; 
+    outter.style.top = startPositionY + "px";
     outter.addEventListener("animationend", animationOutterEnd);
     container.append(outter)
 
@@ -873,12 +899,12 @@ function rainEffectRandomByCssProperty(container, startPositionX, startPositionY
     }
 
     let inner = doc.createElement("div");
-    
-    inner.classList.add("innerDiv");  
+
+    inner.classList.add("innerDiv");
     inner.style.left = startPositionX + "px";
-    inner.style.top = startPositionY + "px";   
+    inner.style.top = startPositionY + "px";
     inner.addEventListener("animationend", animationInnerEnd);
-    container.append(inner)  
+    container.append(inner)
 
     function animationInnerEnd(evt) {
       inner.removeEventListener("animationend", animationInnerEnd);
@@ -889,15 +915,14 @@ function rainEffectRandomByCssProperty(container, startPositionX, startPositionY
 
 function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY, option) {
   if (container !== void 0 && container !== null) {
-    let randomScale = option.isRandom ? getRandomArbitrary(option.randomMin, option.randomMax) : option.radius
-      , styleId = `rainAnimation${option.index}`
-      ,activeAnimation = `activeAnimation${option.index}`
-      ,cssObj = {
-        id:styleId
-        ,cssArr: [
-          {
-            className:`@keyframes circleExtend${option.index}`
-            ,classValue:`
+    let randomScale = option.isRandom ? getRandomArbitrary(option.randomMin, option.randomMax) : option.radius,
+      styleId = `rainAnimation${option.index}`,
+      activeAnimation = `activeAnimation${option.index}`,
+      cssObj = {
+        id: styleId,
+        cssArr: [{
+            className: `@keyframes circleExtend${option.index}`,
+            classValue: `
             {
              to {
                 transform:scale(${randomScale}, ${randomScale});
@@ -907,8 +932,8 @@ function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY
             `
           },
           {
-            className:`.${activeAnimation}`
-            ,classValue:`
+            className: `.${activeAnimation}`,
+            classValue: `
             {
               animation-name:circleExtend${option.index};
             }
@@ -923,7 +948,7 @@ function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY
     outter.classList.add(activeAnimation);
     outter.classList.add("outterDiv");
     outter.style.left = startPositionX + "px";
-    outter.style.top = startPositionY + "px"; 
+    outter.style.top = startPositionY + "px";
     outter.addEventListener("animationend", animationOutterEnd);
     container.append(outter)
 
@@ -933,12 +958,12 @@ function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY
     }
 
     let inner = doc.createElement("div");
-    inner.classList.add(activeAnimation); 
-    inner.classList.add("innerDiv");  
+    inner.classList.add(activeAnimation);
+    inner.classList.add("innerDiv");
     inner.style.left = startPositionX + "px";
-    inner.style.top = startPositionY + "px";   
+    inner.style.top = startPositionY + "px";
     inner.addEventListener("animationend", animationInnerEnd);
-    container.append(inner)  
+    container.append(inner)
 
     function animationInnerEnd(evt) {
       doc.querySelector("#" + styleId).remove();
@@ -949,13 +974,13 @@ function rainEffectRadndomByDynamicCss(container, startPositionX, startPositionY
 }
 
 export function getAllClassNameArr() {
-  var styleSheetLst =  doc.styleSheets
-    ,styleSheetLstLength = styleSheetLst.length
-    ,resultArr = [];
-  for(var i = 0; i < styleSheetLstLength; i++) {
-    var cssRuleLst = styleSheetLst[i].cssRules
-      ,cssRuleLstLength = cssRuleLst.length;
-    for(var j = 0; j < cssRuleLstLength; j++) {
+  var styleSheetLst = doc.styleSheets,
+    styleSheetLstLength = styleSheetLst.length,
+    resultArr = [];
+  for (var i = 0; i < styleSheetLstLength; i++) {
+    var cssRuleLst = styleSheetLst[i].cssRules,
+      cssRuleLstLength = cssRuleLst.length;
+    for (var j = 0; j < cssRuleLstLength; j++) {
       var rule = cssRuleLst[j];
       if (rule.selectorText !== void 0) {
         resultArr.push(rule.selectorText);
@@ -969,18 +994,18 @@ export function getAllClassNameArr() {
 
 export function ripple(container) {
   let cssObj = {
-    id:"rippleStype"
-    , cssArr:  [{
-        className:".rippleStyle"
-        , classValue:`
+    id: "rippleStype",
+    cssArr: [{
+      className: ".rippleStyle",
+      classValue: `
         {
           position: relative;
           overflow:hidden;
         }
         `
-      }, {
-        className:".waveDiv"
-        , classValue:`
+    }, {
+      className: ".waveDiv",
+      classValue: `
         {
           width: 100px;
           height: 100px;
@@ -995,9 +1020,9 @@ export function ripple(container) {
           pointer-events: none;    
         }
         `
-      }, {
-        className:"@keyframes waveanimation"
-        , classValue:`
+    }, {
+      className: "@keyframes waveanimation",
+      classValue: `
         {
           to {
             transform: scale(2, 2);
@@ -1005,26 +1030,26 @@ export function ripple(container) {
           }
         }
         `
-      }]
+    }]
   }
 
-  insertStyle2Head(cssObj, {isCheckRepeat:true});
-  
+  insertStyle2Head(cssObj, { isCheckRepeat: true });
+
   container.addEventListener("click", clickHandle)
   container.classList.add("rippleStyle");
-  
+
   function clickHandle(evt) {
     evt.stopPropagation();
     evt.preventDefault();
     let div = doc.createElement("div");
-    div.classList.add ("waveDiv");    
-    let width = parseInt(win.getComputedStyle(container).getPropertyValue("width").replace("px", ""))
-      , height = parseInt(win.getComputedStyle(container).getPropertyValue("height").replace("px", ""))
-      , radiu = (width > height ? width : height);
+    div.classList.add("waveDiv");
+    let width = parseInt(win.getComputedStyle(container).getPropertyValue("width").replace("px", "")),
+      height = parseInt(win.getComputedStyle(container).getPropertyValue("height").replace("px", "")),
+      radiu = (width > height ? width : height);
     div.style.width = radiu + "px";
     div.style.height = radiu + "px";
-    div.style.left = evt.offsetX - parseInt(radiu)/2 + "px";
-    div.style.top = evt.offsetY -  parseInt(radiu)/2 + "px" ;
+    div.style.left = evt.offsetX - parseInt(radiu) / 2 + "px";
+    div.style.top = evt.offsetY - parseInt(radiu) / 2 + "px";
     container.append(div);
     div.addEventListener("animationend", animationendHandle)
   }
@@ -1053,9 +1078,9 @@ export function getElemBoundingClientRect(element) {
     left: boundingClientRect.left + win.scrollX,
     top: boundingClientRect.top + win.scrollY,
     right: boundingClientRect.right + win.scrollX,
-    bottom: boundingClientRect.bottom + win.scrollY
-    ,width:boundingClientRect.width
-    ,height:boundingClientRect.height
+    bottom: boundingClientRect.bottom + win.scrollY,
+    width: boundingClientRect.width,
+    height: boundingClientRect.height
   }
 }
 
@@ -1077,34 +1102,31 @@ export function calculateDistanceBetweenEleAndDoc(element) {
 
 export function buttonShowContent() {
   let cssObj = {
-    id:"buttonShowContent"
-    ,cssArr:[
-    {
-      className:".hidden"
-      ,classValue:`
+    id: "buttonShowContent",
+    cssArr: [{
+      className: ".hidden",
+      classValue: `
         {
           display:none;
         }
       `
-    }    
-    ,{
-       className:".show"
-       ,classValue:`
+    }, {
+      className: ".show",
+      classValue: `
         {
           display:block;
         }
        `
-    }
-    ,{
-      className:".clicked"
-      ,classValue:`
+    }, {
+      className: ".clicked",
+      classValue: `
       {
         opacity:0.8
       }
       `
     }]
   };
-  insertStyle2Head(cssObj, {isCheckRepeat:true});
+  insertStyle2Head(cssObj, { isCheckRepeat: true });
   return function(btn, content, execOnceFn) {
     btn = getElement(btn);
     content = getElement(content);
@@ -1133,10 +1155,10 @@ export class ButtonContent {
     this.container = getElement(elem);
 
     let css = {
-      id :"buttonContent"
-      , cssArr : [{
-        className:".buttonStyle"
-        ,classValue:`
+      id: "buttonContent",
+      cssArr: [{
+        className: ".buttonStyle",
+        classValue: `
         {
           padding:0 20px;
           height:30px;
@@ -1148,10 +1170,9 @@ export class ButtonContent {
           margin:5px 15px;
         }
         `
-      }
-      ,{
-        className:".contentStyle"
-        ,classValue:`
+      }, {
+        className: ".contentStyle",
+        classValue: `
         {
           width:100%;
           height:600px;
@@ -1161,22 +1182,22 @@ export class ButtonContent {
         `
       }]
     }
-    insertStyle2Head(css, {isCheckRepeat:true});
+    insertStyle2Head(css, { isCheckRepeat: true });
     this.btnDiv = document.createElement("div");
     this.container.appendChild(this.btnDiv);
   }
 
   addButtonAndContent(contentInnerHtml, option) {
     let defaultOption = {
-      btnText:"test"
-      ,contentStyleArr:[]
+      btnText: "test",
+      contentStyleArr: []
     }
 
     this.option = Object.assign(defaultOption, option);
 
-    if(contentInnerHtml !== void 0) {
-      let button = document.createElement("button")
-        ,content = document.createElement("div");
+    if (contentInnerHtml !== void 0) {
+      let button = document.createElement("button"),
+        content = document.createElement("div");
       button.innerText = this.option.btnText;
       button.classList.add("buttonStyle");
       content.classList.add("contentStyle");
@@ -1211,26 +1232,26 @@ export function windowonloadaop(beforeFn, afterFn) {
   }
   let loadDescriptor = Object.getOwnPropertyDescriptor(win, "onload");
   Object.defineProperty(win, "onload", {
-    set:function(value) {
-          function closure() {
-            beforeFn();
-            value();  
-            afterFn();                      
-          }  
-          loadDescriptor.set.call(this, closure);                                                            
-        }  
-  })  
+    set: function(value) {
+      function closure() {
+        beforeFn();
+        value();
+        afterFn();
+      }
+      loadDescriptor.set.call(this, closure);
+    }
+  })
 }
 
 export function createOpenFileInput(container, option) {
   let defaultOption = {
-    text:"上传文件"
+    text: "上传文件"
   };
 
   container = getElement(container) || doc.body;
   option = util.assignOption(defaultOption, option);
 
-  let cssStr =`
+  let cssStr = `
                 .openFileLabel {
                   padding:5px 10px;
                   width: 100%;
@@ -1258,10 +1279,10 @@ export function createOpenFileInput(container, option) {
 
   insertStyle2Head(cssStr);
 
-  let id =" inputFile" + createRandomString(5) + new Date().format("ffff")
-    ,openFileContent = document.createElement("div")
-    ,openFileLabel = document.createElement("label")
-    ,openFileInput = document.createElement("input");
+  let id = " inputFile" + createRandomString(5) + new Date().format("ffff"),
+    openFileContent = document.createElement("div"),
+    openFileLabel = document.createElement("label"),
+    openFileInput = document.createElement("input");
 
   openFileContent.classList.add("openFileContent");
   openFileLabel.classList.add("openFileLabel");
@@ -1274,7 +1295,6 @@ export function createOpenFileInput(container, option) {
   openFileContent.appendChild(openFileLabel);
   openFileContent.appendChild(openFileInput);
   container.appendChild(openFileContent);
-  
+
   return openFileInput;
 }
-    
