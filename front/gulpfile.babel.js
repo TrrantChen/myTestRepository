@@ -639,6 +639,7 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   ],
                   sourceMap:true,
                   nameExports:{
+                    // 'jquery-2.2.3.js':['jquery']
                     jquery:['jQuery']
                     ,underscore:['_']
                     // ,'sourcecode/lib/commonjsTest.js':['named']
@@ -667,7 +668,6 @@ let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
                   }
                 }()    
               ]
-              // ,external:['jquery', 'underscore']
               ,external:['jquery', 'underscore']
             }).then((bundle) => {  
 

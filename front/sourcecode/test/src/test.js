@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $  from 'jquery';
 import  * as util from '../../js/common/util'; 
 // import * as objectSizeof  from '../../lib/sizeof/index';
 import { getDomCount, action4EverySonDom, ButtonContent, setFrame, printDomTree} from '../../js/common/domoperation';
@@ -6,52 +6,57 @@ import { selectable, align, Align } from '../../js/common/interaction';
 import * as named from '../../lib/commonjsTest';
 import '../../../node_modules/babel-polyfill/browser'
 
-let container = document.querySelector(".container");
-$(() => {
-  // function containerClick(evt) {
-  //   console.log("event");
-  // }
+// let container = document.querySelector(".container");
+// $(() => {
+//   // function containerClick(evt) {
+//   //   console.log("event");
+//   // }
 
-  // container.addEventListener("click", containerClick);
-  // container.removeEventListener("click", containerClick);
+//   // container.addEventListener("click", containerClick);
+//   // container.removeEventListener("click", containerClick);
 
-  Object.prototype.myAddEventListener = function(eventName, fn) {
-    if (this.myEventObj === void 0) {
-      this.myEventObj = {};
-    }
+//   Object.prototype.myAddEventListener = function(eventName, fn) {
+//     if (this.myEventObj === void 0) {
+//       this.myEventObj = {};
+//     }
 
-    this.myEventObj[eventName] = fn;
-  }
+//     this.myEventObj[eventName] = fn;
+//   }
 
-  Object.prototype.myRemoveEventListener = function(eventName, fn) {
-    if (this.myEventObj !== void 0) {
-      delete this.myEventObj[eventName]
-    }
-  }
+//   Object.prototype.myRemoveEventListener = function(eventName, fn) {
+//     if (this.myEventObj !== void 0) {
+//       delete this.myEventObj[eventName]
+//     }
+//   }
 
-  Object.prototype.myDispatchEvent = function(myEvent) {
-    if (this.myEventObj !== void 0) {
-      if (this.myEventObj[myEvent.eventType]) {
-        this.myEventObj[myEvent.eventType](myEvent);
-      }
-    }
-  }
+//   Object.prototype.myDispatchEvent = function(myEvent) {
+//     if (this.myEventObj !== void 0) {
+//       if (this.myEventObj[myEvent.eventType]) {
+//         this.myEventObj[myEvent.eventType](myEvent);
+//       }
+//     }
+//   }
 
-  function MyEvent(eventType) {
-    this.eventType = eventType;
-    this.eventData = "this is myEvent";
-  }
+//   function MyEvent(eventType) {
+//     this.eventType = eventType;
+//     this.eventData = "this is myEvent";
+//   }
 
-  let obj = new Object();
-  let myEvent = new MyEvent("click");
+//   let obj = new Object();
+//   let myEvent = new MyEvent("click");
   
-  function myEventCallBack(myEvent) {
-    console.log(myEvent.eventData);
-  }
+//   function myEventCallBack(myEvent) {
+//     console.log(myEvent.eventData);
+//   }
 
-  obj.myAddEventListener("click", myEventCallBack);
+//   obj.myAddEventListener("click", myEventCallBack);
 
-  obj.myDispatchEvent(myEvent);
+//   obj.myDispatchEvent(myEvent);
+// })
+// 
+
+$(() => {
+  console.log("test");
 })
 
 
