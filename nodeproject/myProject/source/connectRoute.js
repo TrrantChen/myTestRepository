@@ -14,6 +14,7 @@ const txtParser = bodyParser.text();
 const commonProcess = require("./common/commonProcess");
 const randomProcess = require("./common/randomProcess");
 const safeProcess = require("./common/safeProcess");
+const cipherProcess = require("./common/cipherProcess");
 
 exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/", defaultConnect);
@@ -29,6 +30,8 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "post", "/test4DefaultContentType", test4DefaultContentType);
     commonProcess.preProcessHttpMethods(app, "post", "/test4PostWithoutThridPart", test4PostWithoutThridPart);
     commonProcess.preProcessHttpMethods(app, "post", "/downloadHtml", downloadHtml);
+    commonProcess.preProcessHttpMethods(app, "get", "/getPublicKey", getPublicKey);
+    commonProcess.preProcessHttpMethods(app, "post", "/uploadEncryptData", uploadEncryptData, jsonParser);
 };
 
 function getRandomTableData(req, res) {
@@ -136,4 +139,25 @@ function getReqData(req) {
 async function downloadHtml(req, res) {
   let data = await getReqData(req);
   res.send(safeProcess.preventXss(data));
+}
+
+let myDecrypter = cipherProcess.createDecrypter();
+
+function getPublicKey(req, res) {
+  let json = JSON.stringify({key:myDecrypter.publicKey});
+  res.send(json);
+}
+
+function uploadEncryptData(req, res) {
+  let user = req.body.user;
+  let password = req.body.password;
+  console.log("user--------------");
+  console.log(user);
+  console.log("password-------------------");
+  console.log(password);
+  res.send(JSON.stringify({
+      user:myDecrypter.decrypter.decrypt(user, "utf8")
+      ,password:myDecrypter.decrypter.decrypt(password, "utf8")
+    })
+  )
 }

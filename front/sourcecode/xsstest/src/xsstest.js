@@ -16,7 +16,7 @@ btnTest.addEventListener("click", (evt) => {
       ,contentType:"text/javascript"
       ,datatype: "document"
       ,success:function(result) {
-        showContent.innerHTML = `<a onclick=location="${result}">test</a>`;
+        showContent.innerHTML = `<a onclick=location= "${result}">test</a>`;
       }
       ,error:function(readyState, status) {
       }

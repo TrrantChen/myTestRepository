@@ -53,3 +53,16 @@ function simpleTest4Rsa2() {
   let encryptResut = myDecrypter.encrypt(testStr, "base64");
   console.log(myDecrypter.decrypt(encryptResut, "utf8"));
 }
+
+exports.createDecrypter = function() {
+  let decrypter = new Rsa({b:512});
+  decrypter.setOptions({encryptionScheme: 'pkcs1'});
+  let publicKey = decrypter.exportKey('public')
+    ,privateKey = decrypter.exportKey('private');
+
+  return {
+    'decrypter':decrypter
+    ,'publicKey':publicKey
+    ,'privateKey':privateKey
+  };
+};
