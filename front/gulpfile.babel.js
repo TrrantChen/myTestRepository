@@ -64,26 +64,21 @@ events.EventEmitter.defaultMaxListeners = 0;
 let browsersync = browserSync.create();
 let reloadPage = browsersync.reload;
 
-let basePath = './sourcecode';
-let projectDoc = basePath + '/!(js|lib|package.json|node_modules|extern)';
-let reg = new RegExp(util.escapeStringRegexp(basePath + "/"), 'g');
-let libArr = [
-  basePath + '/lib/jquery/jquery-2.2.3.js',
-  basePath + '/lib/jquery-ui-1.12.1.custom/jquery-ui.js', 
-  basePath + '/lib/underscore/underscore.js', 
-  basePath + '/lib/globalTest.js', 
-  basePath + '/lib/sizeof.js', 
-  basePath + '/lib/jsencrypt.js'
-];
-
 let isProd = process.env.NODE_ENV === 'production';
+let isTest = process.env.NODE_ENV === 'test';
 
-let rollupPlugs = isProd ? [
-  multiEntry(),
-  rollupUglify({}, minify)
-] : [
-  multiEntry()
-]
+let basePath = './sourcecode';
+let projectDoc = isTest ? basePath + '/test' : basePath + '/!(js|lib|package.json|node_modules|extern)';
+let reg = new RegExp(util.escapeStringRegexp(basePath + "/"), 'g');
+
+console.log(process.env.NODE_ENV);
+
+function getPlugs() {
+  let commonPlags = [multiEntry()];
+  let devPlags = [];
+  let producePlags = [rollupUglify({}, minify)];
+  return commonPlags.concat(isProd ? producePlags : devPlags);
+}
 
 gulp.task('clear-build', () => {
   let vp = vinylPaths();
@@ -129,7 +124,7 @@ gulp.task('compressHtml', (done) => {
 })
 
 gulp.task('cmopressLib', () => {
-  return gulp.src(libArr, (err, files) => {
+  return gulp.src(basePath + '/lib/src/*.js', (err, files) => {
       console.log(files)
     })
     .pipe(sourcemaps.init({ loadMaps: true })) // 设置map
@@ -142,31 +137,29 @@ gulp.task('cmopressLib', () => {
 })
 
 gulp.task('processWithRollup', (done) => {
-  return new Promise((resolve, reject) => {
-    glob(basePath + '/test', (err, projectFiles) => {
-      // glob(projectDoc, (err, projectFiles)  => {   
-      let tasks = projectFiles.map((projectFile, index) => {
+  return new Promise((resolve, reject) => { 
+      glob(projectDoc, (err, projectFiles)  => {   
+      let tasks = projectFiles.map(async function(project, index) {
+        let projectFile = project;
         let name = projectFile.replace(reg, '');
-        return rollup.rollup({
-            entry: projectFile + '/src/*.js',
-            plugins: rollupPlugs,
-            external: ['jquery', 'underscore']
-          })
-          .then((bundle) => {
-            return bundle.write({
-              format: 'iife',
-              sourceMap: true,
-              dest: projectFile + '/build/' + name + '.js',
-              moduleName: name,
-              globals: {
-                jquery: 'jQuery',
-                underscore: '_',
-              }              
-            })
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        const bundle = await rollup.rollup({
+          entry: projectFile + '/src/*.js',
+          plugins: getPlugs(),
+          external: ['jquery', 'underscore']
+        });
+
+        let result = bundle.write({
+          format: 'iife',
+          sourceMap: true,
+          dest: projectFile + '/build/' + name + '.js',
+          moduleName: name,
+          globals: {
+            jquery: 'jQuery',
+            underscore: '_',
+          }              
+        });
+
+        return result
       });
       Promise.all(tasks).then(() => {
         resolve(done);
@@ -197,7 +190,7 @@ gulp.task('replace-hash', ['processWithRollup'], (done) => {
 })
 
 gulp.task('watch-compress', ['browser-sync', 'replace-hash', 'cmopressLib', 'compressHtml'], (done) => {
-  gulp.watch(libArr, ['cmopressLib']);
+  gulp.watch(basePath + '/lib/src/*.js', ['cmopressLib']);
   gulp.watch(basePath + '/js/common/*.js', ['replace-hash']);
   gulp.watch(basePath + '/js/module/*.js', ['replace-hash']);
   gulp.watch(projectDoc + '/src/*.js', ['replace-hash']);
