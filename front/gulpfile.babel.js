@@ -64,14 +64,12 @@ events.EventEmitter.defaultMaxListeners = 0;
 let browsersync = browserSync.create();
 let reloadPage = browsersync.reload;
 
-let isProd = process.env.NODE_ENV === 'production';
-let isTest = process.env.NODE_ENV === 'test';
+let isProd = process.env.NODE_ENV.trim() === 'production';
+let isTest = process.env.NODE_ENV.trim() === 'test';
 
 let basePath = './sourcecode';
 let projectDoc = isTest ? basePath + '/test' : basePath + '/!(js|lib|package.json|node_modules|extern)';
 let reg = new RegExp(util.escapeStringRegexp(basePath + "/"), 'g');
-
-console.log(process.env.NODE_ENV);
 
 function getPlugs() {
   let commonPlags = [multiEntry()];

@@ -22,8 +22,10 @@ function fileProcess(file) {
 }
 
 function upLoadFile2Server(file) {
-  uploadFile(file, "parseFileByBusboy", (result) => {
-    alert(result);
+  uploadFile(file, "parseFileByBusboy", {
+    success:(result) => {
+      alert(result);
+    }
   })
 }
 

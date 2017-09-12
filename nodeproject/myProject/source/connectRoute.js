@@ -11,10 +11,12 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const txtParser = bodyParser.text();
 
+
 const commonProcess = require("./common/commonProcess");
 const randomProcess = require("./common/randomProcess");
 const safeProcess = require("./common/safeProcess");
 const cipherProcess = require("./common/cipherProcess");
+const bufferHelper = require('./common/bufferHelper');
 
 exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/", defaultConnect);
@@ -123,17 +125,25 @@ async function test4PostWithoutThridPart(req, res) {
 }
 
 function getReqData(req) {
-  let data = "";
+  bufferHelper.clear();
   req.setEncoding('utf8');
   return new Promise((resolve, reject) => {
     req.on("data" , (chunk) => {
-       data += chunk;
+      bufferHelper.concat(chunk);
     });
 
     req.on("end", () => {
+      let data = processFormData(bufferHelper.toString());
       resolve(data);
+      bufferHelper.clear();
     });
   })
+}
+
+function processFormData(str) {
+  let result = "";
+  result = str.split("\r\n");
+  return result;
 }
 
 async function downloadHtml(req, res) {

@@ -191,20 +191,15 @@ export function createAndGetProgress() {
 }
 
 export function setAjaxWithProcess(option, isWithProcess) {
-  var progressContainer = createAndGetProgress();
-  option.onloadend = function() {
-    if (isWithProcess) {
+  if (isWithProcess) {
+    var progressContainer = createAndGetProgress();
+    option.onloadend = function() {
       progressContainer.style.display = "none"
-    }
-  };
-  option.onloadstart = function() {
-    if (isWithProcess) {
+    };
+    option.onloadstart = function() {
       progressContainer.style.display = "flex"
-    }
-
-  };
-  option.onprogress = function(event) {
-    if (isWithProcess) {
+    };
+    option.onprogress = function(event) {
       var progressStyle = doc.querySelector(".progressStyle");
       var progressBar = doc.querySelector(".progressBar");
       var progressNum = doc.querySelector(".progressNum");
@@ -465,9 +460,9 @@ function printDomTreeSelf(dom, isOnlyElement, str) {
       while (startElement) {
         console.log(str + startElement.tagName);
         printDomTreeSelf(startElement.firstChild, isOnlyElement, " " + str)
-        startElement = startElement.nextSibling; 
+        startElement = startElement.nextSibling;
       }
-    }    
+    }
   }
 }
 

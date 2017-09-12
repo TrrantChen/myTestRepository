@@ -1,6 +1,6 @@
 import * as util from '../../js/common/util'
-import { autoDownloadUrl } from '../../js/common/domoperation'
-import { downloadFile, uploadFile } from '../../js/common/filemodule'
+import {autoDownloadUrl} from '../../js/common/domoperation'
+import {downloadFile, uploadFile} from '../../js/common/filemodule'
 
 let path = util.getHost();
 $(function() {
@@ -17,11 +17,12 @@ $(function() {
       downloadFile(
         "./output/test1.txt",
         path + "downLoadFileWithStream",
-        function(result) {
-          console.log("onload")
-          autoDownloadUrl("output.txt", result);
-        },
-        false
+        {
+          success: function(result) {
+            console.log("onload")
+            autoDownloadUrl("output.txt", result);            
+          }
+        }
       );
     }
   }
@@ -30,14 +31,16 @@ $(function() {
     downloadFile(
       "./output/test1.txt",
       path + "downLoadFileWithBuffer",
-      function(result) {
-        var reader = new FileReader();
-        reader.addEventListener("loadend", function() {
-          var a = document.querySelector("#testC");
-          a.href = reader.result;
-          a.download = "test1.txt";
-        })
-        reader.readAsDataURL(result)
+      {
+        success: function(result) {
+          var reader = new FileReader();
+          reader.addEventListener("loadend", function() {
+            var a = document.querySelector("#testC");
+            a.href = reader.result;
+            a.download = "test1.txt";
+          })
+          reader.readAsDataURL(result)
+        }
       }
     );
   }

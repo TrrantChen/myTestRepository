@@ -458,6 +458,43 @@ export function htmlStr2Code(value) {
   return div.innerHTML;
 }
 
+export function deepClone(value) {
+  let valueType = Object.prototype.toString.call(value).replace(/\[|\]|object|\s/g, "");
+  let result = void 0;
+
+  switch (valueType) {
+    case "Number":
+    case "String":
+    case "Function":
+    case "Null":
+    case "Undefined":
+      result = value;
+      break;
+    case "Object":
+      result = {};
+      for (key in value) {
+        if (value.hasOwnProperty(key)) {
+          result[key] = deepClone(value[key]);
+        }
+      }
+      break;
+    case "Array":
+      result = [];
+      let length = value.length;
+
+      for (var i = 0; i < length; i++) {
+        result[i] = deepClone(value[i]);
+      }
+      break;    
+    default:
+      break;
+  } 
+
+  return result;
+} 
+
+
+
 Function.prototype.before = function(fn) {
   let args = [],
     length = arguments.length,

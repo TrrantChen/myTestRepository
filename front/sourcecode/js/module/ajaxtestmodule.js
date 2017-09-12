@@ -1,7 +1,8 @@
 import {getHost} from '../common/util.js';
 import {generalAjax} from '../common/ajax.js';
-import { autoDownloadUrl } from '../../js/common/domoperation' 
+import {autoDownloadUrl} from '../../js/common/domoperation' 
 import {string2ab8} from '../../js/common/filedataoperation'
+import {uploadFile} from '../../js/common/filemodule'
 import $ from 'jquery';
 
 const path = getHost();

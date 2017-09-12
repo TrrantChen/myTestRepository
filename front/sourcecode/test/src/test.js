@@ -1,6 +1,6 @@
 import $ from 'jquery';
-
+import {deepClone} from '../../js/common/util';
 
 $(() => {
-  console.log("test");
+  
 })

@@ -807,7 +807,7 @@ function mySelfPromise() {
   testCase10();
 }
 
-(function promiseCallback() {
+function promiseCallback() {
   let testBtn = document.querySelector("#testBtn");
   let index = 0;
 
@@ -837,7 +837,68 @@ function mySelfPromise() {
   // callbakFn(() => {
   //   console.log(window.index);
   // })
-})()
+}
+
+function promiseCatchError() {
+  function myPromise() {
+    let promise = new Promise((resolve, reject) => {
+      try {
+        testErr()
+      }
+      catch(err) {
+        reject(err);
+      }
+    })
+
+    return promise;
+  }
+
+  function testErr() {
+    throw new Error("this is error");
+  }
+
+  myPromise().then((result) => {
+    
+  }).catch((err) => {
+    console.log(err);
+  })
+}
+
+function forAllPromiseError() {
+  function myPromise(value) {
+    let promise = new Promise((resolve, reject) => {
+      if (value !== 1) {
+        resolve(value);
+      }
+      else {
+        reject("error");
+      }
+    })
+
+    return promise;
+  }
+
+  let arr = [1, 2, 3, 4];
+  let promiseArr = arr.map((value) => {
+    return myPromise(value)
+    // .then((result) => {
+    //   console.log(result);
+    // }).catch((err) => {
+    //   console.log(err);
+    // })
+  })
+
+  let promiseAll = Promise.all(promiseArr);
+  return promiseAll;
+}
+
+forAllPromiseError().then((result) => {
+  console.log(result);
+}).catch((err) => {
+  console.log(err);
+})    
+
+
 
 
 

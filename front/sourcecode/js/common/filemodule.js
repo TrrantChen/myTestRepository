@@ -4,52 +4,106 @@ import * as domoperation from './domoperation.js';
 
 var path = util.getHost();
 
-export function uploadFile(files, url, successCallback, isWithProcess) {
-  isWithProcess = isWithProcess || false;
-  successCallback = successCallback || function() { console.log("upload file success;") };
-
-  var formData = new FormData();
-  if (files instanceof FileList) {
-    for (var i = 0; i < files.length; i++) {
-      formData.append("fileBlob" + i.toString(), files[i]);
+export function uploadFilePromise(file, url, option) {
+  let promise = new Promise((resolve, reject) => {
+    try {
+      uploadFile(file, url, {
+        success:resolve,
+        error:reject
+      })        
     }
-  } else if (files instanceof Blob || files instanceof File) {
-    formData.append("fileBlob0", files);
+    catch(err) {
+      reject(err);
+    }
+  }) 
+
+  return promise;
+}
+
+export function uploadFile(file, url, option) {
+  let defaultOption = {
+    success: function() {
+      console.log("upload file success;")
+    }, 
+    error: function() {
+      console.log("upload file error");
+    },
+    isWithProcess:false
+  };
+  let fileOption = Object.assign(defaultOption, option); 
+  let formData = new FormData();
+
+ if (file instanceof Blob || file instanceof File) {
+    formData.append("fileBlob0", file);
+  } else {
+    throw new Error("files is not corret type")
   }
 
-  var option = {
+  let ajaxOption = {
     type: "post",
     async: true,
     data: formData,
     url: url,
     isUpload: true,
-    success: successCallback
+    success: fileOption.success,
+    error: fileOption.error
   }
 
-  domoperation.setAjaxWithProcess(option, isWithProcess);
-  ajax.generalAjax(option);
+  domoperation.setAjaxWithProcess(ajaxOption, fileOption.isWithProcess);
+  ajax.generalAjax(ajaxOption);
 }
 
-export function downloadFile(filePaths, url, successCallback, isWithProcess) {
-  isWithProcess = isWithProcess || false;
-  successCallback = successCallback || function() { console.log("download file success;") };
-  var option = {
+export function uploadFiles(files, url, option) {
+  if (files instanceof FileList || Array.isArray(files)) {
+    let uploadFiles = files.map((file) => {
+      return uploadFilePromise(file, url, option);
+    })
+
+    return Promise.all(uploadFiles);
+  } else {
+    return new Promise((resolve, reject) => {
+      reject("files must be FileList or Array");
+    })
+  }
+}
+
+export function downloadFilePromise(filePath, url, option) {
+  let promise = new Promise((resolve, reject) => {
+    option.success = resolve;
+    option.error = reject;
+  })
+
+  return promise;
+}
+
+export function downloadFile(filePath, url, option) {
+  let defaultOption = {
+    success: function() {
+      console.log("upload file success;")
+    }, 
+    error: function() {
+      console.log("upload file error");
+    },
+    isWithProcess:false
+  };
+  let fileOption = Object.assign(defaultOption, option);   
+  let ajaxOption = {
     type: "get",
     url: url,
     dataType: "blob",
-    success: successCallback
+    data: {path:filePath},
+    success: fileOption.success,
+    error: fileOption.error
   };
 
-  domoperation.setAjaxWithProcess(option, isWithProcess);
+  domoperation.setAjaxWithProcess(ajaxOption, fileOption.isWithProcess);
+  ajax.generalAjax(ajaxOption);
+}
 
-  if (util.isArray(filePaths)) {
-    for (var i = 0; i < filePaths.length; i++) {
-      option.data = { path: filePaths[i] };
-      ajax.generalAjax(option);
-    }
+export function downloadFiles(filePaths, url, option) {
+  let loadFiles = filePaths.map((filePath) => {
+    return downloadFilePromise(filePath, url, option);
+  });
 
-  } else {
-    option.data = { path: filePaths }
-    ajax.generalAjax(option);
-  }
+  return Promsie.all(loadFiles);
 }
