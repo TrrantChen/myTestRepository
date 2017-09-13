@@ -1,6 +1,7 @@
 const stream = require("stream");
 const fs = require("fs");
 const fdSlicer = require("fd-slicer");
+const util = require('../common/util');
 
 let readable = stream.Readable();
 let writable = stream.Writable();
@@ -64,6 +65,16 @@ function writeStreamTest() {
     next();
   }
 }
+
+function writeTest() {
+  fs.open("./output/testWrite.txt", 'a', (err, fd) => {
+    fs.write(fd, "test aaaa\r\n", function() {
+      console.log(arguments);
+    });
+  })
+}
+
+writeTest();
 
 
 

@@ -1,4 +1,5 @@
 const iconv = require('iconv-lite');
+const stream = require('stream');
 
 exports.num2char = function(num) {
     return String.fromCharCode(num);
@@ -88,9 +89,9 @@ exports.initGetUid = function() {
   将string转换为可以pipe的stream
  */
 exports.str2stream = function(str) {
-  let s = new Readable();
+  let s = new stream.Readable();
   s._read = function noop() {};
   s.push(str);
   s.push(null);
   return s;
-}
+};

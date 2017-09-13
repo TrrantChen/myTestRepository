@@ -120,8 +120,13 @@ function test4DefaultContentType(req, res) {
 }
 
 async function test4PostWithoutThridPart(req, res) {
-  let data = await getReqData(req);
-  res.send(data);
+  console.log(req.headers);
+  let strArr = await getReqData(req);
+  let length = strArr.length;
+  let fileName = string2Obj(strArr[1]).filename;
+  let contentArr = strArr.slice(4, length - 3);
+
+  res.send(strArr);
 }
 
 function getReqData(req) {
@@ -133,17 +138,27 @@ function getReqData(req) {
     });
 
     req.on("end", () => {
-      let data = processFormData(bufferHelper.toString());
-      resolve(data);
+      let strArr = processFormData(bufferHelper.toString());
+      resolve(strArr);
       bufferHelper.clear();
     });
   })
 }
 
 function processFormData(str) {
-  let result = "";
-  result = str.split("\r\n");
+  let result = str.split("\r\n");
   return result;
+}
+
+function string2Obj(str) {
+  let obj = {};
+  let strArr = str.split(";");
+  let length = strArr.length;
+  for (var i = 1; i < length; i++) {
+    let tmpArr = strArr[i].split("=");
+    obj[tmpArr[0]] = tmpArr[1].replace(/"/g, "");
+  }
+  return obj;
 }
 
 async function downloadHtml(req, res) {
