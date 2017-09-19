@@ -8,7 +8,7 @@
 import $ from 'jquery';
 
 $(() => {
-  test4SingleFn();
+  // test4Class();
 })
 
 
@@ -335,6 +335,22 @@ function test4SingleFn() {
   console.log(test4Single1 === test4Single2);
 }
 
+
+// 测试如果直接调用一个class和new一个class的区别
+function test4Class() {
+  class TestClass {
+    constructor() {
+      console.log("this is test class");
+    }
+
+    print() {
+      console.log("this is print");
+    }
+  }
+
+  let a = new TestClass();
+  let b = TestClass();
+}
 
 
 

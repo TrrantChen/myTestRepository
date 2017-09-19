@@ -64,6 +64,8 @@ events.EventEmitter.defaultMaxListeners = 0;
 let browsersync = browserSync.create();
 let reloadPage = browsersync.reload;
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 let isProd = process.env.NODE_ENV.trim() === 'production';
 let isTest = process.env.NODE_ENV.trim() === 'test';
 
