@@ -132,82 +132,107 @@ function readableTest() {
   }
 
   // flow到paused的切换
-  function FlowAndPauseTest() {
-    this.rb = stream.Readable();
-    this.rb._read = function() {
-      this.push("a\r\n");
-      this.push("b\r\n");
-      this.push(null);
+  function flowPauseTest() {
+    function FlowAndPauseTest() {
+      this.rb = stream.Readable();
+      this.rb._read = function() {
+        this.push("a\r\n");
+        this.push("b\r\n");
+        this.push(null);
+      };
+      this.rb.setEncoding('utf8');
+
+      // 监听data事件，会自动从pause切换到flow
+      this.rb.on("data", (chunk) => {
+        console.log("====================================")
+        console.log("this is data " + chunk);
+        console.log(this.rb._readableState.flowing);
+        console.log(this.rb._readableState.buffer);
+      });
+
+      this.rb.on("readable", () => {
+        console.log("====================================")
+        console.log("this is readable");
+        console.log(this.rb._readableState.flowing);
+        console.log(this.rb._readableState.buffer);
+      });
+
+      this.rb.on("end", () => {
+        console.log("====================================")
+        console.log("this is end");
+        console.log(this.rb._readableState.flowing);
+        console.log(this.rb._readableState.buffer);
+      });    
+    }
+
+    // 在使用pause且没有pipe的情况下后，即使监听了data事件，数据依旧在buffer中，不会触发data和end事件
+    FlowAndPauseTest.prototype.pauseAndFlow1 = function() {
+      this.rb.pause();  
     };
-    this.rb.setEncoding('utf8');
 
-    // 监听data事件，会自动从pause切换到flow
-    this.rb.on("data", (chunk) => {
-      console.log("====================================")
-      console.log("this is data " + chunk);
-      console.log(this.rb._readableState.flowing);
-      console.log(this.rb._readableState.buffer);
-    });
+    // 通过read()方法触发data事件，但流还是处于pause
+    FlowAndPauseTest.prototype.pauseAndFlow2 = function() {
+      this.rb.pause();
 
-    this.rb.on("readable", () => {
-      console.log("====================================")
-      console.log("this is readable");
-      console.log(this.rb._readableState.flowing);
-      console.log(this.rb._readableState.buffer);
-    });
+      this.rb.on("readable", () => {
+        let data = this.rb.read();
+        console.log(data);
+      });
+    };
 
-    this.rb.on("end", () => {
-      console.log("====================================")
-      console.log("this is end");
-      console.log(this.rb._readableState.flowing);
-      console.log(this.rb._readableState.buffer);
-    });    
+    // pipe在前，pause在后，流会pause
+    FlowAndPauseTest.prototype.pauseAndFlow3 = function() {
+      this.rb.pipe(process.stdout);   
+      this.rb.pause();
+    };
+
+    // pause在前，pipe在后，流会flow
+    FlowAndPauseTest.prototype.pauseAndFlow4 = function() {
+      this.rb.pause();
+      this.rb.pipe(process.stdout);   
+    }; 
+
+    // resume能让流变为flow
+    FlowAndPauseTest.prototype.pauseAndFlow5 = function() {
+      this.rb.pause();
+      this.rb.resume();  
+    }; 
+
+    // unpipe 也能重新让流pause
+    FlowAndPauseTest.prototype.pauseAndFlow6 = function() {
+      this.rb.pause();
+      this.rb.pipe(process.stdout); 
+      this.rb.unpipe(process.stdout);     
+    };  
+
+    let flowAndPauseTest = new FlowAndPauseTest();
+    flowAndPauseTest.pauseAndFlow6();    
   }
 
-  // 在使用pause且没有pipe的情况下后，即使监听了data事件，数据依旧在buffer中，不会触发data和end事件
-  FlowAndPauseTest.prototype.pauseAndFlow1 = function() {
-    this.rb.pause();  
-  };
+  // 测试pipe的end设置
+  function pipeEndTest() {
+    let Readable = stream.Readable;
+    let readable = new Readable();  
+    
 
-  // 通过read()方法触发data事件，但流还是处于pause
-  FlowAndPauseTest.prototype.pauseAndFlow2 = function() {
-    this.rb.pause();
+    readable._read = function() {
+      readable.push("test");
+      readable.push("test");
+      readable.push(null);
+    }
 
-    this.rb.on("readable", () => {
-      let data = this.rb.read();
-      console.log(data);
-    });
-  };
+    let data = "";
 
-  // pipe在前，pause在后，流会pause
-  FlowAndPauseTest.prototype.pauseAndFlow3 = function() {
-    this.rb.pipe(process.stdout);   
-    this.rb.pause();
-  };
+    readable.on('data', (chunk) => {
+      data += chunk;
+    })
 
-  // pause在前，pipe在后，流会flow
-  FlowAndPauseTest.prototype.pauseAndFlow4 = function() {
-    this.rb.pause();
-    this.rb.pipe(process.stdout);   
-  }; 
+    readable.on('end', () => {
 
-  // resume能让流变为flow
-  FlowAndPauseTest.prototype.pauseAndFlow5 = function() {
-    this.rb.pause();
-    this.rb.resume();  
-  }; 
+    })
+  }
 
-  // unpipe 也能重新让流pause
-  FlowAndPauseTest.prototype.pauseAndFlow6 = function() {
-    this.rb.pause();
-    this.rb.pipe(process.stdout); 
-    this.rb.unpipe(process.stdout);     
-  };  
-
-  // let flowAndPauseTest = new FlowAndPauseTest();
-  // flowAndPauseTest.pauseAndFlow6();
-  
-  objectModeTest();
+  pipeEndTest()
 }
 
 readableTest();
