@@ -33,21 +33,6 @@ function writeStreamTest2() {
 }
 
 function simpleTest() {
-  function simpleReadAble() {
-    let Readable = stream.Readable;
-    let readable = new Readable();
-
-    readable._read = function() {
-      readable.push("test");
-      readable.push(null);
-    };
-
-    readable.on("readable", () => {
-      let data = readable.read();
-      console.log("readable:" + data);
-    })
-  }
-
   function simpleTransform() {
     let readStream = fs.createReadStream("./nodeproject/myProject/output/test.txt");
     let writeStream = fs.createWriteStream("./nodeproject/myProject/output/out.txt");
@@ -108,48 +93,121 @@ function writeAtTheSameTime() {
   })
 }
 
-function objectModeTest() {
-}
 
-function flowModeTest() {
+function readableTest() {
+  function simpleTest() {
+    let Readable = stream.Readable;
+    let readable = new Readable();
 
-  function unFlowMode() {
-    console.log("this is un flow mode");
-    process.stdin
-      .on('readable', function() {
-        // 有数据到了, 拼命读, 直到读完.
-        var chunk;
-        console.log('New data available');
-        while((chunk = process.stdin.read()) !== null) {
-          console.log(
-            'Chunk read: (' + chunk.length + ') "' + chunk.toString() + '"'
-          );
-        }})
-      .on('end', function() {
-        process.stdout.write('End of stream');
-      });
+    readable._read = function() {
+      readable.push("test");
+      readable.push(null);
+    };
+
+    readable.on("readable", () => {
+      let data = readable.read();
+      console.log("readable:" + data);
+    })
   }
 
-  function flowMode() {
-    console.log("this is flow mode");
-  // 流动模式
-    process.stdin
-      .on('data', function(chunk) {
-        console.log('New data available');
-        console.log(
-          'Chunk read: (' + chunk.length + ')" ' +
-          chunk.toString() + '"'
-        );
-      })
-      .on('end', function() {
-        process.stdout.write('End of stream');
-      });
+  // 对象模式下才能push object 要不会报错, 而且从buffer中读取到的也是object
+  function objectModeTest() {
+    let Readable = stream.Readable;
+    let readable = new Readable({objectMode: true});
+
+    readable._read = function() {
+      readable.push({test:"test"});
+      readable.push(null);
+    };
+
+    readable.on("readable", () => {
+      let data = readable.read();
+      debugger;
+      console.log(data);
+    })
+
+    readable.on("end", () => {
+      console.log("this is end");
+    })
   }
 
-  unFlowMode();
-  // flowMode();
+  // flow到paused的切换
+  function FlowAndPauseTest() {
+    this.rb = stream.Readable();
+    this.rb._read = function() {
+      this.push("a\r\n");
+      this.push("b\r\n");
+      this.push(null);
+    };
+    this.rb.setEncoding('utf8');
+
+    // 监听data事件，会自动从pause切换到flow
+    this.rb.on("data", (chunk) => {
+      console.log("====================================")
+      console.log("this is data " + chunk);
+      console.log(this.rb._readableState.flowing);
+      console.log(this.rb._readableState.buffer);
+    });
+
+    this.rb.on("readable", () => {
+      console.log("====================================")
+      console.log("this is readable");
+      console.log(this.rb._readableState.flowing);
+      console.log(this.rb._readableState.buffer);
+    });
+
+    this.rb.on("end", () => {
+      console.log("====================================")
+      console.log("this is end");
+      console.log(this.rb._readableState.flowing);
+      console.log(this.rb._readableState.buffer);
+    });    
+  }
+
+  // 在使用pause且没有pipe的情况下后，即使监听了data事件，数据依旧在buffer中，不会触发data和end事件
+  FlowAndPauseTest.prototype.pauseAndFlow1 = function() {
+    this.rb.pause();  
+  };
+
+  // 通过read()方法触发data事件，但流还是处于pause
+  FlowAndPauseTest.prototype.pauseAndFlow2 = function() {
+    this.rb.pause();
+
+    this.rb.on("readable", () => {
+      let data = this.rb.read();
+      console.log(data);
+    });
+  };
+
+  // pipe在前，pause在后，流会pause
+  FlowAndPauseTest.prototype.pauseAndFlow3 = function() {
+    this.rb.pipe(process.stdout);   
+    this.rb.pause();
+  };
+
+  // pause在前，pipe在后，流会flow
+  FlowAndPauseTest.prototype.pauseAndFlow4 = function() {
+    this.rb.pause();
+    this.rb.pipe(process.stdout);   
+  }; 
+
+  // resume能让流变为flow
+  FlowAndPauseTest.prototype.pauseAndFlow5 = function() {
+    this.rb.pause();
+    this.rb.resume();  
+  }; 
+
+  // unpipe 也能重新让流pause
+  FlowAndPauseTest.prototype.pauseAndFlow6 = function() {
+    this.rb.pause();
+    this.rb.pipe(process.stdout); 
+    this.rb.unpipe(process.stdout);     
+  };  
+
+  // let flowAndPauseTest = new FlowAndPauseTest();
+  // flowAndPauseTest.pauseAndFlow6();
+  
+  objectModeTest();
 }
 
-simpleTest();
-
-
+readableTest();
