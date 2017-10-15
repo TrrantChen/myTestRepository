@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+    <div id="app" >
+      {{ message }}
+    </div>
+    <div id="app-4">
+      <ol>
+        <li v-for="todo in todos">
+          {{ todo.text }}
+        </li>
+      </ol>      
+    </div>
+    <button id="addli">add li</button>
+    <ol>
+      <li>t</li>
+      <li>r</li>
+      <li>f</li>
+    </ol>
+
+    <ul>
+      <li>w</li>
+      <li>ds</li>
+      <li>dsd</li>
+      <li>g</li>
+    </ul>
+    <div id="app-5">
+      <div>{{ message }}</div>
+      <button v-on:click="showMessage">showMessage</button>
+    </div>
+</body>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript" src="./helloword.js"></script>
+</html>
