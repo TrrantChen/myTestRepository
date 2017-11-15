@@ -25,6 +25,15 @@
             height:100px;
             border:solid 5px green;
         }
+
+        .testClass {
+            background:green;
+        }
+
+        .instantStyle {
+            border:solid 2px black;
+        }
+
     </style>
 </head>
 <body>
@@ -36,7 +45,7 @@
         <li v-for="todo in todos">
           {{ todo.text }}
         </li>
-      </ol>      
+      </ol>
     </div>
     <button id="addli">add li</button>
     <ol>
@@ -61,13 +70,14 @@
         <p>{{ reversedMessage }}</p>
     </div>
 
-    <div id="computedPropertyTest">
+    <div id="computedPropertyTest" class="instantStyle">
         <p>{{ num }}</p>
         <p>{{ computedMethod }}</p>
         <p>{{ callMethod() }}</p>
         <p>{{ computedGetDate }}</p>
         <p>{{ getDateMethod() }}</p>
         <button @click="clickHandle">add</button>
+        <button @click="getTheComputedMethodValue">getComputedMethodValue</button>
     </div>
 
     <div id="vClassTest">
@@ -80,7 +90,7 @@
     <div id="arrayForTest">
         <ol>
             <li v-for="item in items">
-                {{ item.text }}
+                {{ item }}
             </li>
         </ol>
         <button @click="clickCallback">change item</button>
@@ -90,8 +100,104 @@
         <div>{{ textValue }}</div>
         <button @click="getTextValue">getTextValue</button>
     </div>
+
+    <div id="eventThis">
+        <button @click="clickCallback('name', $event)">show this</button>
+    </div>
+
+    <div id="showTest">
+        <div v-for="(item, index) in items" v-show="index > 3 && isShow">
+            <div>{{item}}</div>
+        </div>
+    </div>
+
+    <div id="watchTest">
+        {{ getData }}
+        <button @click="btnHandle">watchTest</button>
+    </div>
+
+    <div id="componentTest">
+        <button @click="test_message++;test_obj.num++;">add</button>
+        <div>{{ test_message }}</div>
+        <!--这种方式是无法将外面的数据传递到组件里面的，传递的只是字符串-->
+        <!--<my-component from_out="test_message"></my-component>-->
+        <!--额外属性会直接添加给组件的根元素-->
+        <my-component :variable="test_message" :obj="test_obj" class="testClass"></my-component>
+    </div>
+
+    <div id="componentTransmitMessage">
+        <div>
+            {{ message_from_component }}
+        </div>
+        <button @click="clickHandle">send data to component</button>
+        <my-component :message_from_parent = "message_to_component" @compentclickevent="handDataFromComponent"></my-component>
+    </div>
+
+    <div id="slotTest">
+        <child>
+            <template slot-scope="test">
+                <div>hello from parent</div>
+                <div>{{ test.text }}</div>
+            </template>
+        </child>
+    </div>
+
+    <div id="dynamicComponentsTest">
+        <component :is="currentComponent">
+        </component>
+        <button @click="changeComponent">change component</button>
+    </div>
+
+    <div id="notChangeInnerValue">
+        <div>{{ message_modify_by_component.message }}</div>
+        <component1 :message_from_parent="message_to_component" :message_from_parent_can_modify="message_modify_by_component">
+        </component1>
+        <button @click="clickHandle">change message</button>
+    </div>
+
+    <div id="sonComponentRef">
+        <child ref="profile"></child>
+    </div>
+
+    <div id="globalEventTest">
+        <button @click="">test 4 event statement</button>
+        <component1></component1>
+        <component2></component2>
+    </div>
+
+    <div id="inputTest">
+
+        <div>
+            <!--<input type="text" v-model.lazy="inputValue">-->
+            <!--<input type="text" @input="inputHandle">-->
+            <input type="number" @change="changeHandle"  >
+            {{ inputValue }}
+        </div>
+        <button @click="clickHandle">show</button>
+    </div>
+
+    <div class="instantStyle" id="lifeCircleTest">
+        <div>{{ test_data }}</div>
+        <child></child>
+        <button @click="updateHandle">update</button>
+        <button @click="destroyHandle">destroy</button>
+    </div>
+
+    <div id="checkboxTest">
+        <label for="" v-for="item in data_list"><input type="checkbox"  :value="item" v-model="selected_list">{{ item }}</label>
+        {{ selected_list }}
+    </div>
+
+    <div id="getChildComponentByRefs">
+        <child1 ref="c1"></child1>
+        <child2 ref="c2"></child2>
+        <child3 ref="c3"></child3>
+        <button ref="c4">test</button>
+    </div>
 </body>
 <script src="./mock.js"></script>
+<script src="./lodash.js"></script>
+<script src="./jquery-3.2.1.js"></script>
 <script type="text/javascript" src="./vue.js"></script>
 <script src="./vue-resource.js"></script>
 <script type="text/javascript" src="./helloword.js"></script>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .instantStyle {
+        border:solid 2px black;
+    }
+</style>
+<body>
+    <div id="btonDisableTest">
+        <button ref="disableBtn">test</button>
+        <button @click="changeHandle">change</button>
+    </div>
+
+    <div id="selectpickTest">
+        <select v-model="pickData" >
+            <option value="">--请选择--</option>
+            <option :value="key" v-for="(value, key) in lstData">{{ key }} {{ value }}</option>
+        </select>
+        {{ pickData }}
+    </div>
+    <div id="testUndifne">
+        <div>{{ elem || '0' }}</div>
+    </div>
+
+    <div id="computedDisableTest">
+        <button :disabled="getDisabled">testButton</button>
+        <button @click="clickHandle">changeDisable</button>
+        <div>{{ isDisabled }}</div>
+    </div>
+
+    <div id="inputModelSimulation">
+        <input type="text" @input = "message = $event.target.value" :value = "message">
+        {{ message }}
+        <button @click="clickHandle">change</button>
+    </div>
+
+    <div id="directiveTest" class="instantStyle">
+        <input type="text" v-test>
+    </div>
+
+    <div id="test4binding" class="instantStyle">
+        <span>{{ message === 1 ? "t" : "o"}}</span>
+        <span></span>
+        <button @click="changeHande">change</button>
+    </div>
+
+
+    <div id="componentModelTest" class="instantStyle">
+        <label for="">componentModelTest</label>
+        <my_input :value="message" @input="val => message = val"></my_input>
+        <!-- <my_input v-model="message"></my_input> -->
+        {{ message }}
+        <input type="text" v-model="message">   
+    </div>
+
+    <div id="testFromWeb" class="instantStyle">
+        <label for="">testFromWeb</label>
+        <modal v-model="isShow"></modal>
+        <button @click="isShow = !isShow">changeShow</button>
+        {{ isShow }}
+    </div>
+
+    <div id="objTest" class="instantStyle">
+        <label for="">objTest</label>
+        <div>my name is {{ obj.name }}</div>
+        <div>my num is {{ obj.num }}</div>
+        <button @click="clickHandle">change</button>
+    </div>
+
+     
+    <div id="dynamicSelectpicks" class="instantStyle">
+        <div v-for="obj in objLst">
+            <select v-model="obj.selectValue">
+                <option :value="option" v-for="option in obj.selectOptions">{{ option }}</option>
+            </select>
+        </div>       
+        <div v-for="obj in objLst">{{ obj.selectValue }}</div> 
+        <button @click="addHandle">add</button>
+        <button @click="removeHandle">remove</button>
+    </div>
+</body>
+<script src="./mock.js"></script>
+<script src="./lodash.js"></script>
+<script src="./jquery-3.2.1.js"></script>
+<script src="./vue.js"></script>
+<script src="./vue-resource.js"></script>
+<script src="./helloword2.js"></script>
+</html>
+

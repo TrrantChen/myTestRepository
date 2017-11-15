@@ -51,6 +51,7 @@ function testUrlAndpath(req, res) {
 }
 
 function delayloadtestGet(req, res) {
+    console.log("delay load get");
     var delaytime = req.query.para0 || 2000 
     setTimeout(function(){
         var delaytime = req.query.para0 || 2000 
