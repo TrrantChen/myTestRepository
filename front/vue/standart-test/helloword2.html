@@ -1,16 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <style>
-    .instantStyle {
-        border:solid 2px black;
+.instantStyle {
+    border: solid 2px black;
+}
+
+.test-style {
+    width: 100px;
+    height: 100px;
+    border: solid 1px black;
+}
+
+@keyframes glisten {
+    0% {
+        border: solid 1px red;
     }
+
+    100% {
+        border: solid 1px yellow;
+    }
+}
+
+.glisten-style {
+    animation: glisten 1s ease-in alternate backwards;
+    animation-iteration-count: infinite;
+}
 </style>
+
 <body>
-    <div id="btonDisableTest">
+    <!--     <div id="btonDisableTest">
         <button ref="disableBtn">test</button>
         <button @click="changeHandle">change</button>
     </div>
@@ -38,10 +61,6 @@
         <button @click="clickHandle">change</button>
     </div>
 
-    <div id="directiveTest" class="instantStyle">
-        <input type="text" v-test>
-    </div>
-
     <div id="test4binding" class="instantStyle">
         <span>{{ message === 1 ? "t" : "o"}}</span>
         <span></span>
@@ -52,7 +71,6 @@
     <div id="componentModelTest" class="instantStyle">
         <label for="">componentModelTest</label>
         <my_input :value="message" @input="val => message = val"></my_input>
-        <!-- <my_input v-model="message"></my_input> -->
         {{ message }}
         <input type="text" v-model="message">   
     </div>
@@ -78,9 +96,56 @@
                 <option :value="option" v-for="option in obj.selectOptions">{{ option }}</option>
             </select>
         </div>       
-        <div v-for="obj in objLst">{{ obj.selectValue }}</div> 
+        <div v-for="(obj, index) in objLst">
+            <div>
+                {{ obj.selectValue }}
+            </div>
+            <div>
+                {{ index }} ppp
+            </div>
+        </div> 
         <button @click="addHandle">add</button>
         <button @click="removeHandle">remove</button>
+        <div>{{ methodReturn() }}</div>
+        <div>{{ getAsyncTest }}</div>
+        <div>{{ getAsyncTest }}</div>
+    </div>
+
+    <div id="modelInSelectPick" class="instantStyle">
+        <div>this is test</div>
+        <button @click="message = 2">change</button>
+        <my_select v-model='message'></my_select>
+        {{message}}
+    </div>
+
+    <div id="slotComponent" class="instantStyle">
+        <my_select v-model="message" :is_disable='is'>
+            <input type="text" v-model="message" placeholder="请输入中文字段名">
+        </my_select>
+        {{ message }}
+    </div>    
+    <div id="directiveTest" class="instantStyle">
+        <div v-glisten="num"></div>
+        {{ num }}
+        <button @click="add">add</button>
+    </div>
+
+    <div class="test-style glisten-style">this a test</div> -->
+    <div id="objModel" class="instanceStyle">
+        <obj_components :obj_value="message_obj" @input1="parent_input1" @input2="parent_input2"></obj_components>
+        {{ message_obj.data1 }} {{ message_obj.data2 }}
+        <button @click="message_obj.data1 = 'kkkkk'">change</button>
+    </div>
+    <div style="width:100px;height:100px;">
+        <img style="width:100%;height:100%;" src="http://c.hiphotos.baidu.com/ting/pic/item/b151f8198618367a05c961a62d738bd4b31ce50d.jpg" alt="">
+    </div>
+    <div style="width:100px;height:100px;">
+        <iframe style="width:200px;height:200px;" src="javascript:'<!DOCTYPE html><html><body><div style=\'width:100px;height:100px;\'><img style=\'width:100%;height:100%;\' src=\'http://c.hiphotos.baidu.com/ting/pic/item/b151f8198618367a05c961a62d738bd4b31ce50d.jpg\' alt=\'\'></div></body></html>'" frameborder="0"></iframe>
+    </div> 
+    <button id='openNewWindow'>open new window</button>
+    <div id='test4jsx' class="instanceStyle">
+        <anchored-heading :level="1">Hello world!</anchored-heading>
+        <anchored-heading :level="6">Hello world!</anchored-heading>        
     </div>
 </body>
 <script src="./mock.js"></script>
@@ -89,5 +154,10 @@
 <script src="./vue.js"></script>
 <script src="./vue-resource.js"></script>
 <script src="./helloword2.js"></script>
+<script>
+    let openNewWindow = document.querySelector('#openNewWindow');
+    openNewWindow.addEventListener('click', function() {
+        window.open('http://127.0.0.1:8080/helloword.html');
+    })
+</script>
 </html>
-

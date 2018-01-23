@@ -33,6 +33,7 @@
     </div>    
 </body>
 <script>
+    console.log("script 1 start")
     let outter = document.querySelector("#outter");
     let inner = document.querySelector("#inner");
 
@@ -57,11 +58,32 @@
         });
         
         outter.setAttribute("class", "other");
+
+        requestAnimationFrame(() => {
+            console.log("this is requestAnimationFrame");
+        }, 3000)
     }
-
     // inner.click();
-
-    console.log("stript end");
-
+    console.log("script 1 end");
 </script>
+<!-- <script>
+    console.log('this is script1 start');
+    Promise.resolve().then(() => {
+        console.log('this is promise 1');
+    })
+    setTimeout(() => {
+        console.log('this is setTimeout 1');
+    })
+    console.log('this is script1 end');
+</script>
+<script>
+    console.log("this is script2 start");
+    Promise.resolve().then(() => {
+        console.log('this is promise 2');
+    })
+    setTimeout(() => {
+        console.log('this is setTimeout 2');
+    })    
+    console.log('this is script2 end');
+</script> -->
 </html>

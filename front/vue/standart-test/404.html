@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+</head>
+<style>
+    html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background-color:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}img{border:0}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}pre{overflow:auto}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}button{overflow:visible}button,select{text-transform:none}button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}input{line-height:normal}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto}input[type="search"]{-webkit-appearance:textfield;box-sizing:content-box}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{border:0;padding:0}textarea{overflow:auto}optgroup{font-weight:bold}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}    
+</style>
+<style>
+    @font-face {
+      font-family: 'prstartk';
+      src: url('https://s3.amazonaws.com/milespeebles.com/fonts/prstartk.eot#iefix');
+      src: url('https://s3.amazonaws.com/milespeebles.com/fonts/prstartk.eot') format('embedded-opentype'),
+           url('https://s3.amazonaws.com/milespeebles.com/fonts/prstartk.woff2') format('woff2'),
+           url('https://s3.amazonaws.com/milespeebles.com/fonts/prstartk.woff') format('woff'),
+           url('https://s3.amazonaws.com/milespeebles.com/fonts/prstartk.ttf')  format('truetype'),
+           url('https://s3.amazonaws.com/milespeebles.com/fonts/prstartk.svg#prstartk') format('svg');
+    }
+</style>
+<style>
+body,
+html {
+    height: 100%;
+    margin: 0;
+}
+
+.demo {
+    background-color: black;
+    color: white;
+    font-family: 'prstartk';
+    font-size: 1.3rem;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+}
+
+.demo-header {
+    margin: 0 auto;
+    padding-top: 22px;
+    width: 560px;
+}
+
+.demo-header-section {
+    display: inline-block;
+    height: 100%;
+    margin-left: -20px;
+    width: 139px;
+}
+
+.demo-header-section span {
+    text-align: center;
+}
+
+.demo-header-section:first-child {
+    margin-left: 0;
+}
+
+.demo-header-section:first-child span {
+    display: block;
+    text-align: left;
+}
+
+.demo-wrap {
+    bottom: 70px;
+    height: 71px;
+    margin: 0 auto;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+}
+
+.demo-text {
+    height: 70px;
+    left: 50%;
+    margin: 0 auto;
+    position: fixed;
+    text-align: center;
+    top: 40%;
+    transform: translate(-50%, -40%);
+    width: 100%;
+    z-index: 100;
+}
+
+.demo-text p {
+    line-height: 2.6rem;
+    margin: 60px auto 0;
+    text-align: left;
+    width: 380px;
+}
+
+.demo-actors {
+    height: 100%;
+    margin: 0 auto;
+    width: 300px;
+}
+
+.demo-img-mario {
+    height: 48px;
+    width: 36px;
+}
+
+.demo-img-toad {
+    height: 72px;
+    margin-left: -8px;
+    width: 48px;
+}
+
+.demo-img-coin {
+    display: inline-block;
+    height: 18px;
+    margin-bottom: -2px;
+    width: 12px;
+}
+
+.demo-img-x {
+    display: inline-block;
+    height: 12px;
+    margin-left: -22px;
+    margin-right: 6px;
+    width: 19.2px;
+}
+
+.demo-img-brick {
+    background: url("https://s3.amazonaws.com/milespeebles.com/img/mario/brick.png") repeat 0 0;
+    background-size: 48px 48px;
+    width: 100%;
+    z-index: 0;
+}
+
+.demo-img-brick-top {
+    height: 48px;
+}
+
+.demo-img-brick-bottom {
+    bottom: 0;
+    height: 72px;
+    position: fixed;
+}
+
+.demo-coins {
+    margin-left: -20px;
+}
+
+.demo-broken {
+    display: none;
+}
+
+@media screen and (max-width: 530px),
+screen and (max-height: 460px) {
+    .demo {
+        font-size: 0.8rem;
+    }
+
+    .demo-header {
+        padding-top: 14px;
+        width: 330px;
+    }
+
+    .demo-header-section {
+        display: inline-block;
+        height: 100%;
+        margin-left: -10px;
+        width: 80px;
+    }
+
+    .demo-img-coin {
+        height: 14.4px;
+        margin-bottom: -2px;
+        width: 9.6px;
+    }
+
+    .demo-img-x {
+        height: 9.6px;
+        margin-left: -12.5px;
+        margin-right: 6px;
+        width: 15.36px;
+    }
+
+    .demo-img-mario {
+        height: 38.4px;
+        width: 28.8px;
+    }
+
+    .demo-img-toad {
+        height: 57.6px;
+        width: 38.4px;
+    }
+
+    .demo-wrap {
+        height: 41px;
+    }
+
+    .demo-text p {
+        line-height: 1.6rem;
+        margin-top: 20px;
+    }
+
+    .demo-text {
+        margin-left: 25px;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .demo-text span {
+        margin-left: -35px;
+    }
+
+    .demo-img-brick {
+        background-size: 38.4px 38.4px;
+    }
+
+    .demo-img-brick-top {
+        height: 38.4px;
+    }
+
+    .demo-img-brick-bottom {
+        height: 57px;
+    }
+
+    .demo-coins {
+        margin-left: -13px;
+    }
+}
+
+@media (max-height: 260px) {
+    .demo-wrap,
+    .demo-img-brick {
+        display: none;
+    }
+
+    .demo-broken {
+        background-color: black;
+        display: block;
+    }
+
+    .demo-broken span {
+        color: white;
+        font-family: 'prstartk';
+        font-size: 0.8rem;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+</style>
+
+<body>
+    <div class="demo">
+        <div class="demo-header">
+            <div class="demo-header-section">
+                <span>MARIO</span>
+                <span>040400</span>
+            </div>
+            <div class="demo-header-section">
+                <img class="demo-img-coin" src="https://s3.amazonaws.com/milespeebles.com/img/mario/coin.png">
+                <img class="demo-img-x" src="https://s3.amazonaws.com/milespeebles.com/img/mario/x.png">
+                <span class="demo-coins">30</span>
+            </div>
+            <div class="demo-header-section">
+                <span>WORLD</span>
+                <span>404</span>
+            </div>
+            <div class="demo-header-section">
+                <span>TIME</span>
+                <span class="demo-time">1158</span>
+            </div>
+        </div>
+        <div class="demo-img-brick demo-img-brick-top"></div>
+        <div class="demo-wrap">
+            <div class="demo-text">
+                <span>THANK YOU MARIO!</span>
+                <p>BUT OUR PAGE IS IN ANOTHER CASTLE!</p>
+            </div>
+            <div class="demo-actors">
+                <img class="demo-img-mario" src="https://s3.amazonaws.com/milespeebles.com/img/mario/mario.png">
+                <img class="demo-img-toad" src="https://s3.amazonaws.com/milespeebles.com/img/mario/toad.png">
+            </div>
+        </div>
+        <div class="demo-img-brick demo-img-brick-bottom"></div>
+    </div>
+    <div class="demo-broken">
+        <span>GAME OVER</span>
+    </div>
+</body>
+
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+<script>
+    // window.onload = function() {
+    //    var writeText = function(tag, input, iterator, timer) {
+    //         setTimeout(function() {
+    //             $(tag).append(input);
+    //         }, timer * iterator);
+    //     };
+
+    //     var leadingZero = function(n) {
+    //         return (n < 10) ? ("0" + n) : n;
+    //     };
+
+    //     var text_1 = $('.demo-text span').html(),
+    //         text_2 = $('.demo-text p').html(),
+    //         time = 125;
+
+    //     $('.demo-text span').html("");
+    //     $('.demo-text p').html("");
+
+    //     for (var i = 1; i <= text_1.length; i++) {
+    //         var char = text_1[i - 1];
+    //         writeText(".demo-text span", char, i, time);
+    //     }
+
+    //     setTimeout(function() {
+    //         for (var i = 1; i <= text_2.length; i++) {
+    //             var char = text_2[i - 1];
+    //             writeText(".demo-text p", char, i, time);
+    //         }
+    //     }, (text_1.length + 2) * 150);
+
+    //     $('.demo-coins').html("");
+
+    //     setInterval(function() {
+    //         var date = new Date(),
+    //             hours = date.getHours().toString(),
+    //             minutes = leadingZero(date.getMinutes()),
+    //             seconds = leadingZero(date.getSeconds());
+
+    //         $('.demo-time').html(hours + minutes);
+    //         $('.demo-coins').html(seconds);
+    //     }, 1);
+    // }
+
+</script>

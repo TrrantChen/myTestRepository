@@ -1,5 +1,7 @@
+<style>
+</style>
 <template>
-  <div class="hello">
+  <div class="module-style">
     <table>
       <thead>
         <tr>
@@ -30,7 +32,6 @@
 import Test from './test';
 
 export default {
-  name: 'HelloWorld',
   components: { Test },
   data () {
     return {
