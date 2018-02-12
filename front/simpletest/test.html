@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+//    originXmlHttpRequestTestReadyStateChange();
+//
+//    function originXmlHttpRequestTestReadyStateChange() {
+//        var xhr = new XMLHttpRequest();
+//        xhr.open("get", "http://" + document.domain  + ":8088/delayloadtest" + "?para0=1000");
+////        xhr.onreadystatechange = function() {
+////            if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+////                console.log(xhr.response);
+////            }
+////        }
+//        xhr.onload = function() {
+//            if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+//                console.log(xhr.response);
+//            }
+//        }
+//        xhr.send(null);
+//    }
+
+    function myPromise() {
+        return new Promise((resolve) => {
+            setTimeout(function() {
+                resolve(1)
+            }, 0)
+        })
+    }
+
+    async function test() {
+        let result = await myPromise();
+        console.log(result);
+    }
+
+    test().then((value) => {
+        console.log(value);
+    });
+</script>
+</html>

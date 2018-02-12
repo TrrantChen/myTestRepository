@@ -27,7 +27,7 @@ exports.functionRoute = function(app) {
     commonProcess.preProcessHttpMethods(app, "get", "/getClientIPAdress", getClientIPAdress);  
     commonProcess.preProcessHttpMethods(app, "get", "/delayloadtest", delayloadtestGet); 
     commonProcess.preProcessHttpMethods(app, "post", "/delayloadtest", delayloadtestPost, jsonParser);
-    commonProcess.preProcessHttpMethods(app, "get", "/getArrayResut", getArrayResut);
+    commonProcess.preProcessHttpMethods(app, "get", "/getArrayReslut", getArrayReslut);
     commonProcess.preProcessHttpMethods(app, "get", "/getRandomTableData", getRandomTableData);
     commonProcess.preProcessHttpMethods(app, "post", "/test4DefaultContentType", test4DefaultContentType);
     commonProcess.preProcessHttpMethods(app, "post", "/test4PostWithoutThridPart", test4PostWithoutThridPart);
@@ -59,8 +59,9 @@ function delayloadtestGet(req, res) {
     }, delaytime);
 }
 
-function getArrayResut(req, res) {
-    res.send(["1", "2", "3"]);
+function getArrayReslut(req, res) {
+    var arr = new Array(2000).fill(1);
+    res.send(arr);
 }
 
 function delayloadtestPost(req, res) {

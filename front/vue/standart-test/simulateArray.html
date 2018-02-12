@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="first"></div>
+    <div id="second"></div>
+</body>
+<script>
+//    var elems = {
+//        length: 0,
+//        add: function(elem) {
+//            Array.prototype.push.call(this, elem);
+//        },
+//        gather: function(id) {
+//            let node = document.querySelector(id);
+//            console.log(node);
+//            this.add(node);
+//        },
+//    }
+//
+//    elems.gather('#first');
+//    console.log(elems.length);
+//
+//    elems.gather('#second');
+//    console.log(elems.length);
+
+    var obj = {};
+
+    Array.prototype.push.call(obj, 'a');
+    Array.prototype.push.call(obj, 'b');
+    Array.prototype.push.call(obj, 'c');
+
+    let arr = Object.keys(obj);
+
+    console.log(arr);
+
+    console.log(obj);
+
+
+
+</script>
+</html>
