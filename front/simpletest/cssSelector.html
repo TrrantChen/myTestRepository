@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            border: solid 1px black;
+            margin: 10px;
+            padding: 10px;
+        }
+
+        #style1 * {
+            border: solid 1px red;
+        }
+
+        #style2 *:link {
+            background: red;
+        }
+
+        #style2 *:visited {
+            background: blue;
+        }
+
+        #style3 > button + div {
+            background: blue;
+        }
+
+        #style4 > button ~ div {
+            background: yellow;
+        }
+
+        #style5 > input[disabled] {
+            background: red;
+        }
+
+        #style6 > div[title='test'] {
+            background: blue;
+        }
+
+        #style7 > div[title*='test'] {
+            background: darkorange;
+        }
+
+        #style8 > div[title^='test'] {
+            background: darkorange;
+        }
+
+        #style9 > div[title$='aa'] {
+            background: darkorange;
+        }
+
+        #style10 > div[title~='test'] {
+            background: darkorange;
+        }
+
+        #style11 > input:checked + label {
+            background: darkorange;
+        }
+
+        #style12 > .box {
+            margin: 0 auto;
+            width: 400px;
+            text-align: center;
+            padding: 10px;
+            background: white;
+            box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+        }
+
+        #style12 > .box > img {
+            width: 100%;
+            border: 1px inset #8a4419;
+        }
+
+        #style12 > .box:after {
+            content: '';
+            box-shadow: 100px 0 10px 20px rgba(0,0,0, .2);
+            position: absolute;
+            bottom: 15px;
+            width: 10%;
+            height: 40px;
+            transform: skew(-40deg);
+            z-index: -1;
+        }
+
+        #style13 > div:nth-child(2) {
+            background: darkorange;
+        }
+
+        #style13 > div:nth-last-child(2) {
+            background: darkorange;
+        }
+
+        #style14 > #nth_child, #style14 > #nth_of_type {
+            border: solid 1px black;
+            margin:10px;
+        }
+
+        #style14 > #nth_child > p:nth-child(2) {
+            background: darkorange;
+        }
+
+        #style14 > #nth_of_type > p:nth-of-type(2) {
+            background: darkorange;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h6>* 用在所选元素的子元素中</h6>
+        <div id="style1">
+            <div>this is div</div>
+            <button>this is button</button>
+        </div>
+    </div>
+    <div class="container">
+        <h6>使用:visited和:link（貌似只能用于a标签）</h6>
+        <div id="style2">
+            <a href="javascript:;">visited and link</a>
+            <button>visited and link</button>
+        </div>
+    </div>
+    <div class="container">
+        <h6>x + y 选择临近的第一个元素 x > y 选择子元素</h6>
+        <div id="style3">
+            <div>this is a div1</div>
+            <button>test1</button>
+            <button>test2</button>
+            <div>this is a div2</div>
+            <div>this is a div</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>x ~ y 选择临近的所有元素</h6>
+        <div id="style4">
+            <button>test</button>
+            <div>this is a div</div>
+            <div>this is a div</div>
+            <div>this is a div</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>X[x] 包含某属性的元素</h6>
+        <div id="style5">
+            <input type="text" disabled>
+            <input type="text">
+            <input type="text">
+        </div>
+    </div>
+    <div class="container">
+        <h6>X[y='z'] 包含某属性，且某属性为特定值的元素</h6>
+        <div id="style6">
+            <div title="test">a</div>
+            <div title="aaaa">b</div>
+            <div>c</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>X[y*='z'] 包含某属性，且某属性的值包含z的元素</h6>
+        <div id="style7">
+            <div title="test">a</div>
+            <div title="test2">b</div>
+            <div title="aaaaa">c</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>X[y^='z'] 包含某属性，且某属性的值以z开头的元素</h6>
+        <div id="style8">
+            <div title="test">a</div>
+            <div title="aatest2">b</div>
+            <div title="aaaaa">c</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>X[y$='z'] 包含某属性，且某属性的值以z结尾的元素</h6>
+        <div id="style9">
+            <div title="test">a</div>
+            <div title="aatest2">b</div>
+            <div title="aaaaa">c</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>X[y~="z"] 和 X[y*='z'] 效果差不多，区别是，~只会取匹配到的第一个 *会匹配所有 </h6>
+        <div id="style10">
+            <div title="test">a</div>
+            <div title="test2">b</div>
+            <div title="aaaaa">c</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>X:checked 用于input[radio] input[checkbox] 和option中 </h6>
+        <div id="style11">
+            <input type="radio" name="test1"><label for="test1">radio</label>
+            <input type="text" name="test2"><label for="test2">text</label>
+            <input type="checkbox" name="test3"><label for="test3">checkbox</label>
+            <select name="" id="">
+                <option value="">1</option>
+                <option value="">2</option>
+                <option value="">3</option>
+            </select>
+        </div>
+    </div>
+    <div class="container">
+        <h6>使用after创建shadow </h6>
+        <div id="style12" style="position:relative;">
+            <div class="box">
+                <img src="http://n1.itc.cn/img8/wb/recom/2016/06/13/146581723526539134.JPEG">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>使用nth-child(n)设置第n个子元素 nth-last-child(n) 设置倒数第n个子元素</h6>
+        <div id="style13" >
+            <div>this is test</div>
+            <div>this is test</div>
+            <div>this is test</div>
+            <div>this is test</div>
+            <div>this is test</div>
+        </div>
+    </div>
+    <div class="container">
+        <h6>nth-child和nth-of-type差别</h6>
+        <div id="style14" >
+            <h6>nth_child</h6>
+            <div id="nth_child">
+                <div>this is test</div>
+                <p>this is p</p>
+                <p>this is p</p>
+            </div>
+            <h6>nth_of_type</h6>
+            <div id="nth_of_type">
+                <div>this is test</div>
+                <p>this is p</p>
+                <p>this is p</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,16 +2,27 @@
     .CodeMirror {
         font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
         font-size: 16px;
+        height: 100%;
     }
+
+    /*.CodeMirror-scroll {*/
+        /*height: auto;*/
+        /*overflow-y: hidden;*/
+        /*overflow-x: auto;*/
+    /*}*/
 
     .code-container {
         position: relative;
+        height: 100%;
     }
 
     .tool-container-style {
-        top: 4px;
+        top: 5px;
         right: 20px;
         z-index: 1000;
+        /*display: none;*/
+        opacity: 0;
+        transition: all .24s;
     }
 
     .position-absolute {
@@ -21,15 +32,24 @@
     .position-fixed {
         position: fixed;
     }
+
+    .show {
+        /*display: block;*/
+        opacity: 1;
+    }
+
+    .cm-s-monokai .CodeMirror-matchingbracket {
+        background: #b82020;
+        text-decoration: none;
+    }
 </style>
 <template>
-    <div class="code-container">
+    <div class="code-container" @mouseover="mouseOverHandle" @mouseout="mouseOutHandle">
         <div ref="tool_container" class="tool-container-style position-absolute">
             <button @click="fullScreen" title="全屏/恢复">zoom in / out</button>
             <button @click="format" title="格式化">format</button>
         </div>
-        <textarea ref="textArea" :value="value">
-        </textarea>
+        <textarea ref="textArea" :value="value"></textarea>
     </div>
 </template>
 <script>
@@ -90,6 +110,9 @@
     // 格式化
     import beautify from 'js-beautify';
 
+    // 滚动条
+    import 'codemirror/addon/scroll/simplescrollbars.css'
+    import 'codemirror/addon/scroll/simplescrollbars.js'
 
     export default {
         props: {
@@ -109,32 +132,60 @@
                     }
                 },
             },
+            is_show: {
+                type: Boolean,
+                default: true,
+            },
+            disabled: {
+                type: Boolean,
+                default: false,
+            },
         },
         data() {  
             return {  
                 txt: '',
                 editor: void 0,
+                is_first_show: true,
+                old_value: '',   // 用于记录上次的文本内容，主要用blur事件模拟change事件。
             }
         },
-        created() {
-
+        watch: {
+            'is_show': function(val, old_val) {
+                if (val !== old_val) {
+                    if (val && this.is_first_show) {
+                        this.is_first_show = false;
+                        this.$nextTick(() => {
+                            this.initEditor();
+                        });
+                    }
+                }
+            }
         },
         mounted() {
-            this.initEditor();
+            if (this.is_show && this.is_first_show) {
+                this.is_first_show = false;
+                this.initEditor();
+            }
         },
+        // 跳转的时候会报错
         destroyed() {
-            this.editor.off("change", this.changeHandle);
-            this.editor.off("paste", this.pasteHandle);
+            if (this.editor !== void 0) {
+                this.editor.off("change", this.inputHandle);
+                this.editor.off("paste", this.pasteHandle);
+                this.editor.off("blur", this.changeHandle);
+                this.editor.off("focus", this.focusHandle);
+            }
         },
         methods: {
             initEditor() {
+                debugger;
                 let self = this;
                 let textArea = this.$refs.textArea;
                 let default_config = {
                     mode: 'javascript',
                     lineNumbers: true,
                     styleActiveLine: true,
-//                    lineWrapping: true,  // 最好关闭，开启会导致代码缩进不整齐
+                    lineWrapping: true,
                     matchBrackets: true,
                     theme: "monokai",
                     indentUnit: 4,
@@ -172,12 +223,18 @@
                     keyMap: "sublime",
                     autoCloseBrackets: true,
                     showCursorWhenSelecting: true,
+                    scrollbarStyle: "native",  // 设置滚动条
+                    coverGutterNextToScrollbar: true, // 设置滚动条是否覆盖过num条
                 };
+                let config = Object.assign(default_config, this.config);
+                config.readOnly = this.disabled;
+                this.editor = CodeMirror.fromTextArea(textArea, config);
 
-                this.editor = CodeMirror.fromTextArea(textArea, Object.assign(default_config, this.config));
                 this.format();
-                this.editor.on("change", this.changeHandle);
+                this.editor.on("change", this.inputHandle); // 插件本身的change事件和原生的change事件不一样，相当于input
                 this.editor.on("paste", this.pasteHandle);
+                this.editor.on("blur", this.changeHandle);  // 只能用blur来模拟change事件
+                this.editor.on("focus", this.focusHandle);
             },
             format() {
                 this.editor.setValue(beautify(this.editor.getValue(), this.format_config));
@@ -196,14 +253,33 @@
                     tool_container.classList.toggle('position-fixed');
                 }
             },
-            changeHandle() {
+            inputHandle() {
                 this.$emit('input', this.editor.getValue());
             },
             pasteHandle() {
                 setTimeout(() => {
                     this.format()
                 }, 0)
-            }
+            },
+            changeHandle() {
+                let value = this.editor.getValue();
+
+                if (value !== this.old_value) {
+                    this.old_value = value;
+                    this.$emit('change', value);
+                }
+            },
+            focusHandle() {
+                this.old_value = this.editor.getValue();
+            },
+            mouseOverHandle() {
+                let tool_container = this.$refs.tool_container;
+                tool_container.classList.toggle('show');
+            },
+            mouseOutHandle() {
+                let tool_container = this.$refs.tool_container;
+                tool_container.classList.toggle('show');
+            },
         }
     }
 </script>

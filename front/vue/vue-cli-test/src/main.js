@@ -6,9 +6,11 @@ import router from './router'
 import store from './store/store'
 
 
-import globalComponentsEntrance from './components/globalComponents/globalComponentsEntrance'
+import globalComponentsEntrance from './components/globalComponents/globalComponentsEntrance';
+import testDirective from './directive/testDirective';
 
 Vue.use(globalComponentsEntrance);
+Vue.use(testDirective);
 
 
 Vue.config.productionTip = false;

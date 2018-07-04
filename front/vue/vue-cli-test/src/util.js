@@ -16,3 +16,9 @@ export async function loadPattener(state, ...funcArr) {
 
     state =  false;
 }
+
+export function getRandomArbitrary(min, max) {
+    min = min == void 0 ? 0 : min;
+    max = max == void 0 ? 100 : max;
+    return Math.random() * (max - min) + min;
+}

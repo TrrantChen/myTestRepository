@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <div title="this is test" tag="ttt" class="tttr" style="width: 100px;"></div>
+        <div id="u2" title="this is test" tag="ttt" class="tttr" style="width: 100px;"></div>
+
+    </body>
+    <script>
+
+        window.onload = function() {
+        };
+
+        let isOpera = true;
+        let div = document.querySelector('div');
+
+        // 把if给提到外面出来，避免内部函数的逻辑混乱，把扔给调用方，而不是被调的工具函数
+        // 不用wrap函数的版本。
+        // if (isOpera) {
+        //     let tmp = div.getAttribute;
+        //     let wrapGetAttribute = function(attr) {
+        //         return attr === 'title' ? 'uiuiui' : tmp(attr);
+        //     }
+        //
+        //     div.getAttribute = wrapGetAttribute;
+        // }
+
+
+
+
+
+        if (isOpera) {
+            wrap(div, "getAttribute", function(original, attr, para) {
+                console.log(para);
+                return attr === "title" ? 'uiuiu' : original(attr);
+            }, 'tttt');
+
+            console.log(div.getAttribute('title'));
+            // console.log(div.getAttribute('class'));
+            // console.log(div.getAttribute('tag'));
+            // console.log(div.getAttribute('style'));
+        }
+
+        function wrap(object, method, wrapper, paraArr) {
+            let fn = object[method];
+            let arr = paraArr || [];
+
+            return object[method] = function() {
+                return wrapper.apply(this, [fn.bind(this)].concat(Array.prototype.slice.call(arguments), arr))
+            }
+        }
+    </script>
+</html>

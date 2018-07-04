@@ -1,0 +1,86 @@
+//{
+//    "presets": ["babel-preset-env"]
+//}
+
+//{
+////    "presets": [
+//////      "babel-preset-env"
+//////    , "transform-runtime"
+//////    , "babel-plugin-transform-regenerator"
+//////    , "babel-plugin-transform-es2015-modules-commonjs"
+////      "env",
+////      {
+////        "targets": {
+////          "browsers": ["last 2 versions", "ie >= 7"]
+////        }
+////      }
+////    ]
+//  "presets": [
+//    [
+//      "env",
+//      {
+//        "targets": {
+//          "browsers": ["last 2 versions", "ie >= 7"]
+//        }
+//      }
+//    ]
+//  ],
+//  "plugins": [
+//    "transform-runtime"
+////   ,"babel-plugin-transform-regenerator"
+////   ,"babel-plugin-transform-es2015-modules-commonjs"
+//  ]
+//}
+
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": { // 配支持的环境
+          "browsers": [ // 浏览器
+            "IE >= 10"
+          ]
+        },
+        "modules": false,  //设置ES6 模块转译的模块格式 默认是 commonjs
+        "debug": true, // debug，编译的时候 console
+        "useBuiltIns": true // 是否开启自动支持 polyfill
+      }
+    ]
+  ]
+,
+  "plugins": [
+//    "transform-runtime",
+//    "array-includes",
+    //     ,
+    //  "babel-plugin-transform-regenerator"
+    //     ,
+    //      "babel-plugin-transform-es2015-modules-commonjs"
+  ]
+}
+
+//{
+//  "plugins": ["babel-plugin-transform-regenerator"]
+//}
+
+
+//{
+//  "presets": [
+//    ["env", {
+//      "modules": false,
+//      "targets": {
+//        "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+//      }
+//    }],
+//    "stage-2"
+//  ],
+//}
+
+//
+//{
+//  "presets": ["babel-preset-env"],
+//  "plugins": [
+//    ["transform-runtime"]
+//  ]
+//}
+

@@ -1,11 +1,13 @@
 <style>
 </style>
 <template>
-    <div>
-        <div style="float:left;width:50%;">
-            <code-editor v-model="msg"></code-editor>
+    <div >
+        <div>
+            <div style="width:50%;height:400px;">
+                    <code-editor v-model="msg" :is_show="is_show" :disabled="read_only"></code-editor>
+            </div>
+            {{ msg }}
         </div>
-        {{ msg }}
     </div>
 </template>
 <script>
@@ -15,9 +17,13 @@
         components: {
             CodeEditor,
         },
+        props: {
+            is_show: Boolean,
+        },
         data() {
             return {
                 msg: '',
+                read_only: false,
             }
         },
         created() {
@@ -47,7 +53,11 @@
                 "    }\n" +
                 "    cm.setSelections(ranges, 0);\n" +
                 "  });\n" +
-                "}"
+                "}";
+
+//            this.msg = '';
         },
+        methods: {
+        }
     }
 </script>

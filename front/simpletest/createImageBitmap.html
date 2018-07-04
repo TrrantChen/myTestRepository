@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <canvas style="width:600px;height:600px;" id="myCanvas"></canvas>
+        <img src="http://pic1.win4000.com/wallpaper/6/4fcec17f08ec4.jpg" alt="">
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('#myCanvas');
+    let ctx = canvas.getContext('2d');
+    let image = document.querySelector('img');
+
+    image.onload = function() {
+        Promise.all([
+            createImageBitmap(image),
+            // createImageBitmap(image, 0, 0, 100, 100),
+            // createImageBitmap(image, 320, 0, 320, 320)
+        ]).then(function(sprites) {
+            ctx.drawImage(sprites[0], 0, 0);
+            // ctx.drawImage(sprites[1], 320, 320);
+        });
+    }
+
+</script>
+</html>

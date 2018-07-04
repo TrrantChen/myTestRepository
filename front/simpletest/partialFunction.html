@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+</body>
+<script>
+    window.onload = function() {
+        partialFunTest1()
+    };
+
+    Function.prototype.partial = function() {
+        let that = this;
+        let args = [].slice.call(arguments);
+
+        return function() {
+            let arg_lst = [].slice.call(arguments);
+            let arg_tmp = [];
+
+            for (var i = 0, j = 0; i < args.length; i++) {
+                if (args[i] === void 0) {
+                    arg_tmp.push(arg_lst[j++]);
+                } else {
+                    arg_tmp.push(args[i]);
+                }
+            }
+
+            return that.apply(this, arg_tmp);
+        }
+    };
+
+    function partialFunTest1() {
+        let setTimeout10 = setTimeout.partial(void 0, 2000);
+
+        setTimeout10(function() {
+            console.log('this is call1');
+        });
+
+        setTimeout10(function() {
+            console.log('this is call2');
+        });
+    }
+</script>
+</html>

@@ -553,3 +553,12 @@ Date.prototype.format = function(str) {
     .replace("ffff", milliseconds)
 }
 
+// 一个包装函数，可以在原有的函数上再包装一层，
+export function wrap(elem, attr, wrapper, paraArr) {
+    let fn = elem[attr];
+    let arr = paraArr || [];
+
+    return elem[attr] = function() {
+        return wrapper.apply(this, fn.bind(this).concat([].slice.call(arguments, arr)))
+    }
+}

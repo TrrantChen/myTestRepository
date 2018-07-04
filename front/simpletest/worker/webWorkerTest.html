@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <button>try</button>
+    </div>
+</body>
+<script>
+    // 主线程和子线程之间是通过传值序列化和反序列化去拷贝副本的，所以子线程中对数值做的修改并不会影响主线程的。
+    function simpleWorker() {
+        let myWorker = new Worker('./worker.js');
+        let postData = {
+            value: 'testValue',
+        }
+
+        myWorker.postMessage({ postData: postData });
+
+        myWorker.onmessage = function(e) {
+            console.log('receive data from sub thread');
+            console.log(postData.value);
+        };
+    }
+
+    function translateWorker() {
+        let myWorker = new Worker('./translateWorker.js');
+        let int8Array = new Int8Array([1, 2, 3, 4, 5, 6]);
+
+        myWorker.postMessage(int8Array, [int8Array.buffer])
+
+        console.log(int8Array); // int8Array为空，无法操作，因为已经传到子线程
+
+        myWorker.onmessage = (e) => {
+            console.log(int8Array); // 在这里还是拿不到的，只能够通过e.data从子线程返回到主线程中
+            console.log(e.data);
+        };
+
+    }
+
+    function inlineWorker() {
+        let workerContent = `
+            onmessage = (e) => {
+                console.log('data from main');
+                console.log(e.data);
+                postMessage('haha');
+            }
+        `;
+
+        let blob = new Blob([workerContent]);
+        let myWorker = new Worker(window.URL.createObjectURL(blob));
+
+        myWorker.postMessage('test_data');
+        myWorker.onmessage = (e) => {
+            console.log('receive data from sub');
+            console.log(e.data);
+        }
+    }
+
+    function performanceTest() {
+        let worker = new Worker('./performanceWorker.js');
+        let data = new Uint8Array(500 * 1024 * 1024);
+        let button = document.querySelector('button');
+
+        button.addEventListener('click', (e) => {
+            console.log('worker start');
+            let start = performance.now();
+
+            // worker.postMessage(data);
+            worker.postMessage(data, [data.buffer]);
+            worker.onmessage = (e) => {
+                data = e.data;
+                let end = performance.now();
+                console.log('worker end');
+                console.log(`span ${end - start} ms`);
+            }
+        })
+    }
+
+    function mutplePerformanceTest() {
+        let arr = [];
+        let bufferArr = [];
+        let lineLength = 20000;
+        let worker = new Worker('./mulperformanceWorker.js');
+        let button = document.querySelector('button');
+
+        for (var i = 0; i < lineLength; i++) {
+            let tmp = new Uint8Array(100);
+            arr[i] = tmp;
+            bufferArr[i] = tmp.buffer;
+        }
+
+        button.addEventListener('click', (e) => {
+            console.log('worker start');
+            let start = performance.now();
+
+            worker.postMessage(arr);
+            // worker.postMessage(arr, bufferArr);
+            worker.onmessage = (e) => {
+                arr = e.data;
+                let end = performance.now();
+                console.log('worker end');
+                console.log(`span ${end - start} ms`);
+
+                for (var i = 0; i < lineLength; i++) {
+                    bufferArr[i] = arr[i].buffer;
+                }
+            }
+        })
+    }
+
+    onload = () => {
+        mutplePerformanceTest();
+    };
+
+</script>
+</html>

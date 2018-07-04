@@ -1,42 +1,8 @@
 <style>
 </style>
-<template>
-    <div>
-        <button class="btnStyle" @click="is_show1 = !is_show1">hello world</button>
-        <button class="btnStyle" @click="is_show2 = !is_show2">jsx test</button>
-        <button class="btnStyle" @click="is_show3 = !is_show3">add dele lst</button>
-        <button class="btnStyle" @click="is_show4 = !is_show4">multi checkbox</button>
-        <button class="btnStyle" @click="is_show5 = !is_show5">test 4 parent son</button>
-        <button class="btnStyle" @click="is_show6 = !is_show6">watch test</button>
-        <button class="btnStyle" @click="is_show7 = !is_show7">double form test</button>
-        <button class="btnStyle" @click="is_show8 = !is_show8">async store</button>
-        <button class="btnStyle" @click="is_show9 = !is_show9">use global components</button>
-        <button class="btnStyle" @click="is_show10 = !is_show10">scroll test</button>
-        <button class="btnStyle" @click="is_show11 = !is_show11">auto fill width</button>
-        <button class="btnStyle" @click="is_show12 = !is_show12">test</button>
-        <button class="btnStyle" @click="is_show13 = !is_show13">active component</button>
-        <button class="btnStyle" @click="is_show14 = !is_show14">codemirror test</button>
-        <button class="btnStyle" @click="is_show15 = !is_show15">js beautiful</button>
-        <hello-world v-if="is_show1"></hello-world>
-        <jsx-test v-if="is_show2" :level="1">test</jsx-test>
-        <add-dele-lst-test v-if="is_show3"></add-dele-lst-test>
-        <mult-com-check-box v-if="is_show4"></mult-com-check-box>
-        <testparentsonobj v-if="is_show5"></testparentsonobj>
-        <watch-test v-if="is_show6"></watch-test>
-        <double-form-test v-if="is_show7"></double-form-test>
-        <async-store v-if="is_show8"></async-store>
-        <use-global-components v-if="is_show9"></use-global-components>
-        <scrolltest v-if="is_show10"></scrolltest>
-        <auto-fill-width v-if="is_show11"></auto-fill-width>
-        <test v-if="is_show12"></test>
-        <active-component v-if="is_show13"></active-component>
-        <code-mirror-test v-show="is_show14"></code-mirror-test>
-        <jsbeautiful v-if="is_show15"></jsbeautiful>
-    </div>
-</template>
 <script>
     import HelloWorld from '@/components/helloworld';
-    import JsxTest from '@/components/jsxtest';
+    import JsxTest from '@/components/jsxTest/index';
     import AddDeleLstTest from '@/components/addDeleLst/addDeleLstTest';
     import MultComCheckBox from '@/components/multComCheckBox/index';
     import Testparentsonobj  from '@/components/test4parentsonobj/index';
@@ -50,9 +16,36 @@
     import ActiveComponent from '@/components/activeComponent/index'
     import CodeMirrorTest from '@/components/codeMirrorTest/index'
     import Jsbeautiful from '@/components/jsbeautiful/index'
+    import MutpleScroll from '@/components/mutpleScroll/index'
+    import AsyncawaitTest from '@/components/asyncawaitTest/index'
+    import MutualSelect from '@/components/mutualSelect/index'
+    import WrapFunc from '@/components/wrapFunc/index'
+    import SpanLst from '@/components/spanLst/index'
+    import FileUpload from '@/components/fileUpload/index'
+    import deepWatch from '@/components/deepWatchTest/index'
+    import parentAllEvent from '@/components/parentAllEvent/index'
+    import directiveTest from '@/components/directiveTest/index'
+    import jsonView from '@/components/jsonView/index'
+    import deleSubLst from '@/components/deleSubLst/index'
+    import watchAndComputedOrder from '@/components/watchAndComputedOrder/index'
+    import expand from '@/components/expand/index'
+    import objView from '@/components/objView/index';
+    import collapse from '@/components/collapse/index'
+    import inputrequire from '@/components/inputrequire/index'
+    import echartTest from '@/components/echartTest/index'
+    import slider from '@/components/slider/index'
+    import fullscreencontainer from '@/components/fullscreen/index'
 
     export default {
+        that: this,
         components: {
+            fullscreencontainer,
+            slider,
+            echartTest,
+            inputrequire,
+            collapse,
+            objView,
+            expand,
             HelloWorld,
             JsxTest,
             AddDeleLstTest,
@@ -68,27 +61,79 @@
             ActiveComponent,
             CodeMirrorTest,
             Jsbeautiful,
+            MutpleScroll,
+            AsyncawaitTest,
+            MutualSelect,
+            WrapFunc,
+            SpanLst,
+            FileUpload,
+            deepWatch,
+            parentAllEvent,
+            directiveTest,
+            jsonView,
+            deleSubLst,
+            watchAndComputedOrder,
         },
         data() {  
             return {
-                is_show1: false,
-                is_show2: false,
-                is_show3: false,
-                is_show4: false,
-                is_show5: false,
-                is_show6: false,
-                is_show7: false,
-                is_show8: false,
-                is_show9: false,
-                is_show10: false,
-                is_show11: false,
-                is_show12: false,
-                is_show13: false,
-                is_show14: false,
-                is_show15: false,
+                show_lst: [],
             }
         },
         created() {
+            let components = this.$options.that.a.components;
+            let componentNames = Object.keys(components);
+
+
+            for (var i = 0, length = componentNames.length; i < length; i++) {
+                if (i === 0) {
+                    this.show_lst.push(true);
+                } else {
+                    this.show_lst.push(false);
+                }
+            }
         },
+        render() {
+            let components = this.$options.that.a.components;
+            let componentNames = Object.keys(components);
+            let result = [];
+
+            for (let i = 0, length = componentNames.length; i < length; i++) {
+                let Component = componentNames[i];
+                let name = componentNames[i].replace(/[A-Z]/g, (e) => { return " " + e.toLowerCase() });
+
+                let item = null;
+
+                if (name === 'echart test') {
+                    item = (<div>
+                        <button class="btnStyle" onClick={ () => { this.show_lst.splice(i, 1, !this.show_lst[i]) } }>{name}</button>
+                        {/* <button class="btnStyle" on-click={ this.clickHandle.bind(this, i) }>{name}</button> */}
+                        {/* 方法调用的两种方式 */}
+                        {/* 这是注释 */}
+                        { this.show_lst[i] ? (<Component></Component>) : '' }
+                    </div>);
+                } else {
+                     item = (<div>
+                        <button class="btnStyle" onClick={ () => { this.show_lst.splice(i, 1, !this.show_lst[i]) } }>{name}</button>
+                        {/* <button class="btnStyle" on-click={ this.clickHandle.bind(this, i) }>{name}</button> */}
+                        {/* 方法调用的两种方式 */}
+                        {/* 这是注释 */}
+                        { this.show_lst[i] ? (<Component></Component>) : '' }
+                    </div>);
+                }
+
+                result.push(item);
+            }
+
+            return (
+                <div>
+                    { result }
+                </div>
+            )
+        },
+        methods: {
+            clickHandle(index) {
+                this.show_lst.splice(index, 1, !this.show_lst[index]);
+            }
+        }
     }
 </script>
