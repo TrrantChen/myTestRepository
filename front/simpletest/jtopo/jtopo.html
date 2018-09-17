@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            border: solid 1px black;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .tool {
+            width: 20%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .main-container {
+            width: 70%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="tool">
+            <canvas id="end" width="100%" height="100"></canvas>
+            <canvas id="point" width="100%" height="100"></canvas>
+        </div>
+        <div class="main-container">
+            <canvas id="main" width="1000" height="800"></canvas>
+        </div>
+    </div>
+</body>
+<script src="./jtopo-0.4.8-min.js"></script>
+<script>
+    let s_link_node = null;
+    let i = 0;
+
+
+    window.onload = function() {
+        let mouse_down_what = '';
+        let end = document.querySelector('#end');
+        let end_ctx = end.getContext('2d');
+        let node_radius = 10;
+        let element_radius = 20;
+        ellipse(end_ctx, 50, 50, 50, 30, 'red');
+
+        end.addEventListener('mousedown', () => {
+            mouse_down_what = 'end';
+        });
+
+        let point = document.querySelector('#point');
+        let point_ctx = point.getContext('2d');
+        ellipse(point_ctx, 50, 50, 50, 30, 'blue');
+
+        point.addEventListener('mousedown', () => {
+            mouse_down_what = 'point';
+        });
+
+
+        let main = document.querySelector('#main');
+        let stage = new JTopo.Stage(main);
+        let scene = new JTopo.Scene(stage);
+        let main_position = main.getBoundingClientRect();
+
+        let startNode = new JTopo.CircleNode('start');
+        startNode.radius = 24; // 半径
+        startNode.fillColor = '100, 100, 255'; // 填充颜色
+        startNode.setLocation(300, 100);
+        startNode.textPosition = 'Middle_Center'; // 文本位置
+        scene.add(startNode);
+
+        s_link_node = startNode;
+
+        let addPointNode = function(position) {
+            let circleNode = new JTopo.CircleNode(`node${++i}`);
+            circleNode.radius = 24; // 半径
+            circleNode.fillColor = '0, 0, 255'; // 填充颜色
+            circleNode.setLocation(position.x, position.y);
+            circleNode.textPosition = 'Middle_Center'; // 文本位置
+            circleNode.addEventListener('mouseup', (evt) => {
+                let node = evt.target;
+                let displayedElements = scene.getDisplayedElements().filter(displayedElement => {
+                    return displayedElement.elementType === 'link';
+                });
+
+                isOver(node, displayedElements, node_radius, element_radius, scene, stage);
+            });
+
+            circleNode.addEventListener('dbclick', (evt) => {
+                let node = evt.target;
+                removeNode(node, scene);
+            });
+
+            scene.add(circleNode);
+            addLink(s_link_node, circleNode, scene);
+            s_link_node = circleNode;
+        };
+
+        let addEndNode = function() {
+
+        };
+
+        main.addEventListener('mouseup', (evt) => {
+
+            let position = {
+                x: parseInt(evt.pageX) - parseInt(main_position.x),
+                y: parseInt(evt.pageY) - parseInt(main_position.y),
+            };
+
+            switch(mouse_down_what) {
+                case 'point':
+                    addPointNode(position);
+                    break;
+                case 'end':
+                    addEndNode(position);
+                    break;
+            }
+
+            mouse_down_what = '';
+        });
+
+
+    };
+
+    function ellipse(context, x, y, a, b, color) {
+        color = color || 'black'
+        context.save();
+        var r = (a > b) ? a : b;
+        var ratioX = a / r;
+        var ratioY = b / r;
+        context.scale(ratioX, ratioY);
+        context.beginPath();
+        context.arc(x / ratioX, y / ratioY, r, 0, 2 * Math.PI, false);
+        context.closePath();
+        context.restore();
+        context.fillStyle = color;
+        context.fill();
+    }
+
+    function isOver(node, displayedElements, node_radius, element_radius, scene, stage) {
+        let node_range = {
+            x1: node.x + node.width / 2 - node_radius,
+            x2: node.x + node.width / 2 + node_radius,
+            y1: node.y + node.height / 2 - node_radius,
+            y2: node.y + node.height / 2 + node_radius,
+        };
+
+        for (var element of displayedElements) {
+            if ( !node.inLinks.includes(element) && !node.outLinks.includes(element)) {
+                let element_range = {
+                    x1: (element.path[1].x - element.path[0].x) / 2 + element.path[0].x - element_radius,
+                    x2: (element.path[1].x - element.path[0].x) / 2 + element.path[0].x + element_radius,
+                    y1: (element.path[1].y - element.path[0].y) / 2 + element.path[0].y - element_radius,
+                    y2: (element.path[1].y - element.path[0].y) / 2 + element.path[0].y + element_radius,
+                };
+
+                if (node_range.x2 > element_range.x1 && node_range.x1 < element_range.x2 && node_range.y2 > element_range.y1 && node_range.y1 < element_range.y2) {
+                    insertNode(node, scene, element);
+                    break;
+                }
+
+            }
+        }
+    }
+
+    function insertNode(node, scene, link) {
+        repairLink(node, scene);
+
+        if (node.inLinks && node.inLinks.length !== 0) {
+            removeLink(node.inLinks[0], scene);
+        }
+
+        if (node.outLinks && node.outLinks.length !== 0) {
+            removeLink(node.outLinks[0], scene);
+        }
+
+        addLink(link.nodeA, node, scene);
+        addLink(node, link.nodeZ, scene);
+        removeLink(link, scene);
+    }
+
+    function removeNode(node, scene) {
+
+        if (!node.outLinks || node.outLinks.length === 0) {
+            s_link_node = node.inLinks[0].nodeA;
+        }
+
+        repairLink(node, scene);
+        scene.remove(node);
+    }
+
+    function removeLink(link, scene) {
+        scene.remove(link);
+    }
+
+    function repairLink(node, scene) {
+        if (node.inLinks && node.inLinks.length !== 0 && node.outLinks && node.outLinks.length !== 0) {
+            let from_nodes = node.inLinks.map((in_link) => {
+                return in_link.nodeA;
+            })
+
+            let to_nodes = node.outLinks.map((out_link) => {
+                return out_link.nodeZ;
+            })
+
+            for (var from_node of from_nodes) {
+                for (var to_node of to_nodes) {
+                    addLink(from_node, to_node, scene);
+                }
+            }
+        }
+    }
+
+    function addLink(nodeS, nodeE, scene){
+        let link = new JTopo.Link(nodeS, nodeE);
+        link.lineWidth = 3; // 线宽
+        link.bundleOffset = 60; // 折线拐角处的长度
+        link.bundleGap = 20; // 线条之间的间隔
+        link.textOffsetY = 3; // 文本偏移量（向下3个像素）
+        link.strokeColor = '0,200,255';
+        link.arrowsRadius = 10
+
+        link.addEventListener('mouseover', (evt) => {
+            console.log('link over');
+        });
+
+        link.addEventListener('mouseout', (evt) => {
+            console.log('link out');
+        });
+
+        scene.add(link);
+    }
+</script>
+</html>

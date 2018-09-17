@@ -9,7 +9,8 @@
 
     </div>
 </body>
-<script src="./echarts-3.4.0.min.js"></script>
+<script src="./echarts.min.js"></script>
+<!--<script src="./echarts-3.4.0.min.js"></script>-->
 <script>
     let main = document.querySelector('#main');
     let myChart = echarts.init(main);
@@ -17,39 +18,56 @@
     let option = {
         series: [{
             type: 'treemap',
-            levels:[
-                {
-                    itemStyle: {
-                        normal: {
-                            borderColor: 'green',
-                            borderWidth: 1,
-                            gapWidth: 10
-                        }
-                    },
-
+            label: {
+                normal: {
+                    // position: 'insideTopLeft',
+                    // formatter: function (params) {
+                    //     console.log(params);
+                    //     return 'pp';
+                    // },
+                    show: true,
+                    formatter: [
+                        '{a|这段文本采用样式a}',
+                        '{b|这段文本采用样式b}这段用默认样式{x|这段用样式x}'
+                    ].join('\n'),
                 },
-                // {
-                //     itemStyle: {
-                //         normal: {
-                //             borderColor: 'black',
-                //             borderWidth: 5,
-                //             // gapWidth: 1
-                //         }
-                //     }
-                // },
-                //         {
-                //             itemStyle: {
-                //                 normal: {
-                //                     borderWidth: 5,
-                //                     // gapWidth: 1,
-                //  borderColor: 'blue'
-                //                 }
-                //             }
-                //         }
-            ],
-            data: getData(),
+                // emphasis: {
+                //     position: 'insideTopLeft',
+                //     formatter: function (params) {
+                //         console.log(params);
+                //         return 'pp';
+                //     },
+                // }
+            },
+            data: [
+            {
+                name: 'nodeA',            // First tree
+                value: 10,
+                children: [
+                    {
+                        name: 'nodeAa',       // First leaf of first tree
+                        value: 4
+                    }, {
+                        name: 'nodeAb',       // Second leaf of first tree
+                        value: 6
+                    }
+                ],
+            },
+            {
+                name: 'nodeB',            // Second tree
+                value: 20,
+                children: [{
+                    name: 'nodeBa',       // Son of first tree
+                    value: 20,
+                    children: [{
+                        name: 'nodeBa1',  // Granson of first tree
+                        value: 20
+                    }]
+                }]
+            }]
         }]
     };
+
 
     myChart.setOption(option);
 

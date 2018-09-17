@@ -36,13 +36,13 @@
 </style>
 <template>
     <div class="parse_obj_container">
-        <div class="code_line_number_content">
-            <ul>
-                <li v-for="line in line_number">
-                    {{ line }}
-                </li>
-            </ul>
-        </div>
+        <!--<div class="code_line_number_content">-->
+            <!--<ul>-->
+                <!--<li v-for="line in line_number">-->
+                    <!--{{ line }}-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
         <div ref="parse_obj_content" class="parse_obj_content" v-html="obj_html">
         </div>
     </div>
@@ -74,18 +74,18 @@
                     }
                 },
                 obj_html: '',
-                line_number: [],
+                // line_number: [],
             }
         },
         created() {
-            let count = 1;
-            this.line_number = [];
+            // let count = 1;
+            // this.line_number = [];
             this.obj_html = `<pre class='pre_content'>${this.parseObj(this.obj)}</pre>`;
 
-            this.obj_html.split(/\r\n/).forEach(() => {
-                this.line_number.push(count);
-                count++;
-            })
+            // this.obj_html.split(/\r\n/).forEach(() => {
+            //     this.line_number.push(count);
+            //     count++;
+            // })
         },
         mounted() {
             let parse_obj_content = this.$refs.parse_obj_content;

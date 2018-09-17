@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+</body>
+<script>
+
+    async function init() {
+        await testData();
+        console.log('init');
+    }
+
+    function getData() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(1)
+            }, 1000);
+        })
+    }
+
+    async function testData() {
+        let data = await getData();
+        console.log(data);
+    }
+
+    init();
+
+
+</script>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas width="1000" height="800"></canvas>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let life_circle = 3000;
+    let circle_lst = [];
+
+    class Circle {
+        constructor(x = 100, y = 100, radius = 10, start_time = new Date().getTime(), color = 'rgb(100, 100, 100)') {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.start_time = start_time;
+            this.color = color;
+        }
+
+        drawCircle(ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = this.color;
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        changeCircle(ctx, x, y, radius) {
+            ctx.beginPath();
+            ctx.arc(this.x += x, this.y += y, this.radius -= radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function createCircle(start_x, start_y, life_circle) {
+        let x = getRandomInt(-10, 10);
+        let y = getRandomInt(-10, 10);
+        let radius = getRandomInt(-1, 1);
+
+        let circle = new Circle(start_x, start_y);
+        circle_lst.push(circle);
+
+        // for (var i = 0; i < circle_lst.length; i++) {
+        //     circle_lst[i].drawCircle(ctx)
+        // }
+
+        let createAnimationBind = createAnimation.bind(this, circle_lst, ctx, x, y ,radius, life_circle);
+        requestAnimationFrame(createAnimationBind);
+    }
+
+    function createAnimation(circle_lst, ctx, x, y ,radius, life_circle) {
+        ctx.clearRect(0, 0, 1000, 800);
+
+        circle_lst = circle_lst.filter((circle => {
+            return new Date().getTime() - circle.start_time < life_circle && circle.radius > 0
+        }));
+
+        for (var circle of circle_lst) {
+            circle.changeCircle(ctx, x, y, radius);
+        }
+
+        let createAnimationBind = createAnimation.bind(this, circle_lst, ctx, x, y ,radius, life_circle);
+        requestAnimationFrame(createAnimationBind);
+    }
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        if (min == max) {
+            return min;
+        } else {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+    }
+
+    window.addEventListener('mousedown', (evt) => {
+        let boundingClientRect = canvas.getBoundingClientRect();
+        let x = evt.pageX - boundingClientRect.left;
+        let y = evt.pageY - boundingClientRect.top;
+        createCircle(x, y, life_circle);
+
+        // for (var i = 0; i < 6; i++) {
+        //     createCircle(x, y, life_circle);
+        // }
+    });
+
+    function meteor() {
+        let x = 500;
+        let y = 400;
+        setInterval(() => {
+            // for (var i = 0; i < 6; i++) {
+                createCircle(x, y, life_circle);
+            // }
+        }, 300);
+    }
+
+    meteor();
+
+
+</script>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .dragDiv {
+        width:100px;
+        height:100px;
+        border:1px solid black;
+        background: #3e999f;
+    }
+
+    .container, .container2 {
+        width: 600px;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+</style>
+<body>
+    <h4>drag by canvas</h4>
+
+    <div class="container">
+        <div id="1" class="dragDiv" draggable="true">1</div>
+        <span id="2" style="width:100px;height:100px;border:solid 10px green;" class="dragDiv" draggable="true">2</span>
+        <div id="3" class="dragDiv" draggable="true">3</div>
+        <div id="4" class="dragDiv" draggable="true">4</div>
+    </div>
+
+    <div  style="border:solid 1px black;width:400px;height:400px;" id="drop_container"></div>
+
+    <h4>drag by sortable</h4>
+
+    <div class="container2">
+        <div id="11" class="dragDiv" >11</div>
+        <span id="22" style="width:100px;height:100px;border:solid 1px black;" >22</span>
+        <div id="33" class="dragDiv" >33</div>
+        <div id="44" class="dragDiv" >44</div>
+    </div>
+</body>
+<script src="./Sortable.js"></script>
+<script>
+    let drags = document.querySelectorAll('.dragDiv');
+    let drop_container = document.querySelector('#drop_container');
+
+
+
+    drop_container.addEventListener('dragenter', (evt) => {
+        // evt.preventDefault();
+    });
+    drop_container.addEventListener('dragover', (evt) => {
+        evt.preventDefault();
+
+    });
+
+    drop_container.addEventListener('drop', (evt) => {
+        // evt.preventDefault();
+        console.log('this is drop');
+    })
+
+
+    let source_dom = null;
+
+    for (var drag of drags) {
+        drag.addEventListener('dragstart', (evt) => {
+            let msg_obj = {
+                id: evt.target.id,
+            };
+
+            source_dom = evt.currentTarget;
+
+            evt.dataTransfer.setData('text', JSON.stringify(msg_obj));
+
+            let dom = evt.target;
+            dom.style.opacity = 0.5;
+            console.log('dragstart');
+        });
+
+        drag.addEventListener('dragend', (evt) => {
+            evt.preventDefault();
+            let dom = evt.target;
+            dom.style.opacity = 1;
+        });
+
+        drag.addEventListener('dragenter', (evt) => {
+            // evt.preventDefault();
+            // console.log('drag enter');
+            // console.log(evt.currentTarget);
+
+        });
+
+        drag.addEventListener('dragover', (evt) => {
+            evt.preventDefault();
+            // console.log('dragover');
+            // console.log(evt.offsetX);
+            // let target = evt.target;
+            // let lst = target.parentElement.children;
+            // let drag_point = evt.dataTransfer.getData('text/plain');
+            //
+            // console.log(drag_point);
+
+            let target_dom = evt.currentTarget;
+
+            if (source_dom !== target_dom) {
+
+                console.log(source_dom);
+
+                let parent = source_dom.parentNode;
+                let dom_lst = [].slice.call(parent.children);
+                let source_idx = dom_lst.indexOf(source_dom);
+                let target_idx = dom_lst.indexOf(target_dom);
+
+                if (source_idx > target_idx) {
+
+                    source_dom.remove();
+                    parent.insertBefore(source_dom, target_dom);
+
+                } else {
+
+                    source_dom.remove();
+                    parent.insertBefore(source_dom, target_dom.nextSibling);
+
+                }
+
+            }
+        });
+
+        drag.addEventListener('dragleave', (evt) => {
+            // evt.preventDefault();
+            // console.log('drag leave');
+        });
+
+
+        drag.addEventListener('drop', (evt) => {
+            evt.preventDefault();
+            // console.log('drop');
+            // console.log(evt.dataTransfer.getData('text'))
+        });
+    }
+
+    let container = document.querySelector('.container2');
+    var sortable = Sortable.create(container);
+
+</script>
+</html>

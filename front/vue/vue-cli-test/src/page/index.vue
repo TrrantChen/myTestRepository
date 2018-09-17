@@ -5,7 +5,7 @@
     import JsxTest from '@/components/jsxTest/index';
     import AddDeleLstTest from '@/components/addDeleLst/addDeleLstTest';
     import MultComCheckBox from '@/components/multComCheckBox/index';
-    import Testparentsonobj  from '@/components/test4parentsonobj/index';
+    import Testparentsonobj from '@/components/test4parentsonobj/index';
     import WatchTest from '@/components/watchTest/index';
     import DoubleFormTest from '@/components/doubleFormTest/index';
     import AsyncStore from '@/components/asyncStore/index'
@@ -35,10 +35,16 @@
     import echartTest from '@/components/echartTest/index'
     import slider from '@/components/slider/index'
     import fullscreencontainer from '@/components/fullscreen/index'
+    import jtopo from '@/components/jtopo/index'
+    import movescrollbar from '@/components/moveScrollBar/index'
+    import dragAndChange from '@/components/dragAndChange/index'
 
     export default {
         that: this,
         components: {
+            dragAndChange,
+            movescrollbar,
+            jtopo,
             fullscreencontainer,
             slider,
             echartTest,
@@ -74,7 +80,7 @@
             deleSubLst,
             watchAndComputedOrder,
         },
-        data() {  
+        data() {
             return {
                 show_lst: [],
             }
@@ -99,25 +105,31 @@
 
             for (let i = 0, length = componentNames.length; i < length; i++) {
                 let Component = componentNames[i];
-                let name = componentNames[i].replace(/[A-Z]/g, (e) => { return " " + e.toLowerCase() });
+                let name = componentNames[i].replace(/[A-Z]/g, (e) => {
+                    return " " + e.toLowerCase()
+                });
 
                 let item = null;
 
                 if (name === 'echart test') {
                     item = (<div>
-                        <button class="btnStyle" onClick={ () => { this.show_lst.splice(i, 1, !this.show_lst[i]) } }>{name}</button>
+                        <button class="btnStyle" onClick={() => {
+                            this.show_lst.splice(i, 1, !this.show_lst[i])
+                        }}>{name}</button>
                         {/* <button class="btnStyle" on-click={ this.clickHandle.bind(this, i) }>{name}</button> */}
                         {/* 方法调用的两种方式 */}
                         {/* 这是注释 */}
-                        { this.show_lst[i] ? (<Component></Component>) : '' }
+                        {this.show_lst[i] ? (<Component></Component>) : ''}
                     </div>);
                 } else {
-                     item = (<div>
-                        <button class="btnStyle" onClick={ () => { this.show_lst.splice(i, 1, !this.show_lst[i]) } }>{name}</button>
+                    item = (<div>
+                        <button class="btnStyle" onClick={() => {
+                            this.show_lst.splice(i, 1, !this.show_lst[i])
+                        }}>{name}</button>
                         {/* <button class="btnStyle" on-click={ this.clickHandle.bind(this, i) }>{name}</button> */}
                         {/* 方法调用的两种方式 */}
                         {/* 这是注释 */}
-                        { this.show_lst[i] ? (<Component></Component>) : '' }
+                        {this.show_lst[i] ? (<Component></Component>) : ''}
                     </div>);
                 }
 
@@ -126,7 +138,7 @@
 
             return (
                 <div>
-                    { result }
+                    {result}
                 </div>
             )
         },

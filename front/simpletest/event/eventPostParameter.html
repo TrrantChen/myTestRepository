@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <button id="test">test</button>
+        <button id="remove">remove</button>
+        <button id="test2">test2</button>
+    </div>
+</body>
+<script>
+    let test = document.querySelector('#test');
+    let remove = document.querySelector('#remove');
+
+
+    let tmp = clickHandle.bind(test, 90)
+
+    test.addEventListener('click', tmp);
+    remove.addEventListener('click', (evt) => {
+        test.removeEventListener('click', tmp);
+    });
+
+    function clickHandle(index, evt) {
+        console.log(evt);
+        console.log(index);
+    }
+
+    let test2 = document.querySelector('#test2');
+
+    test2.addEventListener('click', () => {
+        console.log('click');
+    });
+
+
+    test2.addEventListener('mousedown', () => {
+        console.log('mousedown');
+    });
+
+    test2.addEventListener('mouseup', () => {
+        console.log('mouseup');
+    });
+
+</script>
+</html>

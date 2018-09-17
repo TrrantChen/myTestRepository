@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas width="1000" height="800"></canvas>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let start_x = 200;
+    let start_y = 200;
+    let radius = 200;
+    let start_time = new Date().getTime();
+    let animationDrawCircleBind = animationDrawCircle.bind(this, ctx, start_x, start_y, radius, start_time);
+    window.requestAnimationFrame(animationDrawCircleBind);
+
+    function drawCircle(ctx, start_x, start_y, radius) {
+        ctx.beginPath();
+        ctx.arc(start_x, start_y, radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function animationDrawCircle(ctx, start_x, start_y, radius, start_time) {
+
+        let now = new Date().getTime();
+
+        if (ctx !== void 0) {
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+
+        if (now - start_time < 2000) {
+            drawCircle(ctx, start_x, start_y, radius);
+            let animationDrawCircleBind = animationDrawCircle.bind(this, ctx, start_x + 1, start_y + 1, radius - 1, start_time);
+            window.requestAnimationFrame(animationDrawCircleBind);
+        }
+    }
+
+</script>
+</html>

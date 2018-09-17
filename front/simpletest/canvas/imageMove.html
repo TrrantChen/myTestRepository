@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+
+        #choose_frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display:none;
+            background: rgba(255, 165, 0, 0.5);
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div style="position: relative; display: inline-block">
+        <img src="./test.jpg" width="900" height="600">
+    </div>
+    <canvas id="main">
+    </canvas>
+    <div id="choose_frame"></div>
+</body>
+<script>
+    let img = document.querySelector('img');
+    let width = 0;
+    let height = 0;
+    let x_ratio = 0;
+    let y_ratio = 0;
+    let zoom_index = 1;
+    let zoom_step = 5;
+
+    img.onload = function(evt) {
+        width = this.width;
+        height = this.height;
+        x_ratio = this.naturalWidth / this.width;
+        y_ratio = this.naturalHeight / this.height;
+    };
+
+    window.onload = function() {
+        let frame_side = 300;
+        let main = document.querySelector('#main');
+
+        main.width = frame_side;
+        main.height = frame_side;
+        let main_ctx = main.getContext('2d');
+
+        let choose_frame = document.querySelector('#choose_frame');
+        choose_frame.style.width = `${frame_side}px`;
+        choose_frame.style.height = `${frame_side}px`;
+
+
+        img.addEventListener('mousemove', (evt) => {
+            choose_frame.style.display = 'block';
+
+            let tmp_width = parseInt(choose_frame.style.width);
+            let tmp_height = parseInt(choose_frame.style.height);
+
+            let c_x = evt.offsetX - tmp_width / 2;
+            let c_y = evt.offsetY - tmp_height / 2;
+            let x = c_x;
+            let y = c_y;
+
+            console.log(c_x);
+
+            if (c_x < 0) {
+                x = 0;
+            } else if (c_x > width - tmp_width) {
+                x = width - tmp_width;
+            }
+
+            if (c_y < 0) {
+                y = 0;
+            } else if (c_y > height - tmp_height) {
+                y = height - tmp_height;
+            }
+
+            choose_frame.style.left = `${ x }px`;
+            choose_frame.style.top = `${ y }px`;
+            main_ctx.clearRect(0, 0, frame_side, frame_side);
+            main_ctx.drawImage(img, x * x_ratio, y * y_ratio, tmp_width * x_ratio, tmp_height * y_ratio, 0, 0, frame_side, frame_side);
+        });
+
+        img.addEventListener('mouseout', (evt) => {
+            choose_frame.style.display = 'none';
+        });
+
+        img.addEventListener('wheel', (evt) => {
+            if (evt.wheelDelta > 0) {
+                zoom_index = 1;
+            } else {
+                zoom_index = -1;
+            }
+
+            let x = parseInt(choose_frame.style.left) - zoom_index * zoom_step;
+            let y = parseInt(choose_frame.style.top) - zoom_index * zoom_step;
+            let tmp_width = parseInt(choose_frame.style.width) + 2 * zoom_index * zoom_step;
+            let tmp_height = parseInt(choose_frame.style.height) + 2 *  zoom_index * zoom_step;
+
+            if (x < 0) {
+                x = 0;
+                return;
+            }
+
+            if (y < 0) {
+                y  = 0;
+                return;
+            }
+
+            if (x + tmp_width > width) {
+                return;
+            }
+
+            if (y + tmp_height > height) {
+                return;
+            }
+
+            choose_frame.style.left =  x + 'px';
+            choose_frame.style.top = y + 'px';
+            choose_frame.style.width = tmp_width + 'px';
+            choose_frame.style.height = tmp_height + 'px';
+
+
+            main_ctx.clearRect(0, 0, frame_side, frame_side);
+            main_ctx.drawImage(
+                img,
+                x * x_ratio,
+                y * y_ratio,
+                tmp_width * x_ratio,
+                tmp_height  * y_ratio,
+                0,
+                0,
+                frame_side,
+                frame_side
+            );
+        });
+
+    }
+
+
+</script>
+</html>

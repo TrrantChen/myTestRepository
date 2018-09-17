@@ -1,0 +1,235 @@
+<!--<div class="dropzone">-->
+    <!--&lt;!&ndash;<div id="draggable">&ndash;&gt;-->
+    <!--<div id="draggable" draggable="true">-->
+        <!--This div is draggable-->
+    <!--</div>-->
+<!--</div>-->
+<!--<div class="dropzone"></div>-->
+<!--<div class="dropzone"></div>-->
+<!--<div class="dropzone"></div>-->
+
+<!--<style>-->
+    <!--#draggable {-->
+        <!--width: 200px;-->
+        <!--height: 20px;-->
+        <!--text-align: center;-->
+        <!--background: white;-->
+    <!--}-->
+
+    <!--.dropzone {-->
+        <!--width: 200px;-->
+        <!--height: 20px;-->
+        <!--background: blueviolet;-->
+        <!--margin-bottom: 10px;-->
+        <!--padding: 10px;-->
+    <!--}-->
+<!--</style>-->
+
+<!--<script>-->
+    <!--var dragged;-->
+
+    <!--let draggable = document.querySelector('#draggable');-->
+    <!--draggable.addEventListener('dragstart', (evt) => {-->
+        <!--evt.dataTransfer.setData('text/plain',null)-->
+    <!--});-->
+
+    <!--/* events fired on the draggable target */-->
+    <!--document.addEventListener("drag", function( event ) {-->
+
+    <!--}, false);-->
+
+    <!--document.addEventListener("dragstart", function( event ) {-->
+        <!--// store a ref. on the dragged elem-->
+        <!--dragged = event.target;-->
+        <!--// make it half transparent-->
+
+        <!--event.target.style.opacity = .5;-->
+    <!--}, false);-->
+
+    <!--document.addEventListener("dragend", function( event ) {-->
+        <!--// reset the transparency-->
+        <!--event.target.style.opacity = "";-->
+    <!--}, false);-->
+
+    <!--/* events fired on the drop targets */-->
+    <!--document.addEventListener("dragover", function( event ) {-->
+        <!--// prevent default to allow drop-->
+        <!--event.preventDefault();-->
+    <!--}, false);-->
+
+    <!--document.addEventListener("dragenter", function( event ) {-->
+        <!--// highlight potential drop target when the draggable element enters it-->
+        <!--if ( event.target.className == "dropzone" ) {-->
+            <!--event.target.style.background = "purple";-->
+        <!--}-->
+
+    <!--}, false);-->
+
+    <!--document.addEventListener("dragleave", function( event ) {-->
+        <!--// reset background of potential drop target when the draggable element leaves it-->
+        <!--if ( event.target.className == "dropzone" ) {-->
+            <!--event.target.style.background = "";-->
+        <!--}-->
+
+    <!--}, false);-->
+
+    <!--document.addEventListener("drop", function( event ) {-->
+        <!--// prevent default action (open as link for some elements)-->
+        <!--event.preventDefault();-->
+        <!--// move dragged elem to the selected drop target-->
+        <!--if ( event.target.className == "dropzone" ) {-->
+            <!--event.target.style.background = "";-->
+            <!--dragged.parentNode.removeChild( dragged );-->
+            <!--event.target.appendChild( dragged );-->
+        <!--}-->
+
+    <!--}, false);-->
+<!--</script>-->
+
+<!-- -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+<!--<!DOCTYPE html>-->
+<!--<html lang=en>-->
+<!--<title>Examples of DataTransfer.{types,items} properties</title>-->
+<!--<meta content="width=device-width">-->
+<!--<style>-->
+    <!--div {-->
+        <!--margin: 0em;-->
+        <!--padding: 2em;-->
+    <!--}-->
+    <!--#target {-->
+        <!--border: 1px solid black;-->
+    <!--}-->
+<!--</style>-->
+<!--<script>-->
+    <!--function dragstart_handler(ev) {-->
+        <!--console.log("dragStart: target.id = " + ev.target.id);-->
+        <!--// Add this element's id to the drag payload so the drop handler will-->
+        <!--// know which element to add to its tree-->
+        <!--ev.dataTransfer.setData("text/plain", ev.target.id);-->
+        <!--ev.dataTransfer.effectAllowed = "move";-->
+    <!--}-->
+
+    <!--function drop_handler(ev) {-->
+        <!--console.log("drop: target.id = " + ev.target.id);-->
+        <!--ev.preventDefault();-->
+        <!--// Get the id of the target and add the moved element to the target's DOM-->
+        <!--var data = ev.dataTransfer.getData("text");-->
+        <!--ev.target.appendChild(document.getElementById(data));-->
+        <!--// Print each format type-->
+        <!--if (ev.dataTransfer.types != null) {-->
+            <!--for (var i=0; i < ev.dataTransfer.types.length; i++) {-->
+                <!--console.log("... types[" + i + "] = " + ev.dataTransfer.types[i]);-->
+            <!--}-->
+        <!--}-->
+        <!--// Print each item's "kind" and "type"-->
+        <!--if (ev.dataTransfer.items != null) {-->
+            <!--for (var i=0; i < ev.dataTransfer.items.length; i++) {-->
+                <!--console.log("... items[" + i + "].kind = " + ev.dataTransfer.items[i].kind + " ; type = " + ev.dataTransfer.items[i].type);-->
+            <!--}-->
+        <!--}-->
+    <!--}-->
+
+    <!--function dragover_handler(ev) {-->
+        <!--console.log("dragOver");-->
+        <!--ev.preventDefault();-->
+        <!--// Set the dropEffect to move-->
+        <!--ev.dataTransfer.dropEffect = "move"-->
+    <!--}-->
+<!--</script>-->
+<!--<body>-->
+<!--<h1>Examples of <code>DataTransfer</code>.{<code>types</code>, <code>items</code>} properties</h1>-->
+<!--<ul>-->
+    <!--<li id="i1" ondragstart="dragstart_handler(event);" draggable="true">Drag Item 1 to the Drop Zone</li>-->
+    <!--<li id="i2" ondragstart="dragstart_handler(event);" draggable="true">Drag Item 2 to the Drop Zone</li>-->
+<!--</ul>-->
+<!--<div id="target" ondrop="drop_handler(event);" ondragover="dragover_handler(event);">Drop Zone</div>-->
+<!--</body>-->
+<!--</html>-->
+
+<div class="dropzone">
+    <div id="draggable" draggable="true" ondragstart="event.dataTransfer.setData('text/plain',null)">
+        This div is draggable
+    </div>
+</div>
+<div class="dropzone"></div>
+<div class="dropzone"></div>
+<div class="dropzone"></div>
+
+<style>
+    #draggable {
+        width: 200px;
+        height: 20px;
+        text-align: center;
+        background: white;
+    }
+
+    .dropzone {
+        width: 200px;
+        height: 20px;
+        background: blueviolet;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+</style>
+
+<script>
+    var dragged;
+
+    /* events fired on the draggable target */
+    document.addEventListener("drag", function( event ) {
+
+    }, false);
+
+    document.addEventListener("dragstart", function( event ) {
+        // store a ref. on the dragged elem
+        dragged = event.target;
+        // make it half transparent
+        event.target.style.opacity = .5;
+    }, false);
+
+    document.addEventListener("dragend", function( event ) {
+        // reset the transparency
+        event.target.style.opacity = "";
+    }, false);
+
+    document.addEventListener("dragexit", function( event ) {
+        // reset the transparency
+        event.target.style.opacity = "";
+        console.log('exit');
+    }, false);
+
+    /* events fired on the drop targets */
+    document.addEventListener("dragover", function( event ) {
+        // prevent default to allow drop
+        event.preventDefault();
+    }, false);
+
+    document.addEventListener("dragenter", function( event ) {
+        // highlight potential drop target when the draggable element enters it
+        if ( event.target.className == "dropzone" ) {
+            event.target.style.background = "purple";
+        }
+
+    }, false);
+
+    document.addEventListener("dragleave", function( event ) {
+        // reset background of potential drop target when the draggable element leaves it
+        if ( event.target.className == "dropzone" ) {
+            event.target.style.background = "";
+        }
+
+    }, false);
+
+    document.addEventListener("drop", function( event ) {
+        // prevent default action (open as link for some elements)
+        event.preventDefault();
+        // move dragged elem to the selected drop target
+        if ( event.target.className == "dropzone" ) {
+            event.target.style.background = "";
+            dragged.parentNode.removeChild( dragged );
+            event.target.appendChild( dragged );
+        }
+
+    }, false);
+</script>
