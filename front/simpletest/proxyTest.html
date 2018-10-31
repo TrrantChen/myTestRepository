@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function simpleTest1() {
+        let my_proxy = new Proxy({}, {
+            // "get": (o, key) => {
+            "get": function(o, key) {
+                console.log(arguments);
+                console.log('==========');
+                console.log('o is');
+                console.log(o)
+                console.log('==========');
+                console.log(`key is ${key}`);
+                console.log('==========');
+                return o[key];
+            },
+            // 'set': (o, key, v) => {
+            'set': function(o, key, v) {
+                console.log(arguments);
+                console.log('-----------');
+                console.log('o is');
+                console.log(o);
+                console.log('-----------');
+                console.log(`key is ${key}`);
+                console.log('-----------');
+                console.log(`v is ${v}`);
+                return o[key] = v;
+            }
+
+        });
+
+        my_proxy.a = 'fff';
+        console.log('middle');
+        console.log(my_proxy.a);
+    }
+
+    simpleTest1();
+</script>
+</html>

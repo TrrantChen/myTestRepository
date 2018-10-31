@@ -38,10 +38,16 @@
     import jtopo from '@/components/jtopo/index'
     import movescrollbar from '@/components/moveScrollBar/index'
     import dragAndChange from '@/components/dragAndChange/index'
+    import awaitWatchTest from '@/components/awaitWatchTest/index'
+    import tableFillData from '@/components/tableFillData/index'
 
     export default {
         that: this,
         components: {
+            tableFillData,
+            Test,
+            CodeMirrorTest,
+            awaitWatchTest,
             dragAndChange,
             movescrollbar,
             jtopo,
@@ -63,9 +69,7 @@
             UseGlobalComponents,
             Scrolltest,
             AutoFillWidth,
-            Test,
             ActiveComponent,
-            CodeMirrorTest,
             Jsbeautiful,
             MutpleScroll,
             AsyncawaitTest,

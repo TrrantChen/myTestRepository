@@ -1,71 +1,46 @@
 <template>
-    <div>
-        <div @change="changeHandle" @blur="blurHandle">
-            <input type="text">
-            <div v-for="(data1, index1) in lst1">
-                <div v-for="(data2, index2) in lst2">
-                    <span>{{ index1 }}</span>
-                    <span>{{ index2 }}</span>
-                </div>
+    <div class="k-main">
+        <div class="k-container container-demo animate-all"  style="max-width: calc(100% - 224px);">
+            <div>
+                <select required v-model="obj.name" class="form-control" @change="changeHandle">
+                    <option value="">--请选择--</option>
+                    <option :value="item" v-for="item in obj_lst">{{ item }}</option>
+                    <!--<option :value="key" v-for="(value, key) in obj_lst">{{ key }}</option>-->
+                </select>
+                {{ obj.name }}
             </div>
         </div>
-        <input type="checkbox"   true-value="1"
-               false-value="0" v-model.number="check_test">
-        {{ check_test }}
     </div>
-
 </template>
 <script>
-    /*
-        用于测试一些js方法库
-     */
-    import * as util from '@/util.js'
-
-    import 'lodash/core'
-    import 'lodash/lang'
 
     export default {
         data() {
             return {
-                msg: 'this is msg',
-                lst1: [1, 2, 3],
-                lst2: [4, 5],
-                check_test: 1,
+                obj: {
+                    name: 'DB',
+                },
+                obj_lst: []
             }
         },
+        watch: {
+        },
+        mounted: function() {
+            // this.obj_lst = {
+            //     'DB': 'ffff'
+            // };
+
+
+        },
         created() {
-            this.autoAction();
+            setTimeout(() => {
+                this.obj_lst = ['DB']
+            }, 2000)
         },
         methods: {
             changeHandle() {
-                alert("change");
-            },
-            blurHandle() {
-                alert("blur");
-            },
-            arrayIsEqual() {
-                let a = [1, 2];
-                let b = [1, 2];
-
-                alert(_.isEqual(a, b));
-            },
-            autoAction() {
-                let timeID = setTimeout(() => {
-                    try {
-                        callback();
-                        this.autoAction();
-                    } catch(e) {
-                        clearTimeout(timeID);
-                        console.log('autoAction is error');
-                        console.log(e);
-                    }
-                }, 1000);
+                console.log('this is change');
             }
         },
-        mounted() {
-            window.addEventListener('click', () => {
-                alert('test');
-            })
-        }
     }
 </script>

@@ -9,17 +9,59 @@
         width: 100%;
         height: 100%;
     }
+
+
 </style>
 <body>
     <div>
-
+        <button id="add">add</button>
     </div>
 </body>
-<script src="moment.js"></script>
+<script src="./moment.js"></script>
 <script>
-    window.addEventListener('click', () => {
-        alert('test');
-    })
+
+    let queue = function(funcs) {
+        let next = function() {
+
+            if (funcs.length > 0) {
+                let f = funcs.shift();
+
+                if (f) {
+                    f(next);
+                }
+            }
+        };
+
+        next();
+    };
+
+    let funcA = function(callback) {
+        console.log('this is a');
+        callback();
+    };
+
+    let funcB = function(callback) {
+        console.log('this is b');
+        callback();
+    };
+
+    let funcC = function(callback) {
+        setTimeout(() => {
+            console.log('this is c');
+            callback();
+        })
+    };
+
+    let funcD = function(callback) {
+        setTimeout(() => {
+            console.log('this is d');
+            callback();
+        }, 5000)
+    };
+
+    queue([funcC, funcA, funcD, funcB]);
+
+
 </script>
 </html>
 

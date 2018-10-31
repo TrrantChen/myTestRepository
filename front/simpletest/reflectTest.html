@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function reflectConstructTestES5() {
+        function A(name) {
+            this.name = name || 'yc';
+            this.getName = function() {
+                console.log('this is get name');
+                console.log(this.name);
+            }
+        }
+
+        A.prototype.AFunc = function() {
+            console.log('this is a func');
+        };
+
+        function B(age) {
+            this.age = age || 20;
+            this.getAge = function() {
+                console.log('this is get age');
+                console.log(this.age);
+            }
+        }
+
+        B.prototype.BFunc = function() {
+            console.log('this is b func');
+        };
+
+        let a = Reflect.construct(A, ['tttt']);
+        console.log(a);
+        a.getName();
+        a.AFunc();
+
+        // 使用Reflect.construct的第三个参数，对象的实例方法用的还是A的，但原型链方法用的是B上的原型链方法。
+        let b = Reflect.construct(A, ['ffff'], B);
+        console.log(b);
+        b.getName();
+        b.BFunc();
+
+        A.prototype = B.prototype;
+        let aa = new A('eeee');
+
+        console.log(aa);
+    }
+
+    function reflectConstructTestES6() {
+        class A1 {
+            constructor(name) {
+                console.log('a is invock');
+                this.name = name;
+            }
+
+            getName() {
+                console.log(this.name);
+                return this.name
+            }
+        }
+
+        class B1 {
+            constructor(age) {
+                console.log('b is invock');
+                this.age = age;
+            }
+
+            getAge() {
+                console.log(this.age);
+                return this.age;
+            }
+        }
+
+        let a = Reflect.construct(A1, ['yc']);
+        console.log(a);
+        a.getName();
+
+        let b = Reflect.construct(A1, ['12'], B1);
+        console.log(b);
+        b.getAge();
+
+        let aa = new A1('oo');
+        console.log(aa);
+
+    }
+
+    reflectConstructTestES5();
+    reflectConstructTestES6();
+
+</script>
+</html>

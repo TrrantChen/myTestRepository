@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .div_style {
+            width: 100%;
+            background: red;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <!--<svg id="test" class="div_style" style="height: 50px;">-->
+        <!--&lt;!&ndash;<div id="test" class="div_style" style="height: 50px;">&ndash;&gt;-->
+            <!--&lt;!&ndash;<object id="test_obj" data="about:blank" type="text/html"></object>&ndash;&gt;-->
+            <!--&lt;!&ndash;<object id="test_obj" style="display:block; position: absolute; top: 0; left: 0; height:100%;width:100%;overflow:hidden;opacity:0;pointer-events:none;z-index:-1;" type="text/html" data="about:blank">&ndash;&gt;-->
+            <!--&lt;!&ndash;</object>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--</svg>-->
+
+        <!--<svg id="test" xmlns="http://www.w3.org/2000/svg"-->
+             <!--xmlns:xlink="http://www.w3.org/1999/xlink" style="height: 50px;">-->
+
+            <!--<g>-->
+                <!--<foreignObject opacity="1" fill-opacity="1" stroke-opacity="1" transform="matrix(1,0,0,1,0,0)" x="0" y="0" width="180" height="60" stroke="none" fill="none">-->
+                    <!--<div class="custom-shape-style">-->
+                        <!--<span class="business">同盾多头分12个月(&lt;=16)</span>-->
+                        <!--<div class="custom-shape" style="width: 180px;height: 22px;background: linear-gradient(90deg, #21cc66 84.36%, transparent 0%);">-->
+                            <!--<span>6,886,666,596.47</span>-->
+                            <!--<span>1.48% </span>-->
+                        <!--</div>-->
+                        <!--<div style="height: 20px;pointer-events: none;background: transparent;">-->
+
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</foreignObject>-->
+            <!--</g>-->
+
+        <!--</svg>-->
+
+        <svg id="test" xmlns="http://www.w3.org/2000/svg"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+
+            <g>
+                <line x1="10" y1="10" x2="85" y2="10"
+                      style="stroke: #006600;"/>
+
+                <rect x="10" y="20" height="50" width="75"
+                      style="stroke: #006600; fill: #006600"/>
+
+                <text x="10" y="90" style="stroke: #660000; fill: #660000">
+                    Text grouped with shapes</text>
+            </g>
+
+        </svg>
+
+
+        <button id="change">change</button>
+    </div>
+</body>
+<script>
+
+
+
+    let change = document.querySelector('#change');
+    let test = document.querySelector('#test');
+    // let test_obj = document.querySelector('#test_obj');
+    let g = test.querySelector('foreignObject');
+
+    // test_obj.onload = function() {
+    //     alert('load');
+    // }
+
+    // test.onload = function() {
+    //     // alert('on load');
+    //     addResize(test, () => {
+    //         console.log('this is change');
+    //     })
+    // };
+
+    addResize(g, () => {
+        alert('change');
+    })
+
+
+    change.addEventListener('click', (evt) => {
+        // console.log(test.style.height)
+        test.style.height = (parseInt(test.style.height) + 50) + 'px';
+    });
+
+    function addResize(dom, callback) {
+
+        if (dom) {
+
+            let obj = document.createElement('object');
+            obj.setAttribute('style','display:block; position: absolute; top: 0; left: 0; height:100%;width:100%;overflow:hidden;opacity:0lpointer-events:none;z-index:-1;background:#000;');
+            obj.onload = function() {
+                console.log('load');
+                this.contentDocument.defaultView.addEventListener('resize', function() {
+
+                    // 添加监听想做的事
+                    if (callback) {
+                        callback();
+                    }
+
+                })
+            };
+            obj.type='text/html';
+            obj.data = 'about:blank';
+            dom.appendChild(obj);
+
+        }
+    }
+
+    function svgAddResize(dom, callback) {
+        if (dom) {
+
+            let g = document.createElement('g');
+            g.setAttribute('opacity', '1')
+            g.setAttribute('fill-opacity', '1')
+            g.setAttribute('transform', 'matrix(1,0,0,1,0,0)')
+            g.setAttribute('stroke', 'none')
+            g.setAttribute('fill', 'none')
+            // g.setAttribute('opacity', '1')
+
+            // opacity="1" fill-opacity="1" stroke-opacity="1" transform="matrix(1,0,0,1,80,500)" stroke="none" fill="none"
+
+            console.log(g);
+
+
+            // let foreignObject = document.createElement('foreignObject');
+            // let obj = document.createElement('object');
+            // obj.setAttribute('style','display:block; position: absolute; top: 0; left: 0; height:100%;width:100%;overflow:hidden;opacity:0lpointer-events:none;z-index:-1;background:#000;');
+            // obj.onload = function() {
+            //     console.log('load');
+            //     this.contentDocument.defaultView.addEventListener('resize', function() {
+            //
+            //         // 添加监听想做的事
+            //         if (callback) {
+            //             callback();
+            //         }
+            //
+            //     })
+            // };
+            // obj.type='text/html';
+            // obj.data = 'about:blank';
+            //
+            // g.appendChild(foreignObject);
+            // foreignObject.appendChild(obj);
+
+            dom.appendChild(g);
+
+        }
+    }
+
+
+</script>
+</html>

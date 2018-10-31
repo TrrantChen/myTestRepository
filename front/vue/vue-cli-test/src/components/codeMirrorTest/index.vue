@@ -4,7 +4,7 @@
     <div >
         <div>
             <div style="width:50%;height:400px;">
-                    <code-editor v-model="msg" :is_show="is_show" :disabled="read_only"></code-editor>
+                <code-editor style="max-width: 1136px;" v-model="msg" :is_show="is_show"></code-editor>
             </div>
             {{ msg }}
         </div>
