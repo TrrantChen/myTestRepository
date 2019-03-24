@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+
+    </div>
+</body>
+<script>
+    // var data = 'aaa'
+    // var a = {}
+    // a.get = funciton() { return data };
+    // a.set = function() { console.log('this is readonly') }
+    //
+    // var b = {};
+    // Object.defineProperty(b, 'test', a);
+
+    let data = 'test';
+    let a = {};
+    a.get = () => data;
+    a.set = () => { console.log('this is readonly') };
+
+    let b = {};
+    // Object.defineProperty(b, 'test', a);
+    // Reflect.defineProperty(b, 'test', a);
+    // let c = Object.defineProperty(b, 'test', a);
+
+
+
+
+
+</script>
+</html>

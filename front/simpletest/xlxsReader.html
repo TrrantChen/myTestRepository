@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <input id="upload" type="file">上传
+        <div id="result">
+
+        </div>
+    </div>
+</body>
+<script src="xlsx.full.min.js"></script>
+<script>
+    let upload = document.querySelector('#upload');
+    let wb = null;
+    let keys= [
+        '本次新增指标',
+        '在贷后页面是否显示',
+        '归属模块',
+        '优先级',
+        '指标名称',
+        '维度拆分',
+        '英文名称',
+        '单位',
+        '定义',
+        '首行时间意义',
+        '对应风控核心指标（权限）'];
+
+
+    upload.addEventListener('change', (evt) => {
+        let f = evt.target.files[0];
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let data = e.target.result;
+            wb = XLSX.read(data, {
+                type: 'binary'
+            });
+
+            let arr = JSON.parse(JSON.stringify(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])));
+
+            console.log(arr);
+
+            createTable(arr);
+            createObj(arr);
+        };
+
+
+        reader.readAsBinaryString(f);
+
+    });
+
+    function createTable(arr) {
+
+        let trs = '';
+        let thead = '';
+
+        for (var i = 0, length = keys.length; i < length; i++) {
+            if (i === 4 || i === 8 || i === 9) {
+                thead += `<td>${keys[i]}</td>`
+            }
+
+        }
+
+        for (var obj of arr) {
+            let tds = '';
+
+            for (var i = 0, length = keys.length; i < length; i++) {
+                if (i === 4 || i === 8 || i === 9) {
+                    tds += `<td>${obj[keys[i]]}</td>`
+                }
+            }
+
+            trs += `<tr>${tds}</tr>`;
+        }
+
+        let table = `<table class="table toolip-table">
+                         <thead>
+                         ${thead}
+                         </thead>
+                        <tbody>
+                        ${trs}
+                        </tbody>
+                    </table>`
+
+        console.log(table);
+        document.querySelector('#result').innerHTML = table;
+    }
+
+    // {
+    //     '授信申请用户数': {
+    //         index: 0,
+    //         sn: 'RCDATA_OA.ANALYSIS.CORE_INDEX.CREDIT',
+    //     },
+    //     '授信通过用户数': {
+    //         index: 1,
+    //         sn: 'RCDATA_OA.ANALYSIS.CORE_INDEX.CREDIT',
+    //     },
+    // }
+    function createObj(arr) {
+
+        let obj = {
+            daiqian: {},
+            daihou: {},
+        };
+
+        let j = 0;
+
+        for (var i = 0, length = arr.length; i < length; i++) {
+
+            let item = arr[i];
+            let name = item['指标名称'].replace(/\r\n/g, '').trim();
+
+            if (item['在贷后页面是否显示'].trim() === '是') {
+
+                let tmp = {
+                    index: j,
+                    sn: name_power_obj[item['对应风控核心指标（权限）']],
+                };
+
+                obj.daihou[name] = tmp;
+                j++;
+            }
+        }
+
+
+        for (var i = 0, length = arr.length; i < length; i++) {
+
+            let item = arr[i];
+            let name = item['指标名称'].replace(/\r\n/g, '').trim();
+            let tmp = {
+                index: i,
+                sn: name_power_obj[item['对应风控核心指标（权限）']],
+            };
+
+            obj.daiqian[name] = tmp;
+        }
+
+
+
+        console.log(JSON.stringify(obj.daihou));
+        console.log(JSON.stringify(obj.daiqian));
+
+
+        return obj;
+    }
+
+    let name_power_obj = {
+        '授信': 'RCDATA_OA.ANALYSIS.CORE_INDEX.CREDIT',
+        'FPD7&30（月）': 'RCDATA_OA.ANALYSIS.CORE_INDEX.FPD30',
+        'Vintage-在贷逾期（金额）': 'RCDATA_OA.ANALYSIS.CORE_INDEX.VINTAGE_LEFT_CAPITAL',
+        'Vintage-金额': 'RCDATA_OA.ANALYSIS.CORE_INDEX.VINTAGE_MONEY',
+        'Coincident DPD': 'RCDATA_OA.ANALYSIS.CORE_INDEX.COINCIDENT',
+        '拨备': 'RCDATA_OA.ANALYSIS.CORE_INDEX.BABEI',
+    }
+
+</script>
+</html>

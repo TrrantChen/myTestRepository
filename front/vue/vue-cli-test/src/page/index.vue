@@ -40,15 +40,32 @@
     import dragAndChange from '@/components/dragAndChange/index'
     import awaitWatchTest from '@/components/awaitWatchTest/index'
     import tableFillData from '@/components/tableFillData/index'
+    import BatchLoadingTable from '@/components/batchLoadingTable/index'
+    import ObjQuote from '@/components/objQuote/index'
+    import recursionCompomentTest from '@/components/recursionCompomentTest/index';
+    import richSelectDirective from '@/components/richSelectDirective/index';
+    import TreeView from '@/components/treeView/index';
+    import dragAndDropControl from '@/components/dragAndDropControl/index';
+    import checkBoxTest from '@/components/checkBoxTest/index';
+    import tableActiveRow from '@/components/tableActiveRow/index';
+
 
     export default {
         that: this,
         components: {
+            dragAndChange,
+            tableActiveRow,
+            checkBoxTest,
+            dragAndDropControl,
+            TreeView,
+            richSelectDirective,
+            recursionCompomentTest,
+            ObjQuote,
+            BatchLoadingTable,
             tableFillData,
             Test,
             CodeMirrorTest,
             awaitWatchTest,
-            dragAndChange,
             movescrollbar,
             jtopo,
             fullscreencontainer,

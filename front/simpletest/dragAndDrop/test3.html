@@ -42,6 +42,7 @@
         ev.preventDefault();
         // Get the data, which is the id of the drop target
         var data = ev.dataTransfer.getData("text");
+        console.log(data);
         ev.target.appendChild(document.getElementById(data));
         // Clear the drag data cache (for all formats/types)
         ev.dataTransfer.clearData();

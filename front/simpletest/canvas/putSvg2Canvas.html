@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script>
+    let canvas = document.createElement('canvas');
+    let w = 100;
+    let h = 100;
+    let l_width = 2;
+    let l_color = '#1a7cc4';
+    let ctx = canvas.getContext('2d');
+    canvas.width = w;
+    canvas.height = h;
+    let img = new Image();
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0, w, h);
+    };
+
+    img.src = './01.svg';
+
+    ctx.arc(w / 2, h / 2, w / 2 - l_width, 0, Math.PI*2, true);
+    ctx.strokeStyle = l_color;
+    ctx.lineWidth = l_width;
+    ctx.stroke();
+    document.body.appendChild(canvas);
+</script>
+</html>

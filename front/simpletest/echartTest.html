@@ -16,57 +16,141 @@
     let myChart = echarts.init(main);
 
     let option = {
-        series: [{
-            type: 'treemap',
-            label: {
-                normal: {
-                    // position: 'insideTopLeft',
-                    // formatter: function (params) {
-                    //     console.log(params);
-                    //     return 'pp';
-                    // },
-                    show: true,
-                    formatter: [
-                        '{a|这段文本采用样式a}',
-                        '{b|这段文本采用样式b}这段用默认样式{x|这段用样式x}'
-                    ].join('\n'),
+        "title":{
+            "title":"订单处理日期时效监控图"
+        },
+        "tooltip":{
+            "trigger":"axis",
+            "axisPointer":{
+                "type":"cross"
+            }
+        },
+        "legend":{
+            "data":[
+                {
+                    "name":"订单操作时长(M)"
                 },
-                // emphasis: {
-                //     position: 'insideTopLeft',
-                //     formatter: function (params) {
-                //         console.log(params);
-                //         return 'pp';
-                //     },
-                // }
+                {
+                    "name":"订单等待时长(H)"
+                },
+                {
+                    "name":"订单处理时长(H)"
+                },
+                {
+                    "name":"处理订单量"
+                }
+            ],
+            "selected":{
+                "订单操作时长(M)":true,
+                "订单等待时长(H)":true,
+                "订单处理时长(H)":true,
+                "处理订单量":true
             },
-            data: [
+            "type":"scroll"
+        },
+        "grid":{
+            "left":"5%",
+            "right":"5%"
+        },
+        "xAxis":[
             {
-                name: 'nodeA',            // First tree
-                value: 10,
-                children: [
-                    {
-                        name: 'nodeAa',       // First leaf of first tree
-                        value: 4
-                    }, {
-                        name: 'nodeAb',       // Second leaf of first tree
-                        value: 6
-                    }
+                "type":"category",
+                "name":"订单首次处理日期",
+                "data":[
+                    "2018-11-13",
+                    "2018-11-14",
+                    "2018-11-15",
+                    "2018-11-16",
+                    "2018-11-17",
+                    "2018-11-18",
+                    "2018-11-19",
+                    "2018-11-20"
+                ]
+            }
+        ],
+        "yAxis":[
+            {
+                "type":"value",
+                "scale":true,
+                "name":"时长",
+                "position":"left",
+                "axisLabel":{
+                    "formatter":"{value}"
+                }
+            },
+            {
+                "type":"value",
+                "scale":true,
+                "name":"处理量",
+                "position":"right",
+                "axisLabel":{
+                    "formatter":"{value}"
+                }
+            }
+        ],
+        "series":[
+            {
+                "name":"订单操作时长(M)",
+                "type":"line",
+                "data":[
+                    39.64,
+                    34.47,
+                    36.04,
+                    28.2,
+                    29.32,
+                    29.25,
+                    32.85,
+                    27.27
                 ],
+                "yAxisIndex":0
             },
             {
-                name: 'nodeB',            // Second tree
-                value: 20,
-                children: [{
-                    name: 'nodeBa',       // Son of first tree
-                    value: 20,
-                    children: [{
-                        name: 'nodeBa1',  // Granson of first tree
-                        value: 20
-                    }]
-                }]
-            }]
-        }]
-    };
+                "name":"订单等待时长(H)",
+                "type":"line",
+                "data":[
+                    14.54,
+                    7.68,
+                    3.54,
+                    1.85,
+                    2.31,
+                    2.27,
+                    2.09,
+                    1.78
+                ],
+                "yAxisIndex":0
+            },
+            {
+                "name":"订单处理时长(H)",
+                "type":"line",
+                "data":[
+                    15.2,
+                    8.26,
+                    4.14,
+                    2.32,
+                    2.8,
+                    2.76,
+                    2.64,
+                    2.23
+                ],
+                "yAxisIndex":0
+            },
+            {
+                "name":"处理订单量",
+                "type":"bar",
+                "data":[
+                    5304,
+                    5302,
+                    4876,
+                    4421,
+                    4678,
+                    4257,
+                    4628,
+                    4960
+                ],
+                "yAxisIndex":1
+            }
+        ]
+    }
 
 
     myChart.setOption(option);

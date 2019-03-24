@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function asyncFunc(i) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(1);
+            }, i * 500)
+        })
+    }
+
+    async function query() {
+        for (var i = 5; i > 0; i--) {
+            await someProcess(i);
+        }
+    }
+
+    async function someProcess(i) {
+        asyncFunc(i).then((value) => {
+            console.log(value + i);
+        })
+        // let value = await asyncFunc(i);
+        // console.log(value + i);
+    }
+
+    query();
+
+</script>
+</html>

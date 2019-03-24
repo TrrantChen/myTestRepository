@@ -31,30 +31,33 @@
 <!--modifiers：一个包含修饰符的对象。例如：v-my-directive.foo.bar 中，修饰符对象为 { foo: true, bar: true }。-->
 <!--vnode：Vue 编译生成的虚拟节点。移步 VNode API 来了解更多详情。-->
 <!--oldVnode：上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用。-->
-
 <script>
+    import testDirective from '../../directive/testDirective';
+    import Vue from 'vue'
+    Vue.use(testDirective);
+
     export default {
         components: {
-            
+
         },
-        data() {  
-            return {  
+        data() {
+            return {
                 lst: [1, 1, 2, 3],
                 select_value: '',
                 is_show: false,
             }
         },
         watch: {
-        
+
         },
         created() {
-        
+
         },
         mounted() {
-        
+
         },
         computed: {
-        
+
         },
         methods: {
             remove(index) {

@@ -46,16 +46,26 @@
                 draggable_content_lst: void 0,
                 select_dom: void 0,
                 is_drag_start: false,
-                initEventHandle: this.initEventHandleOnce(),
             }
         },
         watch: {
             'value': {
                 handler(val) {
 
-                    if (val) {
-                        this.initEventHandle();
+                    if (val && val.length !== 0) {
+
+                        setTimeout(() => {
+
+                            this.dom_lst = this.$slots.default.map((content) => {
+                                return content.elm;
+                            });
+
+                            this.addDragEventHandle();
+
+                        });
+
                     }
+
                 },
                 immediate: true,
                 // deep: true,
@@ -90,6 +100,7 @@
 
                 this.dom_event_map.clear();
 
+                // 这块的事件并不会重复订阅，很神奇。
                 for (let [index, dom] of this.dom_lst.entries()){
 
                     let tmp_drag_start = this.dragStartHandle.bind(dom, index);
@@ -149,6 +160,7 @@
                 // this.select_dom = evt.currentTarget;
                 // this.select_dom.setAttribute('draggable', true);
                 // console.log('click');
+                console.log('click');
             },
             dragStartHandle(idx, evt) {
                 evt.stopPropagation();
@@ -215,30 +227,6 @@
                 }
 
             },
-            initEventHandleOnce() {
-                let inited = true;
-
-                return () => {
-
-                    if (inited) {
-
-                        setTimeout(() => {
-
-                            console.log('ddd');
-
-                            this.dom_lst = this.$slots.default.map((content) => {
-                                return content.elm;
-                            });
-
-                            this.addDragEventHandle();
-                        });
-
-                        inited = false;
-
-                    }
-
-                }
-            }
         }
     }
 </script>

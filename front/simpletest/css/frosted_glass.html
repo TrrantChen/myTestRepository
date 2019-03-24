@@ -1,0 +1,71 @@
+<!--目前这种毛玻璃只能用在safari上-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .outter {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .inner {
+            position: absolute;
+            top: 38%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 200px;
+            border: 1px black solid;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            /*background: rgba(0, 0, 0, 0.8);*/
+            background: transparent;
+        }
+
+        .img-content {
+            width: 250px;
+            height: 250px;
+            overflow:hidden;
+        }
+
+        .img-content>img {
+            width: 100%;
+            height: 100%;
+            object-fit:cover;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="outter">
+        <h1>djskdjskjdskjjk</h1>
+        <div class="img-content">
+            <img src="./Cthulhu_Saber_face.jpg">
+        </div>
+        <div class="inner">
+            <span>this is test</span>
+        </div>
+    </div>
+</body>
+</html>
+

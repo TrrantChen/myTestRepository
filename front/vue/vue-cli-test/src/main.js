@@ -4,15 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store/store'
-
-
 import globalComponentsEntrance from './components/globalComponents/globalComponentsEntrance';
-import testDirective from './directive/testDirective';
 
 Vue.use(globalComponentsEntrance);
-Vue.use(testDirective);
-
-
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

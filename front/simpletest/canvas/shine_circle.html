@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="author" content="Yeeku.H.Lee(CrazyIt.org)" />
+    <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+    <title> 圆形渐变 </title>
+</head>
+<body>
+<h2> 圆形渐变 </h2>
+<canvas id="mc0" width="400" height="280"
+        style="border:1px solid black"></canvas>
+<canvas id="mc1" width="400" height="280"
+        style="border:1px solid black"></canvas>
+<canvas id="mc2" width="400" height="280"
+        style="border:1px solid black"></canvas>
+<canvas id="mc3" width="400" height="280"
+        style="border:1px solid black"></canvas>
+<script type="text/javascript">
+
+    function effect0() {
+        let canvas = document.getElementById('mc0');
+        canvas.width = 160;
+        canvas.height = 160;
+
+        let context = canvas.getContext('2d');
+        let gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.2, 'rgba(0,255,255,1)');
+        gradient.addColorStop(0.4, 'rgba(0,0,64,1)');
+        gradient.addColorStop(1, 'rgba(0,0,0,1)');
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function effect1() {
+        // 获取canvas元素对应的DOM对象
+        var canvas = document.getElementById('mc1');
+        // 获取在canvas上绘图的CanvasRenderingContext2D对象
+        var ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.translate(30 , 20);
+        // 创建圆形渐变
+        lg = ctx.createRadialGradient(80, 40 , 5 , 80 , 40 , 60);
+        // 向圆形渐变上添加颜色
+        lg.addColorStop(0.2 , "#f00");
+        lg.addColorStop(0.5 , "#0f0");
+        lg.addColorStop(0.9 , "#00f");
+        // 设置使用圆形渐变作为填充颜色
+        ctx.fillStyle = lg;
+        // 填充一个矩形
+        ctx.fillRect(0 , 0 , 160 , 80);
+        // 恢复坐标系统
+        ctx.restore();
+        // 平移坐标系统
+        ctx.translate(280 , 160)
+        ctx.beginPath();
+        // 添加圆弧
+        ctx.arc(0 , 0  , 80 , 0 , Math.PI * 2 , true);
+        ctx.closePath();
+        ctx.lineWidth = 12;
+        // 再次创建圆形渐变
+        lg2 = ctx.createRadialGradient(0, 0 , 5 , 0 , 0 , 80);
+        // 向圆形渐变上添加颜色
+        lg2.addColorStop(0.1 , "#ff0");
+        lg2.addColorStop(0.4 , "#0ff");
+        lg2.addColorStop(0.8 , "#f0f");
+        // 设置使用圆形渐变作为填充颜色
+        ctx.fillStyle = lg2;
+        ctx.fill();
+    }
+
+    function effect2() {
+        var canvas = document.getElementById('mc2');
+        canvas.width = 128;
+        canvas.height = 128;
+        var ctx = canvas.getContext('2d');
+        var gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.2, 'rgba(240,255,240,1)');
+        gradient.addColorStop(0.22, 'rgba(0,150,255,.2)');
+        gradient.addColorStop(1, 'rgba(0,50,255,0)');
+        ctx.fillStyle = gradient; // "#FFFFFF"; // gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function effect3() {
+        var canvas = document.getElementById('mc3');
+        canvas.width = 128;
+        canvas.height = 128;
+        var ctx = canvas.getContext('2d');
+        var gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(255,193,193,1)');
+        gradient.addColorStop(0.2, 'rgba(255,193,193,1)');
+        gradient.addColorStop(0.22, 'rgba(255,160,122,.2)');
+        gradient.addColorStop(1, 'rgba(250,128,114,0)');
+        ctx.fillStyle = gradient; // "#FFFFFF"; // gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    effect0();
+    effect1();
+    effect2();
+    effect3();
+
+</script>
+</body>
+</html>
+

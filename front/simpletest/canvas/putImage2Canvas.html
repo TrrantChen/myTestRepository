@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas>
+
+    </canvas>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+    let img = new Image();
+    img.onload = function() {
+        canvas.style.width = img.naturalWidth + 'px';
+        canvas.style.height = img.naturalHeight + 'px';
+        ctx.drawImage(img, 0, 0,img.naturalWidth, img.naturalHeight);
+    };
+
+    img.src = './ooo.png';
+
+</script>
+</html>

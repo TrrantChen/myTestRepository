@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        /* Note: <style> in an import apply to the main
+           document by default. That is, style tags don't need to be
+           explicitly added to the main document. */
+        #somecontainer {
+            background: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="warning">
+        <style>
+            h3 {
+                color: red !important;
+            }
+        </style>
+        <h3>Warning!</h3>
+        <p>This page is under construction</p>
+    </div>
+
+    <div class="outdated">
+        <h3>Heads up!</h3>
+        <p>This content may be out of date</p>
+    </div>
+    <script>
+        // importDoc references this import's document
+        var importDoc = document.currentScript.ownerDocument;
+
+        // mainDoc references the main document (the page that's importing us)
+        var mainDoc = document;
+
+        // Grab the first stylesheet from this import, clone it,
+        // and append it to the importing document.
+        var styles = importDoc.querySelector('link[rel="stylesheet"]');
+        mainDoc.head.appendChild(styles.cloneNode(true));
+    </script>
+</body>
+</html>

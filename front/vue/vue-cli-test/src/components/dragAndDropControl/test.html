@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <div id="source" draggable="true" style="width:100px;height:100px;border:1px solid black;">
+            test
+        </div>
+        <div id="target" style="width:500px;height:500px;border:1px solid black;">
+
+        </div>
+    </div>
+</body>
+<script type="module" >
+    import DragAndDropController from './dragAndDropController.js';
+
+    let source = document.querySelector('#source');
+    let target = document.querySelector('#target');
+    // let dragAndDropController = new DragAndDropController(source, target, null, 'ddddd');
+    // dragAndDropController.setDropCallback((data, dom) => {
+    //     dom.innerHTML = data.data;
+    // })
+
+    source.addEventListener('dragstart', (evt) => {
+        // evt.stopPropagation();
+        evt.dataTransfer.setData('text/plain', 'dddddd');
+    });
+
+    target.addEventListener('dragover', (evt) => {
+        // evt.stopPropagation();
+        evt.preventDefault();
+        console.log('over');
+    });
+
+    target.addEventListener('dropenter', (evt) => {
+        console.log('dropenter');
+        console.log(evt.dataTransfer.getData('text'));
+    });
+
+
+
+    target.addEventListener('drop', (evt) => {
+        evt.preventDefault();
+        // evt.stopPropagation();
+        console.log(evt.dataTransfer.getData('text'));
+    })
+
+</script>
+</html>
