@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="ftp30" style="width:40px;height:40px;background:black;position: absolute; top: 10px; left: 0;">
+
+    </div>
+
+    <div id="ftp40" style="width:40px;height:40px;background:red;position: absolute; top: 60px; left: 0;">
+
+    </div>
+
+    <div id="ftp60" style="width:40px;height:40px;background:green;position: absolute; top: 120px; left: 0;">
+
+    </div>
+</body>
+<script src="./animate.js" type="module"></script>
+<script type="module">
+    import { tick, Tick } from './animate.js';
+
+    let ftp30 = document.querySelector('#ftp30');
+    let ftp40 = document.querySelector('#ftp40');
+    let ftp60 = document.querySelector('#ftp60');
+    let distance = 300;
+    let count_lst = [
+        {
+            dom: ftp30,
+            ftp: 30,
+        },
+        {
+            dom: ftp40,
+            ftp: 40,
+        },
+        {
+            dom: ftp60,
+            ftp: 60,
+        }];
+
+    function useFun() {
+        let callback = function(now, interval) {
+            console.log(`now ${now}`);
+            console.log(`interval ${interval}`);
+        };
+
+        let tickFun = tick();
+        tickFun(callback);
+    }
+
+    function useClass() {
+
+        count_lst.forEach((obj) => {
+            let per = distance / obj.ftp;
+            let dom = obj.dom;
+            let direction = 1;
+            let _tick = new Tick(obj.ftp);
+            let left = 0;
+
+            _tick.setCallback((interval) => {
+                if (left > distance) {
+                    left = distance;
+                    direction = -1
+                }
+                else if (left < 0) {
+                    left = 0;
+                    direction = 1
+                }
+                else {
+                    left +=  (interval * 0.12 * direction);
+                }
+
+                dom.style.left = left + 'px';
+            });
+
+            _tick.start();
+
+            let requestFunc = function() {
+                _tick.update();
+
+                requestAnimationFrame(() => {
+                    requestFunc();
+                })
+            };
+
+            requestFunc();
+        });
+
+
+    }
+
+    function useFun2() {
+        count_lst.forEach((obj) => {
+            let dom = obj.dom;
+            let ftp = obj.ftp;
+            let direction = 1;
+            let left = 0;
+
+            let callback = function(interval) {
+                if (left > distance) {
+                    left = distance * 2 - left;
+                    direction = -1
+                }
+                else if (left < 0) {
+                    left = -left;
+                    direction = 1
+                }
+                else {
+                    left +=  (interval * 0.3 * direction);
+                }
+
+                dom.style.left = left + 'px';
+            };
+
+            let tickFun = tick(callback);
+            tickFun();
+        })
+    }
+
+    useFun2();
+
+</script>
+</html>
