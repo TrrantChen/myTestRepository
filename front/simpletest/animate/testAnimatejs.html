@@ -98,6 +98,9 @@
             let left = 0;
 
             let callback = function(interval) {
+
+                console.log(interval);
+
                 if (left > distance) {
                     left = distance * 2 - left;
                     direction = -1
@@ -113,12 +116,40 @@
                 dom.style.left = left + 'px';
             };
 
-            let tickFun = tick(callback);
-            tickFun();
+            let tickFun = tick(ftp);
+            tickFun(callback);
         })
     }
 
-    useFun2();
+    // useFun2();
+
+    let obj = {
+        lst: [1, 2, 3],
+    };
+
+    let lst = [3, 4, 5];
+
+    function changeObjLst(obj) {
+        // for (var num of obj.lst) {
+        //     ++num;
+        // }
+        for (var i = 0, length = obj.lst.length; i < length; i++) {
+            ++obj.lst[i];
+        }
+    }
+
+    changeObjLst(obj);
+
+    function changeLst(lst) {
+        for (var i = 0, length = lst.length; i < length; i++) {
+            ++lst[i];
+        }
+    }
+
+    changeLst(lst);
+
+    console.log(obj);
+    console.log(lst);
 
 </script>
 </html>
