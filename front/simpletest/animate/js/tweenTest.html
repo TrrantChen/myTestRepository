@@ -1,0 +1,119 @@
+<!--测试tween算法-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .active-one {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            background: black;
+            margin-left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <label for="">special one</label>
+    <div class="active-one" id="one"></div>
+</body>
+<script src="animate.js" type="module"></script>
+<script type="module">
+    import { Tween } from './animate.js';
+
+    function testLst() {
+        let tween_lst = [];
+        let dom_lst = [];
+
+        for (let easing_key of Object.keys(Tween.Easing)) {
+            let easing_obj = Tween.Easing[easing_key];
+
+            for (let in_out_key of Object.keys(easing_obj)) {
+                let div = createDom();
+                let label = createLabel(`${easing_key}-${in_out_key}`);
+                document.body.appendChild(label);
+                document.body.appendChild(div);
+                let start = parseInt(window.getComputedStyle(div).getPropertyValue('margin-left'));
+                let end = 1000;
+                let tween = new Tween({
+                    source: start,
+                    target: end,
+                    duration:1000,
+                    easing_func: easing_obj[in_out_key],
+                });
+
+                dom_lst.push(div);
+                tween_lst.push(tween);
+            }
+        }
+
+        for (var i = 0, length = tween_lst.length; i < length; i++) {
+            let tween = tween_lst[i];
+            let dom = dom_lst[i];
+
+            tween.setUpdateCallback((current) => {
+                dom.style.marginLeft = current + 'px';
+            });
+
+            tween.start();
+        }
+
+        function animate() {
+            for (var tween of tween_lst) {
+                tween.update();
+            }
+
+            requestAnimationFrame(() => {
+                animate();
+            })
+        }
+
+        animate();
+
+    }
+
+    function testOne() {
+        let dom = document.querySelector('#one');
+
+        let start = parseInt(window.getComputedStyle(dom).getPropertyValue('margin-left'));
+        let end = 1000;
+        let tween = new Tween({
+            source: start,
+            target: end,
+            duration:1000,
+            easing_func: Tween.Easing.Quadratic.Out,
+        });
+
+        tween.setUpdateCallback((current) => {
+            dom.style.marginLeft = current + 'px';
+        });
+
+        tween.start();
+
+        let animate = function () {
+            tween.update();
+
+            requestAnimationFrame(() => {
+                animate();
+            })
+        };
+
+        animate();
+    }
+
+    testLst();
+
+    function createDom() {
+        let div = document.createElement('div');
+        div.classList.add('active-one');
+        return div;
+    }
+
+    function createLabel(value) {
+        let label = document.createElement('label');
+        label.textContent = value;
+        return label;
+    }
+</script>
+</html>

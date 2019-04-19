@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        @keyframes animate1 {
+            0% {
+                width: 50px;
+            }
+
+            50% {
+                width: 300px;
+            }
+            100% {
+                width: 600px;
+            }
+        }
+
+        @keyframes animate2 {
+            0% {
+                height: 50px;
+            }
+
+            100% {
+                height: 200px;
+            }
+        }
+
+        .animatetest1 {
+            animation-name:animate1;
+            animation-duration:2s;
+            animation-timing-function:linear;
+        }
+
+        .animatetest2 {
+            animation-name:animate2;
+            animation-duration:2s;
+            animation-timing-function:linear;
+        }
+
+        .active-div {
+            width: 50px;
+            height: 50px;
+            border: 1px;
+            background: red;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="active-div animatetest1" id="one">
+
+    </div>
+</body>
+<script>
+    let one = document.querySelector('#one');
+    one.addEventListener('animationend', (evt) => {
+        let animation_name = evt.animationName;
+
+        switch(animation_name) {
+            case 'animate1':
+                one.classList.add("animatetest2");
+                one.style.width = '600px';
+                break;
+            case 'animate2':
+                one.style.height = '200px';
+                break;
+            default:
+                break;
+        }
+    })
+</script>
+</html>
