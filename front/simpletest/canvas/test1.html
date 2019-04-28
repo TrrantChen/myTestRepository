@@ -5,15 +5,152 @@
     <title>Title</title>
 </head>
 <body>
-    <canvas width="1000" height="800"></canvas>
+    <canvas width="1920" height="800" style="border: 1px solid black;"></canvas>
 </body>
 <script>
-    window.onload = function() {
-        let canvas = document.querySelector('canvas');
-        let ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'rgb(200,100,0)'
-        ctx.fillRect(0, 0, 100, 100);
-        
+
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+    function drawFillRect() {
+        ctx.fillStyle = 'rgb(200,100,0)';
+        ctx.fillRect(200, 50, 100, 100);
     }
+
+    function drawStrokeRect() {
+        ctx.strokeStyle = 'rgb(200,100,0)';
+        ctx.strokeRect(0, 50, 100, 100);
+    }
+
+    function drawFillPath() {
+        ctx.beginPath();
+        ctx.moveTo(475, 100);
+        ctx.lineTo(500, 125);
+        ctx.lineTo(500, 75);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawStrokePath() {
+        ctx.beginPath();
+        ctx.moveTo(675, 100);
+        ctx.lineTo(700, 125);
+        ctx.lineTo(700, 75);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function drawFillArc() {
+        ctx.beginPath();
+        let x = 800;
+        let y = 50;
+        let radius = 20;
+        let startAngle = 0;
+        let endAngle = 2 * Math.PI;
+        let anticlockwise = true;
+
+        ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawStrokeArc() {
+        ctx.beginPath();
+        let x = 900;
+        let y = 50;
+        let radius = 20;
+        let startAngle = 0;
+        let endAngle = 2 * Math.PI;
+        let anticlockwise = true;
+
+        ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function drawQuadratic() {
+        ctx.beginPath();
+        let start_point = {
+            x: 950,
+            y: 50,
+        };
+
+        let first_control = {
+            x: 980,
+            y: 60,
+        };
+
+        let end_point = {
+            x: 970,
+            y: 70,
+        };
+
+        ctx.moveTo(start_point.x, start_point.y); // 这个为起始点
+        ctx.quadraticCurveTo(first_control.x, first_control.y, end_point.x, end_point.y); // 第一个为控制点，第二个为结束点，
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function drawBezier() {
+        ctx.beginPath();
+
+        let start_point = {
+            x: 1000,
+            y: 50,
+        };
+
+        let first_control = {
+            x: 1050,
+            y: 80,
+        };
+
+        let second_control = {
+            x: 1070,
+            y: 60,
+        };
+
+        let end_point = {
+            x: 1070,
+            y: 70,
+        };
+
+        ctx.moveTo(start_point.x, start_point.y);
+        ctx.bezierCurveTo(first_control.x, first_control.y, second_control.x, second_control.y, end_point.x, end_point.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function path2D() {
+        let rectangle = new Path2D();
+        rectangle.rect(10, 200, 50, 50);
+
+        let circle = new Path2D();
+        let x = 200;
+        let y = 220;
+        let radius = 50;
+        let start_angle = 0;
+        let end_angle = Math.PI * 2;
+
+        circle.arc(x, y, radius, start_angle, end_angle);
+
+        ctx.stroke(rectangle);
+        ctx.fill(circle);
+    }
+
+    function useSVG() {
+        let p = new Path2D('M10 10 h 80 v 80 h -80 Z');
+        ctx.fill(p);
+    }
+
+    drawStrokePath();
+    drawFillPath();
+    drawStrokeRect();
+    drawFillRect();
+    drawStrokeArc();
+    drawFillArc();
+    drawQuadratic();
+    drawBezier();
+    path2D();
+    useSVG();
 </script>
 </html>
