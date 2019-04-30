@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+<canvas id="canvas" width="1000" height="1000"></canvas>
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+
+    var count = 80;
+
+    var colors = [];
+
+    // 生成随机颜色
+    for (var i = 0; i < count; i++) {
+        colors.push(
+            `rgb(${ Math.random() * 255 >> 0 }, ${ Math.random() * 255 >> 0 }, ${ Math.random() * 255 >> 0 })`
+        );
+    }
+
+    var percent = 0;
+    ctx.lineWidth = 2;
+
+    function animate() {
+
+        ctx.clearRect(0, 0, 1000, 1000);
+        let center = {
+            x: 300,
+            y: 300,
+        };
+
+        let radius = 300;
+
+        for (var i = 0; i < count; i++) {
+
+            let angle = Math.PI * 2 / count * i;
+            let x = center.x + radius * Math.sin(angle);
+            let y = center.y + radius * Math.cos(angle);
+
+            ctx.strokeStyle = colors[ i ];
+
+            ctx.beginPath();
+
+            let end = {
+                x: x,
+                y: y,
+            };
+
+            drawCurvePath(
+                ctx,
+                center,
+                end,
+                0.4,
+                percent
+            );
+
+            ctx.stroke();
+
+        }
+
+        percent = (percent + 1) % 100;
+
+        requestAnimationFrame(animate);
+
+    }
+
+    animate();
+
+    function drawCurvePath(ctx, start, end, curveness, percent) {
+        let t = percent / 100;
+        let start_point = start;
+
+        let p1 = {
+            x:(start.x + end.x) / 2 - (start.y - end.y) * curveness,
+            y:(start.y + end.y) / 2 - (end.x - start.x) * curveness
+        };
+
+        let p2 = end;
+
+        let v01 = {
+            x: p1.x - start_point.x,
+            y: p1.y - start_point.y
+        };     // 向量<start_point, p1>
+
+        let v12 = {
+            x: p2.x - p1.x,
+            y: p2.y - p1.y,
+        };  // 向量<p1, p2>
+
+        let control_point = {
+            x: start_point.x + v01.x * t,
+            y: start_point.y + v01.y * t,
+        };
+
+        let q1 = {
+            x: p1.x + v12.x * t,
+            y: p1.y + v12.y * t
+        };
+
+        let v = {
+            x: q1.x - control_point.x,
+            y: q1.y - control_point.y,
+        };      // 向量<control_point, q1>
+
+        let end_point = {
+            x: control_point.x + v.x * t,
+            y: control_point.y + v.y * t
+        };
+
+        ctx.moveTo(start_point.x, start_point.y);
+        ctx.quadraticCurveTo(
+            control_point.x, control_point.y,
+            end_point.x, end_point.y
+        );
+
+    }
+</script>
+</body>
+
+</html>
+

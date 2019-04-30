@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas id="unUseBeizer" width="400" height="800" style="border:1px solid black"></canvas>
+    <canvas id="useBeizer" width="400" height="800" style="border:1px solid black"></canvas>
+    <canvas id="canvas1" width="400" height="800" style="border:1px solid black"></canvas>
+    <canvas id="canvas2" width="400" height="800" style="border:1px solid black"></canvas>
+</body>
+<script type="module" src="./util.js">
+</script>
+<script type="module">
+    import { DrawLineUseBezier, DrawLineUnUseBezier, CompareDifferent } from "./util.js";
+
+    let unUseBeizer = document.querySelector('#unUseBeizer');
+    let useBeizer = document.querySelector('#useBeizer');
+
+    let compareDifferent = new CompareDifferent(unUseBeizer, useBeizer);
+</script>
+<script type="text/javascript">
+    let isDown = false;
+    let beginPoint1 = null;
+    let beginPoint2 = null;
+    let points = [];
+    let canvas = document.querySelector('#unUseBeizer');
+    const canvas1 = document.querySelector('#canvas1');
+    const ctx1 = canvas1.getContext('2d');
+
+    const canvas2 = document.querySelector('#canvas2');
+    const ctx2 = canvas2.getContext('2d');
+
+
+    // 设置线条颜色
+    ctx1.strokeStyle = 'red';
+    ctx1.lineWidth = 1;
+    ctx1.lineJoin = 'round';
+    ctx1.lineCap = 'round';
+
+    ctx2.strokeStyle = 'red';
+    ctx2.lineWidth = 1;
+    ctx2.lineJoin = 'round';
+    ctx2.lineCap = 'round';
+
+    canvas.addEventListener('mousedown', down, false);
+    canvas.addEventListener('mousemove', move, false);
+    canvas.addEventListener('mouseup', up, false);
+    canvas.addEventListener('mouseout', up, false);
+
+    function down(evt) {
+        isDown = true;
+        const { x, y } = getPos(evt);
+        points.push({x, y});
+        beginPoint1 = {x, y};
+        beginPoint2 = {x, y};
+    }
+
+    function move(evt) {
+        if (!isDown) return;
+        const endPoint = getPos(evt);
+        drawLine1(beginPoint1, endPoint);
+        beginPoint1 = endPoint;
+
+        const { x, y } = getPos(evt);
+        points.push({x, y});
+
+        if (points.length > 3) {
+            const lastTwoPoints = points.slice(-2);
+            const controlPoint = lastTwoPoints[0];
+            const endPoint = {
+                x: (lastTwoPoints[0].x + lastTwoPoints[1].x) / 2,
+                y: (lastTwoPoints[0].y + lastTwoPoints[1].y) / 2,
+            };
+
+            drawLine2(beginPoint2, controlPoint, endPoint);
+            beginPoint2 = endPoint;
+        }
+    }
+
+    function up(evt) {
+        if (!isDown) return;
+
+        const endPoint = getPos(evt);
+        drawLine1(beginPoint1, endPoint);
+
+        beginPoint1 = null;
+        isDown = false;
+
+        const { x, y } = getPos(evt);
+        points.push({x, y});
+
+        if (points.length > 3) {
+            const lastTwoPoints = points.slice(-2);
+            const controlPoint = lastTwoPoints[0];
+            const endPoint = lastTwoPoints[1];
+            drawLine(beginPoint2, controlPoint, endPoint);
+        }
+        beginPoint2 = null;
+        points = [];
+
+    }
+
+    function getPos(evt) {
+        return {
+            x: evt.clientX,
+            y: evt.clientY
+        }
+    }
+
+    function drawLine1(beginPoint, endPoint) {
+        ctx1.beginPath();
+        ctx1.moveTo(beginPoint.x, beginPoint.y);
+        ctx1.lineTo(endPoint.x, endPoint.y);
+        ctx1.stroke();
+        ctx1.closePath();
+    }
+
+    function drawLine2(beginPoint, controlPoint, endPoint) {
+        ctx2.beginPath();
+        ctx2.moveTo(beginPoint.x, beginPoint.y);
+        ctx2.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y);
+        ctx2.stroke();
+        ctx2.closePath();
+    }
+</script>
+</html>
+
+
