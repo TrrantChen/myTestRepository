@@ -1,0 +1,60 @@
+<!--利用canvas对图片颜色进行处理-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button id="invertbtn">invertbtn</button>
+    <button id="grayscalebtn">grayscalebtn</button>
+    <canvas id="canvas" width="500" height="400"></canvas>
+</body>
+<script>
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+    let data = void 0;
+    let imageData = void 0;
+
+    let img = new Image();
+    img.src = './ooo.png';
+    img.onload = function() {
+        imageData = getImageData(this);
+        data = imageData.data;
+    };
+
+    let invertbtn = document.querySelector('#invertbtn');
+    invertbtn.addEventListener('click', invert);
+    let grayscalebtn = document.querySelector('#grayscalebtn');
+    grayscalebtn.addEventListener('click', grayscale);
+
+    function getImageData(img) {
+      ctx.drawImage(img, 0, 0);
+      img.style.display = 'none';
+      return ctx.getImageData(0,0,canvas.width, canvas.height);
+    }
+
+    function invert() {
+        if (imageData !== void 0 && data !== void 0) {
+            for (var i = 0; i < data.length; i += 4) {
+                data[i]     = 225 - data[i];     // red
+                data[i + 1] = 225 - data[i + 1]; // green
+                data[i + 2] = 225 - data[i + 2]; // blue
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+    }
+
+    function grayscale() {
+        if (imageData !== void 0 && data !== void 0) {
+            for (var i = 0; i < data.length; i += 4) {
+                var avg = (data[i] + data[i +1] + data[i +2]) / 3;
+                data[i]     = avg; // red
+                data[i + 1] = avg; // green
+                data[i + 2] = avg; // blue
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+    }
+</script>
+</html>

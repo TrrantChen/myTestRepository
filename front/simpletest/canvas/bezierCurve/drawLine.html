@@ -1,3 +1,4 @@
+<!--1、3未使用贝塞尔曲线， 2、4使用了贝塞尔曲线， 2是自己的写法，4是网上的写法-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +6,11 @@
     <title>Title</title>
 </head>
 <body>
-    <canvas id="unUseBeizer" width="400" height="800" style="border:1px solid black"></canvas>
-    <canvas id="useBeizer" width="400" height="800" style="border:1px solid black"></canvas>
-    <canvas id="canvas1" width="400" height="800" style="border:1px solid black"></canvas>
-    <canvas id="canvas2" width="400" height="800" style="border:1px solid black"></canvas>
+    <canvas id="unUseBeizer" width="300" height="800" style="border:1px solid black"></canvas>
+    <canvas id="useBeizer" width="300" height="800" style="border:1px solid black"></canvas>
+    <canvas id="three" width="300" height="800" style="border:1px solid black"></canvas>
+    <canvas id="canvas1" width="300" height="800" style="border:1px solid black"></canvas>
+    <canvas id="canvas2" width="300" height="800" style="border:1px solid black"></canvas>
 </body>
 <script type="module" src="./util.js">
 </script>
@@ -17,8 +19,9 @@
 
     let unUseBeizer = document.querySelector('#unUseBeizer');
     let useBeizer = document.querySelector('#useBeizer');
+    let three = document.querySelector('#three');
 
-    let compareDifferent = new CompareDifferent(unUseBeizer, useBeizer);
+    let compareDifferent = new CompareDifferent(unUseBeizer, useBeizer, three);
 </script>
 <script type="text/javascript">
     let isDown = false;
@@ -95,7 +98,7 @@
             const lastTwoPoints = points.slice(-2);
             const controlPoint = lastTwoPoints[0];
             const endPoint = lastTwoPoints[1];
-            drawLine(beginPoint2, controlPoint, endPoint);
+            drawLine2(beginPoint2, controlPoint, endPoint);
         }
         beginPoint2 = null;
         points = [];

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <!--<canvas width="1920" height="1080"></canvas>-->
+    <canvas width="1920" height="1080" style="border:solid 5px red;box-sizing: content-box;"></canvas>
+    <div style="width:10px;height:10px;border:10px solid black;"></div>
+</body>
+<script type="module" src="./graphics.js"></script>
+<script type="module">
+    import { CanvasRect } from './graphics.js';
+
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let canvas_rect = new CanvasRect(ctx, {
+        left: 10,
+        top: 10,
+        width: 30,
+        height: 30,
+        border_width: 10,
+    });
+
+    canvas_rect.on('click', (evt, x, y) => {
+        console.log('click is fired');
+    });
+
+    canvas_rect.draw();
+</script>
+
+

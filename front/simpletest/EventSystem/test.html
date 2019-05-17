@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="btn">show</button>
+    </div>
+</body>
+<script type="module" src="./EventSystem.js"></script>
+<script type="module">
+    import EventSystem from './EventSystem.js'
+
+    let btn = document.querySelector('#btn');
+
+    btn.addEventListener('click', print);
+    btn.addEventListener('click', print);
+
+    function print() {
+        console.log('test');
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!--<div class="container"></div>-->
+    <!--<div class="container"></div>-->
+    <!--<div class="container"></div>-->
+    <!--<div class="container"></div>-->
+    <div id="main"></div>
+</body>
+<script>
+    let count = 200000;
+
+    function fun1() {
+        // let elements = [];
+        // for(var i = count; i--;) {
+        //     elements.push(document.createElement("div"));
+        // }
+        //
+        // let e = document.querySelectorAll("container");
+        // for(var i = e.length; i--;) {
+        //     for(var j= count; j--;) e[i].appendChild(elements[j].cloneNode(true));
+        // }
+
+
+        let divContainer = document.createElement("div");
+        divContainer.id="container";
+
+        let divHeader = document.createElement("div");
+        divHeader.id="header";
+
+        let divData = document.createElement("div");
+        divData.id="data";
+
+        let divFooter = document.createElement("div");
+        divFooter.id="footer";
+
+        divContainer.appendChild(divHeader);
+        divContainer.appendChild(divData);
+        divContainer.appendChild(divFooter);
+        document.querySelector('#main').appendChild(divContainer);
+
+        return 'unuse';
+    }
+
+    function fun2() {
+        // let frag = document.createDocumentFragment();
+        //
+        // for(var i = count; i--;) {
+        //     frag.appendChild(document.createElement("div"));
+        // }
+        //
+        // let e = document.querySelectorAll("container");
+        //
+        // for(var i = e.length; i--;) {
+        //     e[i].appendChild(frag.cloneNode(true));
+        // }
+        let fragment = document.createDocumentFragment();
+        let divContainer = document.createElement("div");
+        divContainer.id="container";
+
+        let divHeader = document.createElement("div");
+        divHeader.id="header";
+
+        let divData = document.createElement("div");
+        divData.id="data";
+
+        let divFooter = document.createElement("div");
+        divFooter.id="footer";
+
+        divContainer.appendChild( divHeader );
+        divContainer.appendChild( divData );
+        divContainer.appendChild( divFooter );
+        fragment.appendChild( divContainer );
+        document.querySelector('#main').appendChild( fragment.cloneNode(true) );
+
+        return 'use';
+    }
+
+    let t0 = window.performance.now();
+    let name =  fun1();
+    // let name = fun2();
+
+    window.onload = () => {
+        let t1 = window.performance.now();
+        console.log(` ${name} 函数执行了 ${(t1 - t0)} 毫秒.`)
+    };
+
+</script>
+</html>

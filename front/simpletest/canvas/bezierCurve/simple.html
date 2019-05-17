@@ -7,9 +7,13 @@
 <body>
     <canvas width="800" height="600" style="border:1px solid black;"></canvas>
 </body>
-<script>
+<script type="module" src="util.js"></script>
+<script type="module">
+    import { drawBezierByControlCurvature, bezierAnimate } from './util.js';
+
     let canvas = document.querySelector('canvas');
     let ctx =  canvas.getContext('2d');
+    ctx.lineWidth = 2;
 
     function simpleTest() {
         ctx.beginPath();
@@ -35,27 +39,70 @@
     }
 
     function bezierCurve() {
+        let start_point = {
+            x: 20,
+            y: 20,
+        };
+
+        let control_point1 = {
+            x: 20,
+            y: 100,
+        };
+
+        let control_point2 = {
+            x: 200,
+            y: 100,
+        };
+
+        let end_point = {
+            x: 200,
+            y: 20,
+        };
+
         ctx.beginPath();
-        ctx.moveTo(20,20);
-        ctx.bezierCurveTo(20,100,200,100,200,20);
-        // ctx.bezierCurveTo(20,100,200,100,200,20);
-        // ctx.bezierCurveTo(20,100,200,100,200,20);
+        ctx.moveTo(start_point.x, start_point.y);
+        ctx.bezierCurveTo(control_point1.x, control_point1.y, control_point2.x, control_point2.y, end_point.x, end_point.y);
         ctx.stroke();
     }
 
-    function drawBubble() {
-        ctx.beginPath();
-        ctx.moveTo(75,25);
-        ctx.quadraticCurveTo(25,25,25,62.5);
-        ctx.quadraticCurveTo(25,100,50,100);
-        ctx.quadraticCurveTo(50,120,30,125);
-        ctx.quadraticCurveTo(60,120,65,100);
-        ctx.quadraticCurveTo(125,100,125,62.5);
-        ctx.quadraticCurveTo(125,25,75,25);
-        ctx.stroke();
+    function changeBezierCurveByCurveness() {
+        let start_point = {
+            x: 20,
+            y: 20,
+        };
+
+        let end_point = {
+            x: 300,
+            y: 400,
+        };
+
+        let curveness = 0;
+
+        while (curveness <= 1) {
+            drawBezierByControlCurvature(ctx, start_point, end_point, curveness);
+            curveness += 0.01;
+        }
     }
 
-    drawBubble();
+    function drawBezierByAnimate() {
+        let start_point = {
+            x: 20,
+            y: 20,
+        };
 
+        let end_point = {
+            x: 300,
+            y: 400,
+        };
+
+        let curveness = 0.5;
+        let interval = 1;
+
+        bezierAnimate(ctx, start_point, end_point, curveness, interval)
+    }
+
+    drawBezierByAnimate();
 </script>
 </html>
+
+

@@ -1,0 +1,59 @@
+<!--我认为的documentfragment的正确用法,用于虚拟dom中，应对频繁的dom修改操作-->
+<!--但实际上并非如此，更多的是差不多，差距不大-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .test {
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+
+    </div>
+</body>
+<script>
+    let main = document.querySelector('#main');
+    let count = 100000;
+    let frag = document.createDocumentFragment();
+
+    function usualMethod() {
+        for (var i = 0; i < count; i++) {
+            let dom = document.createElement('div');
+            dom.className = 'test';
+            main.appendChild(dom);
+            main.removeChild(dom);
+        }
+
+        return '没用';
+    }
+
+    function useDocumentFragment() {
+        for (var i = 0; i < count; i++) {
+            let dom = document.createElement('div');
+            dom.className = 'test';
+            frag.appendChild(dom);
+            frag.removeChild(dom)
+        }
+
+        // main.appendChild(frag);
+
+        return '有用';
+    }
+
+    let t0 = window.performance.now();
+    let name =  usualMethod();
+    // let name = useDocumentFragment();
+
+    window.onload = () => {
+        let t1 = window.performance.now();
+        console.log(` ${name} 函数执行了 ${(t1 - t0)} 毫秒.`)
+    };
+</script>
+</html>

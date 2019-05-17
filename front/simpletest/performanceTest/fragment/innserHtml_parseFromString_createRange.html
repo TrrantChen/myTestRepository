@@ -1,0 +1,105 @@
+<!--innerHTML DOMParser createRange-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .test1 {
+            width: 100px;
+            height: 20px;
+            background: red;
+        }
+
+        .test2 {
+            width: 100px;
+            height: 20px;
+            background: green;
+        }
+
+        .test3 {
+            width: 100px;
+            height: 20px;
+            background: blue;
+        }
+
+        .test4 {
+            width: 100px;
+            height: 20px;
+            background: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+
+    </div>
+</body>
+<script>
+    let count = 50000;
+    let main = document.querySelector('#main');
+    let parent = document.createElement('div');
+
+    function fun1() {
+        for (var i = 0; i < count; i++) {
+            let dom = document.createElement('div');
+            dom.className = 'test1';
+            window.getComputedStyle(dom);
+            parent.appendChild(dom);
+        }
+
+        main.appendChild(parent);
+    }
+
+    function fun2() {
+        let template = '<div>';
+        for (var i = 0; i < count; i++) {
+            template += '<div class="test2"></div>';
+        }
+
+        template += '</div>';
+        main.innerHTML = template;
+    }
+
+    function fun3() {
+        let template = '<div>';
+        for (var i = 0; i < count; i++) {
+            template += '<div class="test3"></div>';
+        }
+
+        template += '</div>';
+
+        let doc = new DOMParser().parseFromString(template, 'text/html');
+        main.appendChild(doc.body.firstChild);
+    }
+
+    function fun4() {
+        let template = '<div>';
+        for (var i = 0; i < count; i++) {
+            template += '<div class="test4"></div>';
+        }
+
+        template += '</div>';
+        let doc = document.createRange().createContextualFragment(template);
+        main.appendChild(doc);
+    }
+
+
+    let t0 = window.performance.now();
+    // fun1();
+    // fun2();
+    // fun3();
+    // fun4();
+
+    window.onload = () => {
+        let t1 = window.performance.now();
+        console.log("onload " + (t1 - t0) + "毫秒.")
+    };
+
+    document.addEventListener('DOMContentLoaded',function(){
+        let t2 = window.performance.now();
+        console.log("DOMContentLoaded " + (t2 - t0) + "毫秒.")
+    });
+
+</script>
+</html>

@@ -1,3 +1,4 @@
+<!--测试microtask的顺序问题-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +18,7 @@
     .other {
         width: 100px;
         height: 100px;
-        background: blue;        
+        background: blue;
     }
 
     .innerStyle {
@@ -30,7 +31,7 @@
 <body>
     <div id="outter" class="outterStyle">
         <div id="inner" class="innerStyle"></div>
-    </div>    
+    </div>
 </body>
 <script>
     console.log("script 1 start")
@@ -56,7 +57,7 @@
         Promise.resolve().then(() => {
             console.log("this is promise");
         });
-        
+
         outter.setAttribute("class", "other");
 
         requestAnimationFrame(() => {
@@ -83,7 +84,7 @@
     })
     setTimeout(() => {
         console.log('this is setTimeout 2');
-    })    
+    })
     console.log('this is script2 end');
 </script> -->
 </html>

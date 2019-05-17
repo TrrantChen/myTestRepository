@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <button style="position: fixed; top: 0; left: 0;" onclick="getBounding()">getBounding</button>
+    <strong>1</strong>
+    <div style="height: 500px; border: 1px solid black;"></div>
+    <strong>2</strong>
+    <div style="height: 500px; border: 1px solid black;"></div>
+    <strong>3</strong>
+    <div style="height: 500px; border: 1px solid black;"></div>
+    <strong>4</strong>
+    <div style="height: 500px; border: 1px solid black;"></div>
+</body>
+<script>
+    function getBounding() {
+        [...document.querySelectorAll('strong')].map((strong) => {
+            return strong.getBoundingClientRect();
+        }).forEach((obj) => {
+
+            console.log(obj.y + window.scrollY);
+        });
+    }
+</script>
+</html>

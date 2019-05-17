@@ -299,6 +299,8 @@ export class CompareDifferent {
     ctx1 = void 0;
     dom2 = void 0;
     ctx2 = void 0;
+    dom3 = void 0;
+    ctx3 = void 0;
     mouse_down = void 0;
     mouse_move = void 0;
     mouse_up = void 0;
@@ -312,13 +314,24 @@ export class CompareDifferent {
         void 0,
         void 0,
     ];
-    is_down = false;
 
-    constructor(dom1, dom2) {
+    move_point_3_lst = [
+        void 0,
+        void 0,
+        void 0,
+        void 0,
+    ];
+    is_down = false;
+    is_first_paint = true;
+    is_first_paint_3 = true;
+
+    constructor(dom1, dom2, dom3) {
         this.dom1 = dom1;
         this.dom2 = dom2;
+        this.dom3 = dom3;
         this.ctx1 = dom1.getContext('2d');
         this.ctx2 = dom2.getContext('2d');
+        this.ctx3 = dom3.getContext('2d');
 
         this.ctx1.strokeStyle = 'red';
         this.ctx1.lineWidth = 1;
@@ -329,6 +342,11 @@ export class CompareDifferent {
         this.ctx2.lineWidth = 1;
         this.ctx2.lineJoin = 'round';
         this.ctx2.lineCap = 'round';
+
+        this.ctx3.strokeStyle = 'red';
+        this.ctx3.lineWidth = 1;
+        this.ctx3.lineJoin = 'round';
+        this.ctx3.lineCap = 'round';
 
         this._init();
     }
@@ -365,6 +383,11 @@ export class CompareDifferent {
             x: evt.clientX,
             y: evt.clientY,
         });
+
+        this._exchangeLstValue3({
+            x: evt.clientX,
+            y: evt.clientY,
+        })
     }
 
     _mouseMoveHandle(evt) {
@@ -385,6 +408,11 @@ export class CompareDifferent {
                 y: evt.clientY,
             });
 
+            this._exchangeLstValue3({
+                x: evt.clientX,
+                y: evt.clientY,
+            });
+
             if (this.move_point_lst[0] !== void 0) {
 
                 let start_point = void 0;
@@ -400,17 +428,39 @@ export class CompareDifferent {
                     }
                 }
 
-
                 let control_point = this.move_point_lst[1];
                 let end_point = {
                     x: (this.move_point_lst[1].x + this.move_point_lst[2].x) / 2,
                     y: (this.move_point_lst[1].y + this.move_point_lst[2].y) / 2,
                 };
 
-
                 this._drawLine2(start_point, end_point, control_point);
             }
 
+            if (this.move_point_3_lst[0] !== void 0) {
+                let start_point = void 0;
+
+                if (this.is_first_paint_3) {
+                    start_point = this.move_point_3_lst[0];
+                    this.is_first_paint_3 = false;
+                }
+                else {
+                    start_point = {
+                        x: (this.move_point_3_lst[2].x + this.move_point_3_lst[3].x) / 2,
+                        y: (this.move_point_3_lst[2].y + this.move_point_3_lst[3].y) / 2,
+                    }
+                }
+
+                let control_point1 = this.move_point_3_lst[1];
+                let control_point2 = this.move_point_3_lst[2];
+
+                let end_point = {
+                    x: (this.move_point_3_lst[2].x + this.move_point_3_lst[3].x) / 2,
+                    y: (this.move_point_3_lst[2].y + this.move_point_3_lst[3].y) / 2,
+                };
+
+                this._drawLine3(start_point, end_point, control_point1, control_point2);
+            }
         }
     }
 
@@ -432,6 +482,11 @@ export class CompareDifferent {
                 y: evt.clientY,
             });
 
+            this._exchangeLstValue3({
+                x: evt.clientX,
+                y: evt.clientY,
+            });
+
             if (this.move_point_lst[0] !== void 0) {
                 let start_point = this.move_point_lst[0];
                 let control_point = this.move_point_lst[1];
@@ -443,11 +498,31 @@ export class CompareDifferent {
                 this._drawLine2(start_point, end_point, control_point);
             }
 
+            if (this.move_point_3_lst[0] !== void 0) {
+                let start_point = this.move_point_3_lst[0];
+                let control_point1 = this.move_point_3_lst[1];
+                let control_point2 = this.move_point_3_lst[2];
+
+                let end_point = {
+                    x: (this.move_point_3_lst[2].x + this.move_point_3_lst[3].x) / 2,
+                    y: (this.move_point_3_lst[2].y + this.move_point_3_lst[3].y) / 2,
+                };
+
+                this._drawLine3(start_point, end_point, control_point1, control_point2);
+            }
+
             this.move_point_lst = [
                 void 0,
                 void 0,
                 void 0,
-            ]
+            ];
+
+            this.move_point_3_lst = [
+                void 0,
+                void 0,
+                void 0,
+                void 0,
+            ];
         }
     }
 
@@ -467,13 +542,114 @@ export class CompareDifferent {
         this.ctx2.closePath();
     }
 
+    _drawLine3(start_point, end_point, control_point1, control_point2) {
+        this.ctx3.beginPath();
+        this.ctx3.moveTo(start_point.x, start_point.y);
+        this.ctx3.bezierCurveTo(control_point1.x, control_point1.y, control_point2.x, control_point2.y, end_point.x, end_point.y);
+        this.ctx3.stroke();
+        this.ctx3.closePath();
+    }
+
     _exchangeLstValue(value) {
         this.move_point_lst[0] = this.move_point_lst[1];
         this.move_point_lst[1] = this.move_point_lst[2];
         this.move_point_lst[2] = value;
     }
 
+    _exchangeLstValue3(value) {
+        this.move_point_3_lst[0] = this.move_point_3_lst[1];
+        this.move_point_3_lst[1] = this.move_point_3_lst[2];
+        this.move_point_3_lst[2] = this.move_point_3_lst[3];
+        this.move_point_3_lst[3] = value;
+    }
+
     destroy() {
         this._eventUnRegister();
     }
+}
+
+// 控制曲率来绘制不同弯曲度的曲线
+export function drawBezierByControlCurvature(ctx, begin, end, curvature = 1) {
+    ctx.beginPath();
+
+    let cp = getControlPointByCurvature(begin, end, curvature);
+
+    ctx.moveTo( begin.x, begin.y );
+    ctx.quadraticCurveTo(
+        cp.x, cp.y,
+        end.x, end.y
+    );
+
+    ctx.stroke();
+}
+
+// 通过曲率来获取中间控制点
+function getControlPointByCurvature(begin, end, curvature = 1) {
+    return {
+        x: ( begin.x + end.x ) / 2 - ( begin.y - end.y ) * curvature,
+        y: ( begin.y + end.y ) / 2 - (  end.x - begin.x ) * curvature
+    };
+}
+
+export function bezierAnimate(ctx, begin, end, curvature = 1, interval = 1) {
+    let cp = getControlPointByCurvature(begin, end, curvature);
+    let percent = 1;
+
+    let animate = function() {
+        requestAnimationFrame(() => {
+            animate();
+        });
+
+        percent += interval;
+
+        if (percent <= 100) {
+            drawBezierByAnimate(ctx, begin, end, cp, percent)
+        }
+    };
+
+    animate();
+}
+
+// 通过动画绘制的曲线
+function drawBezierByAnimate(ctx, p0, p1, cp, percent) {
+    let t = percent / 100;
+
+    let p0c = {
+        x: cp.x - p0.x,
+        y: cp.y - p0.y,
+    };
+
+    let cp1 = {
+        x: p1.x - cp.x,
+        y: p1.y - cp.y,
+    };
+
+    let q0 = {
+        x: p0.x + p0c.x * t,
+        y: p0.y + p0c.y * t,
+    };
+
+    let q1 = {
+        x: cp.x + cp1.x * t,
+        y: cp.y + cp1.y * t,
+    };
+
+    let q0q1 = {
+        x: q1.x - q0.x,
+        y: q1.y - q0.y,
+    };
+
+    let d = {
+        x: q0.x + q0q1.x * t,
+        y: q0.y + q0q1.y * t,
+    };
+
+    ctx.beginPath();
+    ctx.clearRect(0, 0, 800, 800);
+    ctx.moveTo(p0.x, p0.y);
+    ctx.quadraticCurveTo(
+        q0.x, q0.y,
+        d.x, d.y
+    );
+    ctx.stroke();
 }

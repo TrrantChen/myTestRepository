@@ -1,20 +1,26 @@
+<!--渐变圆-->
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="author" content="Yeeku.H.Lee(CrazyIt.org)" />
     <meta http-equiv="Content-Type" content="text/html; charset=GBK" />
     <title> 圆形渐变 </title>
+    <style>
+        canvas {
+            border:1px solid black;
+        }
+    </style>
 </head>
 <body>
 <h2> 圆形渐变 </h2>
-<canvas id="mc0" width="400" height="280"
-        style="border:1px solid black"></canvas>
-<canvas id="mc1" width="400" height="280"
-        style="border:1px solid black"></canvas>
-<canvas id="mc2" width="400" height="280"
-        style="border:1px solid black"></canvas>
-<canvas id="mc3" width="400" height="280"
-        style="border:1px solid black"></canvas>
+<canvas id="mc0" width="400" height="280"></canvas>
+<canvas id="mc1" width="400" height="280"></canvas>
+<canvas id="mc2" width="400" height="280"></canvas>
+<canvas id="mc3" width="400" height="280"></canvas>
+<canvas id="mc4" width="400" height="280"></canvas>
+<canvas id="mc5" width="400" height="280"></canvas>
+<canvas id="mc6" width="400" height="280"></canvas>
+
 <script type="text/javascript">
 
     function effect0() {
@@ -98,10 +104,66 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
+    function effect4() {
+        let canvas = document.getElementById('mc4');
+        let w = 160;
+        let h = 160;
+        canvas.width = w;
+        canvas.height = h;
+
+        let context = canvas.getContext('2d');
+        let gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.4, 'rgba(0,255,255,1)');
+        gradient.addColorStop(0.6, 'rgba(0,0,64,1)');
+        gradient.addColorStop(1, 'rgba(0,0,0,1)');
+        context.fillStyle = gradient;
+        context.arc(w / 2, h / 2, w / 2 - 1, 0, Math.PI*2, true);
+        context.fill();
+    }
+
+    function effect5() {
+        let canvas = document.getElementById('mc5');
+        let w = 160;
+        let h = 160;
+        canvas.width = w;
+        canvas.height = h;
+
+        let context = canvas.getContext('2d');
+        let gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.4, 'rgba(0,255,255,1)');
+        gradient.addColorStop(1.0, 'rgba(0,0,64,1)');
+        // gradient.addColorStop(1, 'rgba(0,0,0,1)');
+        context.fillStyle = gradient;
+        context.arc(w / 2, h / 2, w / 2, 0, Math.PI*2, true);
+        context.fill();
+    }
+
+    function effect6() {
+        let canvas = document.getElementById('mc6');
+        canvas.width = 160;
+        canvas.height = 160;
+
+        let context = canvas.getContext('2d');
+        let gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(0,0,0,1)');
+        gradient.addColorStop(0.2, 'rgba(0,255,255,1)');
+        gradient.addColorStop(1, 'rgba(0,0,64,1)');
+        // gradient.addColorStop(0.4, 'rgba(0,0,64,1)');
+        // gradient.addColorStop(1, 'rgba(0,0,0,1)');
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
     effect0();
     effect1();
     effect2();
     effect3();
+    effect4();
+    effect5();
+    effect6();
 
 </script>
 </body>

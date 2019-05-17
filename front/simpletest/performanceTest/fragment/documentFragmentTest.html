@@ -1,0 +1,99 @@
+<!--在这种场景下，批量添加dom其实append和使用documentFragment的效果都差不多，比较好的方式反而是使用innerHTML-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .test {
+            width: 100px;
+            height: 20px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+
+    </div>
+</body>
+<script>
+    let main = document.querySelector('#main');
+    let start_tag = 'start';
+    let end_tag = 'end';
+    let measure = 'test';
+    let count = 100000;
+    let parent = document.createElement('div');
+    let ul = document.createElement('ul');
+
+    function usualMethod() {
+        for (var i = 0; i < count; i++) {
+            // let dom = document.createElement('div');
+            // dom.className = 'test';
+            // // parent.appendChild(dom);
+            // main.appendChild(dom);
+            // window.getComputedStyle(dom);
+            let li = document.createElement("li");
+            li.innerHTML = "index: " + i;
+            ul.appendChild(li);
+        }
+
+        main.appendChild(ul);
+        // main.appendChild(parent);
+
+        return '没用';
+    }
+
+    function useDocumentFragment() {
+        let documentFragment = document.createDocumentFragment();
+        // let str = '';
+        //
+        // for (var i = 0; i < count; i++) {
+        //     str += '<div class="test"></div>';
+        // }
+        //
+        // parent.innerHTML = str;
+        // documentFragment.appendChild(parent);
+        // main.appendChild(documentFragment);
+
+        for (var i = 0; i < count; i++) {
+            // let dom = document.createElement('div');
+            // dom.className = 'test';
+            // // parent.appendChild(dom);
+            // documentFragment.appendChild(dom);
+            // window.getComputedStyle(dom);
+
+
+            var li = document.createElement("li");
+            li.innerHTML = "index: " + i;
+            documentFragment.appendChild(li);
+        }
+
+        ul.appendChild(documentFragment);
+
+        main.appendChild(ul);
+
+        return '有用';
+    }
+
+
+    // performance.mark(start_tag);
+    // usualMethod();
+    // performance.mark(end_tag);
+
+    // performance.measure(measure, start_tag, end_tag);
+    // let measures = performance.getEntriesByName(measure);
+    // console.log(`set time out ${measures[0].duration}`);
+
+    let t0 = window.performance.now();
+    let name = usualMethod();
+    // let name = useDocumentFragment();
+
+
+    window.onload = () => {
+        let t1 = window.performance.now();
+        console.log(`${name} ${t1 - t0}`);
+    }
+
+</script>
+</html>
