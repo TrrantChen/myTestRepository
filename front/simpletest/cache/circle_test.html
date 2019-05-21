@@ -1,0 +1,45 @@
+<!--循环检测  a.c = b  b.d = a 这种状况-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+</body>
+<script>
+    function isCyclic (obj) {
+        var seenObjects = [];
+
+        function detect (obj) {
+            if (obj && typeof obj === 'object') {
+                if (seenObjects.indexOf(obj) !== -1) {
+                    return true;
+                }
+                seenObjects.push(obj);
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key) && detect(obj[key])) {
+                        console.log(obj, 'cycle at ' + key);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        return detect(obj);
+    }
+
+    let a = {};
+    let b = {};
+    a.f = a;
+
+    let c = {};
+    let d = {};
+    c.e = d;
+    d.f = c;
+
+    console.log(isCyclic(a));
+    console.log(isCyclic(c));
+</script>
+</html>
