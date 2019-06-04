@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    async function start() {
+        let index  = 0;
+
+        while(index < 10) {
+            let tmp = await passIndexAsync(index);
+            console.log(tmp);
+            index++;
+        }
+    }
+
+    start();
+
+    function passIndexAsync(index) {
+        let time = Math.random() * 1000;
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({
+                    index: index,
+                    time: time,
+                });
+            }, time);
+        })
+    }
+</script>
+</html>
