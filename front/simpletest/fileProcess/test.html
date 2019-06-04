@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+    <input type="file" value="测试上传">
+    <span></span>
+</body>
+<script>
+    let input = document.querySelector('input');
+    let span = document.querySelector('span');
+
+    input.addEventListener('change', (evt) => {
+        let file = evt.target.files[0];
+        let fileReader = new FileReader();
+        fileReader.onload = function(e) {
+            // console.log(e.target.result);
+            processText2Obj(e.target.result);
+            span.innerText = 'finish';
+        };
+
+        fileReader.readAsText(file);
+    });
+
+    function processText2Obj(str) {
+        let arr = str.split('\n');
+        let result = [];
+        for (var i = 0; i < arr.length; i++) {
+            let obj = {};
+            let val = arr[i];
+
+            if (val && val !== '') {
+                let tmp = val.split('@');
+
+                obj.name = tmp[0];
+                obj.location = tmp[1].split(',');
+                // obj.aoi = tmp[2];
+
+                result.push(obj);
+            }
+        }
+    }
+</script>
+</html>

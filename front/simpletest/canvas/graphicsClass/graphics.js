@@ -40,11 +40,11 @@ class CanvasBasics {
         return this.uuid;
     }
 
-    setId(id) {
+    setCustomId(id) {
         this.id = id;
     }
 
-    getId() {
+    getCustomId() {
         return this.id;
     }
 }

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        @font-face {
+            font-family: 'Open Sans Condensed';
+            font-style: normal;
+            font-weight: 300;
+            src: local('Open Sans Condensed Light'), local('OpenSansCondensed-Light'), url(https://fonts.gstatic.com/s/opensanscondensed/v13/z7NFdQDnbTkabZAIOl9il_O6KJj73e7Ff1GhDuXMQg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Handlee';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Handlee Regular'), local('Handlee-Regular'), url(https://fonts.gstatic.com/s/handlee/v7/-F6xfjBsISg9aMakPm3wpg.ttf) format('truetype');
+        }
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Open Sans Condensed', sans-serif;
+            color: rgba(252, 251, 250, 0.9);
+        }
+        .menu {
+            perspective: 1000px;
+            transition: background-color 0.3s linear;
+        }
+        .menu .menu-content {
+            transition-duration: 1s;
+            transform: translate3d(0px, 0px, 0px) rotatey(0deg);
+            transform-style: preserve-3d;
+            float: left;
+            width: 6em;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .menu .menu-content h2 {
+            font-family: 'Handlee', cursive;
+            font-size: 1em;
+            font-weight: normal;
+            margin-left: 1em;
+        }
+        .menu .menu-content ul {
+            list-style: none;
+        }
+        .menu .menu-content-1 {
+            transform-origin: right center;
+        }
+        .menu .menu-content-2 {
+            transform-origin: left center;
+        }
+        .menu .menu-content-2 > ul {
+            left: -6em;
+            position: relative;
+        }
+        .menu .menu-content-2 > h2 {
+            left: -6em;
+            position: relative;
+        }
+        .menu .menu-content-3 {
+            transform: none;
+            transition-delay: 1s;
+            transition-duration: 0s;
+            background-color: black;
+            position: absolute;
+            left: 0;
+            width: 12em;
+        }
+        .menu li,
+        .menu label {
+            color: rgba(252, 251, 250, 0.5);
+            cursor: pointer;
+            transition-duration: 1s;
+        }
+        .menu li:hover,
+        .menu label:hover {
+            transition-duration: 0.3s;
+            color: rgba(252, 251, 250, 0.9);
+        }
+        .menu .menu-switch {
+            position: absolute;
+            margin-left: 12em;
+            padding-top: 6em;
+            transition-duration: 0.5s;
+            transition-timing-function: ease-out;
+        }
+        .menu .menu-switch label {
+            font-size: 3em;
+            font-family: 'Open Sans Condensed', sans-serif;
+        }
+        .menu input {
+            display: none;
+        }
+        .menu #menu-collapsed:checked ~ .menu-content-1 {
+            transform: translate3d(-6em, 0, 0) rotatey(120deg);
+        }
+        .menu #menu-collapsed:checked ~ .menu-content-2 {
+            transform: translate3d(-6em, 0em, 0em) rotatey(-60deg);
+            background-color: rgba(128, 128, 128, 0.25);
+        }
+        .menu #menu-collapsed:checked ~ .menu-content-3 {
+            opacity: 0;
+            transition-delay: 0s;
+        }
+        .menu #menu-collapsed:checked ~ .menu-switch {
+            margin-left: 0em;
+            transition-timing-function: ease-out;
+            transition-duration: 1s;
+        }
+        .menu #menu-collapsed:checked ~ .menu-switch .rise {
+            display: block;
+        }
+        .menu #menu-collapsed:checked ~ .menu-switch .collapse {
+            display: none;
+        }
+        .menu #menu-collapsed ~ .menu-switch .rise {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <input type="checkbox" id="menu-collapsed" name="menu-collapsed" checked="checked" />
+        <div class="menu-content menu-content-1">
+            <h2>CSS only 3D fold menu</h2>
+            <ul>
+                <li><a href="www.cetla.howard.edu">Celta</a></li>
+                <li>dolor sit amet</li>
+                <li>consetetur sadipscing</li>
+                <li>elitr</li>
+                <li>sed diam nonumy</li>
+                <li>eirmod tempor</li>
+                <li>invidunt ut</li>
+                <li>labore et dolore</li>
+            </ul>
+        </div>
+        <div class="menu-switch">
+            <label class="collapse" for="menu-collapsed">«</label>
+            <label class="rise" for="menu-collapsed">»</label>
+        </div>
+    </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+    <script>
+        $('.menu-content')
+            .clone()
+            .wrap('div')
+            .attr('class', 'menu-content menu-content-2')
+            .insertBefore('.menu-switch')
+            .clone()
+            .wrap('div')
+            .attr('class', 'menu-content menu-content-3')
+            .insertBefore('.menu-switch');
+
+        // setTimeout(function(){
+        //     $('#menu-collapsed').attr('checked', false);
+        // },1000);
+        for (var i = 0; i < 5; i++) {
+            (function() {
+
+            })()setTimeout(() => {
+                console.log(i);
+            })
+        }
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

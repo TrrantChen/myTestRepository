@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="main" class="container">
+
+    </div>
+</body>
+<script src="https://webapi.amap.com/maps?v=1.4.14&key=938f26de61c40ad5f7d354e5559e130c"></script>
+<script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+<!--这个只是测试数据-->
+<!--<script src="https://webapi.amap.com/js/marker.js"></script>-->
+<script>
+
+    // "name": "北京市",
+    //     "center": "116.405285,39.904989",
+    //     "type": 0,
+    //     "subDistricts": []
+
+    let provinces = [];
+    let lng = 116.405285;
+    let lat = 39.904989;
+
+    for (var i = 0; i < 10000; i++) {
+        lng += (0.001 * Math.random() * (Math.random() > 0.5 ? -1 : 1));
+        lat += (0.001 * Math.random() * (Math.random() > 0.5 ? -1 : 1));
+
+        let center = `${ lng }, ${ lat } `;
+        let obj = {
+            center: center,
+        };
+
+        provinces.push(obj);
+    }
+
+    let style = [
+        {
+            url: './poi-marker-default.png',
+            anchor: new AMap.Pixel(11, 16),
+            size: new AMap.Size(20, 30)
+        }
+    ];
+
+
+    let datas = [];
+
+    for (var province of provinces) {
+        let obj = {
+            "lnglat":province.center.split(',').map((value) => {
+                return parseFloat(value);
+            }),
+            "style": 0
+        };
+
+        datas.push(obj);
+    }
+
+    let mass = new AMap.MassMarks(datas, {
+        opacity: 1,
+        zIndex: 111,
+        cursor: 'pointer',
+        style: style
+    });
+
+    let map = new AMap.Map('main', {
+        resizeEnable: true, //是否监控地图容器尺寸变化
+        zoom:16, //初始化地图层级
+        center: [116.405285,39.904989] //初始化地图中心点
+    });
+
+
+
+    mass.setMap(map);
+
+    AMapUI.loadUI(['overlay/SimpleInfoWindow'], function(SimpleInfoWindow) {
+
+        let infoWindow = new SimpleInfoWindow({
+            infoTitle: '<strong>这里是标题</strong>',
+            infoBody: '<p class="my-desc"><strong>这里是内容。</strong> <br/> 高德地图 JavaScript API，是由 JavaScript 语言编写的应用程序接口，' +
+                '它能够帮助您在网站或移动端中构建功能丰富、交互性强的地图应用程序</p>',
+            //基点指向marker的头部位置
+            offset: new AMap.Pixel(0, 0)
+        });
+
+        mass.on('click',(evt) => {
+            infoWindow.open(map, new AMap.LngLat(evt.data.lnglat.lng, evt.data.lnglat.lat));
+        });
+
+    })
+
+</script>
+</html>
+
+<!--[{"lnglat":[116.258446,37.686622],"name":"景县","style":2}]-->
