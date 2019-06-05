@@ -1,0 +1,44 @@
+<!--util.js里方法的测试-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script type="module" src="../util.js"></script>
+<script type="module">
+    import { isCyclic, batchQuery } from '../util.js';
+
+    class Process {
+
+        constructor(env = window) {
+            this.env = env;
+        }
+
+        test1() {
+            console.log('this is test1');
+        }
+
+        test2() {
+            console.log('this is test2');
+        }
+
+        start() {
+            let process_lst = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter((str) => {
+                return str !== 'constructor' && str !== 'start';
+            });
+
+            for(var fun_name of process_lst) {
+                this[fun_name]();
+            }
+        }
+    }
+
+    let process = new Process();
+    process.start();
+
+</script>
+</html>

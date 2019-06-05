@@ -19,3 +19,22 @@ export function isCyclic (obj) {
 
     return detect(obj);
 }
+
+// 用于批量处理数据
+export async function batchQuery(env, query_statement, stop_conn, call_back) {
+    let index = 0;
+
+    if (stop_conn) {
+        while(!stop_conn.apply(env, [index])) {
+            if (query_statement) {
+                let result = await query_statement.apply(env, [index]);
+
+                if (call_back) {
+                    call_back.apply(env, [result]);
+                }
+            }
+
+            ++index;
+        }
+    }
+}
