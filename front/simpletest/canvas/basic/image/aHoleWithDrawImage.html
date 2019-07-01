@@ -1,0 +1,61 @@
+<!--canvas最好还是通过属性设置宽高，不要通过css去设置宽高，通过css设置drawImage会出现模糊偏差-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            border: 0;
+            margin: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+
+        #canvas2 {
+            width: 400px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <canvas id="canvas1"></canvas>
+    <canvas id="canvas2"></canvas>
+    <img id="test" src="./test2.jpg"  alt="">
+</div>
+</body>
+<script>
+    let canvas1 = document.querySelector('#canvas1');
+    let canvas2 = document.querySelector('#canvas2');
+
+    let ctx1 = canvas1.getContext('2d');
+    let ctx2 = canvas2.getContext('2d');
+
+    window.onload = function() {
+        let img = new Image();
+        img.onload = function() {
+            canvas1.width = img.naturalWidth;
+            canvas1.height = img.naturalHeight;
+            ctx1.drawImage(img, 0, 0);
+            ctx2.drawImage(img, 0, 0);
+        };
+
+        img.src = './test2.jpg';
+    };
+
+</script>
+</html>
+

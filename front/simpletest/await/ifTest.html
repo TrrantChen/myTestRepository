@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <button onclick="addIndex()">add</button>
+        <button onclick="start()">start</button>
+    </div>
+</body>
+<script>
+    let index = 0;
+
+    function promiseFunc() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(10);
+            })
+        })
+    }
+
+    async function start() {
+        let result = await awaitFunc();
+        console.log(result);
+    }
+
+    function addIndex() {
+        index++;
+    }
+
+    async function awaitFunc() {
+        let result = 0;
+        if (index % 2 === 0) {
+            result = await promiseFunc();
+        }
+
+        return result;
+    }
+</script>
+</html>

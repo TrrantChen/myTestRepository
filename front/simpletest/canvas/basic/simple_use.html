@@ -4,13 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-    <canvas width="1920" height="800" style="border: 1px solid black;"></canvas>
+    <canvas id="canvas1" width="1920" height="400"></canvas>
+    <canvas id="canvas2" width="1920" height="200"></canvas>
+    <canvas id="canvas3" width="1920" height="200"></canvas>
 </body>
 <script>
 
-    let canvas = document.querySelector('canvas');
+    let canvas = document.querySelector('#canvas1');
     let ctx = canvas.getContext('2d');
 
     function drawFillRect() {
@@ -143,6 +150,54 @@
         ctx.fill(p);
     }
 
+    function drawFontWithoutSetting() {
+        ctx.font = '48px serif';
+        ctx.fillText('default hello world', 1200, 100);
+    }
+
+    function drawFontWithFill() {
+        ctx.font = '48px serif';
+        ctx.textAlign = 'end';
+        ctx.textBaseline = 'top';
+        ctx.direction = 'rtl';
+        ctx.fillText('hello world', 1200, 100);
+    }
+
+    function drawFontWithStroke() {
+        ctx.font = '48px serif';
+        ctx.textAlign = 'end';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText('hello world', 1200, 200);
+    }
+
+    function saveAndStore() {
+        let canvas2 = document.querySelector('#canvas2');
+        let ctx2 = canvas2.getContext('2d');
+        let canvas3 = document.querySelector('#canvas3');
+        let ctx3 = canvas3.getContext('2d');
+
+        function withSaveAndStore() {
+            for (var i = 0; i < 2; i++) {
+                ctx2.save();
+                ctx2.fillStyle = 'rgb(' + (51 * i) + ', ' + (255 - 51 * i) + ', 255)';
+                ctx2.translate(30 + i * 30, 30);
+                ctx2.fillRect(0, 0, 25, 25);
+                ctx2.restore();
+            }
+        }
+
+        function withoutSaveAndStore() {
+            for (var i = 0; i < 2; i++) {
+                ctx3.fillStyle = 'rgb(' + (51 * i) + ', ' + (255 - 51 * i) + ', 255)';
+                ctx3.translate(30 + i * 30, 30);
+                ctx3.fillRect(0, 0, 25, 25);
+            }
+        }
+
+        withSaveAndStore();
+        withoutSaveAndStore();
+    }
+
     drawStrokePath();
     drawFillPath();
     drawStrokeRect();
@@ -153,5 +208,10 @@
     drawBezier();
     path2D();
     useSVG();
+    drawFontWithoutSetting();
+    drawFontWithFill();
+    drawFontWithStroke();
+    saveAndStore();
+
 </script>
 </html>

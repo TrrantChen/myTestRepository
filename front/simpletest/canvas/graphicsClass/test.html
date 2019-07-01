@@ -20,25 +20,67 @@
     <canvas width="1920" height="1080" style="border:solid 5px red;box-sizing: content-box;"></canvas>
     <div style="width:10px;height:10px;border:10px solid black;"></div>
 </body>
-<script type="module" src="./graphics.js"></script>
+<script type="module" src="graphics.js"></script>
 <script type="module">
     import { CanvasRect } from './graphics.js';
 
     let canvas = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
-    let canvas_rect = new CanvasRect(ctx, {
+
+    let border = new CanvasRect(ctx, {
         left: 10,
         top: 10,
-        width: 30,
-        height: 30,
+        width: 300,
+        height: 300,
         border_width: 10,
     });
 
-    canvas_rect.on('click', (evt, x, y) => {
-        console.log('click is fired');
+    border.draw();
+
+    let no_border = new CanvasRect(ctx, {
+        left: 100,
+        top: 100,
+        width: 100,
+        height: 100,
+        background_color: 'green',
     });
 
-    canvas_rect.draw();
+    no_border.draw();
+
+    function test4ClearWithBorder() {
+        border.clear();
+    }
+
+    function test4ClearNoBorder() {
+        no_border.clear();
+    }
+
+    function test4ClickWithBorder() {
+        border.on('click', (evt) => {
+            console.log('border fired');
+        })
+    }
+
+    function test4ClickNoBorder() {
+        no_border.on('click', () => {
+            console.log('no border fired');
+        })
+    }
+
+    // test4ClearWithBorder();
+    test4ClearNoBorder();
+
+    test4ClickWithBorder();
+    test4ClickNoBorder();
+
+
+    let div = document.querySelector('div');
+    // console.log(div)
+    div.addEventListener('click', function() {
+        console.log('div fired');
+    })
+
+
 </script>
 
 

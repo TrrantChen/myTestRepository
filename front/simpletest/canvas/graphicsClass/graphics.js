@@ -1,9 +1,9 @@
 class CanvasBasics {
     constructor() {
-        this.uuid = this.setUuid();
+        this._uuid = this._setUuid();
     }
 
-    setUuid(len, radix) {
+    _setUuid(len, radix) {
         let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
         let uuid = [],
             i;
@@ -37,15 +37,7 @@ class CanvasBasics {
     }
 
     getUuid() {
-        return this.uuid;
-    }
-
-    setCustomId(id) {
-        this.id = id;
-    }
-
-    getCustomId() {
-        return this.id;
+        return this._uuid;
     }
 }
 
@@ -54,11 +46,6 @@ export class CanvasRect extends CanvasBasics {
         super();
         let default_option = {
             env: window,
-            is_repaint: false,
-            c_left: 0,
-            c_top: 0,
-            c_width: window.innerWidth,
-            c_height: window.innerHeight,
             left: 100,
             top: 100,
             width: 100,
@@ -72,134 +59,108 @@ export class CanvasRect extends CanvasBasics {
                     // "rgba(255,165,0,1)";
         };
 
-        this.option = Object.assign(default_option, option || {});
+        this._option = Object.assign(default_option, option || {});
         this._settingParams(ctx);
         this._init();
     }
 
     _settingParams(ctx) {
-        this.ctx = ctx;
-        this.canvas = ctx.canvas;
-        this.env = this.option.env;
-        this.is_repaint = this.option.is_repaint;
-
-        this.clear_obj = {};
-        this.clear_obj.x = this.option.c_left;
-        this.clear_obj.y = this.option.c_top;
-        this.clear_obj.w = this.option.c_width;
-        this.clear_obj.h = this.option.c_height;
+        this._ctx = ctx;
+        this._canvas = ctx.canvas;
+        this._env = this._option.env;
 
         // 用于存储对象的信息，包括坐标信息，长宽，颜色，等
-        this.obj = {};
-        this.obj.x = this.option.left;
-        this.obj.y = this.option.top;
-        this.obj.w = this.option.width;
-        this.obj.h = this.option.height;
-        this.obj.fillStyle = this.option.background_color;
-        this.obj.strokeStyle = this.option.border_color;
-        this.obj.lineWidth = this.option.border_width;
+        // 两边的参数名称进行映射
+        this._obj = {};
+        this._obj.x = this._option.left;
+        this._obj.y = this._option.top;
+        this._obj.w = this._option.width;
+        this._obj.h = this._option.height;
+        this._obj.fillStyle = this._option.background_color;
+        this._obj.strokeStyle = this._option.border_color;
+        this._obj.lineWidth = this._option.border_width;
     }
 
     _init() {
-        // 是否启用重绘
         // 传递初始值的位置，大小
         // 保留位置和大小信息
         // 方便以后调整
         // 可以尝试绑定事件信息
-        if (this.is_repaint) {
-            this.ctx.clearRect(
-                this.clear_obj.x,
-                this.clear_obj.y,
-                this.clear_obj.width,
-                this.clear_obj.height,
+
+    }
+
+    // 重新绘制这个区域
+    rePaint() {
+        this.clear();
+        this.draw();
+    }
+
+    clear() {
+        if (this._obj.lineWidth !== 0) {
+            this._ctx.clearRect(
+                this._obj.x,
+                this._obj.y,
+                this._obj.w + this._obj.lineWidth * 2,
+                this._obj.h + this._obj.lineWidth * 2,
+            );
+        }
+        else {
+            this._ctx.clearRect(
+                this._obj.x + this._obj.lineWidth,
+                this._obj.y + this._obj.lineWidth,
+                this._obj.w,
+                this._obj.h,
             );
         }
     }
 
     draw() {
-        if (this.obj.lineWidth !== 0) {
-            this.ctx.lineWidth = this.obj.lineWidth;
-            this.ctx.strokeStyle = this.obj.strokeStyle;
-            this.ctx.strokeRect(
-                this.obj.x + this.obj.lineWidth / 2,
-                this.obj.y + this.obj.lineWidth / 2,
-                this.obj.w + this.obj.lineWidth,
-                this.obj.h + this.obj.lineWidth,
+        if (this._obj.lineWidth !== 0) {
+            this._ctx.lineWidth = this._obj.lineWidth;
+            this._ctx.strokeStyle = this._obj.strokeStyle;
+            this._ctx.strokeRect(
+                this._obj.x + this._obj.lineWidth / 2,
+                this._obj.y + this._obj.lineWidth / 2,
+                this._obj.w + this._obj.lineWidth,
+                this._obj.h + this._obj.lineWidth,
             );
         }
 
-        this.ctx.fillStyle = this.obj.fillStyle;
-        this.ctx.fillRect(
-            this.obj.x + this.obj.lineWidth,
-            this.obj.y + this.obj.lineWidth,
-            this.obj.w,
-            this.obj.h,
+        this._ctx.fillStyle = this._obj.fillStyle;
+        this._ctx.fillRect(
+            this._obj.x + this._obj.lineWidth,
+            this._obj.y + this._obj.lineWidth,
+            this._obj.w,
+            this._obj.h,
         );
 
-        this.obj.actual_width = this.obj.w + this.obj.lineWidth * 2;
-        this.obj.actual_height = this.obj.h + this.obj.lineWidth * 2;
+        this._obj.actual_width = this._obj.w + this._obj.lineWidth * 2;
+        this._obj.actual_height = this._obj.h + this._obj.lineWidth * 2;
     }
 
     on(event, call_back) {
-        let client_rect = this.canvas.getBoundingClientRect();
-        let dom_style = window.getComputedStyle(this.canvas);
+        let client_rect = this._canvas.getBoundingClientRect();
+        let dom_style = window.getComputedStyle(this._canvas);
         let border_width = parseInt(dom_style.getPropertyValue('border-width'));
         let left = client_rect.x + border_width;
         let top = client_rect.y + border_width;
 
-        this.canvas.addEventListener(event, (evt) => {
+        this._canvas.addEventListener(event, (evt) => {
             let x = evt.clientX - left;
             let y = evt.clientY - top;
 
-            if (x >= this.obj.x && x <= this.obj.x + this.obj.actual_width && y >= this.obj.y && y <= this.obj.y + this.obj.actual_height && call_back) {
-                call_back(evt, x, y, this.obj);
+            if (x >= this._obj.x && x <= this._obj.x + this._obj.actual_width && y >= this._obj.y && y <= this._obj.y + this._obj.actual_height && call_back) {
+                call_back(evt, x, y, this._obj);
             }
         })
     }
 
     destroy() {
-
+        // 清空图层
+        // 移除事件等
     }
 }
 
-export class CanvasArc extends CanvasBasics {
-    constructor(ctx, env) {
-        super();
-        this.ctx = ctx;
-        this.env = env;
-    }
-}
 
-export class CanvasPath extends CanvasBasics {
-    constructor(ctx, env) {
-        super();
-        this.ctx = ctx;
-        this.env = env;
-    }
-}
-
-export class CanvasQuadratic extends CanvasBasics {
-    constructor(ctx, env) {
-        super();
-        this.ctx = ctx;
-        this.env = env;
-    }
-}
-
-export class CanvasBezier extends CanvasBasics {
-    constructor(ctx, env) {
-        super();
-        this.ctx = ctx;
-        this.env = env;
-    }
-}
-
-export class CanvasPathFor2D extends CanvasBasics {
-    constructor(ctx, env) {
-        super();
-        this.ctx = ctx;
-        this.env = env;
-    }
-}
 
 

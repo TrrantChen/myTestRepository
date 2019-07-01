@@ -7,15 +7,48 @@
         canvas {
             border: 1px solid black;
         }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
-    <canvas id="source" width="500" height="600"></canvas>
-    <canvas id="target" width="100" height="100"></canvas>
-    <canvas id="target2" width="100" height="100"></canvas>
-    <canvas id="target3" width="100" height="100"></canvas>
-    <canvas id="sourceAndTargeInSameCanvas" width="400" height="400"></canvas>
+    <div class="container">
+        <div class="content">
+            <span>source</span>
+            <canvas id="source" width="500" height="600"></canvas>
+        </div>
 
+        <div class="content">
+            <span>target</span>
+            <canvas id="target" width="100" height="100"></canvas>
+        </div>
+
+        <div class="content">
+            <span>target2</span>
+            <canvas id="target2" width="100" height="100"></canvas>
+        </div>
+
+        <div class="content">
+            <span>target3</span>
+            <canvas id="target3" width="100" height="100"></canvas>
+        </div>
+
+        <div class="content">
+            <span>source and target in same canvas</span>
+            <canvas id="sourceAndTargeInSameCanvas" width="400" height="400"></canvas>
+        </div>
+    </div>
 </body>
 <script>
     let source = document.querySelector('#source');
