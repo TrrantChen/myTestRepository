@@ -69,17 +69,14 @@
 
     // 跨canvas使用drawImage，可以对canvas进行缩放。
     function fn1() {
-        target_ctx.drawImage(source, 0, 0, 50, 60);
+        target_ctx.drawImage(source, 0, 0, 100, 120);
     }
 
     function fn2() {
         let image_data = source_ctx.getImageData(0, 0, 500, 500);
-        target2_ctx.putImageData(image_data, 0, 0, 0, 0, 100, 100);
+        target2_ctx.putImageData(image_data, 0, 0, 0, 0, 100, 120);
         target3_ctx.putImageData(image_data, -90, -90, 90, 90, 500, 500);
     }
-
-    fn1();
-    fn2();
 
     // 同个canvas内使用getIamgeData和putImageData。
     function copyInSameCanvas() {
@@ -92,6 +89,8 @@
         sourceAndTargeInSameCanvas_ctx.putImageData(imageData, 0, 120, 0, 0, 50, 50);
     }
 
+    fn1();
+    fn2();
     copyInSameCanvas();
 </script>
 </html>

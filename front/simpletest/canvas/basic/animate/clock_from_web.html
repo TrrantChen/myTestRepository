@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            border: solid 1px black;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="800" height="800">
+
+    </canvas>
+</body>
+<script>
+    function clock(){
+        let now = new Date();
+        let ctx = document.querySelector('canvas').getContext('2d');
+        ctx.save();
+        ctx.clearRect(0,0,150,150);
+        ctx.translate(75,75);
+        ctx.scale(0.4,0.4);
+        ctx.rotate(-Math.PI/2);
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = "white";
+        ctx.lineWidth = 8;
+        ctx.lineCap = "round";
+
+        // Hour marks
+        ctx.save();
+        for (var i=0;i<12;i++){
+            ctx.beginPath();
+            ctx.rotate(Math.PI/6);
+            ctx.moveTo(100,0);
+            ctx.lineTo(120,0);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Minute marks
+        ctx.save();
+        ctx.lineWidth = 5;
+        for (i=0;i<60;i++){
+            if (i%5!=0) {
+                ctx.beginPath();
+                ctx.moveTo(117,0);
+                ctx.lineTo(120,0);
+                ctx.stroke();
+            }
+            ctx.rotate(Math.PI/30);
+        }
+        ctx.restore();
+
+        var sec = now.getSeconds();
+        var min = now.getMinutes();
+        var hr  = now.getHours();
+        hr = hr>=12 ? hr-12 : hr;
+
+        ctx.fillStyle = "black";
+
+        // write Hours
+        ctx.save();
+        ctx.rotate( hr*(Math.PI/6) + (Math.PI/360)*min + (Math.PI/21600)*sec )
+        ctx.lineWidth = 14;
+        ctx.beginPath();
+        ctx.moveTo(-20,0);
+        ctx.lineTo(80,0);
+        ctx.stroke();
+        ctx.restore();
+
+        // write Minutes
+        ctx.save();
+        ctx.rotate( (Math.PI/30)*min + (Math.PI/1800)*sec )
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(-28,0);
+        ctx.lineTo(112,0);
+        ctx.stroke();
+        ctx.restore();
+
+        // Write seconds
+        ctx.save();
+        ctx.rotate(sec * Math.PI/30);
+        ctx.strokeStyle = "#D40000";
+        ctx.fillStyle = "#D40000";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(-30,0);
+        ctx.lineTo(83,0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0,0,10,0,Math.PI*2,true);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(95,0,10,0,Math.PI*2,true);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(0,0,0,0)";
+        ctx.arc(0,0,3,0,Math.PI*2,true);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.lineWidth = 14;
+        ctx.strokeStyle = '#325FA2';
+        ctx.arc(0,0,142,0,Math.PI*2,true);
+        ctx.stroke();
+
+        ctx.restore();
+
+        window.requestAnimationFrame(clock);
+    }
+
+    window.requestAnimationFrame(clock);
+
+    function myClock() {
+        let canvas = document.querySelector('canvas');
+        let ctx = canvas.getContext('2d');
+        ctx.translate(0,canvas.height);
+        ctx.scale(1,-1);
+
+        function createMyClock() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let center = {
+                x: 400,
+                y: 400,
+            };
+
+            let per_angle = Math.PI * 2 / 60;
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 8;
+            ctx.arc(center.x, center.y, 100, 0, 2 * Math.PI, true);
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = 'black';
+            let black_radius = 90;
+            let long_black_radius = 80;
+            let short_black_radius = 85;
+
+            for (var i = 0; i < 60; i++) {
+                let angle = i * per_angle;
+                let x = Math.sin(angle) * black_radius;
+                let y = Math.cos(angle) * black_radius;
+
+                ctx.beginPath();
+                ctx.moveTo(x + center.x, y + center.y);
+
+                if (i % 5 === 0) {
+                    ctx.lineTo(Math.sin(angle) * long_black_radius + center.x, Math.cos(angle) * long_black_radius + center.y);
+                }
+                else {
+                    ctx.lineTo(Math.sin(angle) * short_black_radius + center.x, Math.cos(angle) * short_black_radius + center.y);
+                }
+
+                ctx.closePath();
+                ctx.stroke();
+            }
+
+            let hour_long = 40;
+            let min_long = 55;
+            let sec_long = 70;
+
+            let now = new Date();
+            let hour = now.getHours();
+            let min = now.getMinutes();
+            let sec = now.getSeconds();
+
+            // second;
+            let sec_angle = (sec) / 60 * Math.PI * 2;
+            ctx.beginPath();
+            ctx.strokeStyle = 'red';
+            ctx.strokeWidth = 4;
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(sec_long * Math.sin(sec_angle) + center.x, sec_long * Math.cos(sec_angle) + center.y);
+            ctx.closePath();
+            ctx.stroke();
+            // min
+            let min_angle = min / 60 * Math.PI * 2 + sec / 60 * per_angle;
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.strokeWidth = 6;
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(min_long * Math.sin(min_angle) + center.x, min_long * Math.cos(min_angle) + center.y);
+            ctx.closePath();
+            ctx.stroke();
+            // hour
+            let hour_angle = (hour > 12 ? hour - 12 : hour) / 12 * Math.PI * 2 + min / 60 * per_angle * 5;
+            ctx.beginPath();
+            ctx.strokeStyle = 'blue';
+            ctx.strokeWidth = 8;
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(hour_long * Math.sin(hour_angle) + center.x, hour_long * Math.cos(hour_angle) + center.y);
+            ctx.closePath();
+            ctx.stroke();
+
+            console.log(`time is ${hour} : ${min} : ${sec}`)
+        }
+
+        createMyClock();
+
+        setInterval(() => {
+            createMyClock();
+        }, 1000)
+    }
+
+
+</script>
+</html>

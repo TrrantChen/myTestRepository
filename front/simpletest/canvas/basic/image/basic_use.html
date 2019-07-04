@@ -1,6 +1,9 @@
 <!--void ctx.drawImage(image, dx, dy);-->
 <!--void ctx.drawImage(image, dx, dy, dWidth, dHeight);-->
 <!--void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);-->
+<!--ImageData ctx.getImageData(sx, sy, sw, sh);-->
+<!--void ctx.putImageData(imagedata, dx, dy);-->
+<!--void ctx.putImageData(imagedata, dx, dy, sx, sy, sw, sh);-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,13 +33,18 @@
 </head>
 <body>
     <div class="container">
-        <canvas width="800" height="800"></canvas>
+        <canvas id="canvas1" width="400" height="600"></canvas>
+        <canvas id="canvas2" width="600" height="600"></canvas>
         <img id="test" alt="">
     </div>
 </body>
 <script>
-    let canvas = document.querySelector('canvas');
+    let canvas = document.querySelector('#canvas1');
     let ctx = canvas.getContext('2d');
+
+    let canvas2 = document.querySelector('#canvas2');
+    let ctx2 = canvas2.getContext('2d');
+
     let src = './test2.jpg';
 
     let test = document.querySelector('#test');
@@ -44,8 +52,8 @@
 
     window.onload = function() {
         basicUseOfDrawImage();
+        basicUseOfPutAndGetImage();
     };
-
 
     function basicUseOfDrawImage() {
         let img = new Image();
@@ -53,6 +61,7 @@
             let width = img.naturalWidth;
             let height = img.naturalHeight;
 
+            // 完全复制
             ctx.drawImage(img, 0, 0);
 
             // 缩小了一半；
@@ -63,6 +72,21 @@
         };
 
         img.src = src;
+    }
+
+    function basicUseOfPutAndGetImage() {
+        ctx2.arc(50, 50, 50, 0, Math.PI * 2);
+        ctx2.fill();
+
+        // 完全复制
+        let image_data = ctx2.getImageData(0, 0, 100, 100);
+        ctx2.putImageData(image_data, 0, 100);
+
+        // 缩小一半
+        let l_image_data = ctx2.getImageData(0, 0, 50, 50);
+        ctx2.putImageData(l_image_data, 0, 200)
+
+        // 只需要一半面积
     }
 </script>
 </html>

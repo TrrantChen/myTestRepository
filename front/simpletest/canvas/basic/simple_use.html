@@ -1,4 +1,4 @@
-<!--最简单的图形api应用-->
+<!--最简单的图形api应用,图形，像素相关的单独拎出来了-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -189,7 +189,9 @@
         function withoutSaveAndStore() {
             for (var i = 0; i < 2; i++) {
                 ctx3.fillStyle = 'rgb(' + (51 * i) + ', ' + (255 - 51 * i) + ', 255)';
-                ctx3.translate(30 + i * 30, 30);
+                // ctx3.translate(30 + i * 30, 30);
+                // 如果没有save和restore，也可以这么写来解决问题
+                ctx3.translate(30, 0);
                 ctx3.fillRect(0, 0, 25, 25);
             }
         }
@@ -198,20 +200,78 @@
         withoutSaveAndStore();
     }
 
-    drawStrokePath();
-    drawFillPath();
-    drawStrokeRect();
-    drawFillRect();
-    drawStrokeArc();
-    drawFillArc();
-    drawQuadratic();
-    drawBezier();
-    path2D();
-    useSVG();
-    drawFontWithoutSetting();
-    drawFontWithFill();
-    drawFontWithStroke();
-    saveAndStore();
+
+    function scaleFunc() {
+        // 笛卡尔坐标系
+        ctx.translate(0,canvas.height);
+        ctx.scale(1,-1);
+        ctx.fillRect(0, 0, 50, 50);
+    }
+
+    // clip用于裁剪，裁剪的地方是中间空的一块地方
+    function clipFunc() {
+        ctx.beginPath();
+        ctx.fillStyle = 'rgb(100,100,0)';
+        ctx.arc(60,60,60,0,Math.PI*2,true);
+        ctx.clip();
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = 'rgb(200,100,0)';
+        ctx.fillRect(0, 0, 300, 300);
+    }
+
+    function setLineDash() {
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        ctx.setLineDash([5, 10]);
+        ctx.lineWidth = 4;
+        ctx.arc(200, 200, 100, 0, 2 * Math.PI, true);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function setLineDashOffset() {
+        let offset = 0;
+
+        function draw() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            ctx.setLineDash([4, 2]);
+            ctx.lineDashOffset = -offset;
+            ctx.strokeRect(10,10, 100, 100);
+        }
+
+        function march() {
+            offset++;
+            if (offset > 16) {
+                offset = 0;
+            }
+            draw();
+            setTimeout(march, 20);
+        }
+
+        march();
+    }
+
+    // drawStrokePath();
+    // drawFillPath();
+    // drawStrokeRect();
+    // drawFillRect();
+    // drawStrokeArc();
+    // drawFillArc();
+    // drawQuadratic();
+    // drawBezier();
+    // path2D();
+    // useSVG();
+    // drawFontWithoutSetting();
+    // drawFontWithFill();
+    // drawFontWithStroke();
+    // saveAndStore();
+    // scaleFunc();
+    // clipFunc();
+    // setLineDash();
+    setLineDashOffset();
+
 
 </script>
 </html>
