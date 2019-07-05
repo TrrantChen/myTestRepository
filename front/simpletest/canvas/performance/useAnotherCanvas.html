@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="1000" height="400" >
+
+    </canvas>
+
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let c_width = canvas.width;
+    let c_height = canvas.height;
+
+    class Ball {
+        constructor(x, y, x_speed, y_speed, canvas) {
+            this.x = x >> 0;
+            this.y = y >> 0;
+            this.x_speed = x_speed >> 0;
+            this.y_speed = y_speed >> 0;
+            this.colors = [];
+            this.line_widths = [];
+            this.count = (Math.random() * 14 + 6) >> 1;
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+
+            for (var i = 0; i < this.count; i++) {
+                let line_width = (Math.random() * 10 + 2) >> 0;
+                this.line_widths.push(line_width);
+                this.colors.push(Ball._randomColor());
+            }
+
+            this._draw();
+            this.move();
+        }
+
+        _draw() {
+            let radius = 0;
+            for (var i = 0; i < this.count; i++) {
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = this.colors[i];
+                this.ctx.lineWidth = this.line_widths[i];
+                this.ctx.arc(this.x, this.y, radius, 0 , Math.PI * 2, true);
+                radius += this.line_widths[i];
+                this.ctx.stroke();
+            }
+        }
+
+        move() {
+            if (this.x <= 0 || this.x >= c_width) {
+                this.x_speed = -this.x_speed;
+            }
+
+            if (this.y <= 0 || this.y >= c_height) {
+                this.y_speed = -this.y_speed;
+            }
+
+            this.x += this.x_speed;
+            this.y += this.y_speed;
+
+            this._draw();
+        }
+
+        static _randomColor() {
+            return `rgb(${(Math.random() * 255) >> 0}, ${(Math.random() * 255) >> 0}, ${(Math.random() * 255) >> 0})`;
+        }
+    }
+
+    class Game {
+        constructor() {
+            this.count = 1000;
+            this.ball_lst = [];
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = c_width;
+            this.canvas.height = c_height;
+            this.ctx = this.canvas.getContext('2d');
+            this._init();
+        }
+
+        _init() {
+            for (var i = 0; i < this.count; i++) {
+                let x = Math.random() * c_width;
+                let y = Math.random() * c_height;
+                let x_speed = Math.random() * 5 + 1;
+                let y_speed = Math.random() * 5 + 1;
+
+                let ball = new Ball(x, y, x_speed, y_speed, this.canvas);
+                this.ball_lst.push(ball);
+            }
+        }
+
+        start() {
+            this._loop();
+        }
+
+        _loop() {
+            requestAnimationFrame(() => {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                this.ctx.clearRect(0,0,canvas.width,canvas.height);
+                for (var ball of this.ball_lst) {
+                    ball.move();
+                }
+                ctx.drawImage(this.canvas, 0, 0);
+
+                this._loop();
+            })
+        }
+    }
+
+    let game = new Game();
+    game.start();
+
+</script>
+</html>
