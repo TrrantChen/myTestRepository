@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .message-box {
+            border: 1px solid black;
+            width: 80%;
+            height: 200px;
+            margin: 10px;
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="send">send</button>
+        <button id="close">close</button>
+        <textarea id="send_box" class="message-box">
+        </textarea>
+        <textarea id="receive_box" class="message-box">
+        </textarea>
+    </div>
+</body>
+<script>
+    const socket = new  WebSocket('ws://localhost:8081');
+    let send = document.querySelector('#send');
+    let close = document.querySelector('#close');
+    let send_box = document.querySelector('#send_box');
+    let receive_box = document.querySelector('#receive_box');
+    let is_can_send = false;
+
+    send.addEventListener('click', (evt) => {
+        if (is_can_send) {
+            socket.send(send_box.value);
+        };
+    });
+
+    close.addEventListener('click', (evt) => {
+        socket.close();
+    });
+
+    socket.addEventListener('open', (evt) => {
+        is_can_send = true;
+        console.log('it is open');
+    });
+
+    socket.addEventListener('message', (evt) => {
+        receive_box.value = receive_box.value + '\n' + evt.data;
+    })
+</script>
+</html>

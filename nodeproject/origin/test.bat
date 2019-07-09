@@ -1,3 +1,3 @@
-forever start -w app.js
+forever start -w server.js
 
 

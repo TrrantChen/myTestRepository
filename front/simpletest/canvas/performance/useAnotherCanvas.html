@@ -23,7 +23,6 @@
     <canvas width="1000" height="400" >
 
     </canvas>
-
 </body>
 <script>
     let canvas = document.querySelector('canvas');
@@ -32,7 +31,7 @@
     let c_height = canvas.height;
 
     class Ball {
-        constructor(x, y, x_speed, y_speed, canvas) {
+        constructor(x, y, x_speed, y_speed) {
             this.x = x >> 0;
             this.y = y >> 0;
             this.x_speed = x_speed >> 0;
@@ -43,26 +42,40 @@
             this.canvas = canvas;
             this.ctx = canvas.getContext('2d');
 
+            let radius = 0;
+
             for (var i = 0; i < this.count; i++) {
                 let line_width = (Math.random() * 10 + 2) >> 0;
                 this.line_widths.push(line_width);
+                radius += line_width;
                 this.colors.push(Ball._randomColor());
             }
 
+            this._createTmpCanvas(radius);
             this._draw();
             this.move();
         }
 
         _draw() {
             let radius = 0;
+
             for (var i = 0; i < this.count; i++) {
-                this.ctx.beginPath();
-                this.ctx.strokeStyle = this.colors[i];
-                this.ctx.lineWidth = this.line_widths[i];
-                this.ctx.arc(this.x, this.y, radius, 0 , Math.PI * 2, true);
+                this.tmp_ctx.beginPath();
+                this.tmp_ctx.strokeStyle = this.colors[i];
+                this.tmp_ctx.lineWidth = this.line_widths[i];
+                this.tmp_ctx.arc(this.x, this.y, radius, 0 , Math.PI * 2, true);
                 radius += this.line_widths[i];
-                this.ctx.stroke();
+                this.tmp_ctx.stroke();
             }
+
+            this.ctx.drawImage(this.tmp_canvas, this.x - radius, this.y - radius);
+        }
+
+        _createTmpCanvas(radius) {
+            this.tmp_canvas = document.createElement('canvas');
+            this.tmp_ctx = this.tmp_canvas.getContext('2d');
+            this.tmp_canvas.width = radius * 2;
+            this.tmp_canvas.height = radius * 2;
         }
 
         move() {
@@ -89,10 +102,6 @@
         constructor() {
             this.count = 1000;
             this.ball_lst = [];
-            this.canvas = document.createElement('canvas');
-            this.canvas.width = c_width;
-            this.canvas.height = c_height;
-            this.ctx = this.canvas.getContext('2d');
             this._init();
         }
 
@@ -103,7 +112,7 @@
                 let x_speed = Math.random() * 5 + 1;
                 let y_speed = Math.random() * 5 + 1;
 
-                let ball = new Ball(x, y, x_speed, y_speed, this.canvas);
+                let ball = new Ball(x, y, x_speed, y_speed);
                 this.ball_lst.push(ball);
             }
         }
@@ -114,12 +123,11 @@
 
         _loop() {
             requestAnimationFrame(() => {
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                this.ctx.clearRect(0,0,canvas.width,canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
                 for (var ball of this.ball_lst) {
                     ball.move();
                 }
-                ctx.drawImage(this.canvas, 0, 0);
 
                 this._loop();
             })
