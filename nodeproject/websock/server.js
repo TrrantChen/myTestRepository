@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8081 });
 
 wss.on('open', () => {
-    console.log('connected');
+    console.log('open');
 });
 
 wss.on('close', () => {
@@ -11,28 +11,54 @@ wss.on('close', () => {
 });
 
 wss.on('connection', function connection(ws, req) {
-    const ip = req.connection.remoteAddress;
-    const port = req.connection.remotePort;
-    const clientName = ip + port;
-    console.log(`${clientName} is connected`);
+    // console.log('======================================');
+    // console.log(ws);
+    // console.log('--------------------------------------');
+    // console.log(req);
+    // console.log('======================================');
+    let exec_result = req.headers.cookie.match(/Webstorm-152e451e=(.*)/);
+    let token = (exec_result && exec_result[1]) || '';
 
-    ws.send(`welcome ${clientName}`);
+    console.log(`${token} is connected`);
+
+    ws.send(`welcome ${token}`);
     ws.on('message', function incoming(message) {
-        console.log(`received: ${message} from ${clientName} `);
+        console.log(`received message from ${token} `);
 
-        console.log('============');
-        console.log(ws);
-        console.log('==============');
+        let msg_obj = JSON.parse(message) || null;
 
-        // 广播消息给所有客户端
-        for (var client of wss.clients) {
-            if (client.readyState === WebSocket.OPEN) {
-                console.log('--------------------------------------------');
-                client.send( `${clientName} ->  ${message}`);
-                console.log(client);
-                console.log('--------------------------------------------');
+        if (msg_obj) {
+            let type = msg_obj.type;
 
+            switch(type) {
+                case 'show_all':
+                    console.log(`client size is ${wss.clients.size}`);
+                    break;
+                case 'msg':
+                default:
+                    // 广播消息给所有客户端
+                    for (var client of wss.clients) {
+                        console.log(client);
+                        if (client.readyState === WebSocket.OPEN) {
+                            console.log('--------------------------------------------');
+                            client.send( `${token} ->  ${message}`);
+                            console.log('--------------------------------------------');
+                        }
+                    }
+                    break;
             }
+
         }
+
     });
+
+    ws.on('pong', () => {
+        console.log('pong fired');
+        let is_alive = true;
+    });
+
+    ws.ping(function() {});
 });
+
+
+

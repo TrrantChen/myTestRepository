@@ -33,6 +33,7 @@
     <div class="container">
         <button id="send">send</button>
         <button id="close">close</button>
+        <button id="show_all">show all connect client</button>
         <textarea id="send_box" class="message-box">
         </textarea>
         <textarea id="receive_box" class="message-box">
@@ -40,30 +41,80 @@
     </div>
 </body>
 <script>
+    const token = getUuid();
+    document.cookie = `token=${token}`;
     const socket = new  WebSocket('ws://localhost:8081');
     let send = document.querySelector('#send');
     let close = document.querySelector('#close');
+    let show_all = document.querySelector('#show_all');
     let send_box = document.querySelector('#send_box');
     let receive_box = document.querySelector('#receive_box');
     let is_can_send = false;
 
     send.addEventListener('click', (evt) => {
         if (is_can_send) {
-            socket.send(send_box.value);
-        };
+            let message_obj = {
+                type: 'msg',
+                value: send_box.value,
+            };
+
+            socket.send(JSON.stringify(message_obj));
+        }
     });
 
     close.addEventListener('click', (evt) => {
         socket.close();
     });
 
+    show_all.addEventListener('click', (evt) => {
+        let message_obj = {
+            type:  'show_all',
+            value: '',
+        };
+
+        socket.send(JSON.stringify(message_obj));
+    });
+
     socket.addEventListener('open', (evt) => {
         is_can_send = true;
-        console.log('it is open');
     });
 
     socket.addEventListener('message', (evt) => {
         receive_box.value = receive_box.value + '\n' + evt.data;
-    })
+    });
+
+    function getUuid(len, radix) {
+        let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+        let uuid = [],
+            i;
+        radix = radix || chars.length;
+
+        if (len) {
+            // Compact form
+            for (i = 0; i < len; i++) {
+                uuid[i] = chars[0 | (Math.random() * radix)];
+            }
+        }
+        else {
+            // rfc4122, version 4 form
+            let r;
+
+            // rfc4122 requires these characters
+            uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+            uuid[14] = '4';
+
+            // Fill in random data.  At i==19 set the high bits of clock sequence as
+            // per rfc4122, sec. 4.1.5
+            for (i = 0; i < 36; i++) {
+                if (!uuid[i]) {
+                    r = 0 | (Math.random() * 16);
+                    uuid[i] = chars[i === 19 ? (r & 0x3) | 0x8 : r];
+                }
+            }
+        }
+
+        return uuid.join('');
+    }
+
 </script>
 </html>
