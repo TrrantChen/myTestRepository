@@ -42,8 +42,7 @@
 </body>
 <script>
     const token = getUuid();
-    document.cookie = `token=${token}`;
-    const socket = new  WebSocket('ws://localhost:8081');
+    const socket = new  WebSocket('ws://localhost:8081', token);
     let send = document.querySelector('#send');
     let close = document.querySelector('#close');
     let show_all = document.querySelector('#show_all');
