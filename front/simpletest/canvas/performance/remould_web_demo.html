@@ -76,7 +76,7 @@
             let j = 0;
             this.cacheCtx.lineWidth = this.borderWidth;
 
-            for (var i = i; i < this.r; i += this.borderWidth) {
+            for (var i = 1; i < this.r; i += this.borderWidth) {
                 this.cacheCtx.beginPath();
                 this.cacheCtx.strokeStyle = this.color[j];
                 this.cacheCtx.arc(this.r, this.r, i, 0, 2 * Math.PI);
@@ -111,7 +111,7 @@
         }
 
         init() {
-            for (var i = 0; i < 1000; i++) {
+            for (var i = 0; i < 100; i++) {
                 let ball = new Ball(getRandom(0, canvas.width), getRandom(0, canvas.height), getRandom(-10, 10), getRandom(-10, 10), true);
                 this.Balls.push(ball);
             }
@@ -146,7 +146,7 @@
         rounded = (0.5 + num) | 0;
         // A double bitwise not.
         rounded = ~~ (0.5 + num);
-        // Finally, a left bitwise shift.
+        // Finally, a left bitwise shift. 属于四舍五入的三种方式
         rounded = (0.5 + num) << 0;
 
         return rounded;

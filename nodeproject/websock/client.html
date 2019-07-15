@@ -41,8 +41,9 @@
     </div>
 </body>
 <script>
-    const token = getUuid();
-    const socket = new  WebSocket('ws://localhost:8081', token);
+    const uuid = getUuid();
+    const msg = `${uuid}#1`;
+    const socket = new  WebSocket('ws://localhost:8081', msg);
     let send = document.querySelector('#send');
     let close = document.querySelector('#close');
     let show_all = document.querySelector('#show_all');
@@ -114,6 +115,8 @@
 
         return uuid.join('');
     }
+
+
 
 </script>
 </html>

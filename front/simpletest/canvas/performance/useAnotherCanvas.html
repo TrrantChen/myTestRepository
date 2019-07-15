@@ -30,52 +30,41 @@
     let c_width = canvas.width;
     let c_height = canvas.height;
 
+    function getZ(num) {
+        return (0.5 + num) << 0;
+    }
+
     class Ball {
         constructor(x, y, x_speed, y_speed) {
-            this.x = x >> 0;
-            this.y = y >> 0;
-            this.x_speed = x_speed >> 0;
-            this.y_speed = y_speed >> 0;
-            this.colors = [];
-            this.line_widths = [];
-            this.count = (Math.random() * 14 + 6) >> 1;
-            this.canvas = canvas;
-            this.ctx = canvas.getContext('2d');
+            this.x = getZ(x);
+            this.y = getZ(y);
+            this.x_speed = getZ(x_speed);
+            this.y_speed = getZ(y_speed);
+            this.r = getZ(Math.random() * 20 + 20);
+            this.borderWidth = 2;
+            this.count = getZ(this.r / this.borderWidth);
 
-            let radius = 0;
+            this.tmp_canvas = document.createElement('canvas');
+            this.tmp_ctx = this.tmp_canvas.getContext('2d');
+            this.tmp_canvas.width = this.r * 2;
+            this.tmp_canvas.height = this.r * 2;
 
+            let j = 1;
             for (var i = 0; i < this.count; i++) {
-                let line_width = (Math.random() * 10 + 2) >> 0;
-                this.line_widths.push(line_width);
-                radius += line_width;
-                this.colors.push(Ball._randomColor());
+                this.tmp_ctx.beginPath();
+                this.tmp_ctx.strokeStyle = Ball._randomColor();
+                this.tmp_ctx.lineWidth = this.borderWidth;
+                this.tmp_ctx.arc(this.r, this.r, j * this.borderWidth, 0 , Math.PI * 2, true);
+                this.tmp_ctx.stroke();
+                j++;
             }
 
-            this._createTmpCanvas(radius);
             this._draw();
             this.move();
         }
 
         _draw() {
-            let radius = 0;
-
-            for (var i = 0; i < this.count; i++) {
-                this.tmp_ctx.beginPath();
-                this.tmp_ctx.strokeStyle = this.colors[i];
-                this.tmp_ctx.lineWidth = this.line_widths[i];
-                this.tmp_ctx.arc(this.x, this.y, radius, 0 , Math.PI * 2, true);
-                radius += this.line_widths[i];
-                this.tmp_ctx.stroke();
-            }
-
-            this.ctx.drawImage(this.tmp_canvas, this.x - radius, this.y - radius);
-        }
-
-        _createTmpCanvas(radius) {
-            this.tmp_canvas = document.createElement('canvas');
-            this.tmp_ctx = this.tmp_canvas.getContext('2d');
-            this.tmp_canvas.width = radius * 2;
-            this.tmp_canvas.height = radius * 2;
+            ctx.drawImage(this.tmp_canvas, this.x - this.r, this.y - this.r);
         }
 
         move() {
@@ -94,7 +83,7 @@
         }
 
         static _randomColor() {
-            return `rgb(${(Math.random() * 255) >> 0}, ${(Math.random() * 255) >> 0}, ${(Math.random() * 255) >> 0})`;
+            return `rgb(${getZ(Math.random() * 255)}, ${getZ(Math.random() * 255)}, ${getZ(Math.random() * 255)})`;
         }
     }
 
@@ -107,10 +96,10 @@
 
         _init() {
             for (var i = 0; i < this.count; i++) {
-                let x = Math.random() * c_width;
-                let y = Math.random() * c_height;
-                let x_speed = Math.random() * 5 + 1;
-                let y_speed = Math.random() * 5 + 1;
+                let x = getZ(Math.random() * c_width);
+                let y = getZ(Math.random() * c_height);
+                let x_speed = getZ(Math.random() * 5 + 1);
+                let y_speed = getZ(Math.random() * 5 + 1);
 
                 let ball = new Ball(x, y, x_speed, y_speed);
                 this.ball_lst.push(ball);
@@ -122,13 +111,13 @@
         }
 
         _loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (var ball of this.ball_lst) {
+                ball.move();
+            }
+
             requestAnimationFrame(() => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                for (var ball of this.ball_lst) {
-                    ball.move();
-                }
-
                 this._loop();
             })
         }
@@ -136,6 +125,5 @@
 
     let game = new Game();
     game.start();
-
 </script>
 </html>
