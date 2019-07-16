@@ -43,7 +43,9 @@
 <script>
     const uuid = getUuid();
     const msg = `${uuid}#1`;
+    console.log(WebSocket.readyState);
     const socket = new  WebSocket('ws://localhost:8081', msg);
+    console.log(socket.readyState);
     let send = document.querySelector('#send');
     let close = document.querySelector('#close');
     let show_all = document.querySelector('#show_all');
@@ -51,7 +53,9 @@
     let receive_box = document.querySelector('#receive_box');
     let is_can_send = false;
 
+
     send.addEventListener('click', (evt) => {
+        console.log(socket.readyState);
         if (is_can_send) {
             let message_obj = {
                 type: 'msg',
