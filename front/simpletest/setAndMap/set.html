@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function transformWithArray() {
+        let arr = [1, 2, 3, 4, 5];
+        let set = new Set(arr);
+        let new_arr = [...set];
+
+        console.log(set);
+        console.log(new_arr);
+    }
+
+    function addAndClearTheSet() {
+        let set = new Set();
+        set.add(1);
+        set.add('aa');
+        set.add(0.23);
+        console.log(set);
+        set.delete(1);
+        console.log(set);
+        set.clear();
+        console.log(set);
+    }
+
+    function judgeTheExistValue() {
+        let set = new Set([1, 2, 3, {}, 'aa', { a: 1 }]);
+        console.log(`set has 1 is ${set.has(1)}`);   // true
+        console.log(`set has aa is ${set.has('aa')}`); // true
+        console.log(`set has {} is ${set.has({})}`); // false
+        console.log(`set has { a: 1 } is ${set.has({ a: 1 })}`); // false
+        let obj1 = Object.create(null);
+        let obj2 = Object.create(null);
+
+        set.add(obj1);
+        console.log(`set has obj2 is ${set.has(obj2)}`); // false
+    }
+
+    function traversalSet() {
+        // 获取的都是一个Iterator
+        let set = new Set([1, 2, 3, 4, 5]);
+
+        for (var item of set.values()) {
+            console.log(item);
+        }
+
+        for (var item of set.keys()) {
+            console.log(item);
+        }
+
+        for (var item of set.entries()) {
+            console.log(item);
+        }
+    }
+
+    // transformWithArray();
+    // addAndClearTheSet();
+    // judgeTheExistValue();
+    // traversalSet();
+    arrayUnique();
+
+    // 也可以做下去重，但性能并不是很好，写法简单，适合数据量少的时候
+    function arrayUnique() {
+        let arr1 = [];
+        let arr2 = [];
+        let count = 1000000;
+
+
+        for (var i = 0; i < count; i++) {
+            arr1[i] = (~~(Math.random() * count)).toString();
+            arr2[i] = (~~(Math.random() * count)).toString();
+        }
+
+
+        performance.mark("mySetTimeout-start");
+
+        let result = twoArrayUnique(arr1, arr2);
+        // let result = new Set([...arr1, ...arr2]);
+        performance.mark("mySetTimeout-end");
+        performance.measure(
+            "mySetTimeout",
+            "mySetTimeout-start",
+            "mySetTimeout-end"
+        );
+
+        let measures = performance.getEntriesByName("mySetTimeout");
+        let measure = measures[0];
+        console.log("setTimeout milliseconds:", measure.duration)
+
+        function twoArrayUnique(target, source) {
+            let result = [],
+                tmpMap = {},
+                sourceLength = source.length,
+                targetLength = target.length;
+
+            for (var i = 0; i < sourceLength; i++) {
+                tmpMap[source[i]] = true;
+            }
+
+            for (var i = 0; i < targetLength; i++) {
+                if (tmpMap[target[i]] !== true) {
+                    result.push(target[i]);
+                }
+            }
+
+            return result;
+        }
+    }
+
+
+
+</script>
+</html>

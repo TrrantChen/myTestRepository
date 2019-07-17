@@ -37,11 +37,10 @@ wss.on('connection', (ws, req) => {
             let request_type = msg_obj.request_type;
             let page = msg_obj.page;
             let data = '';
+            let msg_value = msg_obj.value;
 
             switch(request_type) {
                 case 'send':
-                    data = getStepDataFromBusiness(page);
-                    let msg_value = msg_obj.value;
                     syncData(msg_value, page);
 
                     for (var client of wss.clients) {
@@ -49,9 +48,30 @@ wss.on('connection', (ws, req) => {
                             let c_protocol_obj = createProtocolObj(client.protocol);
 
                             if (c_protocol_obj.uuid !== protocol_obj.uuid) {
-                                client.send(JSON.stringify(data));
+                                client.send(JSON.stringify(msg_obj));
                             }
                         }
+                    }
+
+                    break;
+                case 'click':
+                    let main = void 0;
+
+                    for (var client of wss.clients) {
+                        if (client.readyState === WebSocket.OPEN) {
+                            let c_protocol_obj = createProtocolObj(client.protocol);
+
+                            if (c_protocol_obj.uuid !== protocol_obj.uuid) {
+                                client.send(JSON.stringify(msg_obj));
+                            }
+                            else {
+                                main = client;
+                            }
+                        }
+                    }
+
+                    if (main) {
+                        main.send(JSON.stringify(msg_obj));
                     }
 
                     break;
@@ -125,3 +145,22 @@ function createProtocolObj(str) {
 
     return result;
 }
+
+setInterval(() => {
+    console.log('====all client====');
+    for (var client of wss.clients) {
+        // if (client.readyState === WebSocket.OPEN) {
+            let c_protocol_obj = createProtocolObj(client.protocol);
+            console.log(c_protocol_obj.uuid);
+        // }
+    }
+
+    console.log('=====all open client=====');
+    for (var client of wss.clients) {
+        if (client.readyState === WebSocket.OPEN) {
+            let c_protocol_obj = createProtocolObj(client.protocol);
+            console.log(c_protocol_obj.uuid);
+        }
+    }
+
+}, 5000);
