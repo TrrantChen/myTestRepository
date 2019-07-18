@@ -1,5 +1,7 @@
 const WebSocket = require('ws');
+const ParticleEllipse = require('./business/ParticleEllipse');
 const wss = new WebSocket.Server({ port: 8081 });
+
 
 // 初始化
 // 链接回调
@@ -20,7 +22,8 @@ wss.on('connection', (ws, req) => {
     // msg 的格式为
     // {
     //      request_type: 'send' or 'get'
-    //      value: ''
+    //      request: ''
+    //      response: '',
     // }
     ws.on('message', (msg) => {
         console.log(`received message from ${protocol_obj.uuid} `);
@@ -35,50 +38,17 @@ wss.on('connection', (ws, req) => {
 
         if (msg_obj) {
             let request_type = msg_obj.request_type;
-            let page = msg_obj.page;
-            let data = '';
-            let msg_value = msg_obj.value;
 
             switch(request_type) {
                 case 'send':
-                    syncData(msg_value, page);
-
-                    for (var client of wss.clients) {
-                        if (client.readyState === WebSocket.OPEN) {
-                            let c_protocol_obj = createProtocolObj(client.protocol);
-
-                            if (c_protocol_obj.uuid !== protocol_obj.uuid) {
-                                client.send(JSON.stringify(msg_obj));
-                            }
-                        }
-                    }
-
+                    sendProcess(msg_obj, protocol_obj, ws);
                     break;
                 case 'click':
-                    let main = void 0;
-
-                    for (var client of wss.clients) {
-                        if (client.readyState === WebSocket.OPEN) {
-                            let c_protocol_obj = createProtocolObj(client.protocol);
-
-                            if (c_protocol_obj.uuid !== protocol_obj.uuid) {
-                                client.send(JSON.stringify(msg_obj));
-                            }
-                            else {
-                                main = client;
-                            }
-                        }
-                    }
-
-                    if (main) {
-                        main.send(JSON.stringify(msg_obj));
-                    }
-
+                    clickProcess(msg_obj, protocol_obj, ws);
                     break;
                 case 'get':
                 default:
-                    data = getInitDataFromBusiness(page);
-                    ws.send(JSON.stringify(data));
+                    getProcess(msg_obj, protocol_obj, ws);
                     break;
             }
         }
@@ -89,11 +59,75 @@ wss.on('error', (e) => {
     console.error(e);
 });
 
-function getInitDataFromBusiness(page) {
-    let result = {};
+function sendProcess(msg_obj, protocol_obj, ws) {
+    msg_obj.response = msg_obj.request;
+    let page = protocol_obj.page;
+
+    // syncData(msg_value, page);
+
+    for (var client of wss.clients) {
+        if (client.readyState === WebSocket.OPEN) {
+            let c_protocol_obj = createProtocolObj(client.protocol);
+
+            if (c_protocol_obj.uuid !== protocol_obj.uuid) {
+                client.send(JSON.stringify(msg_obj));
+            }
+        }
+    }
+}
+
+function clickProcess(msg_obj, protocol_obj, ws) {
+    let main = void 0;
+    msg_obj.response = msg_obj.request;
+
+    for (var client of wss.clients) {
+        if (client.readyState === WebSocket.OPEN) {
+            let c_protocol_obj = createProtocolObj(client.protocol);
+
+            if (c_protocol_obj.uuid !== protocol_obj.uuid) {
+                client.send(JSON.stringify(msg_obj));
+            }
+            else {
+                main = client;
+            }
+        }
+    }
+
+    if (main) {
+        main.send(JSON.stringify(msg_obj));
+    }
+}
+
+function getProcess(msg_obj, protocol_obj, ws) {
+    let page = protocol_obj.page;
+    let data = msg_obj.request;
+    let data_type = msg_obj.data_type;
+
+    switch(data_type) {
+        case 'rotate_y':
+            msg_obj.response = getRotatoYFromBusiness(page);
+            break;
+        case 'bad_point_data':
+        default:
+            let bad_point_positions =  getInitDataFromBusiness(page, data);
+
+            msg_obj.response = {
+                bad_point_data: msg_obj.request,
+                bad_point_positions: bad_point_positions,
+            };
+
+            break;
+    }
+
+    ws.send(JSON.stringify(msg_obj));
+}
+
+function getInitDataFromBusiness(page, data) {
+    let result = void 0;
 
     switch(page) {
         case '1':
+            result = ParticleEllipse.getInitData(data);
             break;
         case '2':
         default:
@@ -101,6 +135,25 @@ function getInitDataFromBusiness(page) {
     }
 
     return result;
+}
+
+function getRotatoYFromBusiness(page) {
+    let result = void 0;
+
+    switch(page) {
+        case '1':
+        default:
+            result = ParticleEllipse.getRotateY();
+            break;
+        case '2':
+            break;
+    }
+
+    return result;
+}
+
+function getParticleEllipseInitData(data) {
+
 }
 
 function getStepDataFromBusiness(page) {
@@ -164,3 +217,5 @@ setInterval(() => {
     }
 
 }, 5000);
+
+

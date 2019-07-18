@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button onclick="pause()">pause</button>
+    <button onclick="go()">go on</button>
+</body>
+<script>
+
+    function pause() {
+        cancelAnimationFrame(id1);
+        // clearTimeout(id2);
+    }
+
+    function go() {
+        one();
+        // two();
+    }
+
+    performance.mark("mySetTimeout-start");
+    let id1;
+    let id2;
+    function one() {
+        performance.mark("mySetTimeout-start");
+        id1 = requestAnimationFrame(() => {
+            performance.mark("mySetTimeout-end");
+            performance.measure(
+                "mySetTimeout",
+                "mySetTimeout-start",
+                "mySetTimeout-end"
+            );
+            let measures = performance.getEntriesByName("mySetTimeout");
+            let measure = measures[0];
+            console.log("setTimeout milliseconds:", measure.duration);
+
+            one()
+        })
+    }
+
+    function two() {
+        console.log(2);
+        id2 = setTimeout(() => {
+            two();
+        }, 18)
+    }
+
+    one();
+    // two();
+
+</script>
+</html>

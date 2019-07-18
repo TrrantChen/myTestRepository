@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button onclick="remove()">remove</button>
+</body>
+<script>
+    function basic() {
+        let weakSet = new WeakSet();
+        let obj = {};
+        let a = obj;
+        weakSet.add(obj);
+        console.log(weakSet);
+        console.log(weakSet.has(obj));
+
+        function remove() {
+            obj = null;
+            console.log(weakSet);
+            console.log(weakSet.has(a));
+        }
+    }
+
+    // 确保实例方法只能在实例上调用, 没想到什么使用场景
+    function demo() {
+        const foos = new WeakSet();
+
+        class Foo {
+            constructor() {
+                foos.add(this);
+            }
+
+            method() {
+                if (!foos.has(this)) {
+                    throw new TypeError('method 只能在 Foo实例上调用');
+                }
+                else {
+                    console.log('get it');
+                }
+            }
+        }
+
+        class Son extends Foo {
+            constructor() {
+                super();
+            }
+        }
+
+        let foo = new Foo();
+        foo.method();
+
+        let son = new Son();
+        son.method();
+    }
+
+    demo();
+</script>
+</html>
