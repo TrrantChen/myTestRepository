@@ -1,5 +1,6 @@
 let cache = [];
 let rotate_y = 0;
+let state = void 0;
 
 function getInitData(lst) {
     if (cache.length === 0) {
@@ -18,7 +19,10 @@ function getInitData(lst) {
         calculateRotateY();
     }
 
-    return cache;
+    return {
+        cache,
+        state,
+    };
 }
 
 function getRotateY() {
@@ -57,9 +61,15 @@ function calculateRotateY() {
     }, 18);
 }
 
+function setState(data) {
+    state = data;
+}
+
+
 module.exports = {
     getInitData,
     getRotateY,
+    setState,
 };
 
 

@@ -19,36 +19,48 @@ wss.on('connection', (ws, req) => {
     let protocol_obj = createProtocolObj(ws.protocol);
     console.log(`${protocol_obj.uuid} is connected`);
 
-    // msg 的格式为
+    // 接收的msg的格式为
     // {
-    //      request_type: 'send' or 'get'
-    //      request: ''
-    //      response: '',
+    //      request_type: 'send' / 'get' / 'broadcast'
+    //      data_type: ''
+    //      value: ''
+    // }
+    //
+    // 返回的消息格式为
+    // {
+    //     data_type: '',
+    //         values: [],
     // }
     ws.on('message', (msg) => {
         console.log(`received message from ${protocol_obj.uuid} `);
 
-        let msg_obj = void 0;
+        let request = void 0;
 
         try {
-            msg_obj = JSON.parse(msg) || void 0;
+            request = JSON.parse(msg) || void 0;
         } catch(e) {
             console.error(e);
         }
 
-        if (msg_obj) {
-            let request_type = msg_obj.request_type;
+        if (request) {
+            let request_type = request.request_type;
+            let data_type = request.data_type;
 
             switch(request_type) {
                 case 'send':
-                    sendProcess(msg_obj, protocol_obj, ws);
+                    sendProcess(request, protocol_obj, ws);
+
+                    if (data_type === 'state') {
+                        syncData(request.value, protocol_obj.page);
+                    }
+
                     break;
-                case 'click':
-                    clickProcess(msg_obj, protocol_obj, ws);
+                case 'broadcast':
+                    broadcastProcess(request, protocol_obj, ws);
                     break;
                 case 'get':
                 default:
-                    getProcess(msg_obj, protocol_obj, ws);
+                    getProcess(request, protocol_obj, ws);
                     break;
             }
         }
@@ -59,33 +71,34 @@ wss.on('error', (e) => {
     console.error(e);
 });
 
-function sendProcess(msg_obj, protocol_obj, ws) {
-    msg_obj.response = msg_obj.request;
-    let page = protocol_obj.page;
-
-    // syncData(msg_value, page);
+function sendProcess(request, protocol_obj, ws) {
+    let response = {};
+    response.values = [request.value];
+    response.data_type = request.data_type;
 
     for (var client of wss.clients) {
         if (client.readyState === WebSocket.OPEN) {
             let c_protocol_obj = createProtocolObj(client.protocol);
 
             if (c_protocol_obj.uuid !== protocol_obj.uuid) {
-                client.send(JSON.stringify(msg_obj));
+                client.send(JSON.stringify(response));
             }
         }
     }
 }
 
-function clickProcess(msg_obj, protocol_obj, ws) {
+function broadcastProcess(request, protocol_obj, ws) {
     let main = void 0;
-    msg_obj.response = msg_obj.request;
+    let response = {};
+    response.values = [request.value];
+    response.data_type = request.data_type;
 
     for (var client of wss.clients) {
         if (client.readyState === WebSocket.OPEN) {
             let c_protocol_obj = createProtocolObj(client.protocol);
 
             if (c_protocol_obj.uuid !== protocol_obj.uuid) {
-                client.send(JSON.stringify(msg_obj));
+                client.send(JSON.stringify(response));
             }
             else {
                 main = client;
@@ -94,32 +107,30 @@ function clickProcess(msg_obj, protocol_obj, ws) {
     }
 
     if (main) {
-        main.send(JSON.stringify(msg_obj));
+        main.send(JSON.stringify(response));
     }
 }
 
-function getProcess(msg_obj, protocol_obj, ws) {
+function getProcess(request, protocol_obj, ws) {
     let page = protocol_obj.page;
-    let data = msg_obj.request;
-    let data_type = msg_obj.data_type;
+    let data = request.value;
+    let data_type = request.data_type;
+    let response = {};
+    response.values = [];
+    response.data_type = data_type;
 
     switch(data_type) {
         case 'rotate_y':
-            msg_obj.response = getRotatoYFromBusiness(page);
+            response.values[0] = getRotatoYFromBusiness(page);
             break;
         case 'bad_point_data':
         default:
-            let bad_point_positions =  getInitDataFromBusiness(page, data);
-
-            msg_obj.response = {
-                bad_point_data: msg_obj.request,
-                bad_point_positions: bad_point_positions,
-            };
-
+            response.values[0] = data;
+            response.values[1] = getInitDataFromBusiness(page, data);
             break;
     }
 
-    ws.send(JSON.stringify(msg_obj));
+    ws.send(JSON.stringify(response));
 }
 
 function getInitDataFromBusiness(page, data) {
@@ -173,6 +184,7 @@ function getStepDataFromBusiness(page) {
 function syncData(data, page) {
     switch(page) {
         case '1':
+            ParticleEllipse.setState(data);
             break;
         case '2':
         default:

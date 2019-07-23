@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function basic() {
+        let map = new Map();
+        map.set('a', 1);
+        map.set({}, 2);
+        map.set(NaN, undefined);
+
+        map.forEach((val) => {
+            console.log(val);
+        });
+
+        console.log(map.has(NaN)); // true
+        console.log(map.has(undefined)); // false 因为是不同的对象
+    }
+
+    // 与数组互换,只能互相转换为二维数组
+    function arrayTrans() {
+        let arr = [[1, 2], [3, 4]];
+        let map = new Map(arr);
+        console.log(map);
+
+        let map2 = new Map();
+        map2.set(1, 2);
+        map2.set(3, 4);
+        let arr2 = Array.from(map2);
+        console.log(arr2);
+        let arr3 = [... map2];
+        console.log(arr3);
+    }
+
+    function copyMap() {
+        let map = new Map([
+            [1, 2],
+            [3, 4],
+        ]);
+
+        let clone = new Map(map);
+
+        console.log(map);
+        console.log(clone);
+        console.log(map === clone);
+    }
+
+    // 通过转换成数组类进行合并
+    function merge() {
+        let map = new Map([
+            [1, 2],
+            [3, 4],
+            [4, 'lll'],
+        ]);
+
+        let map1 = new Map([
+           [4, 5],
+           [6, 7],
+        ]);
+
+        let map_merge = new Map([...map, ...map1]);
+        console.log(map_merge);
+    }
+
+    merge();
+</script>
+</html>
