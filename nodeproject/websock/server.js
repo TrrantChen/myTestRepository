@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const ParticleEllipse = require('./business/ParticleEllipse');
+const Group = require('./business/Group');
 const wss = new WebSocket.Server({ port: 8081 });
 
 
@@ -142,6 +143,7 @@ function getInitDataFromBusiness(page, data) {
             break;
         case '2':
         default:
+            result = Group.getInitData(data);
             break;
     }
 
@@ -184,10 +186,11 @@ function getStepDataFromBusiness(page) {
 function syncData(data, page) {
     switch(page) {
         case '1':
+        default:
             ParticleEllipse.setState(data);
             break;
         case '2':
-        default:
+            Group.setState(data);
             break;
     }
 }
