@@ -3,11 +3,6 @@ const ParticleEllipse = require('./business/ParticleEllipse');
 const Group = require('./business/Group');
 const wss = new WebSocket.Server({ port: 8081 });
 
-
-// 初始化
-// 链接回调
-// 心跳
-
 wss.on('open', () => {
     console.log('open');
 });
@@ -17,6 +12,8 @@ wss.on('close', () => {
 });
 
 wss.on('connection', (ws, req) => {
+    ws.is_alive = true;
+
     let protocol_obj = createProtocolObj(ws.protocol);
     console.log(`${protocol_obj.uuid} is connected`);
 
@@ -61,16 +58,45 @@ wss.on('connection', (ws, req) => {
                     break;
                 case 'get':
                 default:
-                    getProcess(request, protocol_obj, ws);
+                    if (request.data_type === 'ping') {
+                        let response = {};
+                        response.data_type = 'ping';
+                        ws.send(JSON.stringify(response));
+                    }
+                    else {
+                        getProcess(request, protocol_obj, ws);
+                    }
+
                     break;
             }
         }
-    })
+    });
+
+    ws.on('pong', () => {
+        ws.is_alive = true;
+    });
 });
 
 wss.on('error', (e) => {
     console.error(e);
 });
+
+// beatHeart
+setInterval(() => {
+    wss.clients.forEach((ws) => {
+        let protocol_obj = createProtocolObj(ws.protocol);
+
+        if (ws.is_alive === false) {
+            ws.terminate();
+            console.log(`${protocol_obj.uuid} is force closed`);
+        }
+        else {
+            ws.is_alive = false;
+            ws.ping(noop);
+            console.log(`${protocol_obj.uuid} still connect`);
+        }
+    })
+}, 10 * 60 * 1000);
 
 function sendProcess(request, protocol_obj, ws) {
     let response = {};
@@ -121,13 +147,11 @@ function getProcess(request, protocol_obj, ws) {
     response.data_type = data_type;
 
     switch(data_type) {
-        case 'rotate_y':
-            response.values[0] = getRotatoYFromBusiness(page);
-            break;
         case 'bad_point_data':
         default:
             response.values[0] = data;
-            response.values[1] = getInitDataFromBusiness(page, data);
+            let r = getInitDataFromBusiness(page, data);
+            response.values[1] = r;
             break;
     }
 
@@ -137,11 +161,11 @@ function getProcess(request, protocol_obj, ws) {
 function getInitDataFromBusiness(page, data) {
     let result = void 0;
 
-    switch(page) {
-        case '1':
+    switch(parseInt(page)) {
+        case 1:
             result = ParticleEllipse.getInitData(data);
             break;
-        case '2':
+        case 2:
         default:
             result = Group.getInitData(data);
             break;
@@ -150,46 +174,13 @@ function getInitDataFromBusiness(page, data) {
     return result;
 }
 
-function getRotatoYFromBusiness(page) {
-    let result = void 0;
-
-    switch(page) {
-        case '1':
-        default:
-            result = ParticleEllipse.getRotateY();
-            break;
-        case '2':
-            break;
-    }
-
-    return result;
-}
-
-function getParticleEllipseInitData(data) {
-
-}
-
-function getStepDataFromBusiness(page) {
-    let result = {};
-
-    switch(page) {
-        case '1':
-            break;
-        case '2':
-        default:
-            break;
-    }
-
-    return result;
-}
-
 function syncData(data, page) {
-    switch(page) {
-        case '1':
+    switch(parseInt(page)) {
+        case 1:
         default:
             ParticleEllipse.setState(data);
             break;
-        case '2':
+        case 2:
             Group.setState(data);
             break;
     }
@@ -214,23 +205,25 @@ function createProtocolObj(str) {
     return result;
 }
 
-setInterval(() => {
-    console.log('====all client====');
-    for (var client of wss.clients) {
-        // if (client.readyState === WebSocket.OPEN) {
-            let c_protocol_obj = createProtocolObj(client.protocol);
-            console.log(c_protocol_obj.uuid);
-        // }
-    }
+function noop() {}
 
-    console.log('=====all open client=====');
-    for (var client of wss.clients) {
-        if (client.readyState === WebSocket.OPEN) {
-            let c_protocol_obj = createProtocolObj(client.protocol);
-            console.log(c_protocol_obj.uuid);
-        }
-    }
-
-}, 5000);
+// setInterval(() => {
+//     console.log('====all client====');
+//     for (var client of wss.clients) {
+//         // if (client.readyState === WebSocket.OPEN) {
+//             let c_protocol_obj = createProtocolObj(client.protocol);
+//             console.log(c_protocol_obj.uuid);
+//         // }
+//     }
+//
+//     console.log('=====all open client=====');
+//     for (var client of wss.clients) {
+//         if (client.readyState === WebSocket.OPEN) {
+//             let c_protocol_obj = createProtocolObj(client.protocol);
+//             console.log(c_protocol_obj.uuid);
+//         }
+//     }
+//
+// }, 5000);
 
 

@@ -9,43 +9,95 @@
 </body>
 <script>
     var a = {
-        11: {
-            21: {
-                31: 31,
+        1: {
+            11: {
+                21: {
+                    31: 31,
+                },
+                22: {
+                    32: 32,
+                    33: 33,
+                    34: 34,
+                }
             },
-            22: {
-                32: 32,
-                33: 33,
-                34: 34,
+            12: {
+                23: {
+                    35: 35,
+                    36: 36,
+                    37: 37,
+                },
+                24: {
+                    38: 38,
+                    39: 39,
+                    310: 310,
+                },
+                25: {
+                    311: 311,
+                    312: 312,
+                    313: 313,
+                    314: 314,
+                },
             }
-        },
-        12: {
-            23: {
-                35: 35,
-                36: 36,
-                37: 37,
-            },
-            24: {
-                38: 38,
-                39: 39,
-                310: 310,
-            },
-            25: {
-                311: 311,
-                312: 312,
-                313: 313,
-                314: 314,
-            },
         }
     }
 
+    // breadth-first-search 广度优先算法
     function bfs(obj) {
-        let keys =Object.keys(obj);
+        let open = [];
+        let closed = [];
+        open.push(obj);
 
-        for (var key of keys) {
-            console.log(key);
-            // let node =
+        while (open.length !== 0) {
+            let node = open.shift();
+            console.log(Object.keys(node));
+            closed.push(node);
+
+            let keys = Object.keys(node);
+
+            for (var key of keys) {
+                let child = node[key];
+                open.push(child);
+            }
         }
+
+        console.log('==================================');
+
+        // for (var node of  closed) {
+        //     console.log(node);
+        // }
+    }
+
+    function test() {
+        async function async1() {
+            console.log('async1 start');
+            await async2();
+            console.log('async1 end');
+        }
+        async function async2() {
+            console.log('async2');
+        }
+
+        console.log('script start');
+
+        setTimeout(function() {
+            console.log('setTimeout');
+        }, 0);
+
+        async1();
+
+        new Promise(function(resolve) {
+            console.log('promise1');
+            resolve();
+        })
+        .then(function() {
+            console.log('promise2');
+        });
+
+        console.log('script end');
+    }
+
+    function altest1() {
+        var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
     }
 </script>
 </html>

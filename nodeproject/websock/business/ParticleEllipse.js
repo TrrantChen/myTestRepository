@@ -1,5 +1,4 @@
 let cache = [];
-let rotate_y = 0;
 let state = void 0;
 
 function getInitData(lst) {
@@ -15,18 +14,12 @@ function getInitData(lst) {
                 cache.push(position.z + 200 * Math.random() - 100);
             }
         }
-
-        calculateRotateY();
     }
 
     return {
         cache,
         state,
     };
-}
-
-function getRotateY() {
-    return rotate_y;
 }
 
 function createClickPointPosition() {
@@ -53,22 +46,12 @@ function getPositionByRandomSphere(radius = 10, origin = { x: 0, y: 0, z: 0 }) {
     }
 }
 
-function calculateRotateY() {
-    rotate_y = (rotate_y + 1) % 8000;
-
-    setTimeout(() => {
-        calculateRotateY();
-    }, 18);
-}
-
 function setState(data) {
     state = data;
 }
 
-
 module.exports = {
     getInitData,
-    getRotateY,
     setState,
 };
 

@@ -11,7 +11,7 @@ function getInitData(data) {
     let result = cache[community];
 
     if (!result) {
-        let result = {};
+        result = {};
         let bad_point_position_obj = {};
         let current_uid_position_obj = {};
         let target_position_obj = {};
@@ -119,7 +119,10 @@ function getInitData(data) {
         cache[community] = result;
     }
 
-    return result;
+    return {
+        data: result,
+        state: state,
+    };
 }
 
 function getPositionByRandomSphere(radius = 10, origin = { x: 0, y: 0, z: 0 }) {
@@ -227,15 +230,6 @@ function calculateCenterPosition(positions, radius = 40) {
     // center = this.getPositionByRandomSphere(500, center);
 
     return center;
-}
-
-function createLinePositions(start, end, positions) {
-    positions.push(start.x);
-    positions.push(start.y);
-    positions.push(start.z);
-    positions.push(end.x);
-    positions.push(end.y);
-    positions.push(end.z);
 }
 
 module.exports = {
