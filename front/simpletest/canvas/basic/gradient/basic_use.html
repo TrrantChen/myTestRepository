@@ -1,0 +1,94 @@
+<!--addColorStop(offset, color) offset在0和1之间-->
+<!--createLinearGradient(x0, y0, x1, y1)创建一个线性渐变区域-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <span>LinearGradient</span>
+        <span>x0</span><input id="x0" type="text" value="0">
+        <span>y0</span><input id="y0" type="text" value="0">
+        <span>x1</span><input id="x1" type="text" value="0">
+        <span>y1</span><input id="y1" type="text" value="0">
+        <button onclick="refresh()">refresh</button>
+    </div>
+    <canvas width="1250" height="600">
+
+    </canvas>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let x0 = document.querySelector('#x0');
+    let y0 = document.querySelector('#y0');
+    let x1 = document.querySelector('#x1');
+    let y1 = document.querySelector('#y1');
+    let index = 0;
+
+    function drawLinearGradient(x0, y0, x1, y1) {
+        ctx.clearRect(0, 0, 1250, 600);
+        let canvasGradient = ctx.createLinearGradient(x0, y0, x1, y1);
+        canvasGradient.addColorStop(0, "green");
+        canvasGradient.addColorStop(0.5, "white");
+        canvasGradient.addColorStop(1, "green");
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(5, 5, 610, 110);
+        ctx.fillStyle = canvasGradient;
+        // ctx.fillStyle = 'green';
+        ctx.fillRect(10, 10, 600, 100);
+
+        drawPoint(x0, y0);
+        drawPoint(x1, y1);
+    }
+
+    function drawPoint(x, y) {
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+
+        let radius = 4;
+        let startAngle = 0;
+        let endAngle = 2 * Math.PI;
+        let anticlockwise = true;
+
+        ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function refresh() {
+        let x0_v = Number(x0.value);
+        let y0_v = Number(y0.value);
+        let x1_v = Number(x1.value);
+        let y1_v = Number(y1.value);
+
+        console.log(x0_v);
+
+        drawLinearGradient(
+            x0_v,
+            y0_v,
+            x1_v,
+            y1_v
+        )
+    }
+
+    // function gradient() {
+    //     console.log(index);
+    //     drawLinearGradient(index);
+    //     index += 100;
+    //
+    //     if (index > 600) {
+    //         index = 0;
+    //     }
+    // }
+
+</script>
+</html>

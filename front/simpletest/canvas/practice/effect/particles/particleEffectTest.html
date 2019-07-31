@@ -36,18 +36,20 @@
     </div>
 </body>
 <script src="html2canvas.js"></script>
-<script type="module" src="./util.js"></script>
+<script type="module" src="./ParticleEffect.js"></script>
 <script type="module">
-    import { ParticleEffect } from './util.js'
+    import { ParticleEffect } from './ParticleEffect.js'
 
     let btn = document.querySelector('.btn');
-    let particleEffect = new ParticleEffect(btn, () => {
+    let particleEffect = new ParticleEffect(btn);
+
+    particleEffect.setCallback(() => {
         btn.style.display = 'none';
     });
 
     btn.addEventListener('click', (evt) => {
         particleEffect.startEffect();
-    })
+    });
 
 </script>
 </html>

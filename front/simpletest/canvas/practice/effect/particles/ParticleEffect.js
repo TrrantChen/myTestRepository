@@ -47,12 +47,12 @@ export class ParticleEffect {
     particle_ctx = this._createParticleCanvas();
     dom = void 0;
 
-    constructor(dom, func) {
-        if (func) {
-            this.callback = this._execOnce(func);
-        }
-
+    constructor(dom) {
         this.dom = dom;
+    }
+
+    setCallback(func) {
+        this.callback = func;
     }
 
     startEffect() {
@@ -71,7 +71,6 @@ export class ParticleEffect {
                     for(let local_y = 0; local_y < height; local_y++) {
                         if(count % reduction_factor === 0) {
                             let index = (local_y * width + local_x) * 4;
-                            console.log(index);
                             let rgba_color_arr = color_data.slice(index, index + 4);
                             let globalX = window.scrollX + bcr.left + local_x;
                             let globalY =  window.scrollY + bcr.top + local_y;
