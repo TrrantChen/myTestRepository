@@ -9,16 +9,35 @@
         canvas {
             border: 1px solid black;
         }
+
+        .msg_style {
+            border:1px solid black;
+            padding:5px;
+            margin: 5px 2px;
+        }
     </style>
 </head>
 <body>
     <div>
-        <span>LinearGradient</span>
-        <span>x0</span><input id="x0" type="text" value="0">
-        <span>y0</span><input id="y0" type="text" value="0">
-        <span>x1</span><input id="x1" type="text" value="0">
-        <span>y1</span><input id="y1" type="text" value="0">
-        <button onclick="refresh()">refresh</button>
+        <div class="msg_style">
+            <span>LinearGradient</span>
+            <span>x0</span><input id="x0" type="text" value="0">
+            <span>y0</span><input id="y0" type="text" value="0">
+            <span>x1</span><input id="x1" type="text" value="0">
+            <span>y1</span><input id="y1" type="text" value="0">
+            <button onclick="refresh()">refresh</button>
+        </div>
+        <div class="msg_style">
+            <!--x0, y0, r0, x1, y1, r1-->
+            <span>RadialGradient</span>
+            <span>x0</span><input id="r_x0" type="text" value="200">
+            <span>y0</span><input id="r_y0" type="text" value="200">
+            <span>r0</span><input id="r_r0" type="text" value="100">
+            <span>x1</span><input id="r_x1" type="text" value="200">
+            <span>y1</span><input id="r_y1" type="text" value="200">
+            <span>r1</span><input id="r_r1" type="text" value="120">
+            <button onclick="r_refresh()">refresh</button>
+        </div>
     </div>
     <canvas width="1250" height="600">
 
@@ -31,7 +50,13 @@
     let y0 = document.querySelector('#y0');
     let x1 = document.querySelector('#x1');
     let y1 = document.querySelector('#y1');
-    let index = 0;
+
+    let r_x0 = document.querySelector('#r_x0');
+    let r_y0 = document.querySelector('#r_y0');
+    let r_r0 = document.querySelector('#r_r0');
+    let r_x1 = document.querySelector('#r_x1');
+    let r_y1 = document.querySelector('#r_y1');
+    let r_r1 = document.querySelector('#r_r1');
 
     function drawLinearGradient(x0, y0, x1, y1) {
         ctx.clearRect(0, 0, 1250, 600);
@@ -80,15 +105,31 @@
         )
     }
 
-    // function gradient() {
-    //     console.log(index);
-    //     drawLinearGradient(index);
-    //     index += 100;
-    //
-    //     if (index > 600) {
-    //         index = 0;
-    //     }
-    // }
+    function r_refresh() {
+        let v_r_x0 = Number(r_x0.value);
+        let v_r_y0 = Number(r_y0.value);
+        let v_r_r0 = Number(r_r0.value);
+        let v_r_x1 = Number(r_x1.value);
+        let v_r_y1 = Number(r_y1.value);
+        let v_r_r1 = Number(r_r1.value);
+
+
+
+        drawRadialGradient(v_r_x0, v_r_y0, v_r_r0, v_r_x1, v_r_y1, v_r_r1);
+    }
+
+    function drawRadialGradient(x0 = 200, y0 = 200, r0 = 100, x1 = 200, y1 = 200, r1 = 120) {
+        ctx.clearRect(0, 0, 1250, 600);
+        let gradient = ctx.createRadialGradient(x0, y0, r0, x1, y1, r1);
+        gradient.addColorStop(0, 'white');
+        gradient.addColorStop(0.5, 'blue');
+        gradient.addColorStop(0.9, 'blue');
+        gradient.addColorStop(1, 'white');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 800, 400);
+    }
+
+    drawRadialGradient();
 
 </script>
 </html>

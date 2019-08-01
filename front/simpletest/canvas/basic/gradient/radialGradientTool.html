@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .setting {
+            border: 1px solid black;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .setting input {
+            margin-right: 4px;
+            margin-left: 2px;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="setting">
+            <div>
+                <span>x0:</span><input id="x0" type="text" value="100">
+                <span>y0:</span><input id="y0" type="text" value="100">
+                <span>r0:</span><input id="r0" type="text" value="50">
+                <span>x1:</span><input id="x1" type="text" value="100">
+                <span>y1:</span><input id="y1" type="text" value="100">
+                <span>r1:</span><input id="r1" type="text" value="60">
+            </div>
+            <div>
+                <label for="fill_type">fill type</label>
+                <select id="fill_type" onchange="changeFillType()">
+                    <option value="rect">rect</option>
+                    <option value="arc">arc</option>
+                </select>
+                <div id="radius_div" style="display:none;">
+                    <span>arc radius</span><input id="radius" type="text">
+                </div>
+            </div>
+            <div>
+                <ul id="color_stop_lst">
+                </ul>
+                <button onclick="add()">add</button>
+                <button onclick="remove()">remove</button>
+            </div>
+            <button onclick="refresh()">refresh</button>
+        </div>
+        <canvas width="800" height="600"></canvas>
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+    let radius_div = document.querySelector('#radius_div');
+    let radius = document.querySelector('#radius');
+
+    let x0 = document.querySelector('#x0');
+    let y0 = document.querySelector('#y0');
+    let r0 = document.querySelector('#r0');
+    let x1 = document.querySelector('#x1');
+    let y1 = document.querySelector('#y1');
+    let r1 = document.querySelector('#r1');
+
+    let fill_type = document.querySelector('#fill_type');
+    let color_stop_lst = document.querySelector('#color_stop_lst');
+    let fill_type_value = 'rect';
+
+    function refresh() {
+        let offsets = [...color_stop_lst.querySelectorAll('.offset')];
+        let colors = [...color_stop_lst.querySelectorAll('.color')];
+
+        ctx.clearRect(0, 0, 800, 600);
+        let gradient = ctx.createRadialGradient(
+            Number(x0.value) || 0,
+            Number(y0.value) || 0,
+            Number(r0.value) || 0,
+            Number(x1.value) || 0,
+            Number(y1.value) || 0,
+            Number(r1.value) || 0
+        );
+
+        if (offsets.length !== 0) {
+            for (var i = 0; i < offsets.length; i++) {
+                gradient.addColorStop(parseFloat(offsets[i].value), colors[i].value);
+            }
+        }
+        else {
+            gradient.addColorStop(.1, 'white');
+            gradient.addColorStop(.4, 'green');
+            gradient.addColorStop(1, 'yellow');
+        }
+
+
+        ctx.fillStyle = gradient;
+
+        if (fill_type_value === 'rect') {
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        else {
+            ctx.arc(canvas.width / 2, canvas.height / 2, radius.value || 100, 0, 2 * Math.PI, true);
+        }
+    }
+
+    function add() {
+        let html = `
+            <span>offset:</span><input class="offset" type="text"><span>color:</span><input class="color" type="text">
+        `;
+
+        let li = document.createElement("li");
+        li.innerHTML = html;
+
+        color_stop_lst.appendChild(li);
+    }
+
+    function remove() {
+        if ([...color_stop_lst.children].length > 0) {
+            [...color_stop_lst.children][[...color_stop_lst.children].length - 1].remove();
+        }
+    }
+
+    function changeFillType() {
+        fill_type_value = fill_type.options[fill_type.selectedIndex].value;
+
+
+        if (fill_type_value === 'arc') {
+            radius_div.style.display = 'block';
+        }
+        else {
+            radius_div.style.display = 'none';
+        }
+    }
+</script>
+</html>
