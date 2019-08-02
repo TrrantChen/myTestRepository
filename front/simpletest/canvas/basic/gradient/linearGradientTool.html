@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .tool {
+
+        }
+
+        canvas {
+            border: 1px solid black;
+            margin: 30px;
+            background: #001c39;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool">
+            <span>x0:</span><input id="x0" value="0"  type="text">
+            <span>y0:</span><input id="y0" value="0"  type="text">
+            <span>x1:</span><input id="x1" value="100"  type="text">
+            <span>y1:</span><input id="y1" value="0"  type="text">
+            <span>w:</span><input  id="w"  value="273" type="text">
+            <span>h:</span><input  id="h"  value="600" type="text">
+        </div>
+        <div>
+            <ul id="color_stop_lst">
+            </ul>
+            <button onclick="add()">add</button>
+            <button onclick="remove()">remove</button>
+        </div>
+        <div>
+            <button onclick="refresh()">refresh</button>
+        </div>
+        <canvas width="1200" height="600">
+
+        </canvas>
+    </div>
+</body>
+<script>
+    let x0 = document.querySelector('#x0');
+    let y0 = document.querySelector('#y0');
+    let x1 = document.querySelector('#x1');
+    let y1 = document.querySelector('#y1');
+    let w = document.querySelector('#w');
+    let h = document.querySelector('#h');
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let color_stop_lst = document.querySelector('#color_stop_lst');
+
+    function refresh() {
+        let offsets = [...color_stop_lst.querySelectorAll('.offset')];
+        let colors = [...color_stop_lst.querySelectorAll('.color')];
+
+        ctx.clearRect(0, 0, 1200, 600);
+        let gradient = ctx.createLinearGradient(Number(x0.value), Number(y0.value), Number(x1.value), Number(y1.value));
+
+        if (offsets.length !== 0) {
+            for (var i = 0; i < offsets.length; i++) {
+                gradient.addColorStop(parseFloat(offsets[i].value), colors[i].value);
+            }
+        }
+        else {
+            gradient.addColorStop(.4, '#003f77');
+            gradient.addColorStop(1, 'white');
+        }
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, Number(w.value), Number(h.value))
+    }
+
+    function add() {
+        let html = `
+            <span>offset:</span><input class="offset" type="text"><span>color:</span><input class="color" type="text">
+        `;
+
+        let li = document.createElement("li");
+        li.innerHTML = html;
+
+        color_stop_lst.appendChild(li);
+    }
+
+    function remove() {
+        if ([...color_stop_lst.children].length > 0) {
+            [...color_stop_lst.children][[...color_stop_lst.children].length - 1].remove();
+        }
+    }
+</script>
+</html>
