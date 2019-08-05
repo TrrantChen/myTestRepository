@@ -5,16 +5,63 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
         canvas {
             border: 1px solid black;
+            background: Linen;
         }
+
     </style>
 </head>
 <body>
-    <canvas id="main" width="500" height="400"></canvas>
+    <div id="move" style="outline:1px solid red;"></div>
     <canvas id="map" width="100" height="80"></canvas>
+    <div id="show" style="width:400px;height:400px;border:1px solid black;overflow: scroll">
+        <canvas id="main" width="1000" height="800"></canvas>
+    </div>
 </body>
 <script>
+    let main = document.querySelector('#main');
+    let main_ctx = main.getContext('2d');
+    let map = document.querySelector('#map');
+    let map_ctx = map.getContext('2d');
 
+    main_ctx.beginPath();
+    main_ctx.fillStyle = 'Ivory';
+    main_ctx.arc(main.width / 2, main.height /2, 200, 0, 2 * Math.PI, true);
+    main_ctx.closePath();
+    main_ctx.fill();
+
+    main_ctx.beginPath();
+    main_ctx.fillStyle = 'LightCyan';
+    main_ctx.rect(10, 10, 100, 100);
+    main_ctx.closePath();
+    main_ctx.fill();
+    map_ctx.drawImage(main, 0, 0, map.width, map.height);
+
+    let show = document.querySelector('#show');
+    let move = document.querySelector('#move');
+    let w_ratio = show.clientWidth / 1000;
+    let h_ratio = show.clientHeight / 800
+
+    move.style.width = (100 * w_ratio) + 'px';
+    move.style.height = (80 * h_ratio) + 'px';
+    let origin = map.getBoundingClientRect();
+    move.style.transform = `translate(${origin.x}px, ${origin.y}px)`;
+
+    show.addEventListener('scroll', evt => {
+        // console.log(show.scrollLeft);
+        // console.log(show.scrollTop);
+        move.style.transform = `translate(${origin.x + show.scrollLeft * 100  / 1000}px, ${origin.y + show.scrollTop * 80 / 800}px)`;
+    })
 </script>
 </html>

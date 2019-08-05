@@ -97,7 +97,11 @@ function sendProcess(request, protocol_obj, ws, wss) {
         if (client.readyState === WebSocket.OPEN) {
             let c_protocol_obj = createProtocolObj(client.protocol);
 
-            if (c_protocol_obj.uuid !== protocol_obj.uuid && Number(c_protocol_obj.page) === Number(protocol_obj.page)) {
+            if (
+                c_protocol_obj.uuid !== protocol_obj.uuid
+                && Number(c_protocol_obj.page) === Number(protocol_obj.page)
+                && c_protocol_obj.mid === protocol_obj.mid
+            ) {
                 client.send(JSON.stringify(response));
             }
         }
@@ -114,7 +118,7 @@ function broadcastProcess(request, protocol_obj, ws, wss) {
         if (client.readyState === WebSocket.OPEN) {
             let c_protocol_obj = createProtocolObj(client.protocol);
 
-            if (Number(c_protocol_obj.page) === Number(protocol_obj.page)) {
+            if (Number(c_protocol_obj.page) === Number(protocol_obj.page) && c_protocol_obj.mid === protocol_obj.mid) {
                 if (c_protocol_obj.uuid !== protocol_obj.uuid) {
                     client.send(JSON.stringify(response));
                 }
@@ -184,6 +188,7 @@ function createProtocolObj(str) {
     let result = {
         uuid: '',
         page: '',
+        mid: '',
     };
 
     if (str && str !== '') {
@@ -192,6 +197,7 @@ function createProtocolObj(str) {
         if (lst && lst.length > 1) {
             result.uuid = lst[0];
             result.page = lst[1];
+            result.mid = lst[2];
         }
 
     }
