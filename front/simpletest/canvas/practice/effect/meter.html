@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+
+    </style>
+</head>
+<body>
+    <canvas width="1600" height="800"></canvas>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+
+    class MovingCircle {
+        constructor() {
+            this._init();
+        }
+
+        _init() {
+            this.x = canvas.width / 2;
+            this.y = canvas.height / 2;
+            this.radius = 20;
+            this.angle = ~~(Math.random() * 360);
+            this.moving_speed = 10;
+            this.radius_speed = 1;
+        }
+
+        _drawCircle(x, y, radius) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+            ctx.fillStyle = 'Bisque';
+            ctx.fill();
+        }
+
+        moving() {
+            let _x = (this.angle > 180 ? Math.sin(this.angle) : -Math.sin(this.angle)) * this.moving_speed;
+            let _y = (this.angle > 90 && this.angle < 270 ? -Math.cos(this.angle) : Math.cos(this.angle)) * this.moving_speed;
+
+            this.x += _x;
+            this.y += _y;
+            this.radius += this.radius_speed;
+
+            this._drawCircle(this.x, this.y, this.radius);
+        }
+    }
+
+    let i = 0;
+    let lst = [];
+
+    function animate() {
+
+        if (i % 10 === 0) {
+            i = 0;
+            let moving_circle = new MovingCircle();
+            lst.push(moving_circle);
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let tmp = [];
+
+        for (var moving_circle of lst) {
+            moving_circle.moving();
+
+            if (moving_circle.x > 0 && moving_circle.x < canvas.width && moving_circle.y > 0 && moving_circle.y < canvas.height) {
+                tmp.push(moving_circle);
+            }
+        }
+
+        lst = tmp;
+
+        i++;
+
+        requestAnimationFrame(() => {
+            animate();
+        })
+    }
+
+    animate();
+
+</script>
+</html>

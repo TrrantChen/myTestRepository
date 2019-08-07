@@ -1,0 +1,110 @@
+<!--批量修改dom，会引起多次回流，测试使用以下方法来减少回流，提高性能-->
+<!--总体思路为，使元素脱离文档流-->
+<!--对其进行多次修改-->
+<!--将元素带回到文档中。-->
+<!--其中脱离文档流的三种方法-->
+<!--隐藏元素，应用修改，重新显示-->
+<!--使用文档片段(document fragment)在当前DOM之外构建一个子树，再把它拷贝回文档。-->
+<!--将原始元素拷贝到一个脱离文档的节点中，修改节点后，再替换原始的元素。-->
+<!--但这种方式其实在大多数情况下是没用的，因为浏览器的队列里会保留修改的信息。-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+         * {
+             margin: 0;
+             padding: 0;
+         }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .add-div {
+            width: 10px;
+            height: 10px;
+            border: 1px solid black;
+            background: red;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="container">
+
+    </div>
+</body>
+<script>
+    let container = document.querySelector('#container');
+    const count = 4000;
+
+    // 啥优化手段都不用
+    function normal() {
+        for (var i = 0; i < count; i++) {
+            let div = document.createElement('div');
+            div.className = 'add-div';
+            container.appendChild(div);
+        }
+    }
+
+    // 隐藏元素，应用修改，重新显示
+    function useHideAndShow() {
+        container.style.visibility = 'hidden';
+
+        for (var i = 0; i < count; i++) {
+            let div = document.createElement('div');
+            div.className = 'add-div';
+            container.appendChild(div);
+        }
+
+        container.style.visibility = 'visible';
+    }
+
+    // 使用文档片段(document fragment)在当前DOM之外构建一个子树，再把它拷贝回文档。
+    function useDocumentFragment() {
+        const frag = document.createDocumentFragment();
+
+        for (var i = 0; i < count; i++) {
+            let div = document.createElement('div');
+            div.className = 'add-div';
+            frag.appendChild(div);
+        }
+
+        container.appendChild(frag);
+    }
+
+    // 原始元素拷贝到一个脱离文档的节点中，修改节点后，再替换原始的元素。
+    function cloneAndReplace() {
+        let clone = container.cloneNode(true);
+
+        for (var i = 0; i < count; i++) {
+            let div = document.createElement('div');
+            div.className = 'add-div';
+            clone.appendChild(div);
+        }
+
+        container.parentElement.replaceChild(clone, container);
+    }
+
+
+    container.getBoundingClientRect();
+    // normal();
+    // useHideAndShow();
+    useDocumentFragment();
+
+    // cloneAndReplace();
+
+    // console.log(`domComplete ${timing.domComplete}`);
+    window.onload = () => {
+        let timing = performance.timing;
+        console.log(timing.domComplete - timing.domLoading);
+    }
+
+
+</script>
+</html>
