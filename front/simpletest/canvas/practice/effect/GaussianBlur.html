@@ -1,0 +1,51 @@
+<!--提供高斯模糊算法的实现-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas width="800" height="600"></canvas>
+        <img src="./test.jpg" alt="">
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let img = document.querySelector('img');
+
+    img.onload = () => {
+        let img_data = change2ImageDate(img);
+        console.log(img_data);
+    };
+
+    function change2ImageDate(image) {
+        let tmp_canvas = document.createElement('canvas');
+        let tmp_ctx = tmp_canvas.getContext('2d');
+        tmp_canvas.width = image.naturalWidth;
+        tmp_canvas.height = image.naturalHeight;
+        tmp_ctx.drawImage(image, 0, 0);
+
+        return tmp_ctx.getImageData(0, 0, image.naturalWidth, image.naturalHeight);
+    }
+</script>
+</html>

@@ -1,0 +1,49 @@
+<!--测试是否会有强制刷新队列的操作-->
+<!--传说这些属性会立即刷新队列，导致重排+重绘-->
+<!--offsetTop, offsetLeft, offsetWidth, offsetHeight-->
+<!--scrollTop, scrollLeft, scrollWidth, scrollHeight-->
+<!--clientTop, clientLeft, clientWidth, clientHeight-->
+<!--getComputedStyle(), 或者 IE的 currentStyle-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button onclick="test1()">test1</button>
+    <button onclick="test2()">test2</button>
+    <div id="test" style="width:100px;height:100px;border:1px solid black;">
+
+    </div>
+</body>
+<script>
+    let test = document.querySelector('#test');
+
+    function test1() {
+        for (var i = 0; i < 500; i++) {
+            test.style.left =  i + 'px';
+            test.style.top = i + 'px';
+            test.style.width = i + 'px';
+            test.style.height = i + 'px';
+        }
+    }
+
+    // offsetHeight的消耗是在layout上，而getComputedStyle的消耗是在api的调用上。
+    // 但是两者确实都会显著增加页面总的渲染时间。
+    function test2() {
+        for (var i = 0; i < 500; i++) {
+            test.style.left = i + 'px';
+            // console.log(test.offsetLeft);
+            test.style.top = i + 'px';
+            // console.log(test.offsetTop);
+            test.style.width = i + 'px';
+            // console.log(test.offsetWidth);
+            test.style.height = i + 'px';
+            console.log(test.offsetHeight);
+            // console.log(window.getComputedStyle(test));
+        }
+    }
+</script>
+</html>

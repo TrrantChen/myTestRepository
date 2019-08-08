@@ -35,76 +35,58 @@
     </style>
 </head>
 <body>
+    <button onclick="normal()">normal</button>
+    <button onclick="useHideAndShow()">useHideAndShow</button>
+    <button onclick="useDocumentFragment()">useDocumentFragment</button>
+    <button onclick="cloneAndReplace()">cloneAndReplace</button>
+    <button onclick="clear()">clear</button>
     <div id="container">
-
     </div>
 </body>
 <script>
     let container = document.querySelector('#container');
-    const count = 4000;
+    const count = 2000;
 
     // 啥优化手段都不用
     function normal() {
-        for (var i = 0; i < count; i++) {
-            let div = document.createElement('div');
-            div.className = 'add-div';
-            container.appendChild(div);
-        }
+        appendDiv(container);
     }
 
     // 隐藏元素，应用修改，重新显示
     function useHideAndShow() {
-        container.style.visibility = 'hidden';
-
-        for (var i = 0; i < count; i++) {
-            let div = document.createElement('div');
-            div.className = 'add-div';
-            container.appendChild(div);
-        }
-
-        container.style.visibility = 'visible';
+        container.style.display = 'none';
+        appendDiv(container);
+        container.style.display = 'block';
     }
 
     // 使用文档片段(document fragment)在当前DOM之外构建一个子树，再把它拷贝回文档。
     function useDocumentFragment() {
         const frag = document.createDocumentFragment();
-
-        for (var i = 0; i < count; i++) {
-            let div = document.createElement('div');
-            div.className = 'add-div';
-            frag.appendChild(div);
-        }
-
+        appendDiv(frag);
         container.appendChild(frag);
     }
 
     // 原始元素拷贝到一个脱离文档的节点中，修改节点后，再替换原始的元素。
     function cloneAndReplace() {
         let clone = container.cloneNode(true);
-
-        for (var i = 0; i < count; i++) {
-            let div = document.createElement('div');
-            div.className = 'add-div';
-            clone.appendChild(div);
-        }
-
+        appendDiv(clone);
         container.parentElement.replaceChild(clone, container);
     }
 
-
-    container.getBoundingClientRect();
-    // normal();
-    // useHideAndShow();
-    useDocumentFragment();
-
-    // cloneAndReplace();
-
-    // console.log(`domComplete ${timing.domComplete}`);
-    window.onload = () => {
-        let timing = performance.timing;
-        console.log(timing.domComplete - timing.domLoading);
+    function clear() {
+        container.innerHTML = '';
     }
 
+    function appendDiv(container) {
+        for (var i = 0; i < count; i++) {
+            // 强制刷新队列 ，这种情况下，2,3,4表现比1要好很多，优化还是有效果的。
+            // 假如这句不加，没有强制清空队列，其实4种情况都差不了多少。因为队列中有缓存，会对重排操作做优化。
+            console.log(container.offsetWidth);
+            let div = document.createElement('div');
+            div.className = 'add-div';
+            container.appendChild(div);
+        }
+    }
 
 </script>
 </html>
