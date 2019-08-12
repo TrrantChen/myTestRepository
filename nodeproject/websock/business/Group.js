@@ -1,9 +1,9 @@
-let state = void 0;
+// let state = void 0;
 let cache = {};
 
-function setState(data) {
-    state = data;
-}
+// function setState(data) {
+//     state = data;
+// }
 
 function getInitData(data) {
     let data_lst =  data.data_lst;
@@ -121,7 +121,7 @@ function getInitData(data) {
 
     return {
         data: result,
-        state: state,
+        // state: state,
     };
 }
 
@@ -233,6 +233,6 @@ function calculateCenterPosition(positions, radius = 40) {
 }
 
 module.exports = {
-    setState,
+    // setState,
     getInitData,
 };

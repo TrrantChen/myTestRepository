@@ -1,5 +1,5 @@
 let cache = [];
-let state = void 0;
+// let state = void 0;
 
 function getInitData(lst) {
     if (cache.length === 0) {
@@ -18,7 +18,7 @@ function getInitData(lst) {
 
     return {
         cache,
-        state,
+        // state,
     };
 }
 
@@ -46,13 +46,13 @@ function getPositionByRandomSphere(radius = 10, origin = { x: 0, y: 0, z: 0 }) {
     }
 }
 
-function setState(data) {
-    state = data;
-}
+// function setState(data) {
+//     state = data;
+// }
 
 module.exports = {
     getInitData,
-    setState,
+    // setState,
 };
 
 

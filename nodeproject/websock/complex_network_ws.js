@@ -51,11 +51,6 @@ function init(port = 9090) {
                 switch(request_type) {
                     case 'send':
                         sendProcess(request, protocol_obj, ws, wss);
-
-                        if (data_type === 'state') {
-                            syncData(request.value, protocol_obj.page);
-                        }
-
                         break;
                     case 'broadcast':
                         broadcastProcess(request, protocol_obj, ws, wss);
@@ -171,18 +166,18 @@ function getInitDataFromBusiness(page, data) {
     return result;
 }
 
-function syncData(data, page) {
-    switch(parseInt(page)) {
-        case 1:
-            ParticleEllipse.setState(data);
-            break;
-        case 2:
-            Group.setState(data);
-            break;
-        default:
-            break;
-    }
-}
+// function syncData(data, page) {
+//     switch(parseInt(page)) {
+//         case 1:
+//             ParticleEllipse.setState(data);
+//             break;
+//         case 2:
+//             Group.setState(data);
+//             break;
+//         default:
+//             break;
+//     }
+// }
 
 function createProtocolObj(str) {
     let result = {
