@@ -24,7 +24,7 @@
 </head>
 <body>
     <div class="container">
-        <canvas width="800" height="600"></canvas>
+        <canvas width="1000" height="600"></canvas>
         <img src="./test.jpg" alt="">
     </div>
 </body>
@@ -35,7 +35,8 @@
 
     img.onload = () => {
         let img_data = change2ImageDate(img);
-        console.log(img_data);
+        gaussianBlur(img_data, 20);
+        ctx.putImageData(img_data, 0, 0);
     };
 
     function change2ImageDate(image) {
@@ -46,6 +47,119 @@
         tmp_ctx.drawImage(image, 0, 0);
 
         return tmp_ctx.getImageData(0, 0, image.naturalWidth, image.naturalHeight);
+    }
+
+    function gaussianBlur(image_data, radius = 3, sigma) {
+        let data = image_data.data;
+        let width = image_data.width;
+        let height = image_data.height;
+        sigma = sigma || radius / 3;
+        let gaussian_lst = createGaussianLst(radius, sigma);
+        let pos = 0,
+            offset_pos = 0,
+            total_gaussian = 0,
+            tmp_gaussian = 0,
+            r = 0,
+            g = 0,
+            b = 0,
+            tmp_sum_r = 0,
+            tmp_sum_g = 0,
+            tmp_sum_b = 0;
+
+        // 分两次求值，先x，后y
+        // x轴求值
+
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                pos = i * width + j;
+                total_gaussian = 0;
+                tmp_sum_r = 0;
+                tmp_sum_g = 0;
+                tmp_sum_b = 0;
+
+                for (var k = -radius; k < radius; k++) {
+                    offset_pos = pos + k;
+
+                    if (offset_pos > -1 && offset_pos < width) {
+                        tmp_gaussian = gaussian_lst[k + radius];
+                        r = data[offset_pos * 4] * tmp_gaussian;
+                        g = data[offset_pos * 4 + 1] * tmp_gaussian;
+                        b = data[offset_pos * 4 + 2] * tmp_gaussian;
+                        total_gaussian += tmp_gaussian;
+                        tmp_sum_r += r;
+                        tmp_sum_g += g;
+                        tmp_sum_b += b;
+                    }
+                }
+
+                data[pos * 4] = (tmp_sum_r / total_gaussian);
+                data[pos * 4 + 1] = (tmp_sum_g / total_gaussian);
+                data[pos * 4 + 2] = (tmp_sum_b / total_gaussian);
+            }
+        }
+
+        // y轴求值
+        for (var i = 0; i < width; i++) {
+            for (var j = 0; j < height; j++) {
+                pos = i * height + j;
+                total_gaussian = 0;
+                tmp_sum_r = 0;
+                tmp_sum_g = 0;
+                tmp_sum_b = 0;
+
+                for (var k = -radius; k < radius; k++) {
+                    offset_pos = pos + k;
+
+                    if (offset_pos > -1 && offset_pos < height) {
+                        tmp_gaussian = gaussian_lst[k + radius];
+                        r = data[offset_pos * 4] * tmp_gaussian;
+                        g = data[offset_pos * 4 + 1] * tmp_gaussian;
+                        b = data[offset_pos * 4 + 2] * tmp_gaussian;
+                        total_gaussian += tmp_gaussian;
+                        tmp_sum_r += r;
+                        tmp_sum_g += g;
+                        tmp_sum_b += b;
+                    }
+                }
+
+                data[pos * 4] = ~~(tmp_sum_r / total_gaussian);
+                data[pos * 4 + 1] = ~~(tmp_sum_g / total_gaussian);
+                data[pos * 4 + 2] = ~~(tmp_sum_b / total_gaussian);
+            }
+        }
+
+        console.log(data);
+
+        image_data.data = data;
+    }
+
+    function createGaussianLst(radius, sigma) {
+        let result = [];
+        let total = 0;
+
+        for (var j = -radius; j <= radius; j++) {
+            let tmp = gaussianBlurFormula(j, sigma);
+            total += tmp;
+            result.push(tmp);
+        }
+
+        // 归一化
+        result = result.map((value) => {
+            return value / total;
+        });
+
+        return result;
+    }
+
+    // g = a * Math.exp(b * x * x);
+    // a = 1 / (Math.sqrt(2 * Math.PI) * sigma);
+    // b = -1 / (2 * sigma * sigma);
+
+    function gaussianBlurFormula(x, sigma) {
+        let a = 1 / (sigma * Math.sqrt(2 * Math.PI));
+        let b = -1 / (2 * Math.pow(sigma, 2));
+
+        return a * Math.exp(b * x * x);
     }
 </script>
 </html>

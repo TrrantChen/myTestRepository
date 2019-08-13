@@ -125,7 +125,7 @@
     /**
      * 此函数为分别循环
      */
-    function gaussBlur1(imgData,radius, sigma) {
+    function gaussBlur1(imgData, radius, sigma) {
         var pixes = imgData.data;
         var width = imgData.width;
         var height = imgData.height;
@@ -134,7 +134,6 @@
             x, y,
             r, g, b, a,
             i, j, k, len;
-
 
         radius = Math.floor(radius) || 3;
         sigma = sigma || radius / 3;
@@ -152,6 +151,7 @@
         for (i = 0, len = gaussMatrix.length; i < len; i++) {
             gaussMatrix[i] /= gaussSum;
         }
+        
         //x 方向一维高斯运算
         for (y = 0; y < height; y++) {
             for (x = 0; x < width; x++) {
@@ -159,7 +159,8 @@
                 gaussSum = 0;
                 for(j = -radius; j <= radius; j++){
                     k = x + j;
-                    if(k >= 0 && k < width){//确保 k 没超出 x 的范围
+                    if(k >= 0 && k < width){
+                        //确保 k 没超出 x 的范围
                         //r,g,b,a 四个一组
                         i = (y * width + k) * 4;
                         r += pixes[i] * gaussMatrix[j + radius];
