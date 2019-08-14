@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h6>碰撞检测</h6>
+    <canvas id="one" width="800" height="600"></canvas>
+    <h6>尾焰</h6>
+    <canvas id="two" width="800" height="600"></canvas>
+</body>
+<script>
+    class Ball {
+        constructor(canvas, x = 0, y = 0, r = 40, color = 'blue') {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.color = color;
+
+            this._draw();
+        }
+
+        _draw() {
+            this.tmp_canvas = document.createElement('canvas');
+            this.tmp_canvas.width = this.r * 2;
+            this.tmp_canvas.height = this.r * 2;
+            this.tmp_ctx = this.tmp_canvas.getContext('2d');
+            this.tmp_ctx.beginPath();
+            this.tmp_ctx.fillStyle = color;
+            this.tmp_ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI, true);
+            this.tmp_ctx.fill();
+
+            this.ctx.drawImage(this.tmp_canvas, this.x - this.r, this.y - this.r);
+        }
+
+        move(x_speed, y_speed) {
+            this.x += x_speed;
+            this.y += y_speed;
+
+            this.ctx.drawImage(this.tmp_canvas, this.x - this.r, this.y - this.r);
+        }
+    }
+</script>
+</html>

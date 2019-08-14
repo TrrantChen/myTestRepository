@@ -35,11 +35,12 @@
 
         var tempData = gaussBlur1(canvasData, 20);
 
+        var endTime = +new Date();
+        console.log(" 一共经历时间：" + (endTime - startTime) + "ms");
 
         context.putImageData(tempData,0,0);
 
-        var endTime = +new Date();
-        console.log(" 一共经历时间：" + (endTime - startTime) + "ms");
+
     }
 
     /**
@@ -151,7 +152,7 @@
         for (i = 0, len = gaussMatrix.length; i < len; i++) {
             gaussMatrix[i] /= gaussSum;
         }
-        
+
         //x 方向一维高斯运算
         for (y = 0; y < height; y++) {
             for (x = 0; x < width; x++) {
@@ -206,6 +207,7 @@
             }
         }
         //end
+
         imgData.data = pixes;
         return imgData;
     }

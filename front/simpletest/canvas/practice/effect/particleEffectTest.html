@@ -35,10 +35,10 @@
         <button class="btn">click</button>
     </div>
 </body>
-<script src="html2canvas.js"></script>
-<script type="module" src="./ParticleEffect.js"></script>
+<script src="../html2canvas.js"></script>
+<script type="module" src="../util.js"></script>
 <script type="module">
-    import { ParticleEffect } from './ParticleEffect.js'
+    import { ParticleEffect } from '../util.js'
 
     let btn = document.querySelector('.btn');
     let particleEffect = new ParticleEffect(btn);
