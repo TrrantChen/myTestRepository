@@ -22,13 +22,15 @@
 </body>
 <script>
     class Ball {
-        constructor(canvas, x = 0, y = 0, r = 40, color = 'blue') {
+        constructor(canvas, x = 0, y = 0, x_speed = 10, y_speed = 15, r = 40, color = 'blue') {
             this.canvas = canvas;
             this.ctx = canvas.getContext('2d');
             this.x = x;
             this.y = y;
             this.r = r;
             this.color = color;
+            this.x_speed = x_speed;
+            this.y_speed = y_speed;
 
             this._draw();
         }
@@ -39,19 +41,91 @@
             this.tmp_canvas.height = this.r * 2;
             this.tmp_ctx = this.tmp_canvas.getContext('2d');
             this.tmp_ctx.beginPath();
-            this.tmp_ctx.fillStyle = color;
-            this.tmp_ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI, true);
+            this.tmp_ctx.fillStyle = this.color;
+            this.tmp_ctx.arc(this.r, this.r, this.r, 0, 2 * Math.PI, true);
             this.tmp_ctx.fill();
 
             this.ctx.drawImage(this.tmp_canvas, this.x - this.r, this.y - this.r);
         }
 
-        move(x_speed, y_speed) {
-            this.x += x_speed;
-            this.y += y_speed;
+        move() {
+            if (this.x < 0 || this.x > this.canvas.width) {
+                this.x_speed = -this.x_speed;
+            }
+
+            if (this.y < 0 || this.y > this.canvas.height) {
+                this.y_speed = -this.y_speed;
+            }
+
+            this.x += this.x_speed;
+            this.y += this.y_speed;
 
             this.ctx.drawImage(this.tmp_canvas, this.x - this.r, this.y - this.r);
         }
+
     }
+
+    function crashDetection() {
+        let canvas = document.querySelector('#one');
+        let ctx = canvas.getContext('2d');
+
+        let x = ~~(Math.random() * canvas.width);
+        let y = ~~(Math.random() * canvas.height);
+        let x_speed = ~~(Math.random() * 20 + 5);
+        let y_speed = ~~(Math.random() * 20 + 5);
+
+        console.log(x);
+        console.log(y);
+        console.log(x_speed);
+        console.log(y_speed);
+
+        let ball = new Ball(canvas, x, y, x_speed, y_speed);
+        animate();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ball.move();
+
+            requestAnimationFrame(() => {
+                animate();
+            })
+        }
+    }
+
+    function wakeFlame() {
+        let canvas = document.querySelector('#two');
+        let ctx = canvas.getContext('2d');
+
+        let x = ~~(Math.random() * canvas.width);
+        let y = ~~(Math.random() * canvas.height);
+        let x_speed = ~~(Math.random() * 20 + 5);
+        let y_speed = ~~(Math.random() * 20 + 5);
+
+        console.log(x);
+        console.log(y);
+        console.log(x_speed);
+        console.log(y_speed);
+
+        let ball = new Ball(canvas, x, y, x_speed, y_speed);
+        animate();
+
+        function animate() {
+
+            // 制作尾焰的关键是把一层层的透明方形叠加上去。
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // 这两句是关键， 是fill而不是clear
+
+            ball.move();
+
+            requestAnimationFrame(() => {
+                animate();
+            })
+        }
+    }
+
+    crashDetection();
+    wakeFlame();
+
 </script>
 </html>

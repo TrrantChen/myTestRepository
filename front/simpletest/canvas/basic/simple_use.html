@@ -210,14 +210,14 @@
     // clip用于裁剪，裁剪的地方是中间空的一块地方
     function clipFunc() {
         ctx.beginPath();
-        ctx.fillStyle = 'rgb(100,100,0)';
+        ctx.fillStyle = 'red';
         ctx.arc(60,60,60,0,Math.PI*2,true);
         ctx.clip();
         ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = 'rgb(200,100,0)';
-        ctx.fillRect(0, 0, 300, 300);
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 300, 20);
     }
 
     function setLineDash() {
@@ -267,7 +267,7 @@
     // drawFontWithStroke();
     // saveAndStore();
     // scaleFunc();
-    // clipFunc();
+    clipFunc();
     // setLineDash();
     // setLineDashOffset();
 </script>

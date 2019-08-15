@@ -1,0 +1,56 @@
+<!--测试下clip的性能-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="800" height="600"></canvas>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = 'red';
+
+    ctx.moveTo(0, 400);
+    ctx.lineTo(300, 200);
+    ctx.lineTo(0, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = 'black';
+    ctx.arc(50, 50, 50, 0, 2 * Math.PI, true);
+    ctx.fill();
+    ctx.clip();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.fillStyle = 'green';    //注意这个绿色
+    ctx.fillRect(100, 100, 200, 200);
+    ctx.closePath();
+    ctx.restore();
+
+
+    ctx.beginPath();
+    ctx.fillStyle = 'yellow';
+    ctx.arc(100, 50, 50, 0, 2 * Math.PI, true);
+    ctx.fill();
+
+
+</script>
+</html>
