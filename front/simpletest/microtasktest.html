@@ -1,0 +1,90 @@
+<!--测试microtask的顺序问题-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style>
+    .outterStyle {
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+
+    .other {
+        width: 100px;
+        height: 100px;
+        background: blue;
+    }
+
+    .innerStyle {
+        width: 50px;
+        height: 50px;
+        background: green;
+    }
+</style>
+</head>
+<body>
+    <div id="outter" class="outterStyle">
+        <div id="inner" class="innerStyle"></div>
+    </div>
+</body>
+<script>
+    console.log("script 1 start")
+    let outter = document.querySelector("#outter");
+    let inner = document.querySelector("#inner");
+
+    let ob = new MutationObserver(function() {
+        console.log("this is MutationObserver");
+    });
+
+    ob.observe(outter, { attributes: true });
+
+    outter.addEventListener("click", clickHandle);
+    inner.addEventListener("click", clickHandle);
+
+    function clickHandle() {
+        console.log("this is click");
+
+        setTimeout(() => {
+            console.log("this is timeout");
+        }, 0);
+
+        Promise.resolve().then(() => {
+            console.log("this is promise");
+        });
+
+        outter.setAttribute("class", "other");
+
+        requestAnimationFrame(() => {
+            console.log("this is requestAnimationFrame");
+        }, 3000)
+    }
+    // inner.click();
+    console.log("script 1 end");
+</script>
+<!-- <script>
+    console.log('this is script1 start');
+    Promise.resolve().then(() => {
+        console.log('this is promise 1');
+    })
+    setTimeout(() => {
+        console.log('this is setTimeout 1');
+    })
+    console.log('this is script1 end');
+</script>
+<script>
+    console.log("this is script2 start");
+    Promise.resolve().then(() => {
+        console.log('this is promise 2');
+    })
+    setTimeout(() => {
+        console.log('this is setTimeout 2');
+    })
+    console.log('this is script2 end');
+</script> -->
+</html>

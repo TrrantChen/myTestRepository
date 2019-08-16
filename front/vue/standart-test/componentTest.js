@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * @authors Your Name (you@example.org)
  * @date    2017-11-03 14:48:49
  * @version $Id$
@@ -28,8 +28,7 @@ let switchComponent = {
     },
     template: switchComponentTemplate,
     methods: {
-        switchHandle() { 
-            debugger
+        switchHandle() {
             console.log(this.test_model);
             this.is_check_inner = !this.is_check_inner;
             this.$emit('switch_change', [this.is_check_inner]);

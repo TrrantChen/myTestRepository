@@ -1,0 +1,121 @@
+<!--一颗可以根据节点数调整宽度的树-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas width="800" height="600"></canvas>
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+    let data_lst = [
+        {
+            value: '1',
+            children: [
+                {
+                    value: '2',
+                    children: [
+                        {
+                            value: '5',
+                        },
+                        {
+                            value: '6',
+                        }
+                    ]
+                },
+                {
+                    value: '3',
+                    children: [
+                        {
+                            value: '7',
+                        }
+                    ]
+                },
+                {
+                    value: '4',
+                    children: [
+                        {
+                            value: '8',
+                        },
+                        {
+                            value: '9',
+                        }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    class AutoWidthTree {
+        constructor(data_lst = [], canvas, option) {
+            this.data_lst = data_lst;
+            this.canvas = canvas;
+            this.ctx = this.canvas.getContext('2d');
+
+            this._transformData(this.data_lst);
+        }
+
+        _transformData(lst) {
+            let width = 0;
+
+            for (var obj of lst) {
+                let tmp_width = 0;
+
+                if (obj.children) {
+                    tmp_width = this._transformData(obj.children);
+                }
+                else {
+                    tmp_width = 1;
+                }
+
+                obj.width = tmp_width;
+                width += tmp_width;
+            }
+
+            return width;
+        }
+
+        _drawTree(lst) {
+
+        }
+
+        _drawPoint(obj) {
+
+        }
+
+        _drawLine(obj) {
+            let s_pos = obj.s_pos;
+            let e_pos = obj.e_pos;
+
+        }
+    }
+
+</script>
+</html>
