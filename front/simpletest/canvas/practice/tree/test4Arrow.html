@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .tool {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool">
+            <label for="">s_x</label><input id="s_x" type="text" value="0">
+            <label for="">s_y</label><input id="s_y" type="text" value="0">
+            <label for="">e_x</label><input id="e_x" type="text" value="200">
+            <label for="">e_y</label><input id="e_y" type="text" value="200">
+            <button id="refresh">refresh by start and end</button>
+            <label for="">angle</label><input id="angle" type="text" value="180">
+            <button id="refreshByAngle">refresh by angle</button>
+        </div>
+
+        <canvas width="800" height="600" style="border:solid black 1px;"></canvas>
+    </div>
+</body>
+<script>
+    let s_x = document.querySelector('#s_x');
+    let s_y = document.querySelector('#s_y');
+    let e_x = document.querySelector('#e_x');
+    let e_y = document.querySelector('#e_y');
+    let angle = document.querySelector('#angle');
+    let refresh = document.querySelector('#refresh');
+    let refreshByAngle = document.querySelector('#refreshByAngle');
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let width = canvas.width,
+        height=canvas.height;
+    if (window.devicePixelRatio) {
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        canvas.height = height * window.devicePixelRatio;
+        canvas.width = width * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    refresh.addEventListener('click', (evt) => {
+
+        let s_pos = {
+            x: parseInt(s_x.value),
+            y: parseInt(s_y.value),
+        };
+
+        let e_pos = {
+            x: parseInt(e_x.value),
+            y: parseInt(e_y.value),
+        };
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawArrowLine(ctx, s_pos, e_pos);
+    });
+
+    refreshByAngle.addEventListener('click', (evt) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let value = parseInt(angle.value);
+        drawByAngle(value);
+    });
+
+    function drawArrowLine(ctx, s_pos, e_pos) {
+        // ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        ctx.moveTo(s_pos.x, s_pos.y);
+        ctx.lineTo(e_pos.x, e_pos.y);
+        ctx.closePath();
+        ctx.stroke();
+
+        let obj = calculateArrowAngle(s_pos, e_pos);
+
+        ctx.beginPath();
+        ctx.moveTo(e_pos.x, e_pos.y);
+        ctx.lineTo(obj.p1.x, obj.p1.y);
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(e_pos.x, e_pos.y);
+        ctx.lineTo(obj.p2.x, obj.p2.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    function calculateArrowAngle(s_pos, e_pos, angle = 30, length = 20) {
+        let angle1 = calcAngleDegrees(e_pos.x - s_pos.x, e_pos.y - s_pos.y);
+        let angle2 = angleProcess(angle1 + angle);
+        let angle3 = angleProcess(angle1 - angle);
+
+
+        let p1 = calcPos(angle2, e_pos, length);
+        let p2 = calcPos(angle3, e_pos, length);
+
+        return {
+            p1, p2
+        }
+    }
+
+    // 角度转换为-180到180之间
+    function angleProcess(angle) {
+        let result = 0;
+
+        if (angle > 180) {
+            result = angle - 360;
+        }
+        else if (angle < -180) {
+            result = 360 + angle;
+        }
+        else {
+            result = angle;
+        }
+
+        return result;
+    }
+
+    function  calcPos(angle, pos, length, ) {
+        let x = 0;
+        let y = 0;
+
+        if (angle === 0) {
+            x = pos.x + length;
+            y = pos.y;
+        }
+        else if (angle === 180 || angle === -180) {
+            x = pos.x - length;
+            y = pos.y;
+        }
+        else if (angle === 90) {
+            x = pos.x;
+            y = pos.y + length;
+        }
+        else if (angle === -90) {
+            x = pos.x;
+            y = pos.y - length;
+        }
+        else if (angle > 0 && angle < 90) {
+            x = pos.x - Math.cos(angle / 180 * Math.PI) * length;
+            y = pos.y + Math.sin(angle / 180 * Math.PI) * length;
+        }
+        else if (angle > 90 && angle < 180) {
+            x = pos.x + Math.cos(angle / 180 * Math.PI) * length;
+            y = pos.y - Math.sin(angle / 180 * Math.PI) * length;
+        }
+        else if (angle < 0 && angle > -90) {
+            x = pos.x - Math.cos(angle / 180 * Math.PI) * length;
+            y = pos.y - Math.sin(angle / 180 * Math.PI) * length;
+        }
+        else if (angle < -90 && angle > -180) {
+
+        }
+        else {
+
+        }
+
+
+        return {
+            x: x,
+            y: y,
+        }
+    }
+
+    function calcAngleDegrees(x, y) {
+        return Math.atan2(y, x) * 180 / Math.PI;
+    }
+
+    // test case 1
+    function drawCircle() {
+        let s_x = 300;
+        let s_y = 300;
+        let length = 250;
+        let e_x = 0;
+        let e_y = 0;
+        let c_x = 0;
+        let c_y = 0;
+
+        for (var i = 0; i < 360; i = i + 10) {
+            c_x = Math.abs(length * Math.cos(i / 180 * Math.PI));
+            c_y = Math.abs(length * Math.sin(i / 180 * Math.PI));
+
+            if (i >= 0 && i < 90) {
+                e_x = s_x + c_x;
+                e_y = s_y + c_y;
+            }
+            else if (i >= 90 && i < 180) {
+                e_x = s_x - c_x;
+                e_y = s_y + c_y;
+            }
+            else if (i >= 180 && i < 270) {
+                e_x = s_x - c_x;
+                e_y = s_y - c_y;
+            }
+            else if (i >= 270 && i < 360) {
+                e_x = s_x + c_x;
+                e_y = s_y - c_y
+            }
+
+            let s_pos = {
+                x: s_x,
+                y: s_y,
+            };
+
+            let e_pos = {
+                x: e_x,
+                y: e_y,
+            };
+
+            drawArrowLine(ctx, s_pos, e_pos);
+        }
+    }
+
+    // test case 2
+    function draw8angle() {
+        let s_x = 300;
+        let s_y = 300;
+        let length = 250;
+        let e_x = 0;
+        let e_y = 0;
+        let c_x = 0;
+        let c_y = 0;
+
+        for (var i = 0; i < 360; i = i + 45) {
+            c_x = Math.abs(length * Math.cos(i / 180 * Math.PI));
+            c_y = Math.abs(length * Math.sin(i / 180 * Math.PI));
+
+            if (i >= 0 && i < 90) {
+                e_x = s_x + c_x;
+                e_y = s_y + c_y;
+            }
+            else if (i >= 90 && i < 180) {
+                e_x = s_x - c_x;
+                e_y = s_y + c_y;
+            }
+            else if (i >= 180 && i < 270) {
+                e_x = s_x - c_x;
+                e_y = s_y - c_y;
+            }
+            else if (i >= 270 && i < 360) {
+                e_x = s_x + c_x;
+                e_y = s_y - c_y
+            }
+
+            let s_pos = {
+                x: s_x,
+                y: s_y,
+            };
+
+            let e_pos = {
+                x: e_x,
+                y: e_y,
+            };
+
+            drawArrowLine(ctx, s_pos, e_pos);
+        }
+    }
+
+    // test case 3
+    function drawByAngle(angle) {
+        let s_x = 300;
+        let s_y = 300;
+        let length = 250;
+        let e_x = 0;
+        let e_y = 0;
+        let c_x = Math.abs(length * Math.cos(angle / 180 * Math.PI));
+        let c_y = Math.abs(length * Math.sin(angle / 180 * Math.PI));
+
+        if (angle >= 0 && angle < 90) {
+            e_x = s_x + c_x;
+            e_y = s_y + c_y;
+        }
+        else if (angle >= 90 && angle < 180) {
+            e_x = s_x - c_x;
+            e_y = s_y + c_y;
+        }
+        else if (angle >= 180 && angle < 270) {
+            e_x = s_x - c_x;
+            e_y = s_y - c_y;
+        }
+        else if (angle >= 270 && angle < 360) {
+            e_x = s_x + c_x;
+            e_y = s_y - c_y
+        }
+
+        let s_pos = {
+            x: s_x,
+            y: s_y,
+        };
+
+        let e_pos = {
+            x: e_x,
+            y: e_y,
+        };
+
+        drawArrowLine(ctx, s_pos, e_pos);
+    }
+
+    draw8angle()
+
+
+</script>
+</html>
