@@ -73,6 +73,8 @@
         };
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawArrowLine(ctx, s_pos, e_pos);
+        // drawArrow(ctx, parseInt(s_x.value),  parseInt(s_y.value), parseInt(e_x.value), parseInt(e_y.value));
+        // drawArrow(ctx, parseInt(s_x.value),  parseInt(s_y.value), parseInt(e_x.value), parseInt(e_y.value),30,30,5,'#f36');
     });
 
     refreshByAngle.addEventListener('click', (evt) => {
@@ -107,78 +109,26 @@
 
     function calculateArrowAngle(s_pos, e_pos, angle = 30, length = 20) {
         let angle1 = calcAngleDegrees(e_pos.x - s_pos.x, e_pos.y - s_pos.y);
-        let angle2 = angleProcess(angle1 + angle);
-        let angle3 = angleProcess(angle1 - angle);
+        let angle2 = (angle1 + angle) * Math.PI / 180;
+        let angle3 = (angle1 - angle1) * Math.PI / 180;
 
+        let topX = length * Math.cos(angle2);
+        let topY = length * Math.sin(angle2);
+        let botX = length * Math.cos(angle3);
+        let botY = length * Math.sin(angle3);
 
-        let p1 = calcPos(angle2, e_pos, length);
-        let p2 = calcPos(angle3, e_pos, length);
+        let p1 = {
+            x: topX,
+            y: topY,
+        };
+
+        let p2 = {
+            x: botX,
+            y: botY,
+        };
 
         return {
             p1, p2
-        }
-    }
-
-    // 角度转换为-180到180之间
-    function angleProcess(angle) {
-        let result = 0;
-
-        if (angle > 180) {
-            result = angle - 360;
-        }
-        else if (angle < -180) {
-            result = 360 + angle;
-        }
-        else {
-            result = angle;
-        }
-
-        return result;
-    }
-
-    function  calcPos(angle, pos, length, ) {
-        let x = 0;
-        let y = 0;
-
-        if (angle === 0) {
-            x = pos.x + length;
-            y = pos.y;
-        }
-        else if (angle === 180 || angle === -180) {
-            x = pos.x - length;
-            y = pos.y;
-        }
-        else if (angle === 90) {
-            x = pos.x;
-            y = pos.y + length;
-        }
-        else if (angle === -90) {
-            x = pos.x;
-            y = pos.y - length;
-        }
-        else if (angle > 0 && angle < 90) {
-            x = pos.x - Math.cos(angle / 180 * Math.PI) * length;
-            y = pos.y + Math.sin(angle / 180 * Math.PI) * length;
-        }
-        else if (angle > 90 && angle < 180) {
-            x = pos.x + Math.cos(angle / 180 * Math.PI) * length;
-            y = pos.y - Math.sin(angle / 180 * Math.PI) * length;
-        }
-        else if (angle < 0 && angle > -90) {
-            x = pos.x - Math.cos(angle / 180 * Math.PI) * length;
-            y = pos.y - Math.sin(angle / 180 * Math.PI) * length;
-        }
-        else if (angle < -90 && angle > -180) {
-
-        }
-        else {
-
-        }
-
-
-        return {
-            x: x,
-            y: y,
         }
     }
 
@@ -315,9 +265,6 @@
 
         drawArrowLine(ctx, s_pos, e_pos);
     }
-
-    draw8angle()
-
 
 </script>
 </html>
