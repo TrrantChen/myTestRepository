@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--arcTo(x0, y0, x1, y1, radius)-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool">
+            <span>x:</span><input id="x" value="50"  type="text">
+            <span>y:</span><input id="y" value="50"  type="text">
+            <span>x0:</span><input id="x0" value="60"  type="text">
+            <span>y0:</span><input id="y0" value="100"  type="text">
+            <span>x1:</span><input id="x1" value="300"  type="text">
+            <span>y1:</span><input id="y1" value="100"  type="text">
+            <span>radius:</span><input  id="radius"  value="40" type="text">
+        </div>
+        <div>
+            <button onclick="refresh()">refresh</button>
+        </div>
+        <canvas width="1200" height="800"></canvas>
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let w = canvas.width;
+    let h = canvas.height;
+    let ctx = canvas.getContext('2d');
+
+    let x = document.querySelector('#x');
+    let y = document.querySelector('#y');
+    let x0 = document.querySelector('#x0');
+    let y0 = document.querySelector('#y0');
+    let x1 = document.querySelector('#x1');
+    let y1 = document.querySelector('#y1');
+    let radius = document.querySelector('#radius');
+
+    function refresh() {
+        ctx.clearRect(0, 0, w, h);
+        let v_x =  parseInt(x.value || 0);
+        let v_y =  parseInt(y.value || 0);
+        let v_x0 =  parseInt(x0.value || 0);
+        let v_y0 =  parseInt(y0.value || 0);
+        let v_x1 =  parseInt(x1.value || 0);
+        let v_y1 =  parseInt(y1.value || 0);
+        let r = parseInt(radius.value || 0);
+
+        ctx.beginPath();
+        ctx.fillStyle = 'blue';
+        ctx.moveTo(v_x, v_y);
+        ctx.arc(v_x, v_y, 4, 0, 2 * Math.PI, true);
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.moveTo(v_x, v_y);
+        ctx.lineTo(v_x0, v_y0);
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.fillStyle = 'red';
+        ctx.moveTo(v_x0, v_y0);
+        ctx.arc(v_x0, v_y0, 4, 0, 2 * Math.PI, true);
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.moveTo(v_x0, v_y0);
+        ctx.lineTo(v_x1, v_y1);
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.fillStyle = 'red';
+        ctx.moveTo(v_x1, v_y1);
+        ctx.arc(v_x1, v_y1, 4, 0, 2 * Math.PI, true);
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 4;
+        ctx.moveTo(v_x, v_y);
+        ctx.arcTo(v_x0, v_y0, v_x1, v_y1, r);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function calcAngle() {
+        let v_x =  parseInt(x.value || 0);
+        let v_y =  parseInt(y.value || 0);
+        let v_x0 =  parseInt(x0.value || 0);
+        let v_y0 =  parseInt(y0.value || 0);
+        let v_x1 =  parseInt(x1.value || 0);
+        let v_y1 =  parseInt(y1.value || 0);
+        let r = parseInt(radius.value || 0);
+
+        let a = {
+            x: v_x - v_x0,
+            y: v_y - v_y0,
+        };
+
+        let b = {
+            x: v_x1 - v_x0,
+            y: v_y1 - v_y0,
+        };
+
+        let angle1 = Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
+
+        let length1 = Math.sqrt((a.x * a.x + a.y * a.y));
+        let length2 = Math.sqrt((b.x * b.x + b.y * b.y));
+        let tmp1= a.x * b.x + a.y * b.y;
+
+        let angle2 = Math.acos((tmp1 / (length1 * length2)));
+
+        console.log(angle1 / 2);
+        console.log( angle2 / Math.PI * 180 / 2 / 180 * Math.PI);
+
+        let tmp_angle = angle1 / 2;
+
+        let ab_l = r / Math.tan(tmp_angle);
+        // let tmp_b_x = ;
+        // let tmp_b_y = ;
+    }
+
+    refresh();
+    calcAngle();
+</script>
+</html>
