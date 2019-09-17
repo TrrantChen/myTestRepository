@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .tool {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool">
+            <label for="">s_x</label><input id="s_x" type="text" value="200">
+            <label for="">s_y</label><input id="s_y" type="text" value="200">
+            <label for="">e_x</label><input id="e_x" type="text" value="200">
+            <label for="">e_y</label><input id="e_y" type="text" value="100">
+            <button id="refresh">refresh by start and end</button>
+        </div>
+
+        <canvas width="800" height="600" style="border:solid black 1px;"></canvas>
+    </div>
+</body>
+<script src="./util.js" type="module"></script>
+<script type="module">
+    import { drawArrow } from './util.js'
+
+    let s_x = document.querySelector('#s_x');
+    let s_y = document.querySelector('#s_y');
+    let e_x = document.querySelector('#e_x');
+    let e_y = document.querySelector('#e_y');
+    let refresh = document.querySelector('#refresh');
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let width = canvas.width,
+        height=canvas.height;
+    if (window.devicePixelRatio) {
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        canvas.height = height * window.devicePixelRatio;
+        canvas.width = width * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    refresh.addEventListener('click', (evt) => {
+
+        let s_pos = {
+            x: parseInt(s_x.value),
+            y: parseInt(s_y.value),
+        };
+
+        let e_pos = {
+            x: parseInt(e_x.value),
+            y: parseInt(e_y.value),
+        };
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawArrow(ctx, s_pos, e_pos);
+    });
+
+
+    // test case 1 eight direction
+    function eightDirection() {
+        let s_pos = {
+            x: 300,
+            y: 300,
+        };
+
+        let lst = [
+            {
+                x: 300,
+                y: 250,
+            },
+            {
+                x: 350,
+                y: 250,
+            },
+            {
+                x: 350,
+                y: 300,
+            },
+            {
+                x: 350,
+                y: 350,
+            },
+            {
+                x: 300,
+                y: 350,
+            },
+            {
+                x: 250,
+                y: 350,
+            },
+            {
+                x: 250,
+                y: 300,
+            },
+            {
+                x: 250,
+                y: 250,
+            },
+        ]
+
+        for (var e_pos of lst) {
+            drawArrow(ctx, s_pos, e_pos);
+        }
+    }
+
+    // test case 多个方向测试
+    function multiDirection() {
+        let s_pos = {
+            x: 300,
+            y: 300,
+        };
+        let l = 300;
+
+        for (var i = 0; i < 360; i+= 0.8) {
+            let e_pos = {
+                x: 0,
+                y: 0,
+            };
+
+            e_pos.x = s_pos.x + l * Math.cos(i / 180 * Math.PI);
+            e_pos.y = s_pos.y + l * Math.sin(i / 180 * Math.PI);
+
+            drawArrow(ctx, s_pos, e_pos, {
+                arrow_line_color: 'red',
+                line_color: 'yellow',
+                arrow_line_length: 40,
+            });
+        }
+    }
+
+    multiDirection();
+
+
+</script>
+</html>

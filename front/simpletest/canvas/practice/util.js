@@ -274,3 +274,80 @@ class ExplodingParticle {
         }
     };
 }
+
+// 绘制箭头
+export function drawArrow(ctx, s_pos, e_pos, option = {}) {
+    let default_option = {
+        line_width: 1,
+        line_color: 'black',
+        arrow_line_width: 1,
+        arrow_line_color: 'black',
+        arrow_angle: 30,
+        arrow_line_length: 10,
+        with_arc: true,
+    };
+
+    let _option = Object.assign(default_option, option || {});
+
+    ctx.beginPath();
+    ctx.lineWidth = _option.line_width;
+    ctx.strokeStyle = _option.line_color;
+    ctx.moveTo(s_pos.x, s_pos.y);
+    ctx.lineTo(e_pos.x, e_pos.y);
+    ctx.closePath();
+    ctx.stroke();
+
+    let obj = calculateArrowAngle(s_pos, e_pos, _option.arrow_angle, _option.arrow_line_length);
+
+    ctx.beginPath();
+    ctx.lineWidth = _option.arrow_line_width;
+    ctx.strokeStyle = _option.arrow_line_color;
+    ctx.moveTo(e_pos.x, e_pos.y);
+    ctx.lineTo(obj.p1.x, obj.p1.y);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.lineWidth = _option.arrow_line_width;
+    ctx.strokeStyle = _option.arrow_line_color;
+    ctx.moveTo(e_pos.x, e_pos.y);
+    ctx.lineTo(obj.p2.x, obj.p2.y);
+    ctx.closePath();
+    ctx.stroke();
+}
+
+function calculateArrowAngle(s_pos, e_pos, angle, l) {
+    let se = {
+        x: e_pos.x - s_pos.x,
+        y: e_pos.y - s_pos.y,
+    };
+
+    let se_angle = calcAngleDegrees(se.x, se.y);
+    let angle1 = se_angle + 180 - angle;
+    let angle2 = se_angle + 180 + angle;
+
+    let x1 = e_pos.x + l * Math.cos(angle1 * Math.PI / 180);
+    let y1 = e_pos.y + l * Math.sin(angle1 * Math.PI / 180);
+
+    let x2 =  e_pos.x + l * Math.cos(angle2 * Math.PI / 180);
+    let y2 =  e_pos.y + l * Math.sin(angle2 * Math.PI / 180);
+
+
+    let p1 = {
+        x: x1,
+        y: y1,
+    };
+
+    let p2 = {
+        x: x2,
+        y: y2,
+    };
+
+    return {
+        p1, p2
+    }
+}
+
+function calcAngleDegrees(x, y) {
+    return Math.atan2(y, x) * 180 / Math.PI;
+}

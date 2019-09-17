@@ -113,44 +113,6 @@
         ctx.closePath();
     }
 
-    function calcAngle() {
-        let v_x =  parseInt(x.value || 0);
-        let v_y =  parseInt(y.value || 0);
-        let v_x0 =  parseInt(x0.value || 0);
-        let v_y0 =  parseInt(y0.value || 0);
-        let v_x1 =  parseInt(x1.value || 0);
-        let v_y1 =  parseInt(y1.value || 0);
-        let r = parseInt(radius.value || 0);
-
-        let a = {
-            x: v_x - v_x0,
-            y: v_y - v_y0,
-        };
-
-        let b = {
-            x: v_x1 - v_x0,
-            y: v_y1 - v_y0,
-        };
-
-        let angle1 = Math.atan2(b.y, b.x) - Math.atan2(a.y, a.x);
-
-        let length1 = Math.sqrt((a.x * a.x + a.y * a.y));
-        let length2 = Math.sqrt((b.x * b.x + b.y * b.y));
-        let tmp1= a.x * b.x + a.y * b.y;
-
-        let angle2 = Math.acos((tmp1 / (length1 * length2)));
-
-        console.log(angle1 / 2);
-        console.log( angle2 / Math.PI * 180 / 2 / 180 * Math.PI);
-
-        let tmp_angle = angle1 / 2;
-
-        let ab_l = r / Math.tan(tmp_angle);
-        // let tmp_b_x = ;
-        // let tmp_b_y = ;
-    }
-
     refresh();
-    calcAngle();
 </script>
 </html>
