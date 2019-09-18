@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+    </div>
+</body>
+<script>
+    // 一个函数，可以在有限次数内反复异步的执行，如果执行成功，则进行下一步，如果执行失败则再进来重来。直到次数满了为止
+
+    function asynFunc() {
+
+    }
+
+    function asynExec(func, callback, finalcall, env) {
+        let is_success = true;
+        let self = this;
+
+        if (!self.max_index) {
+            self.max_index = 4;
+        }
+
+        if (!self.exec_index) {
+            self.exec_index = 0;
+        } else {
+            if (self.exec_index >= self.max_index) {
+                self.exec_index = 0;
+            }
+        }
+
+        try {
+            self.exec_index++;
+
+            if (func) {
+                func.apply(env, []);
+            }
+
+        } catch(e) {
+            is_success = false;
+            console.log(e);
+        }
+
+        if (is_success && callback) {
+            callback.apply(env, []);
+        }
+        else {
+            if (self.exec_index < self.max_index) {
+                setTimeout(() => {
+                    self.apply(env, [func, callback, finalcall]);
+                });
+            }
+            else {
+                if (finalcall) {
+                    finalcall.apply(env, []);
+                }
+            }
+        }
+    }
+
+
+
+</script>
+</html>
