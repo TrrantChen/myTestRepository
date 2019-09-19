@@ -29,21 +29,21 @@
 </head>
 <body>
     <div class="container">
-        <div id="main" >
+        <canvas width="800" height="600" style="border:1px solid black;">
 
-        </div>
-        <div style="height: 800px;">
-
-        </div>
-        <button onclick="divFocus()">focus</button>
+        </canvas>
     </div>
 </body>
 <script>
-    let div = document.querySelector('#main');
-    let button = document.querySelector('button');
-    function divFocus() {
-        div.setAttribute('tabindex','0');
-        div.focus();
-    }
+    var canvas = document.querySelector('canvas');
+
+    var ctx2d = canvas.getContext('2d');
+    console.log(Object.prototype.toString.call(ctx2d));
+    console.log(ctx2d);
+
+    // var ctx3d = canvas.getContext('webgl');
+    // console.log(ctx3d);
+    //
+    // console.log(canvas.getContext('2d'));
 </script>
 </html>
