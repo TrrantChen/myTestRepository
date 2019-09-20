@@ -20,30 +20,55 @@
             border: 1px solid black;
         }
 
+        .canvas-style {
+            width: 800px;
+            height: 600px;
+            border: solid black 1px;
+        }
+
         #main {
             width: 300px;
             height: 300px;
             border: 1px solid black;
         }
+
+        .first {
+            width: 100px;
+            height: 100px;
+            border: solid red 1px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <canvas width="800" height="600" style="border:1px solid black;">
+        <div class="first">
 
-        </canvas>
+        </div>
+        <!--<canvas width="800" height="600" style="border:1px solid black;">-->
+
+        <!--</canvas>-->
     </div>
 </body>
 <script>
-    var canvas = document.querySelector('canvas');
-
-    var ctx2d = canvas.getContext('2d');
-    console.log(Object.prototype.toString.call(ctx2d));
-    console.log(ctx2d);
+    // var canvas = document.querySelector('canvas');
+    //
+    // var ctx2d = canvas.getContext('2d');
+    // console.log(Object.prototype.toString.call(ctx2d));
+    // console.log(ctx2d);
 
     // var ctx3d = canvas.getContext('webgl');
     // console.log(ctx3d);
     //
     // console.log(canvas.getContext('2d'));
+    let container = document.querySelector('.container');
+
+    let canvas = document.createElement('canvas');
+    canvas.className = 'canvas-style';
+
+    let first = container.firstElementChild;
+    container.insertBefore(canvas, first);
+    // container.appendChild(canvas);
+
+
 </script>
 </html>
