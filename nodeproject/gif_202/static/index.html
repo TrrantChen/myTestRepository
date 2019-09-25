@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!--<img src="/test.gif" style="width:1px;height:1px;opacity: 0">-->
+    </div>
+</body>
+<script>
+    let container = document.querySelector('.container');
+    let thisPage = location.href;
+    let referringPage = (document.referrer) ? document.referrer : "none";
+    let beacon = new Image();
+    beacon.style.width = '1px';
+    beacon.style.height = '1px';
+    beacon.style.opacity = '0';
+    // beacon.src = "/test.gif";
+    beacon.src = "/test.gif?page=" + encodeURI(thisPage) + "&ref=" + encodeURI(referringPage);
+
+    container.appendChild(beacon);
+</script>
+</html>

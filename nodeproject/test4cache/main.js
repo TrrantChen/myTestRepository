@@ -15,7 +15,8 @@ const server = app.listen(8999, function() {
 
 function setHeadersFunc(res, path, stat) {
     // res.set('Cache-Control', 'public');
-    res.set('Cache-Control', 'no-cache');
+    res.set('Cache-Control', 'max-age=10000');
+    // res.set('Pragma', 'no-cache');
     // res.set('Cache-Control', 'no-cache, max-age=100');
     // res.set('Cache-Control', 'max-age=1, max-stale=10');
     // res.set('Cache-Control', 'no-cache, max-age=10, max-stale=10');

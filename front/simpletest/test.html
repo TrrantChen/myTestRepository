@@ -19,56 +19,23 @@
             height: 100%;
             border: 1px solid black;
         }
-
-        .canvas-style {
-            width: 800px;
-            height: 600px;
-            border: solid black 1px;
-        }
-
-        #main {
-            width: 300px;
-            height: 300px;
-            border: 1px solid black;
-        }
-
-        .first {
-            width: 100px;
-            height: 100px;
-            border: solid red 1px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="first">
 
-        </div>
-        <!--<canvas width="800" height="600" style="border:1px solid black;">-->
-
-        <!--</canvas>-->
     </div>
 </body>
 <script>
-    // var canvas = document.querySelector('canvas');
-    //
-    // var ctx2d = canvas.getContext('2d');
-    // console.log(Object.prototype.toString.call(ctx2d));
-    // console.log(ctx2d);
+    // (5).add(3).minus(2) 功能。
+    Number.prototype.add = function(val) {
+        return this + val;
+    };
 
-    // var ctx3d = canvas.getContext('webgl');
-    // console.log(ctx3d);
-    //
-    // console.log(canvas.getContext('2d'));
-    let container = document.querySelector('.container');
+    Number.prototype.minus = function(val) {
+        return this - val;
+    };
 
-    let canvas = document.createElement('canvas');
-    canvas.className = 'canvas-style';
-
-    let first = container.firstElementChild;
-    container.insertBefore(canvas, first);
-    // container.appendChild(canvas);
-
-
+    console.log((5).add(3).minus(2));
 </script>
 </html>

@@ -3,11 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <canvas width="1600" height="800">
 
+        </canvas>
+    </div>
 </body>
-<script>
+<script src="../util.js" type="module"></script>
+<script type="module">
+    import { drawArrow } from '../util.js'
+
+    let canvas = document.querySelector('canvas');
+    let data_lst = [
+        {
+            value: '1',
+            children: [
+                {
+                    value: '2',
+                    children: [
+                        {
+                            value: '5',
+                        },
+                        {
+                            value: '6',
+                        }
+                    ]
+                },
+                {
+                    value: '3',
+                    children: [
+                        {
+                            value: '7',
+                        }
+                    ]
+                },
+                {
+                    value: '4',
+                    children: [
+                        {
+                            value: '8',
+                        },
+                        {
+                            value: '9',
+                        }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    class AutoWidthTree {
+        env = void 0;
+        option = {};
+
+        constructor(data_lst = [], canvas, option) {
+            let default_option = {
+                env: window,
+                min_area_width: 50,
+            };
+
+            this.option = Object.assign(default_option, option || {});
+            this.data_lst = data_lst;
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+
+            this._transformData(this.data_lst);
+            this._drawTree(this.data_lst[0], 0, 0);
+        }
+
+        _transformData(lst) {
+            let area_width = 0;
+
+            for (var obj of lst) {
+                let tmp_width = 0;
+
+                if (obj.children) {
+                    tmp_width = this._transformData(obj.children);
+                }
+                else {
+                    tmp_width = this.option.min_area_width;
+                }
+
+                obj.area_width = tmp_width;
+                area_width += tmp_width;
+            }
+
+            return area_width;
+        }
+
+        _drawTree(obj, offset_x, offset_y, l_s_pos) {
+            obj.width = 40;
+            obj.height = 40;
+            obj.x = obj.area_width / 2 + offset_x  - obj.width / 2;
+            obj.y = obj.height / 2 + offset_y;
+
+            this._drawPoint(obj);
+            this._drawFont(obj);
+
+            if (l_s_pos) {
+                let e_pos = {
+                    x: obj.x + obj.width / 2,
+                    y: obj.y,
+                };
+
+                this._drawArrowLine(l_s_pos, e_pos);
+            }
+
+            let s_pos = {
+                x: obj.x + obj.width / 2,
+                y: obj.y + obj.height,
+            };
+
+            if (obj.children) {
+                let tmp_offset_y = obj.height + 40 + offset_y;
+                let tmp_offset_x = offset_x;
+                for (var i = 0, length = obj.children.length; i < length; i++) {
+                    let c_obj = obj.children[i];
+
+                    if (i === 0) {
+                        tmp_offset_x += 0;
+                    }
+                    else {
+                        let last_obj = obj.children[i - 1];
+                        tmp_offset_x += last_obj.area_width;
+                    }
+
+                    this._drawTree(c_obj, tmp_offset_x, tmp_offset_y, s_pos);
+                }
+            }
+        }
+
+        _drawPoint(obj) {
+            this.ctx.beginPath();
+            this.ctx.fillStyle = 'yellow';
+            this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
+
+        _drawFont(obj) {
+            this.ctx.font = '12px serif';
+            this.ctx.textAlign = 'end';
+            this.ctx.textBaseline = 'top';
+            this.ctx.direction = 'rtl';
+            this.ctx.fillStyle = 'black';
+            this.ctx.fillText(obj.value, obj.x + obj.width / 2 - 4, obj.y + obj.height / 2 - 4);
+        }
+
+        _drawLine(obj) {
+            this.ctx.beginPath();
+            this.ctx.fillStyle = 'black';
+            this.ctx.moveTo(obj.s_pos.x, obj.s_pos.y);
+            this.ctx.lineTo(obj.e_pos.x, obj.e_pos.y);
+            this.ctx.closePath();
+        }
+
+        _drawArrowLine(s_pos, e_pos) {
+            drawArrow(this.ctx, s_pos, e_pos)
+        }
+    }
+
+    let auto_width_tree = new AutoWidthTree(data_lst, canvas);
+
 
 </script>
 </html>
