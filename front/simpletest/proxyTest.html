@@ -8,39 +8,70 @@
 
 </body>
 <script>
-    function simpleTest1() {
-        let my_proxy = new Proxy({}, {
-            // "get": (o, key) => {
-            "get": function(o, key) {
-                console.log(arguments);
-                console.log('==========');
-                console.log('o is');
-                console.log(o)
-                console.log('==========');
-                console.log(`key is ${key}`);
-                console.log('==========');
-                return o[key];
-            },
-            // 'set': (o, key, v) => {
-            'set': function(o, key, v) {
-                console.log(arguments);
-                console.log('-----------');
-                console.log('o is');
-                console.log(o);
-                console.log('-----------');
-                console.log(`key is ${key}`);
-                console.log('-----------');
-                console.log(`v is ${v}`);
-                return o[key] = v;
+    function simpleTest() {
+        let origin = {};
+        let handler = {
+            get: function(target, name, receiver) {
+
+                if (name === 'yc') {
+                    console.log('this is yc');
+                }
+                else {
+                    console.log('this is get test');
+                }
+
+                console.log(receiver === proxy);
+
+                return Reflect.get(target, name, receiver);
             }
+        };
+        let proxy = new Proxy(origin, handler);
 
-        });
-
-        my_proxy.a = 'fff';
-        console.log('middle');
-        console.log(my_proxy.a);
+        proxy.num = 1;
+        proxy.yc = 'test';
+        console.log(proxy.num);
+        console.log(proxy.yc);
     }
 
-    simpleTest1();
+    function getTest1() {
+        let pipe =  function(value) {
+            let funcStack = [];
+            let proxy = new Proxy({}, {
+                get: function(pipeObject, fnName) {
+                    if (fnName === 'get') {
+                        return funcStack.reduce(function(val, fn) {
+                            return fn(val);
+                        }, value);
+                    }
+
+                    funcStack.push(fn_obj[fnName]);
+                    return proxy;
+                }
+            });
+
+            return proxy;
+        };
+
+        let fn_obj ={
+            double: function(n) {
+                return n * 2;
+            },
+            pow: function(n) {
+                return n * n;
+            },
+            reverseInt: function(n) {
+                return n.toString().split("").reverse().join("") | 0;
+            }
+        };
+
+        console.log(pipe(3).double.pow.reverseInt.get);
+    }
+
+    function getTest2() {
+
+    }
+
+    getTest1();
+
 </script>
 </html>
