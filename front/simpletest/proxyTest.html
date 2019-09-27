@@ -67,11 +67,139 @@
         console.log(pipe(3).double.pow.reverseInt.get);
     }
 
+    // 很神奇，要好好琢磨琢磨
     function getTest2() {
+        const dom = new Proxy({}, {
+            get(target, property) {
+                return function(attrs = {}, ...children) {
+                    const el = document.createElement(property);
+
+                    for (let prop of Object.keys(attrs)) {
+                        el.setAttribute(prop, attrs[prop]);
+                    }
+
+                    for (let child of children) {
+                        if (typeof child === 'string') {
+                            child = document.createTextNode(child);
+                        }
+
+                        el.appendChild(child);
+                    }
+
+                    return el;
+                }
+            }
+        });
+
+        const el = dom.div({},
+            'Hello, my name is ',
+            dom.a({href: '//example.com'}, 'Mark'),
+            '. I like:',
+            dom.ul({},
+                dom.li({}, 'The web'),
+                dom.li({}, 'Food'),
+                dom.li({}, '…actually that\'s it')
+            )
+        );
+
+        document.body.appendChild(el);
+    }
+
+    function applyTest() {
+        let twice = {
+            apply(target, ctx, args) {
+                return Reflect.apply(...arguments) * 2;
+            }
+        };
+
+        function sum(left, right) {
+            return left + right;
+        }
+
+        let proxy = new Proxy(sum, twice);
+        console.log(proxy(1, 2));
+        console.log(proxy.call(null, 5, 6));
+        console.log(proxy.apply(null, [7, 8]));
+    }
+
+    function hasTest() {
+        Object.prototype.test = 1;
+        let obj = new Object();
+        obj.length = 10;
+
+        let handler = {
+            has: function(target, key) {
+                console.log('the has handler is call back');
+                return Reflect.has(...arguments);
+            }
+        };
+
+        let proxy = new Proxy(obj, handler);
+        console.log('length' in proxy);
+        console.log('test' in proxy);
+        console.log(proxy.hasOwnProperty('length'));
+        console.log(proxy.hasOwnProperty('test'));
+
+        for (var k in proxy) {
+
+        }
 
     }
 
-    getTest1();
+    function constructTest() {
+        class TestClass {
+            constructor(num) {
+                console.log(num);
+            }
+
+            print1() {
+
+            }
+        }
+
+        class TestClass2 {
+            constructor(num1, num2) {
+                console.log(`${num1}, ${num2}`);
+            }
+
+            print2() {
+
+            }
+        }
+
+        let handler = {
+            construct(target, args, new_target) {
+                console.log('construct is called');
+                // return Reflect.construct(...arguments);
+                return Reflect.construct(target, args, TestClass2);
+            }
+        };
+
+        let P = new Proxy(TestClass, handler);
+        let new_class = new P(1, 2);
+        console.log(new_class);
+    }
+
+    function deleteTest() {
+        var handler = {
+            deleteProperty (target, key) {
+                invariant(key, 'delete');
+                delete target[key];
+                return true;
+            }
+        };
+        function invariant (key, action) {
+            if (key[0] === '_') {
+                throw new Error(`Invalid attempt to ${action} private "${key}" property`);
+            }
+        }
+
+        var target = { _prop: 'foo' };
+        var proxy = new Proxy(target, handler);
+        delete proxy._prop
+    }
+
+    deleteTest();
 
 </script>
 </html>
