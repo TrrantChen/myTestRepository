@@ -199,7 +199,47 @@
         delete proxy._prop
     }
 
-    deleteTest();
+    function ownKeysTest() {
+        let target = {
+            a: 1,
+            b: 2,
+            c: 3,
+        };
+
+        let handler = {
+            ownKeys(target) {
+                return Reflect.ownKeys(...arguments);
+            }
+        };
+
+        let proxy = new Proxy(target, handler);
+
+        console.log(Object.keys(proxy));
+    }
+
+    function arrayPushTest() {
+        let arr = [];
+        let handle = {
+            set(target, key, value, receiver) {
+                // console.log('push');
+                // console.log(target);
+                // console.log(key);
+                // console.log(value);
+                if (key !== 'length') {
+                    console.log('push');
+                }
+
+                return Reflect.set(...arguments);
+            }
+        };
+
+        let proxy = new Proxy(arr, handle);
+        proxy.push('1');
+    }
+
+    arrayPushTest();
+
+
 
 </script>
 </html>

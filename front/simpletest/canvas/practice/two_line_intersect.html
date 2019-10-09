@@ -4,11 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-
+    <div>
+        <span>point1:</span><input id="point1" type="text">
+        <span>point2:</span><input id="point2" type="text">
+        <span>is intersect</span><span id="result"></span>
+        <canvas width="800" height="600"></canvas>
+    </div>
 </body>
 <script>
+    let point1 = document.querySelector('#point1');
+    let point2 = document.querySelector('#point2');
+    let result = document.querySelector('#result');
 
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
 </script>
 </html>
