@@ -28,23 +28,295 @@
 <body>
     <div class="container">
         <canvas id="main" width="800" height="600"></canvas>
+        <canvas id="random_line" width="800" height="600"></canvas>
         <img src="./glass.jpg" width="800" height="600" alt="">
     </div>
 </body>
 <script>
+    let container = document.querySelector('.container');
     let canvas = document.querySelector('#main');
     let ctx = canvas.getContext('2d');
     let w = canvas.width;
     let h = canvas.height;
     let img = document.querySelector('img');
     img.onload = function() {
-        ctx.beginPath();
-        ctx.moveTo(100, 100);
-        ctx.lineTo(200, 100);
-        ctx.lineTo(150, 200);
-        ctx.clip();
-        ctx.closePath();
-        ctx.drawImage(img, 0, 0, w, h);
+        ForTriangle();
     };
+
+    class Chip {
+        constructor(canvas, ctx, img, points, w, h, x, y) {
+            this.ctx = ctx;
+            this.canvas = canvas;
+            this.img = img;
+            this.points = points;
+            this.w = w;
+            this.h = h;
+            this.x = x;
+            this.y = y;
+            this._init();
+        }
+
+        _init() {
+            this.t_canvas = document.createElement('canvas');
+            this.t_canvas.width = this.w;
+            this.t_canvas.height = this.h;
+            this.t_ctx = this.t_canvas.getContext('2d');
+            this.t_ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+
+            for (var i = 0, l = this.points.length; i < l; i++) {
+                let point = this.points[i];
+
+                if (i === 0) {
+                }
+            }
+
+        }
+
+
+    }
+
+    function randomLine() {
+        let w = 800;
+        let h = 600;
+        let random_line = document.querySelector('#random_line');
+        let r_ctx = random_line.getContext('2d');
+
+        let r_point = {
+            x: ~~(300 + Math.random() * 200),
+            y: ~~(200 + Math.random() * 200),
+        };
+
+        let r_count_lst = [];
+
+        for (var i = 0; i < 4; i++) {
+            r_count_lst.push(~~(3 + Math.random() * 5));
+        }
+
+
+        let arr = [];
+
+        for (var i = 0, l = r_count_lst.length; i < l; i++) {
+            let count = r_count_lst[i];
+            let tmp = [];
+
+            switch(i) {
+                case 0:
+                    for (var j = 0; j < count; j++) {
+                        tmp.push({
+                            x: ~~(Math.random() * w),
+                            y: 0,
+                        })
+                    }
+
+                    break;
+                case 1:
+                    for (var j = 0; j < count; j++) {
+                        tmp.push({
+                            x: 800,
+                            y: ~~(Math.random() * h),
+                        })
+                    }
+
+                    break;
+                case 2:
+                    for (var j = 0; j < count; j++) {
+                        tmp.push({
+                            x: ~~(Math.random() * w),
+                            y: 600,
+                        })
+                    }
+
+                    break;
+                case 3:
+                default:
+                    for (var j = 0; j < count; j++) {
+                        tmp.push({
+                            x: 0,
+                            y: ~~(Math.random() * h),
+                        })
+                    }
+
+                    break;
+            }
+
+            arr.push(tmp);
+        }
+
+        r_ctx.strokeStyle = 'black';
+
+        for (var i = 0, l = arr.length; i < l; i++) {
+            let tmp_arr = arr[i];
+
+            for (var j = 0, t_l = tmp_arr.length; j < t_l; j++) {
+                let end = tmp_arr[j];
+                r_ctx.beginPath();
+                r_ctx.moveTo(r_point.x, r_point.y);
+                r_ctx.lineTo(end.x, end.y);
+                r_ctx.closePath();
+                r_ctx.stroke();
+            }
+        }
+    }
+
+    function Forsquare() {
+        ctx.drawImage(img, 0, 0, w, h);
+
+        for (let i = 0; i < 4; i++) {
+            let tmp_canvas = document.createElement('canvas');
+            tmp_canvas.width = w / 2;
+            tmp_canvas.height = h / 2;
+            let tmp_ctx = tmp_canvas.getContext('2d');
+            let sx = 0;
+            let sy = 0;
+
+            switch(i) {
+                case 0:
+                    sx = 0;
+                    sy = 0;
+                    break;
+                case 1:
+                    sx = 1;
+                    sy = 0;
+                    break;
+                case 2:
+                    sx = 0;
+                    sy = 1;
+                    break;
+                case 3:
+                default:
+                    sx = 1;
+                    sy = 1;
+                    break;
+            }
+
+            sx = sx * w / 2;
+            sy = sy * h / 2;
+
+            let t_data =  ctx.getImageData(sx, sy, w /2 , h /2);
+            tmp_ctx.putImageData(t_data, 0, 0, 0, 0, w / 2, h / 2);
+            container.appendChild(tmp_canvas);
+
+            if (i === 1) {
+                let br = document.createElement('br');
+                container.appendChild(br);
+            }
+        }
+    }
+
+    function ForTriangle() {
+        let s_point = {
+            x: 400,
+            y: 300,
+        };
+
+        let lst = [
+            {
+                x: 0,
+                y: 0,
+            },
+            {
+                x: 800,
+                y: 0,
+            },
+            {
+                x: 800,
+                y: 600,
+            },
+            {
+                x: 0,
+                y: 600,
+            },
+        ];
+
+        let arr = [];
+
+        let canvas_lst = [];
+        let move_lst = [
+            -10,
+            10,
+            10,
+            -10,
+        ];
+
+        for (var i = 0, l = lst.length; i < l; i++) {
+            let tmp = [];
+            tmp.push(s_point);
+
+            if (i === (l - 1)) {
+                tmp.push(lst[i]);
+                tmp.push(lst[0]);
+            }
+            else {
+                tmp.push(lst[i]);
+                tmp.push(lst[i + 1]);
+            }
+
+            arr.push(tmp);
+        }
+
+        for (let i = 0, l = arr.length; i < l; i++) {
+            let tmp_arr = arr[i];
+            let tmp_canvas = document.createElement('canvas');
+            let tmp_ctx =tmp_canvas.getContext('2d');
+            tmp_canvas.width = w;
+            tmp_canvas.height = h;
+
+            tmp_ctx.beginPath();
+            for (let j = 0, t_l = tmp_arr.length; j < t_l; j++) {
+                let point = tmp_arr[j];
+
+                if (j === 0) {
+                    tmp_ctx.moveTo(point.x, point.y);
+                }
+                else {
+                    tmp_ctx.lineTo(point.x, point.y);
+                }
+            }
+
+            tmp_ctx.clip();
+            tmp_ctx.closePath();
+            tmp_ctx.drawImage(img, 0, 0, w, h);
+
+            container.appendChild(tmp_canvas);
+
+            canvas_lst.push(tmp_canvas);
+
+            switch(i) {
+                case 0:
+                    ctx.drawImage(tmp_canvas, 0, move_lst[0], w, h);
+                    break;
+                case 1:
+                    ctx.drawImage(tmp_canvas,  move_lst[1], 0, w, h);
+                    break;
+                case 2:
+                    ctx.drawImage(tmp_canvas, 0, move_lst[2], w, h);
+                    break;
+                case 3:
+                default:
+                    ctx.drawImage(tmp_canvas, move_lst[3], 0, w, h);
+                    break;
+            }
+        }
+
+        animate();
+
+        function animate() {
+            let speed = 4;
+            move_lst[0] -= speed;
+            move_lst[1] += speed;
+            move_lst[2] += speed;
+            move_lst[3] -= speed;
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(canvas_lst[0], 0, move_lst[0], w, h);
+            ctx.drawImage(canvas_lst[1],  move_lst[1], 0, w, h);
+            ctx.drawImage(canvas_lst[2], 0, move_lst[2], w, h);
+            ctx.drawImage(canvas_lst[3], move_lst[3], 0, w, h);
+
+            requestAnimationFrame(() => {
+                animate();
+            })
+        }
+    }
+
 </script>
 </html>
