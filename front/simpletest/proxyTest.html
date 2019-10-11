@@ -237,9 +237,49 @@
         proxy.push('1');
     }
 
-    arrayPushTest();
+    function enumTest() {
+        let handler = {
+            get(target, key, receiver) {
+                if (!target[key]) {
+                    throw new ReferenceError(`unknown enum ${key}`);
+                }
+                else {
+                    return Reflect.get(...arguments);
+                }
+            },
+            deleteProperty() {
+                throw new TypeError('enum is readonly');
+            },
+            set() {
+                throw new TypeError('enum is readonly');
+            }
+        };
 
+        let obj = {
+            a: 1,
+            b: 2,
+        };
+        let enum_obj = new Proxy(obj, handler);
 
+        try {
+            console.log(enum_obj.c);
+        } catch(e) {
+            console.log(e)
+        }
 
+        try {
+            enum_obj.b = 3;
+        } catch(e) {
+            console.log(e);
+        }
+
+        try {
+            delete enum_obj.a;
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
+    enumTest();
 </script>
 </html>
