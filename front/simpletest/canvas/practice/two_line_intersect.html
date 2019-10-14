@@ -12,18 +12,92 @@
 </head>
 <body>
     <div>
-        <span>point1:</span><input id="point1" type="text">
-        <span>point2:</span><input id="point2" type="text">
-        <span>is intersect</span><span id="result"></span>
+        <div>
+            <span>point1</span>
+            <span>X1:</span><input id="p1x1" type="text" value="100">
+            <span>Y1:</span><input id="p1y1" type="text" value="100">
+            <br>
+            <span>X2:</span><input id="p1x2" type="text" value="200">
+            <span>Y2:</span><input id="p1y2" type="text" value="200">
+            <br>
+            <span>point2</span>
+            <span>X1:</span><input id="p2x1" type="text" value="100">
+            <span>Y1:</span><input id="p2y1" type="text" value="180">
+            <br>
+            <span>X2:</span><input id="p2x2" type="text" value="400">
+            <span>Y2:</span><input id="p2y2" type="text" value="100">
+            <br>
+            <span>is intersect </span><span id="result"></span>
+            <button id="refresh">refresh</button>
+        </div>
         <canvas width="800" height="600"></canvas>
     </div>
 </body>
 <script>
-    let point1 = document.querySelector('#point1');
-    let point2 = document.querySelector('#point2');
+    let p1x1 = document.querySelector('#p1x1');
+    let p1y1 = document.querySelector('#p1y1');
+    let p1x2 = document.querySelector('#p1x2');
+    let p1y2 = document.querySelector('#p1y2');
+
+    let p2x1 = document.querySelector('#p2x1');
+    let p2y1 = document.querySelector('#p2y1');
+    let p2x2 = document.querySelector('#p2x2');
+    let p2y2 = document.querySelector('#p2y2');
+
+    let refresh = document.querySelector('#refresh');
     let result = document.querySelector('#result');
 
     let canvas = document.querySelector('canvas');
+    let w = canvas.width;
+    let h = canvas.height;
     let ctx = canvas.getContext('2d');
+
+    refresh.addEventListener('click', (e) => {
+        draw();
+    });
+
+    function draw() {
+        let v_p1x1 = parseInt(p1x1.value || 0);
+        let v_p1y1 = parseInt(p1y1.value || 0);
+        let v_p1x2 = parseInt(p1x2.value || 0);
+        let v_p1y2 = parseInt(p1y2.value || 0);
+
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.beginPath();
+        ctx.moveTo(v_p1x1, v_p1y1);
+        ctx.lineTo(v_p1x2, v_p1y2);
+        ctx.stroke();
+        ctx.closePath();
+
+        let v_p2x1 = parseInt(p2x1.value || 0);
+        let v_p2y1 = parseInt(p2y1.value || 0);
+        let v_p2x2 = parseInt(p2x2.value || 0);
+        let v_p2y2 = parseInt(p2y2.value || 0);
+
+
+        ctx.beginPath();
+        ctx.moveTo(v_p2x1, v_p2y1);
+        ctx.lineTo(v_p2x2, v_p2y2);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function isIntersect() {
+        let v_p1x1 = parseInt(p1x1.value || 0);
+        let v_p1y1 = parseInt(p1y1.value || 0);
+        let v_p1x2 = parseInt(p1x2.value || 0);
+        let v_p1y2 = parseInt(p1y2.value || 0);
+
+        let v_p2x1 = parseInt(p2x1.value || 0);
+        let v_p2y1 = parseInt(p2y1.value || 0);
+        let v_p2x2 = parseInt(p2x2.value || 0);
+        let v_p2y2 = parseInt(p2y2.value || 0);
+
+        
+    }
+
+    draw();
+    isIntersect();
 </script>
 </html>
