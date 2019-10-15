@@ -19,24 +19,31 @@
             height: 100%;
             border: 1px solid black;
         }
+
+        .parent {
+            width: 200px;
+            height: 200px;
+            background: red;
+            visibility: hidden;
+        }
+
+        .son {
+            width: 100px;
+            height: 100px;
+            background: blue;
+            margin:auto;
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-
+        <div class="parent">
+            <div class="son"></div>
+        </div>
     </div>
 </body>
 <script>
-    // (5).add(3).minus(2) 功能。
-    Number.prototype.add = function(val) {
-        return this + val;
-    };
-
-    Number.prototype.minus = function(val) {
-        return this - val;
-    };
-
-    console.log((5).add(3).minus(2));
 
 </script>
 </html>

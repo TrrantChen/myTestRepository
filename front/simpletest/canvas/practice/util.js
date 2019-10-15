@@ -351,3 +351,45 @@ function calculateArrowAngle(s_pos, e_pos, angle, l) {
 function calcAngleDegrees(x, y) {
     return Math.atan2(y, x) * 180 / Math.PI;
 }
+
+// 判断两条直线是否相交
+export function twoLineIsIntersect(p1, p2, q1, q2) {
+    let result = false;
+
+    if (
+        // 判断以两条线段为对角线的矩形是否相交，如果相交那肯定是相交的。
+        Math.min(p1.x, p2.x) <= Math.max(q1.x, q2.x)
+        && Math.min(q1.x, q2.x) <= Math.max(p1.x, p2.x)
+        && Math.min(p1.y, p2.y) <= Math.max(q1.y, q2.y)
+        && Math.min(q1.y, q2.y) <= Math.max(p1.y, p2.y)
+    ) {
+        // 使用两条线段的向量积，但无法处理两条线段在同一直线上但不相交的情况。
+        // x1y2 - x2y1
+        let p1p2 = {
+            x: p2.x - p1.x,
+            y: p2.y - p1.y,
+        };
+
+        let p1q1 = {
+            x: q1.x - p1.x,
+            y: q1.y - p1.y,
+        };
+
+        let p1q2 = {
+            x: q2.x - p1.x,
+            y: q2.y - p1.y,
+        };
+
+        // p1p2 X p1q1
+        let c1 = p1p2.x * p1q1.y - p1q1.x * p1p2.y;
+        // p1p2 X p1q2
+        let c2 = p1p2.x * p1q2.y - p1q2.x * p1p2.y;
+
+        return c1 * c2 < 0;
+    }
+    else {
+        result = false;
+    }
+
+    return result;
+}
