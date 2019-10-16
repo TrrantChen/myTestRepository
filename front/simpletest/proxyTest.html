@@ -280,6 +280,29 @@
         }
     }
 
-    enumTest();
+    // 写一个spy断言库，统计函数的调用次数
+    function spyTest() {
+
+        function testFunc() {
+
+        }
+
+        testFunc.call_count = 0;
+
+        let handler = {
+            apply(target, ctx, args) {
+                target.call_count++;
+                return Reflect.apply(...arguments);
+            }
+        };
+
+        let proxy_func = new Proxy(testFunc, handler);
+        proxy_func();
+        console.log(proxy_func.call_count);
+        proxy_func();
+        console.log(proxy_func.call_count);
+    }
+
+    spyTest();
 </script>
 </html>
