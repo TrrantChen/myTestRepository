@@ -79,10 +79,37 @@
         env = void 0;
         option = {};
 
+        // todo 抽象添加个性化配置
         constructor(data_lst = [], canvas, option) {
             let default_option = {
                 env: window,
                 min_area_width: 50,
+                global_style: {
+                    entirety_style: {
+                        x:0,
+                        y:0,
+                    },
+                    point_style: {
+                        shape: 'rect',  // rect circle [custom] 甚至可以是canvas 图片或者自定义函数
+                        border: {
+                            border_width: 0,
+                            border_color: 'black',
+                        },
+                        background_color: 'yellow',
+                        width: 40,
+                        height: 40,
+                    },
+                    font_style: {
+                        font: '12px serif',
+                        textAlign: 'end',
+                        textBaseline: 'top',
+                        direction: 'rtl',
+                        fillStyle: 'black',
+                    },
+                    line_style: {
+
+                    },
+                }
             };
 
             this.option = Object.assign(default_option, option || {});
@@ -165,11 +192,21 @@
         }
 
         _drawFont(obj) {
-            this.ctx.font = '12px serif';
-            this.ctx.textAlign = 'end';
-            this.ctx.textBaseline = 'top';
-            this.ctx.direction = 'rtl';
-            this.ctx.fillStyle = 'black';
+            let global_font_style = this.option.global_style.font_style;
+            let keys = Object.keys(global_font_style);
+
+            for (var key of keys) {
+                this.ctx[key] = global_font_style[key];
+            }
+
+            if (obj.font_style) {
+                let keys = Object.keys(obj.font_style);
+
+                for (var key of keys) {
+                    this.ctx[key] = obj.font_style[key];
+                }
+            }
+
             this.ctx.fillText(obj.value, obj.x + obj.width / 2 - 4, obj.y + obj.height / 2 - 4);
         }
 
