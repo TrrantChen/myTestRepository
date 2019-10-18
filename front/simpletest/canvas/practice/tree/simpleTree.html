@@ -46,6 +46,12 @@
                     children: [
                         {
                             value: '5',
+                            style: {
+                                min_area: {
+                                    width: 200,
+                                },
+                                width: 3000,
+                            }
                         },
                         {
                             value: '6',
@@ -80,6 +86,7 @@
         option = {};
 
         // todo 抽象添加个性化配置
+        // todo 先做长宽位置
         constructor(data_lst = [], canvas, option) {
             let default_option = {
                 env: window,
@@ -88,6 +95,12 @@
                     entirety_style: {
                         x:0,
                         y:0,
+                        // min_area: {
+                        //     width: 60,
+                        //     height: 60,
+                        // },
+                        min_point_area_width: 60,
+                        min_line_area_height: 60,
                     },
                     point_style: {
                         shape: 'rect',  // rect circle [custom] 甚至可以是canvas 图片或者自定义函数
@@ -95,6 +108,7 @@
                             border_width: 0,
                             border_color: 'black',
                         },
+                        border_radius: 0,
                         background_color: 'yellow',
                         width: 40,
                         height: 40,
@@ -122,50 +136,66 @@
         }
 
         _transformData(lst) {
-            let area_width = 0;
+            let min_point_area_width = 0;
 
             for (var obj of lst) {
-                let tmp_width = 0;
+                if (!obj.style) {
+                    obj.style = {};
+                }
+
+                let tmp_min_point_area_width = 0;
 
                 if (obj.children) {
-                    tmp_width = this._transformData(obj.children);
+                    tmp_min_point_area_width = this._transformData(obj.children);
                 }
                 else {
-                    tmp_width = this.option.min_area_width;
+                    if (obj.style && obj.style.min_point_area_width) {
+                        tmp_min_point_area_width = obj.style.min_point_area_width;
+                    }
+                    else {
+                        tmp_min_point_area_width = this.option.global_style.entirety_style.min_point_area_width;
+                    }
                 }
 
-                obj.area_width = tmp_width;
-                area_width += tmp_width;
+
+
+                obj.style.min_point_area_width = tmp_min_point_area_width;
+                obj.style.width =  obj.style.width || this.option.global_style.point_style.width;
+                obj.style.height =  obj.style.height || this.option.global_style.point_style.height;
+
+                if (obj.style.width > obj.style.min_point_area_width) {
+                    obj.style.width = obj.style.min_point_area_width;
+                }
+
+                min_point_area_width += tmp_min_point_area_width
             }
 
-            return area_width;
+            return min_point_area_width
         }
 
-        _drawTree(obj, offset_x, offset_y, l_s_pos) {
-            obj.width = 40;
-            obj.height = 40;
-            obj.x = obj.area_width / 2 + offset_x  - obj.width / 2;
-            obj.y = obj.height / 2 + offset_y;
+        _drawTree(obj, offset_x, offset_y, line_s_pos) {
+            obj.style.x = obj.style.min_point_area_width / 2 + offset_x  - obj.style.width / 2;
+            obj.style.y = obj.style.height / 2 + offset_y;
 
             this._drawPoint(obj);
             this._drawFont(obj);
 
-            if (l_s_pos) {
+            if (line_s_pos) {
                 let e_pos = {
-                    x: obj.x + obj.width / 2,
-                    y: obj.y,
+                    x: obj.style.x  + obj.style.width / 2,
+                    y: obj.style.y,
                 };
 
-                this._drawArrowLine(l_s_pos, e_pos);
+                this._drawArrowLine(line_s_pos, e_pos);
             }
 
             let s_pos = {
-                x: obj.x + obj.width / 2,
-                y: obj.y + obj.height,
+                x: obj.style.x + obj.style.width / 2,
+                y: obj.style.y + obj.style.height,
             };
 
             if (obj.children) {
-                let tmp_offset_y = obj.height + 40 + offset_y;
+                let tmp_offset_y = obj.style.height + 40 + offset_y;
                 let tmp_offset_x = offset_x;
                 for (var i = 0, length = obj.children.length; i < length; i++) {
                     let c_obj = obj.children[i];
@@ -175,7 +205,7 @@
                     }
                     else {
                         let last_obj = obj.children[i - 1];
-                        tmp_offset_x += last_obj.area_width;
+                        tmp_offset_x += last_obj.style.min_point_area_width;
                     }
 
                     this._drawTree(c_obj, tmp_offset_x, tmp_offset_y, s_pos);
@@ -186,7 +216,7 @@
         _drawPoint(obj) {
             this.ctx.beginPath();
             this.ctx.fillStyle = 'yellow';
-            this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+            this.ctx.fillRect(obj.style.x, obj.style.y, obj.style.width, obj.style.height);
             this.ctx.fill();
             this.ctx.closePath();
         }
@@ -207,7 +237,7 @@
                 }
             }
 
-            this.ctx.fillText(obj.value, obj.x + obj.width / 2 - 4, obj.y + obj.height / 2 - 4);
+            this.ctx.fillText(obj.value, obj.style.x + obj.style.width / 2 - 4, obj.style.y + obj.style.height / 2 - 4);
         }
 
         _drawLine(obj) {
