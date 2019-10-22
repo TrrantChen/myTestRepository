@@ -47,10 +47,9 @@
                         {
                             value: '5',
                             style: {
-                                min_area: {
-                                    width: 200,
-                                },
-                                width: 3000,
+                                min_point_area_width: 500,
+                                min_line_area_height: 60,
+                                width: 300,
                             }
                         },
                         {
@@ -95,12 +94,8 @@
                     entirety_style: {
                         x:0,
                         y:0,
-                        // min_area: {
-                        //     width: 60,
-                        //     height: 60,
-                        // },
-                        min_point_area_width: 60,
-                        min_line_area_height: 60,
+                        min_point_area_width: 60,  // 这两个属性可能需要修改，纵向和横向的时候是不一样的。所以命名需要商榷
+                        min_line_area_height: 200,  //
                     },
                     point_style: {
                         shape: 'rect',  // rect circle [custom] 甚至可以是canvas 图片或者自定义函数
@@ -195,7 +190,8 @@
             };
 
             if (obj.children) {
-                let tmp_offset_y = obj.style.height + 40 + offset_y;
+                let min_line_area_height = obj.style.min_line_area_height || this.option.global_style.entirety_style.min_line_area_height;
+                let tmp_offset_y = obj.style.height + min_line_area_height + offset_y;
                 let tmp_offset_x = offset_x;
                 for (var i = 0, length = obj.children.length; i < length; i++) {
                     let c_obj = obj.children[i];
@@ -254,7 +250,5 @@
     }
 
     let auto_width_tree = new AutoWidthTree(data_lst, canvas);
-
-
 </script>
 </html>
