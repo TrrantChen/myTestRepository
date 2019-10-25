@@ -191,20 +191,21 @@
 
             if (obj.children) {
                 let min_line_area_height = obj.style.min_line_area_height || this.option.global_style.entirety_style.min_line_area_height;
-                let tmp_offset_y = obj.style.height + min_line_area_height + offset_y;
-                let tmp_offset_x = offset_x;
+                let next_offset_y = obj.style.height + min_line_area_height + offset_y;
+                let next_offset_x = offset_x;
+
                 for (var i = 0, length = obj.children.length; i < length; i++) {
                     let c_obj = obj.children[i];
 
                     if (i === 0) {
-                        tmp_offset_x += 0;
+                        next_offset_x += 0;
                     }
                     else {
                         let last_obj = obj.children[i - 1];
-                        tmp_offset_x += last_obj.style.min_point_area_width;
+                        next_offset_x += last_obj.style.min_point_area_width;
                     }
 
-                    this._drawTree(c_obj, tmp_offset_x, tmp_offset_y, s_pos);
+                    this._drawTree(c_obj, next_offset_x, next_offset_y, s_pos);
                 }
             }
         }

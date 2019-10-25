@@ -1,0 +1,23 @@
+{
+  "name": "webpackTest",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "entry_test": "webpack --config build/entry.test.config.js",
+    "buildByNode": "node build/buildByNode.js",
+    "projectBuild": "webpack --config build/projectTest/webpack.prod.conf.js",
+    "projectDev": "webpack-dev-server --inline --progress --config build/projectTest/webpack.dev.conf.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^4.2.2"
+  }
+}
