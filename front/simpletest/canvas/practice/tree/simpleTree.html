@@ -37,45 +37,78 @@
     import { drawArrow } from '../util.js'
 
     let canvas = document.querySelector('canvas');
+    // todo 共同的子点在碰到跨越度较大的节点时会出现横跨节点的情况
     let data_lst = [
         {
             value: '1',
+            id: '1',
+            style: {
+                line_area_height: 20,
+            },
             children: [
                 {
                     value: '2',
+                    id: '2',
+                    style: {
+                        line_area_height: 40,
+                        point_area_width: 100,
+                    },
                     children: [
                         {
                             value: '5',
+                            id: '3',
                             style: {
-                                min_point_area_width: 500,
-                                min_line_area_height: 60,
-                                width: 300,
-                            }
+                                // point_area_width: 500,
+                                // line_area_height: 60,
+                                // width: 300,
+                            },
+                            children: [
+                                {
+                                    value: 'joke',
+                                    id: '4',
+                                }
+                            ]
                         },
                         {
                             value: '6',
-                        }
+                            id: '5',
+                            // children: [
+                            //     {
+                            //         value: 'joke',
+                            //         id: '4',
+                            //     }
+                            // ]
+                        },
                     ]
                 },
                 {
                     value: '3',
+                    id: '6',
                     children: [
                         {
+                            id: '7',
                             value: '7',
+                        },
+                        {
+                            value: 'joke',
+                            id: '4',
                         }
                     ]
                 },
                 {
                     value: '4',
+                    id: '8',
                     children: [
                         {
                             value: '8',
+                            id: '9',
                         },
                         {
                             value: '9',
+                            id: '10',
                         }
                     ]
-                }
+                },
             ]
         }
     ];
@@ -85,18 +118,20 @@
         option = {};
 
         // todo 抽象添加个性化配置
-        // todo 先做长宽位置
         constructor(data_lst = [], canvas, option) {
             let default_option = {
                 env: window,
-                min_area_width: 50,
+                test: {  // 测试的开关
+                    show_point_area: false,
+                },
                 global_style: {
                     entirety_style: {
                         x:0,
                         y:0,
-                        min_point_area_width: 60,  // 这两个属性可能需要修改，纵向和横向的时候是不一样的。所以命名需要商榷
-                        min_line_area_height: 200,  //
+                        point_area_width: 200,  // 用于配置区域的宽度 这个属性只有叶子节点设置才会生效
+                        line_area_height: 200,  // 用于配置方块与方块的纵向间距
                     },
+                    // todo 改造这块的配置
                     point_style: {
                         shape: 'rect',  // rect circle [custom] 甚至可以是canvas 图片或者自定义函数
                         border: {
@@ -104,8 +139,8 @@
                             border_color: 'black',
                         },
                         border_radius: 0,
-                        background_color: 'yellow',
-                        width: 40,
+                        background_color: 'orange',
+                        width: 100,
                         height: 40,
                     },
                     font_style: {
@@ -116,7 +151,8 @@
                         fillStyle: 'black',
                     },
                     line_style: {
-
+                        type: 'circle', // default 默认 angle 直角 circle 圆角
+                        radius: 14, // type为circle的时候会生效，表示角的圆角
                     },
                 }
             };
@@ -126,93 +162,124 @@
             this.canvas = canvas;
             this.ctx = canvas.getContext('2d');
 
+            this.id_lst = [];
             this._transformData(this.data_lst);
             this._drawTree(this.data_lst[0], 0, 0);
         }
 
         _transformData(lst) {
-            let min_point_area_width = 0;
+            let point_area_width = 0;
 
             for (var obj of lst) {
                 if (!obj.style) {
                     obj.style = {};
                 }
 
-                let tmp_min_point_area_width = 0;
+                let tmp_point_area_width = 0;
 
                 if (obj.children) {
-                    tmp_min_point_area_width = this._transformData(obj.children);
+                    tmp_point_area_width = this._transformData(obj.children);
                 }
                 else {
-                    if (obj.style && obj.style.min_point_area_width) {
-                        tmp_min_point_area_width = obj.style.min_point_area_width;
+                    if (obj.style && obj.style.point_area_width) {
+                        tmp_point_area_width = obj.style.point_area_width;
                     }
                     else {
-                        tmp_min_point_area_width = this.option.global_style.entirety_style.min_point_area_width;
+                        tmp_point_area_width = this.option.global_style.entirety_style.point_area_width;
                     }
                 }
 
-
-
-                obj.style.min_point_area_width = tmp_min_point_area_width;
+                obj.style.point_area_width = tmp_point_area_width;
                 obj.style.width =  obj.style.width || this.option.global_style.point_style.width;
                 obj.style.height =  obj.style.height || this.option.global_style.point_style.height;
 
-                if (obj.style.width > obj.style.min_point_area_width) {
-                    obj.style.width = obj.style.min_point_area_width;
+                if (obj.style.width > obj.style.point_area_width) {
+                    obj.style.width = obj.style.point_area_width;
                 }
 
-                min_point_area_width += tmp_min_point_area_width
+                point_area_width += tmp_point_area_width
             }
 
-            return min_point_area_width
+            return point_area_width
         }
 
         _drawTree(obj, offset_x, offset_y, line_s_pos) {
-            obj.style.x = obj.style.min_point_area_width / 2 + offset_x  - obj.style.width / 2;
-            obj.style.y = obj.style.height / 2 + offset_y;
+            let is_point_draw = false;
+            let point_pos = null;
 
-            this._drawPoint(obj);
-            this._drawFont(obj);
-
-            if (line_s_pos) {
-                let e_pos = {
-                    x: obj.style.x  + obj.style.width / 2,
-                    y: obj.style.y,
-                };
-
-                this._drawArrowLine(line_s_pos, e_pos);
+            for (var id_obj of this.id_lst) {
+                if (id_obj[obj.id]) {
+                    is_point_draw = true;
+                    point_pos = id_obj[obj.id];
+                    break;
+                }
             }
 
-            let s_pos = {
-                x: obj.style.x + obj.style.width / 2,
-                y: obj.style.y + obj.style.height,
-            };
+            if (!is_point_draw) {
+                obj.style.x = obj.style.point_area_width / 2 + offset_x  - obj.style.width / 2;
 
-            if (obj.children) {
-                let min_line_area_height = obj.style.min_line_area_height || this.option.global_style.entirety_style.min_line_area_height;
-                let next_offset_y = obj.style.height + min_line_area_height + offset_y;
-                let next_offset_x = offset_x;
+                let line_area_height = obj.style.line_area_height || this.option.global_style.entirety_style.line_area_height;
+                obj.style.y = offset_y + line_area_height;
 
-                for (var i = 0, length = obj.children.length; i < length; i++) {
-                    let c_obj = obj.children[i];
-
-                    if (i === 0) {
-                        next_offset_x += 0;
-                    }
-                    else {
-                        let last_obj = obj.children[i - 1];
-                        next_offset_x += last_obj.style.min_point_area_width;
-                    }
-
-                    this._drawTree(c_obj, next_offset_x, next_offset_y, s_pos);
+                if (this.option.test.show_point_area) {
+                    this._drawTestArea(
+                        offset_x,
+                        obj.style.y,
+                        obj.style.point_area_width,
+                        obj.style.height,
+                        'red'
+                    );
                 }
+
+                this._drawPoint(obj);
+                this._drawFont(obj);
+
+                if (line_s_pos) {
+                    let e_pos = {
+                        x: obj.style.x  + obj.style.width / 2,
+                        y: obj.style.y,
+                    };
+
+                    let tmp_obj = {};
+                    tmp_obj[obj.id] = e_pos;
+
+                    this.id_lst.push(tmp_obj);
+
+                    this._drawLine(line_s_pos, e_pos);
+                }
+
+                let s_pos = {
+                    x: obj.style.x + obj.style.width / 2,
+                    y: obj.style.y + obj.style.height,
+                };
+
+                if (obj.children) {
+                    let next_offset_y = obj.style.y + obj.style.height;
+                    let next_offset_x = offset_x;
+
+                    for (var i = 0, length = obj.children.length; i < length; i++) {
+                        let c_obj = obj.children[i];
+
+                        if (i === 0) {
+                            next_offset_x += 0;
+                        }
+                        else {
+                            let last_obj = obj.children[i - 1];
+                            next_offset_x += last_obj.style.point_area_width;
+                        }
+
+                        this._drawTree(c_obj, next_offset_x, next_offset_y, s_pos);
+                    }
+                }
+            }
+            else {
+                this._drawLine(line_s_pos, point_pos);
             }
         }
 
         _drawPoint(obj) {
             this.ctx.beginPath();
-            this.ctx.fillStyle = 'yellow';
+            this.ctx.fillStyle = this.option.global_style.point_style.background_color;
             this.ctx.fillRect(obj.style.x, obj.style.y, obj.style.width, obj.style.height);
             this.ctx.fill();
             this.ctx.closePath();
@@ -237,16 +304,100 @@
             this.ctx.fillText(obj.value, obj.style.x + obj.style.width / 2 - 4, obj.style.y + obj.style.height / 2 - 4);
         }
 
-        _drawLine(obj) {
+        _drawLine(s_pos, e_pos) {
+            let type = this.option.global_style.line_style.type;
+
+            switch(type) {
+                case 'default':
+                default:
+                    this._drawArrowLine(s_pos, e_pos);
+                    break;
+                case 'angle':
+                    this._drawAngleLine(s_pos, e_pos);
+                    break;
+                case 'circle':
+                    this._drawCircleLine(s_pos, e_pos);
+                    break;
+            }
+        }
+
+        _drawAngleLine(s_pos, e_pos) {
+            let middle_y = s_pos.y + (e_pos.y - s_pos.y) / 2;
+            let middle_one = {
+                x: s_pos.x,
+                y: middle_y,
+            };
+            let middle_two = {
+                x: e_pos.x,
+                y: middle_y,
+            };
+
+            this._drawLineFunc(s_pos, middle_one);
+            this._drawLineFunc(middle_one, middle_two);
+            drawArrow(this.ctx, middle_two, e_pos, {
+                line_width: 2,
+            });
+        }
+
+        _drawCircleLine(s_pos, e_pos) {
+            let middle_y = s_pos.y + (e_pos.y - s_pos.y) / 2;
+            let middle_one = {
+                x: s_pos.x,
+                y: middle_y,
+            };
+            let middle_two = {
+                x: e_pos.x,
+                y: middle_y,
+            };
+
+            let radius = this.option.global_style.line_style.radius;
+
             this.ctx.beginPath();
-            this.ctx.fillStyle = 'black';
-            this.ctx.moveTo(obj.s_pos.x, obj.s_pos.y);
-            this.ctx.lineTo(obj.e_pos.x, obj.e_pos.y);
+            this.ctx.strokeStyle = 'black';
+            this.ctx.lineWidth = 2;
+            this.ctx.moveTo(s_pos.x, s_pos.y);
+            this.ctx.arcTo(middle_one.x, middle_one.y, middle_two.x, middle_two.y, radius);
+            this.ctx.stroke();
+            this.ctx.closePath();
+
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = 'black';
+            this.ctx.lineWidth = 2;
+            let fixed = (middle_two.x === middle_one.x ? 0 : (middle_two.x > middle_one.x) ? radius : -radius);
+            this.ctx.moveTo(middle_one.x + fixed, middle_one.y);
+            this.ctx.arcTo(middle_two.x, middle_two.y, e_pos.x, e_pos.y, radius);
+            this.ctx.stroke();
+            this.ctx.closePath();
+
+            if (fixed !== 0) {
+                middle_two.y += radius;
+            }
+
+            drawArrow(this.ctx, middle_two, e_pos, {
+                line_width: 2,
+            });
+        }
+
+        _drawLineFunc(s_pos, e_pos) {
+            this.ctx.beginPath();
+            this.ctx.lineWidth = 2;
+            this.ctx.strokeStyle = 'black';
+            this.ctx.moveTo(s_pos.x, s_pos.y);
+            this.ctx.lineTo(e_pos.x, e_pos.y);
+            this.ctx.stroke();
             this.ctx.closePath();
         }
 
         _drawArrowLine(s_pos, e_pos) {
             drawArrow(this.ctx, s_pos, e_pos)
+        }
+
+        _drawTestArea(x, y , w, h, c = 'red') {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = c;
+            this.ctx.strokeRect(x, y , w, h);
+            this.ctx.stroke();
+            this.ctx.closePath();
         }
     }
 

@@ -1,5 +1,5 @@
-const fs = require("fs"),
-    path = require("path");
+const fs = require("fs");
+
 function getFileName(doc_path) {
     let file_name_lst = [];
 

@@ -1,6 +1,12 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const baseWebpackConfig = require('./webpack.base.conf');
+
+const config = require('../config');
+const { resolve } = require('../util.js');
+
+process.env.NODE_ENV = 'development';
 
 const devWebpackConfig = {
     mode: 'development',
@@ -9,10 +15,10 @@ const devWebpackConfig = {
         port: 8080,
         inline: true,
         hot: true,
-        publicPath: "/assets/", // 这里的值最好跟output.publicPath上的值保持一致。
+        publicPath:  config.common.assetsPublicPath, // 这里的值最好跟output.publicPath上的值保持一致。
         quiet: true, // 除了初始打印信息，其他的信息不会在控制台上打印，
         open: false,
-        openPage: 'assets/project.html',
+        // openPage: false,
         overlay: {
             warnings: false,
             errors: true,
@@ -27,7 +33,14 @@ const devWebpackConfig = {
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(), // 热更新的必要插件
-    ]
+        // new CopyWebpackPlugin([
+        //     {
+        //         from: resolve('../assets'),
+        //         to: config.dev.assetsSubDirectory,
+        //         ignore: ['.*']
+        //     }
+        // ])
+    ],
 };
 
 module.exports = merge(baseWebpackConfig, devWebpackConfig);
