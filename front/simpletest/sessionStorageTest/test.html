@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <button onclick="set()">set</button>
+    <button onclick="get()">get</button>
+</head>
+<body>
+<script>
+    function get() {
+        let data = sessionStorage.getItem('key');
+        alert(data);
+    }
+
+    function set() {
+        sessionStorage.setItem('key', 'testhahahah');
+    }
+    
+</script>
+</body>
+</html>
