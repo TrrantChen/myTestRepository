@@ -7,12 +7,26 @@
 </style>
 <template>
     <div>
-        this is img tes
-        <img src="/assets/ss.png" alt="img fail">
-        <img src="/assets/large.jpg" alt="img fail">
+        <span>三种加载方式</span>
+        <br>
+        <span>一</span>
+        <img width="50" height="50" src="../../../assets/ss.png" alt="img fail">
+        <img width="50" height="50" src="../../../assets/large.jpg" alt="img fail">
+        <br>
+        <span>二</span>
+        <img width="50" height="50" :src=aa  alt="img fail">
+        <img width="50" height="50" :src=large alt="img fail">
+        <br>
+        <span>三</span>
+        <!--content设置为false的时候不行-->
+        <img width="50" height="50" src="/assets/ss.png" alt="img fail">
+        <img width="50" height="50" src="/assets/large.jpg" alt="img fail">
+        <br>
+        <span>四</span>
+        <img width="50" height="50" src="vue_project/assets/ss.png" alt="img fail">
+        <img width="50" height="50" src="vue_project/assets/large.jpg" alt="img fail">
+        <br>
         <div class="img-div"></div>
-        <img :src=aa  alt="img fail">
-        <img :src=large alt="img fail">
     </div>
 </template>
 <script>

@@ -12,7 +12,8 @@
     "nodemonTestAndScript": "node build/dynamic_nodemon.js",
     "nodemonVueDev": "nodemon --watch build/ --exec \"webpack-dev-server --inline --progress --config build/vueProjectTest/webpack.dev.conf.js\"",
     "vueBuild": "node build/vueProjectTest/build.js",
-    "strip_css": "webpack --config build/strip_css.js"
+    "strip_css": "webpack --config build/strip_css.js",
+    "snabbdomDev": "nodemon --watch build/ --exec \"webpack-dev-server --inline --progress --config build/snabbdom_test.js\""
   },
   "keywords": [],
   "author": "",
@@ -31,6 +32,7 @@
     "ora": "^1.4.0",
     "postcss-loader": "^3.0.0",
     "rimraf": "^3.0.0",
+    "snabbdom": "^0.7.3",
     "style-loader": "^1.0.0",
     "url-loader": "^2.2.0",
     "vue-loader": "^15.7.1",

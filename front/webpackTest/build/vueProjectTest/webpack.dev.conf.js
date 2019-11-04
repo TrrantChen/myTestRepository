@@ -16,6 +16,7 @@ const devWebpackConfig = {
         inline: true,
         hot: true,
         publicPath:  config.common.assetsPublicPath, // 这里的值最好跟output.publicPath上的值保持一致。
+        contentBase: false,
         quiet: true, // 除了初始打印信息，其他的信息不会在控制台上打印，
         open: false,
         // openPage: false,
