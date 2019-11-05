@@ -8,8 +8,6 @@ const { resolve } = require('../util.js');
 
 process.env.NODE_ENV = 'development';
 
-console.log(resolve('../assets'));
-
 const devWebpackConfig = {
     mode: 'development',
     devServer: {
@@ -18,7 +16,8 @@ const devWebpackConfig = {
         inline: true,
         hot: true,
         publicPath:  config.common.assetsPublicPath, // 这里的值最好跟output.publicPath上的值保持一致。
-        contentBase: 'htdocs',
+        // contentBase: resolve('../assets'),  // 使用这种方式，然后在html中 <img width="50" height="50" src="/ss.png" alt="img fail"> 也是可行的
+        contentBase: false, // 但一般好像都是禁止的，使用CopyWebpackPlugin，我猜应该是为了线上和线下路径一致才这么做的。
         quiet: true, // 除了初始打印信息，其他的信息不会在控制台上打印，
         open: false,
         // openPage: false,
@@ -36,13 +35,13 @@ const devWebpackConfig = {
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(), // 热更新的必要插件
-        // new CopyWebpackPlugin([
-        //     {
-        //         from: resolve('../assets'),
-        //         to: config.dev.assetsSubDirectory,
-        //         ignore: ['.*']
-        //     }
-        // ])
+        new CopyWebpackPlugin([
+            {
+                from: resolve('../assets'),
+                to: config.dev.assetsSubDirectory,
+                ignore: ['.*']
+            }
+        ])
     ],
 };
 

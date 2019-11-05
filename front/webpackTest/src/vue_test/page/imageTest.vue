@@ -21,6 +21,8 @@
         <!--content设置为false的时候不行-->
         <img width="50" height="50" src="/assets/ss.png" alt="img fail">
         <img width="50" height="50" src="/assets/large.jpg" alt="img fail">
+        <img width="50" height="50" src="assets/ss.png" alt="img fail">
+        <img width="50" height="50" src="assets/large.jpg" alt="img fail">
         <br>
         <span>四</span>
         <img width="50" height="50" src="vue_project/assets/ss.png" alt="img fail">

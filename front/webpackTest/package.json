@@ -13,7 +13,9 @@
     "nodemonVueDev": "nodemon --watch build/ --exec \"webpack-dev-server --inline --progress --config build/vueProjectTest/webpack.dev.conf.js\"",
     "vueBuild": "node build/vueProjectTest/build.js",
     "strip_css": "webpack --config build/strip_css.js",
-    "snabbdomDev": "nodemon --watch build/ --exec \"webpack-dev-server --inline --progress --config build/snabbdom_test.js\""
+    "snabbdomDev": "nodemon --watch build/ --exec \"webpack-dev-server --inline --progress --config build/snabbdom_test.js\"",
+    "static_test": "nodemon --watch build/ --exec \"webpack-dev-server --inline --progress --config build/static_test/webpack.dev.conf.js\"",
+    "static_build": "webpack --config build/static_test/webpack.prod.conf.js"
   },
   "keywords": [],
   "author": "",
