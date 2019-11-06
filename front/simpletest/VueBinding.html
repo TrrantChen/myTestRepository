@@ -1,0 +1,103 @@
+<!--模拟vue的双向绑定, 使用Proxy替代Object.define-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span>name: </span><span>{{ name }}</span>
+        <span>number: </span><span>{{ number }}</span>
+        <button onclick="changeNumber()">change</button>
+    </div>
+</body>
+<script>
+    let container = document.querySelector('.container');
+
+    function changeNumber() {
+        obj.number++;
+    }
+
+    let obj = {
+        name: 'yc',
+        number: 1,
+    };
+
+    class Observer {
+        constructor(obj) {
+            this.dep = new Dep();
+            let handle = {
+                get(target, propKey, receiver) {
+                    if (是否需要添加订阅者) {
+                        this.dep.addSub(watcher); // 在这里添加一个订阅者
+                    }
+                    return Reflect.get(...arguments)
+                },
+                set(target, propKey, value, receiver) {
+                    let old_value = target[propKey];
+
+                    if (old_value !== value) {
+                        this.dep.notify(); // 如果数据变化，通知所有订阅者
+                    }
+
+                    return Reflect.set(...arguments);
+                },
+            };
+            this.proxy = new Proxy(obj, handle);
+        }
+    }
+
+    class Watcher {
+        constructor() {
+
+        }
+        update() {
+
+        }
+    }
+
+    class Compile {
+        constructor() {
+
+        }
+
+        _init() {
+
+        }
+    }
+
+    class Dep {
+        constructor() {
+            this.subs = [];
+        }
+        add(watcher) {
+            this.subs.push(watcher);
+        }
+        modify() {
+            this.subs.forEach((sub) => {
+                sub.update();
+            })
+        }
+    }
+
+    let observer = new Observer(obj);
+</script>
+</html>

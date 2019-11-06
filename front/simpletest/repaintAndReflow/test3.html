@@ -1,0 +1,112 @@
+<!--修改所有的长宽高，怎么减少回流, 三种方法是有效的-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .add-div {
+            width: 10px;
+            height: 10px;
+            border: 1px solid black;
+            background: red;
+        }
+
+    </style>
+</head>
+<body>
+<button onclick="normal()">normal</button>
+<button onclick="useHideAndShow()">useHideAndShow</button>
+<button onclick="useDocumentFragment()">useDocumentFragment</button>
+<button onclick="cloneAndReplace()">cloneAndReplace</button>
+<button onclick="clear()">clear</button>
+<div id="container">
+</div>
+</body>
+<script>
+    let container = document.querySelector('#container');
+    const count = 2000;
+
+    for (var i = 0; i < count; i++) {
+        let div = document.createElement('div');
+        div.className = 'add-div';
+        container.appendChild(div);
+    }
+
+    // 啥优化手段都不用
+    function normal() {
+        let children = container.children;
+
+        for (var child of children) {
+            let width = window.getComputedStyle(child).getPropertyValue('width');
+            console.log(width);
+            child.style.width = '100px';
+        }
+    }
+
+    // 隐藏元素，应用修改，重新显示
+    function useHideAndShow() {
+        container.style.display = 'none';
+
+        let children = container.children;
+
+        for (var child of children) {
+            let width = window.getComputedStyle(child).getPropertyValue('width');
+            console.log(width);
+            child.style.width = '100px';
+        }
+
+        container.style.display = 'block';
+    }
+
+    // 使用文档片段(document fragment)在当前DOM之外构建一个子树，再把它拷贝回文档。
+    function useDocumentFragment() {
+        let parent = container.parentElement;
+        let frag = document.createDocumentFragment();
+        container.remove();
+        frag.appendChild(container);
+        let children = container.children;
+
+        for (var child of children) {
+            let width = window.getComputedStyle(child).getPropertyValue('width');
+            console.log(width);
+            child.style.width = '100px';
+        }
+
+        parent.appendChild(frag);
+    }
+
+    // 原始元素拷贝到一个脱离文档的节点中，修改节点后，再替换原始的元素。
+    function cloneAndReplace() {
+        let clone = container.cloneNode(true);
+
+        let children = clone.children;
+
+        for (var child of children) {
+            let width = window.getComputedStyle(child).getPropertyValue('width');
+            console.log(width);
+            child.style.width = '100px';
+        }
+
+        container.parentElement.replaceChild(clone, container);
+    }
+
+    function clear() {
+        container.innerHTML = '';
+    }
+
+
+</script>
+</html>
