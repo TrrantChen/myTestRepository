@@ -26,61 +26,109 @@
     <div class="container">
         <span>name: </span><span>{{ name }}</span>
         <span>number: </span><span>{{ number }}</span>
+        <div>
+            <span>{{ age }}</span>
+        </div>
         <button onclick="changeNumber()">change</button>
     </div>
 </body>
 <script>
     let container = document.querySelector('.container');
 
-    function changeNumber() {
-        obj.number++;
-    }
-
     let obj = {
         name: 'yc',
         number: 1,
+        age: 10,
     };
+
+    function changeNumber() {
+        observer.number = observer.number + 1;
+    }
+
+
 
     class Observer {
         constructor(obj) {
-            this.dep = new Dep();
+            let dep = new Dep();
+
             let handle = {
                 get(target, propKey, receiver) {
-                    if (是否需要添加订阅者) {
-                        this.dep.addSub(watcher); // 在这里添加一个订阅者
+                    if (Dep.target) {
+                        dep.add(Dep.target); // 在这里添加一个订阅者
                     }
+
                     return Reflect.get(...arguments)
                 },
                 set(target, propKey, value, receiver) {
+
                     let old_value = target[propKey];
 
                     if (old_value !== value) {
-                        this.dep.notify(); // 如果数据变化，通知所有订阅者
+                        dep.modify(); // 如果数据变化，通知所有订阅者
                     }
 
                     return Reflect.set(...arguments);
                 },
             };
+
             this.proxy = new Proxy(obj, handle);
+
+            return this.proxy;
         }
     }
 
     class Watcher {
-        constructor() {
-
+        constructor(property, obj, cb) {
+            this.property = property;
+            this.cb = cb;
+            this.obj = obj;
+            this.value = this.get();
         }
         update() {
+            let old_value = this.value;
+            let new_value = this.obj[this.property];
 
+            if (old_value !== new_value) {
+                this.cb(new_value);
+                this.value = new_value;
+            }
+        }
+        get() {
+            Dep.target = this;
+            let value = this.obj[this.property];
+            Dep.target = null;
+
+            return value;
         }
     }
 
     class Compile {
-        constructor() {
-
+        constructor(el, obj) {
+            this.obj = obj;
+            this.el = el;
+            this._init();
         }
 
         _init() {
+            let children = this.el.children;
+            this._complexDom(children);
+        }
+        _complexDom(dom_lst) {
+            let reg = /\{\{.*\}\}/g;
 
+            for (let dom of dom_lst) {
+                if (reg.test(dom.innerText)) {
+                    let property = dom.innerText.replace(/(\{\{|\}\}|\s)/g, '');
+                    dom.innerText = this.obj[property];
+                    new Watcher(property, this.obj, (v) => {
+                        dom.innerText = v;
+                    });
+                }
+
+                if (dom.children.length !== 0) {
+                    this._complexDom(dom.children);
+                }
+            }
         }
     }
 
@@ -93,11 +141,14 @@
         }
         modify() {
             this.subs.forEach((sub) => {
-                sub.update();
+                setTimeout(() => {
+                    sub.update();
+                })
             })
         }
     }
 
     let observer = new Observer(obj);
+    let compile = new Compile(container, observer);
 </script>
 </html>

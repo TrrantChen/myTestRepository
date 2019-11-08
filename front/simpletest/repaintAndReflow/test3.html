@@ -71,12 +71,10 @@
         container.style.display = 'block';
     }
 
-    // 使用文档片段(document fragment)在当前DOM之外构建一个子树，再把它拷贝回文档。
+    // 直接脱离文档流就可以了。
     function useDocumentFragment() {
         let parent = container.parentElement;
-        let frag = document.createDocumentFragment();
         container.remove();
-        frag.appendChild(container);
         let children = container.children;
 
         for (var child of children) {
@@ -85,7 +83,7 @@
             child.style.width = '100px';
         }
 
-        parent.appendChild(frag);
+        parent.appendChild(container);
     }
 
     // 原始元素拷贝到一个脱离文档的节点中，修改节点后，再替换原始的元素。
