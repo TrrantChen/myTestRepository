@@ -19,23 +19,33 @@
             height: 100%;
             border: 1px solid black;
         }
+
+        .content {
+            width: 1200px;
+            height: 400px;
+            border: 1px solid black;
+        }
+
+        textarea {
+
+        }
+
     </style>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
+    <!--<meta http-equiv="Content-Security-Policy" content="script-src 'self'">-->
     <link rel="stylesheet" href="./test.css">
 </head>
 <body>
     <div class="container">
-        <span>hehtjehtj hjyiuuuuuuiyyyyyy</span>
-        <div class="test-div">
+        <button onclick="addHtml()">add</button>
+        <div class="content">
 
         </div>
-        <img src="./test.png" width="300" alt="">
+        <span></span>
+        <textarea cols="200" rows="10"></textarea>
     </div>
 </body>
+<script src="./axios.js"></script>
 <script src="./test.js"></script>
-<script>
-    alert('nonono');
-</script>
 </html>
 
 
