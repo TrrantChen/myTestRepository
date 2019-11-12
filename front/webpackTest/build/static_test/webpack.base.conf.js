@@ -4,8 +4,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const config = require('../config');
 const { resolve } = require('../util.js');
+const { assetsPath } = require('../tool.js');
 
 module.exports = {
+    context: resolve('../'),
     entry: {
         main: './src/static_test/main.js',
     },
@@ -49,7 +51,8 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 10000,
-                            name: path.posix.join(config.common.assetsSubDirectory, '[name].[hash:7].[ext]'),
+                            // name: path.posix.join(config.common.assetsSubDirectory, 'img/[name].[hash:7].[ext]'),
+                            name: assetsPath('img/[name].[hash:7].[ext]'),
                         },
                     },
                 ],

@@ -1,10 +1,10 @@
-const { resolve } = require('../util');
+const{ resolve } = require('../util');
 
 module.exports = {
     common: {
         assetsRoot: resolve('../htdocs'),
         assetsSubDirectory: 'assets',
-        assetsPublicPath: '/test_project/',
+        assetsPublicPath: '/static_test/',
     },
     dev: {
         // Paths
@@ -15,3 +15,4 @@ module.exports = {
         // Paths
     }
 };
+

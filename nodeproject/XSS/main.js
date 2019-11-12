@@ -29,6 +29,7 @@ function setCookie(res) {
 app.get('/getxss', function (req, res) {
     setCookie(res);
     res.send(escapeHTML(req.query.a));
+    // res.send(req.query.a);
 });
 
 // 对get的值进行过滤
