@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <img width="50" height="50" src="./assets/logo.png">
-    <img width="50" height="50" src="/uuu/static/large.jpg" alt="ooooooooooooo">
+    <img width="50" height="50" src="/uuu/jojo/large.jpg" alt="ooooooooooooo">
     <router-view/>
   </div>
 </template>
@@ -11,7 +11,6 @@ export default {
   name: 'App'
 }
 </script>
-
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -22,3 +21,5 @@ export default {
   margin-top: 60px;
 }
 </style>
+<!--assetsSubDirectory: 'jojo',-->
+<!--assetsPublicPath: '/uuu/',-->

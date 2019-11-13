@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require('path');
+
 const baseWebpackConfig = require('./webpack.base.conf');
 
 const config = require('../config');
@@ -38,7 +40,7 @@ const devWebpackConfig = {
         new CopyWebpackPlugin([
             {
                 from: resolve('../assets'),
-                to: config.dev.assetsSubDirectory,
+                to: config.common.assetsSubDirectory,
                 ignore: ['.*']
             }
         ])
