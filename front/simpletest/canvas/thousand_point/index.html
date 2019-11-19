@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas width="1920" height="1080">
+        </canvas>
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let count = 300000;
+
+    for (var i = 0; i < count; i++) {
+        drawCircle()
+    }
+
+    function drawCircle() {
+        // let random_seed = Math.random();
+        // let t_canvas = document.createElement('canvas');
+        // let t_ctx = t_canvas.getContext('2d');
+        // // let radius = (random_seed * 50 >> 0) + 10;
+        // let radius = 20;
+        //
+        // t_canvas.width = radius * 2;
+        // t_canvas.height = radius * 2;
+        //
+        // t_ctx.beginPath();
+        // let startAngle = 0;
+        // let endAngle = 2 * Math.PI;
+        // let anticlockwise = true;
+        // t_ctx.arc(radius, radius, radius, startAngle, endAngle, anticlockwise);
+        // t_ctx.fillStyle = `rgb(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0})`;
+        //
+        // t_ctx.closePath();
+        // t_ctx.fill();
+        //
+        // ctx.drawImage(t_canvas, Math.random() * 1920 >> 0, Math.random() * 1080 >> 0);
+
+
+        let radius = (Math.random() * 2 >> 0) + 2;
+        // let radius = 20;
+        ctx.beginPath();
+        let startAngle = 0;
+        let endAngle = 2 * Math.PI;
+        let anticlockwise = true;
+        ctx.arc(Math.random() * 1920 >> 0, Math.random() * 1080 >> 0, radius, startAngle, endAngle, anticlockwise);
+        ctx.fillStyle = `rgba(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random()})`;
+        // ctx.closePath();
+        ctx.fill();
+
+    }
+
+    drawCircle();
+
+</script>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <button onclick="setData()">set</button>
+    <button onclick="getData()">get</button>
+</body>
+<script>
+    let ul = document.querySelector('ul');
+    let lis = [...ul.children];
+
+    function setData() {
+        for (var i = 0; i < lis.length; i++) {
+            let li = lis[i];
+            li.dataset.id = i;
+        }
+    }
+
+    function getData() {
+        for (var li of lis) {
+            console.log(li.dataset.id);
+        }
+    }
+
+</script>
+</html>

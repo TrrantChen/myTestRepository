@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .test_div {
+            border: 1px solid black;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button>test</button>
+    </div>
+</body>
+<script>
+    function clickTest() {
+        // function clickHandle(evt) {
+        //     console.log(arguments);
+        // }
+        //
+        // let button = document.querySelector('button');
+        // let bind_click = clickHandle.bind(null, 1, 2);
+        // button.addEventListener('click', bind_click);
+
+
+        function clickHandle(evt) {
+            console.log(arguments);
+        }
+
+        function b() {
+            console.log('b');
+        }
+
+        let button = document.querySelector('button');
+
+        button.addEventListener('click', clickHandle);
+        button.addEventListener('click', b);
+        button.addEventListener('click', clickHandle);
+
+        // button.removeEventListener('click', clickHandle);
+    }
+
+    function simpleFunTest() {
+        function testFunc() {
+            console.log(arguments);
+        }
+
+        let test = testFunc.bind(null, 1, 2);
+
+        test(3);
+    }
+
+    function test() {
+        console.log(this);
+    }
+
+    function objTest() {
+        let t_obj = {
+            a:() => {
+                console.log(this);
+            }
+        };
+
+        let another = {
+            this_is_another: {}
+        };
+
+        t_obj.a.bind(another)();
+    }
+
+    function classTest() {
+        class TestClass {
+            constructor() {
+                this.bindTest();
+            }
+            printThis() {
+                console.log(this);
+            }
+            bindTest() {
+                let obj = {};
+                this.printThis.bind(obj)();
+            }
+        }
+
+        let test_class = new TestClass();
+    }
+
+    clickTest();
+</script>
+</html>

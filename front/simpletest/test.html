@@ -15,28 +15,9 @@
         }
 
         .container {
-            width: 100%;
-            height: 100%;
+            width: 2000px;
+            height: 2000px;
             border: 1px solid black;
-        }
-
-        #source {
-            width: 200px;
-            height: 200px;
-            border: 1px solid black;
-        }
-
-        #target {
-            width: 200px;
-            height: 200px;
-            border: 1px solid black;
-        }
-
-        #move {
-            width: 100px;
-            height: 100px;
-            border: 1px solid black;
-            background: red;
         }
     </style>
 </head>
@@ -45,5 +26,18 @@
     </div>
 </body>
 <script>
+    let promise = new Promise((resolve, reject) => {
+        console.log('promise');
+        return;
+    });
+
+    promise.then(() => {
+        console.log('then')
+    })
+    .catch(() => {
+        console.log('reject');
+    });
+
+    console.log('later');
 </script>
 </html>

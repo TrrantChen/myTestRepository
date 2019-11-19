@@ -100,15 +100,17 @@
 
                 this.dom_event_map.clear();
 
-                // 这块的事件并不会重复订阅，很神奇。
-                for (let [index, dom] of this.dom_lst.entries()){
 
-                    let tmp_drag_start = this.dragStartHandle.bind(dom, index);
-                    let tmp_drag_enter = this.dragEnterHandle.bind(dom, index);
-                    let tmp_drag_over = this.dragOverHandle.bind(dom, index);
-                    let tmp_drag_leave = this.dragLeaveHandle.bind(dom, index);
-                    let tmp_drag_end = this.dragEndHandle.bind(dom, index);
-                    let tmp_drop = this.dropHandle.bind(dom, index);
+                // 这块的事件并不会重复订阅，很神奇。
+                // 这块的作用域bind是null也没关系，vue中方法的this都是没法改变的。神奇
+                for (let [index, dom] of this.dom_lst.entries()){
+                    let tmp_drag_start = this.dragStartHandle.bind(null, index);
+                    let tmp_drag_enter = this.dragEnterHandle.bind(null, index);
+                    let tmp_drag_over = this.dragOverHandle.bind(null, index);
+                    let tmp_drag_leave = this.dragLeaveHandle.bind(null, index);
+                    let tmp_drag_end = this.dragEndHandle.bind(null, index);
+                    let tmp_drop = this.dropHandle.bind(null, index);
+
 
                     let evt_obj = {
                         'drag_start': tmp_drag_start,
@@ -160,11 +162,12 @@
                 // this.select_dom = evt.currentTarget;
                 // this.select_dom.setAttribute('draggable', true);
                 // console.log('click');
+                console.log(evt);
+                console.log(this);
                 console.log('click');
             },
             dragStartHandle(idx, evt) {
                 evt.stopPropagation();
-
                 this.move_index = idx;
                 // let dom = evt.currentTarget;
                 this.is_drag_start = true;
