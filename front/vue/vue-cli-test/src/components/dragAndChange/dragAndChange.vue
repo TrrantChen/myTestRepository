@@ -55,11 +55,12 @@
                     if (val && val.length !== 0) {
 
                         setTimeout(() => {
+                            console.log('change');
 
                             this.dom_lst = this.$slots.default.map((content) => {
                                 return content.elm;
                             });
-
+                            this.removeDragEventHandle();
                             this.addDragEventHandle();
 
                         });
@@ -110,6 +111,7 @@
                     let tmp_drag_leave = this.dragLeaveHandle.bind(null, index);
                     let tmp_drag_end = this.dragEndHandle.bind(null, index);
                     let tmp_drop = this.dropHandle.bind(null, index);
+                    let tmp_mousedown = this.mousedown.bind(null, index);
 
 
                     let evt_obj = {
@@ -119,11 +121,12 @@
                         'drag_leave': tmp_drag_leave,
                         'drag_end': tmp_drag_end,
                         'drop': tmp_drop,
+                        'mouse_down': tmp_mousedown,
                     };
 
                     this.dom_event_map.set(dom, evt_obj);
 
-                    dom.addEventListener('click', this.mousedown);
+                    dom.addEventListener('click', tmp_mousedown);
                     dom.addEventListener('dragstart', tmp_drag_start);
                     dom.addEventListener('dragenter', tmp_drag_enter);
                     dom.addEventListener('dragover', tmp_drag_over);
@@ -143,14 +146,13 @@
 
                     if (evt_obj) {
 
-                        dom.removeEventListener('click', this.mousedown);
+                        dom.removeEventListener('click', evt_obj['mouse_down']);
                         dom.removeEventListener('dragstart', evt_obj['drag_start']);
                         dom.removeEventListener('dragenter', evt_obj['drag_enter']);
                         dom.removeEventListener('dragover', evt_obj['drag_over']);
                         dom.removeEventListener('dragleave', evt_obj['drag_leave']);
                         dom.removeEventListener('dragend', evt_obj['drag_end']);
                         dom.removeEventListener('drop', evt_obj['drop']);
-
                     }
 
                 }
@@ -162,9 +164,10 @@
                 // this.select_dom = evt.currentTarget;
                 // this.select_dom.setAttribute('draggable', true);
                 // console.log('click');
+                // console.log(evt);
+                // console.log(this);
+                // console.log('click');
                 console.log(evt);
-                console.log(this);
-                console.log('click');
             },
             dragStartHandle(idx, evt) {
                 evt.stopPropagation();

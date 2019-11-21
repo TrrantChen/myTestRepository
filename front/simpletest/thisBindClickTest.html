@@ -105,6 +105,21 @@
         let test_class = new TestClass();
     }
 
-    clickTest();
+    function differentBindingEvent() {
+        let button = document.querySelector('button');
+        let cb = function(i) {
+            console.log(i)
+        };
+
+        let a_cb = cb.bind(null, 1);
+        let b_cb = cb.bind(null, 2);
+
+        button.addEventListener('click', a_cb);
+        button.addEventListener('click', b_cb);
+
+        button.removeEventListener('click', a_cb);
+    }
+
+    differentBindingEvent();
 </script>
 </html>

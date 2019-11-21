@@ -22,22 +22,20 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" >
+        <div class="parent"  style="width:200px;height:200px;border:1px solid black;" onclick="test(event)">
+            <div class="son" style="width:100px;height:100px;border:1px solid black;margin:10px;">
+
+            </div>
+        </div>
     </div>
 </body>
 <script>
-    let promise = new Promise((resolve, reject) => {
-        console.log('promise');
-        return;
-    });
-
-    promise.then(() => {
-        console.log('then')
-    })
-    .catch(() => {
-        console.log('reject');
-    });
-
-    console.log('later');
+    function test(evt) {
+        console.log('target is');
+        console.log(evt.target);
+        console.log('currentTarget is');
+        console.log(evt.currentTarget);
+    }
 </script>
 </html>

@@ -28,7 +28,7 @@ function setCookie(res) {
 //在url 输入http://127.0.0.1:8999/getxss?a=<script>alert(document.cookie)</script> 就可以做一个反射型xss
 app.get('/getxss', function (req, res) {
     setCookie(res);
-    res.send(escapeHTML(req.query.a));
+    // res.send(escapeHTML(req.query.a));
     // res.send(req.query.a);
 });
 
@@ -42,6 +42,8 @@ function escapeHTML(str) {
     str = str.replace(/'/g, "&#39;");
     return str;
 }
+
+
 
 
 
