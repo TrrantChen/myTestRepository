@@ -1,3 +1,4 @@
+<!--todo 将事件抽象出来  变成没次enter leave的时候去触发事件，然后将数据交换抽象出来-->
 <style>
     .draggable-content {
         display: flex;

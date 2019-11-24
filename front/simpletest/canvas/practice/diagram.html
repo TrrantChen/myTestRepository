@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        canvas {
+            border: 1px solid black;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas  id="main" width="1600" height="900">
+
+        </canvas>
+    </div>
+</body>
+<script>
+    let cavnas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+
+    let data = {
+        focus_data: {
+            data_node: {
+                key: 0,
+                name: '0',
+                type: 1,
+            }
+        },
+        left_tree: {
+
+        },
+        right_tree: {
+
+        }
+    }
+
+
+
+    let obj = {
+        right: [
+            [
+                {
+                    name: 'table1',
+                    type: 'table',
+                    key: 0,
+                    target: 1,
+                }
+            ],
+            [
+                {
+                    name: 'etl1',
+                    type: 'etl',
+                    key: 1,
+                    target: 2,
+                }
+            ],
+            [
+                {
+                    name: 'sch1',
+                    type: 'sch',
+                    key: 2,
+                    target: 3,
+                }
+            ],
+            [
+                {
+                    name: 'table2',
+                    type: 'table',
+                    key: 3,
+                }
+            ],
+        ],
+        left: [
+            [
+                {
+                    name: 'table1',
+                    type: 'table',
+                    key: 0,
+                    target: 4,
+                }
+            ],
+            [
+                {
+                    name: 'sch2',
+                    type: 'sch',
+                    key: 4,
+                    target: 5,
+                }
+            ],
+            [
+                {
+                    name: 'etl2',
+                    type: 'etl',
+                    key: 5,
+                    target: [6, 7, 8],
+                }
+            ],
+            [
+                {
+                    name: 'table3',
+                    type: 'table',
+                    key: 6,
+                },
+                {
+                    name: 'table4',
+                    type: 'table',
+                    key: 7,
+                },
+                {
+                    name: 'table5',
+                    type: 'table',
+                    key: 8,
+                },
+            ],
+        ]
+    }
+</script>
+</html>

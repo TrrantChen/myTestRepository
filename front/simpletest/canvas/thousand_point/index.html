@@ -27,20 +27,20 @@
 </head>
 <body>
     <div class="container">
-        <canvas width="1920" height="1080">
+        <canvas width="1600" height="800">
         </canvas>
     </div>
 </body>
 <script>
     let canvas = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
-    let count = 300000;
+    let count = 300;
 
     for (var i = 0; i < count; i++) {
-        drawCircle()
+        drawCircle(i * 2)
     }
 
-    function drawCircle() {
+    function drawCircle(i) {
         // let random_seed = Math.random();
         // let t_canvas = document.createElement('canvas');
         // let t_ctx = t_canvas.getContext('2d');
@@ -63,14 +63,16 @@
         // ctx.drawImage(t_canvas, Math.random() * 1920 >> 0, Math.random() * 1080 >> 0);
 
 
-        let radius = (Math.random() * 2 >> 0) + 2;
+        let radius = (Math.random() * 2 >> 0) + 1;
         // let radius = 20;
         ctx.beginPath();
         let startAngle = 0;
         let endAngle = 2 * Math.PI;
         let anticlockwise = true;
-        ctx.arc(Math.random() * 1920 >> 0, Math.random() * 1080 >> 0, radius, startAngle, endAngle, anticlockwise);
-        ctx.fillStyle = `rgba(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random()})`;
+        ctx.arc(i, i, radius, startAngle, endAngle, anticlockwise);
+        // ctx.arc((Math.random() * 1000 >> 0) + 100, (Math.random() * 600 >> 0) + 100, radius, startAngle, endAngle, anticlockwise);
+        ctx.fillStyle = `rgb(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0})`;
+        // ctx.fillStyle = `rgba(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random()})`;
         // ctx.closePath();
         ctx.fill();
 
