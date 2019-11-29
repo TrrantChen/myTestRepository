@@ -35,9 +35,9 @@
 </body>
 <script src="./util.js" type="module"></script>
 <script type="module">
-    import drawArrow from './util.js';
+    import { drawArrow } from './util.js';
 
-    let cavnas = document.querySelector('canvas');
+    let canvas = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
     let data = {
         right: [
@@ -46,7 +46,7 @@
                     name: 'table1',
                     type: 1,
                     key: 0,
-                    target: 1,
+                    target: [1],
                 }
             ],
             [
@@ -54,7 +54,7 @@
                     name: 'etl1',
                     type: 2,
                     key: 1,
-                    target: 2,
+                    target: [2],
                 }
             ],
             [
@@ -62,7 +62,7 @@
                     name: 'sch1',
                     type: 3,
                     key: 2,
-                    target: 3,
+                    target: [3],
                 }
             ],
             [
@@ -79,7 +79,7 @@
                     name: 'table1',
                     type: 1,
                     key: 0,
-                    target: 4,
+                    target: [4],
                 }
             ],
             [
@@ -87,7 +87,7 @@
                     name: 'sch2',
                     type: 3,
                     key: 4,
-                    target: 5,
+                    target: [5],
                 }
             ],
             [
@@ -123,27 +123,181 @@
             this.ctx = ctx;
             this.canvas = canvas;
             this.data = data;
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
+            this.interval = {
+                x: 160,
+                y: 50,
+            };
+
+            // {
+            //      key: [x, y]
+            // }
+            this.key_position = {};
+
+            // {
+            //      target_key: [[x, y], [x, y]];
+            // }
+            this.target_key_source_postions = {};
+
+            this.emun_type = {
+                table: 1,
+                schema: 2,
+                task: 3,
+            };
 
             this._draw();
         }
 
         _draw() {
-            this._drawLeft();
-            this._drawRight();
+            let right_data = this.data.right;
+            let left_data = this.data.left;
+
+            // this._drawLeft(left_data);
+            this._drawRight(right_data);
         }
 
-        _drawLeft() {
-
+        _drawLeft(lst) {
+            for (var arr of lst) {
+                this._drawLay(arr);
+            }
         }
 
-        _drawRight() {
+        _drawRight(lst) {
+            let start_point = {
+                x: this.width / 2,
+                y: this.height / 2,
+            };
 
+            for (var arr of lst) {
+                this._drawLay(arr, start_point);
+                start_point.x += this.interval.x;
+            }
+        }
+
+         _drawLay(lst, start_point) {
+             let count = lst.length;
+             let x = start_point.x;
+             let y = start_point.y - (count - 1) * this.interval.y / 2;
+
+             for (var i = 0; i < count; i++) {
+                 let obj = lst[i];
+                 y += this.interval.y;
+                 this._drawPoint(x, y, obj);
+             }
+        }
+
+        _drawPoint(x, y, obj) {
+            let type = obj.type;
+
+            // this.emun_type = {
+            //     table: 1,
+            //     schema: 2,
+            //     task: 3,
+
+
+
+            switch(type) {
+                case this.emun_type.table:
+                    this._drawRectangle(x, y);
+                    break;
+                case this.emun_type.schema:
+                    this._drawSquare(x, y);
+                    break;
+                case this.emun_type.task:
+                default:
+                    this._drawCircle(x, y);
+                    break;
+            }
+
+            this._drawFont(x, y, obj.name);
+
+            //  name: 'table4',
+            //  type: 1,
+            //  key: 7,
+            //  target: [1, 2]
+            this.key_position[obj.key] = [x, y];
+
+            if (this.target_key_source_postions[obj.key]) {
+                // todo 绘制连线，
+            }
+
+            // {
+            //      target_key: [[x, y], [x, y]];
+            // }
+            if (obj.target) {
+                for (var target_key of obj.target) {
+                    if (!this.target_key_source_postions[target_key]) {
+                        this.target_key_source_postions[target_key] = []
+                    }
+
+                    this.target_key_source_postions[target_key].push([x, y]);
+                }
+            }
+        }
+
+        _drawRectangle(x, y, color='#fcf16e') {
+            let w = 80;
+            let h = 60;
+            let _x = x - w / 2;
+            let _y = y - h / 2;
+
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(_x, _y, w, h);
+        }
+
+        _drawSquare(x, y, color='#90d7ec') {
+            let i = 80;
+            let _x = x - i / 2;
+            let _y = y - i / 2;
+
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(_x, _y, i, i);
+        }
+
+        _drawCircle(x, y, color='#d5c59f') {
+            let r = 80;
+            this.ctx.fillStyle = color;
+            this.ctx.arc(x, y, r/2, 0, 2 * Math.PI, true);
+            this.ctx.fill();
+        }
+
+        _drawFont(x, y, text) {
+            let size = '20px';
+            this.ctx.fillStyle = 'black';
+            this.ctx.font =  size + ' serif';
+            let tmp = this._convertStr2Px(text, size);
+            this.ctx.fillText(text, x - tmp[0] / 2, y + tmp[1]);
         }
 
         _drawArrowLine(s_pos, e_pos) {
             drawArrow(this.ctx, s_pos, e_pos);
         }
+
+        _convertStr2Px(value, size) {
+            let span = document.querySelector('#strpx');
+
+            if (span === null) {
+                span = document.createElement('span');
+                span.id = 'strpx';
+                span.style.visibility = 'hidden';
+                span.style. whiteSpace = 'nowrap';
+                span.style.height = '0px';
+                span.style.position = 'fixed';
+                span.style.fontSize = size;
+                span.style.lineSize = size;
+                span.style.left = 0;
+                span.style.bottom = 0;
+                document.body.appendChild(span);
+            }
+
+            span.innerText = value;
+            let tmp = span.getBoundingClientRect();
+
+            return [tmp.width, tmp.height];
+        }
     }
 
+    let diagram = new Diagram(ctx, canvas, data);
 </script>
 </html>

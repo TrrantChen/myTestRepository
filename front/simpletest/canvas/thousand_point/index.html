@@ -35,12 +35,12 @@
     let canvas = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
     let count = 300;
+    let n = 120;
+    let m = 60;
+    let inner_x = 12;
+    let inner_y = 12;
 
-    for (var i = 0; i < count; i++) {
-        drawCircle(i * 2)
-    }
-
-    function drawCircle(i) {
+    function drawCircle(x, y, t_x = 0, t_y = 0) {
         // let random_seed = Math.random();
         // let t_canvas = document.createElement('canvas');
         // let t_ctx = t_canvas.getContext('2d');
@@ -61,24 +61,46 @@
         // t_ctx.fill();
         //
         // ctx.drawImage(t_canvas, Math.random() * 1920 >> 0, Math.random() * 1080 >> 0);
-
-
-        let radius = (Math.random() * 2 >> 0) + 1;
-        // let radius = 20;
+        // let radius = (Math.random() * 20 >> 0) + 1;
+        let radius = 4;
         ctx.beginPath();
         let startAngle = 0;
         let endAngle = 2 * Math.PI;
         let anticlockwise = true;
-        ctx.arc(i, i, radius, startAngle, endAngle, anticlockwise);
-        // ctx.arc((Math.random() * 1000 >> 0) + 100, (Math.random() * 600 >> 0) + 100, radius, startAngle, endAngle, anticlockwise);
-        ctx.fillStyle = `rgb(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0})`;
+        ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+        ctx.fillStyle = ctx.isPointInPath(t_x, t_y) ? 'red' : 'black';
+        // ctx.fillStyle = `rgb(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0})`;
         // ctx.fillStyle = `rgba(${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random() * 255 >> 0},${Math.random()})`;
         // ctx.closePath();
         ctx.fill();
-
     }
 
-    drawCircle();
+    function drawAll() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 1; i < n; i++) {
+            for (var j = 1; j < m; j++) {
+                drawCircle(i * inner_x, j * inner_y);
+            }
+        }
+    }
+
+    drawAll();
+
+    canvas.onmousemove = function(e) {
+        let rect = this.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 1; i < n; i++) {
+            for (var j = 1; j < m; j++) {
+                drawCircle(i * inner_x, j * inner_y, x, y);
+            }
+        }
+    };
+
 
 </script>
 </html>
