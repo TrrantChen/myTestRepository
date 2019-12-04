@@ -17,7 +17,7 @@
         .container {
             width: 100%;
             height: 100%;
-            border: 1px solid black;
+            /*border: 1px solid black;*/
         }
 
         canvas {
@@ -28,9 +28,10 @@
 </head>
 <body>
     <div class="container">
-        <canvas  id="main" width="1600" height="900">
+        <canvas  id="main" width="1600" height="1000">
 
         </canvas>
+        <span style="font-size: 14px;">7878</span>
     </div>
 </body>
 <script src="./util.js" type="module"></script>
@@ -39,86 +40,878 @@
 
     let canvas = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
-    let data = {
-        right: [
-            [
-                {
-                    name: 'table1',
-                    type: 1,
-                    key: 0,
-                    target: [1],
-                }
-            ],
-            [
-                {
-                    name: 'etl1',
-                    type: 2,
-                    key: 1,
-                    target: [2],
-                }
-            ],
-            [
-                {
-                    name: 'sch1',
-                    type: 3,
-                    key: 2,
-                    target: [3],
-                }
-            ],
-            [
-                {
-                    name: 'table2',
-                    type: 1,
-                    key: 3,
-                }
-            ],
-        ],
-        left: [
-            [
-                {
-                    name: 'table1',
-                    type: 1,
-                    key: 0,
-                    target: [4],
-                }
-            ],
-            [
-                {
-                    name: 'sch2',
-                    type: 3,
-                    key: 4,
-                    target: [5],
-                }
-            ],
-            [
-                {
-                    name: 'etl2',
-                    type: 2,
-                    key: 5,
-                    target: [6, 7, 8],
-                }
-            ],
-            [
-                {
-                    name: 'table3',
-                    type: 1,
-                    key: 6,
-                },
-                {
-                    name: 'table4',
-                    type: 1,
-                    key: 7,
-                },
-                {
-                    name: 'table5',
-                    type: 1,
-                    key: 8,
-                },
-            ],
-        ]
-    };
+    // let data = {
+    //     right_list: [
+    //         [
+    //             {
+    //                 name: 'table1',
+    //                 type: 1,
+    //                 key: 0,
+    //                 target: [1],
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 name: 'etl1',
+    //                 type: 2,
+    //                 key: 1,
+    //                 target: [2],
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 name: 'sch1',
+    //                 type: 3,
+    //                 key: 2,
+    //                 target: [3],
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 name: 'table2',
+    //                 type: 1,
+    //                 key: 3,
+    //             }
+    //         ],
+    //     ],
+    //     left_list: [
+    //         [
+    //             {
+    //                 name: 'table1',
+    //                 type: 1,
+    //                 key: 0,
+    //                 target: [4],
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 name: 'sch2',
+    //                 type: 3,
+    //                 key: 4,
+    //                 target: [5],
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 name: 'etl2',
+    //                 type: 2,
+    //                 key: 5,
+    //                 target: [6, 7, 8],
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 name: 'table3',
+    //                 type: 1,
+    //                 key: 6,
+    //             },
+    //             {
+    //                 name: 'table4',
+    //                 type: 1,
+    //                 key: 7,
+    //             },
+    //             {
+    //                 name: 'table5',
+    //                 type: 1,
+    //                 key: 8,
+    //             },
+    //         ],
+    //     ]
+    // };
 
-    class Diagram {
+    let data = {
+            "left_list": [
+                [{
+                    "key": "3#47656",
+                    "index": 47656,
+                    "type": 3,
+                    "name": "eco_user_active_type_info_detail",
+                    "target": ["8#106815"]
+                }],
+                [{
+                    "key": "8#106815",
+                    "index": 106815,
+                    "type": 8,
+                    "name": "登陆用户分类中间表",
+                    "target": ["7#4592"]
+                }],
+                [{
+                    "key": "7#4592",
+                    "index": 4592,
+                    "type": 7,
+                    "name": "登陆用户分类中间表",
+                    "target": ["3#50767",
+                        "3#61839",
+                        "3#47658"]
+                }],
+                [{
+                    "key": "3#50767",
+                    "index": 50767,
+                    "type": 3,
+                    "name": "fkfx_order_detail",
+                    "target": ["8#1072"]
+                },
+                {
+                    "key": "3#61839",
+                    "index": 61839,
+                    "type": 3,
+                    "name": "t_click_stream_log",
+                    "target": ["8#106764"]
+                },
+                {
+                    "key": "3#47658",
+                    "index": 47658,
+                    "type": 3,
+                    "name": "eco_user_basic_info",
+                    "target": ["8#99134"]
+                }],
+                [{
+                    "key": "8#1072",
+                    "index": 1072,
+                    "type": 8,
+                    "name": "风控订单宽表（dp_edw->dp_fk_mart）",
+                    "target": ["3#43322"]
+                },
+                {
+                    "key": "8#106764",
+                    "index": 106764,
+                    "type": 8,
+                    "name": "dp_click.t_click_stream_log 小文件合并",
+                    "target": ["7#4555"]
+                },
+                {
+                    "key": "8#99134",
+                    "index": 99134,
+                    "type": 8,
+                    "name": "电商用户画像宽表",
+                    "target": ["7#2324"]
+                }],
+                [{
+                    "key": "7#4555",
+                    "index": 4555,
+                    "type": 7,
+                    "name": "dp_click.t_click_stream_log 小文件合并",
+                    "target": []
+                },
+                {
+                    "key": "7#2324",
+                    "index": 2324,
+                    "type": 7,
+                    "name": "电商用户画像宽表",
+                    "target": ["3#50767",
+                        "3#50925",
+                        "3#60272",
+                        "3#52039",
+                        "3#52050",
+                        "3#68998",
+                        "3#69122",
+                        "3#50962",
+                        "3#60125",
+                        "3#69148"]
+                }],
+                [{
+                    "key": "3#43322",
+                    "index": 43322,
+                    "type": 3,
+                    "name": "ddfx_order_detail",
+                    "target": null
+                },
+                {
+                    "key": "3#50767",
+                    "index": 50767,
+                    "type": 3,
+                    "name": "fkfx_order_detail",
+                    "target": null
+                },
+                {
+                    "key": "3#50925",
+                    "index": 50925,
+                    "type": 3,
+                    "name": "fkfx_user_credit_limit",
+                    "target": null
+                },
+                {
+                    "key": "3#60272",
+                    "index": 60272,
+                    "type": 3,
+                    "name": "risk_price_pd_el",
+                    "target": null
+                },
+                {
+                    "key": "3#52039",
+                    "index": 52039,
+                    "type": 3,
+                    "name": "hyfx_user_basic_info",
+                    "target": null
+                },
+                {
+                    "key": "3#52050",
+                    "index": 52050,
+                    "type": 3,
+                    "name": "hyfx_user_valid_info",
+                    "target": null
+                },
+                {
+                    "key": "3#68998",
+                    "index": 68998,
+                    "type": 3,
+                    "name": "yhfx_dict_user_tag_new",
+                    "target": null
+                },
+                {
+                    "key": "3#69122",
+                    "index": 69122,
+                    "type": 3,
+                    "name": "yhfx_user_base_info",
+                    "target": null
+                },
+                {
+                    "key": "3#50962",
+                    "index": 50962,
+                    "type": 3,
+                    "name": "fkfx_user_verify",
+                    "target": null
+                },
+                {
+                    "key": "3#60125",
+                    "index": 60125,
+                    "type": 3,
+                    "name": "risk_db_t_credit_limit",
+                    "target": null
+                },
+                {
+                    "key": "3#69148",
+                    "index": 69148,
+                    "type": 3,
+                    "name": "yhfx_user_detail",
+                    "target": null
+                }]],
+            "right_list": [[{
+                "key": "3#47656",
+                "index": 47656,
+                "type": 3,
+                "name": "eco_user_active_type_info_detail",
+                "target": ["8#106847"]
+            }],
+                [{
+                    "key": "8#106847",
+                    "index": 106847,
+                    "type": 8,
+                    "name": "登录用户成交电商效果查询报表",
+                    "target": []
+                }],
+                []]
+        };
+
+    // let data = {
+    //     "left_list":[
+    //         [
+    //             {
+    //                 "name":"eco_user_active_type_info_detail",
+    //                 "index":47656,
+    //                 "type":3,
+    //                 "key":"3#47656",
+    //                 "target":[
+    //                     "8#106815"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"登陆用户分类中间表",
+    //                 "index":106815,
+    //                 "type":8,
+    //                 "key":"8#106815",
+    //                 "target":[
+    //                     "7#4592"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"登陆用户分类中间表",
+    //                 "index":4592,
+    //                 "type":7,
+    //                 "key":"7#4592",
+    //                 "target":[
+    //                     "3#61839",
+    //                     "3#50767",
+    //                     "3#47658"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"fkfx_order_detail",
+    //                 "index":50767,
+    //                 "type":3,
+    //                 "key":"3#50767",
+    //                 "target":[
+    //                     "8#1072"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"eco_user_basic_info",
+    //                 "index":47658,
+    //                 "type":3,
+    //                 "key":"3#47658",
+    //                 "target":[
+    //                     "8#99134"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"t_click_stream_log",
+    //                 "index":61839,
+    //                 "type":3,
+    //                 "key":"3#61839",
+    //                 "target":[
+    //                     "8#106764"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"风控订单宽表（dp_edw->dp_fk_mart）",
+    //                 "index":1072,
+    //                 "type":8,
+    //                 "key":"8#1072",
+    //                 "target":[
+    //                     "3#43322"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"电商用户画像宽表",
+    //                 "index":99134,
+    //                 "type":8,
+    //                 "key":"8#99134",
+    //                 "target":[
+    //                     "7#2324"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"dp_click.t_click_stream_log 小文件合并",
+    //                 "index":106764,
+    //                 "type":8,
+    //                 "key":"8#106764",
+    //                 "target":[
+    //                     "7#4555"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"电商用户画像宽表",
+    //                 "index":2324,
+    //                 "type":7,
+    //                 "key":"7#2324",
+    //                 "target":[
+    //                     "3#52039",
+    //                     "3#50962",
+    //                     "3#50767",
+    //                     "3#69122",
+    //                     "3#60272",
+    //                     "3#52050",
+    //                     "3#50925",
+    //                     "3#69148",
+    //                     "3#60125",
+    //                     "3#68998"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"dp_click.t_click_stream_log 小文件合并",
+    //                 "index":4555,
+    //                 "type":7,
+    //                 "key":"7#4555",
+    //                 "target":[
+    //
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"ddfx_order_detail",
+    //                 "index":43322,
+    //                 "type":3,
+    //                 "key":"3#43322",
+    //                 "target":[
+    //                     "8#698"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"fkfx_user_credit_limit",
+    //                 "index":50925,
+    //                 "type":3,
+    //                 "key":"3#50925",
+    //                 "target":[
+    //                     "8#1073"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"fkfx_user_verify",
+    //                 "index":50962,
+    //                 "type":3,
+    //                 "key":"3#50962",
+    //                 "target":[
+    //                     "8#1074"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"risk_db_t_credit_limit",
+    //                 "index":60125,
+    //                 "type":3,
+    //                 "key":"3#60125",
+    //                 "target":[
+    //                     "8#91078"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"yhfx_user_base_info",
+    //                 "index":69122,
+    //                 "type":3,
+    //                 "key":"3#69122",
+    //                 "target":[
+    //                     "8#91341"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"hyfx_user_basic_info",
+    //                 "index":52039,
+    //                 "type":3,
+    //                 "key":"3#52039",
+    //                 "target":[
+    //                     "8#95008"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"yhfx_user_detail",
+    //                 "index":69148,
+    //                 "type":3,
+    //                 "key":"3#69148",
+    //                 "target":[
+    //                     "8#96758"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"hyfx_user_valid_info",
+    //                 "index":52050,
+    //                 "type":3,
+    //                 "key":"3#52050",
+    //                 "target":[
+    //                     "8#98676"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"yhfx_dict_user_tag_new",
+    //                 "index":68998,
+    //                 "type":3,
+    //                 "key":"3#68998",
+    //                 "target":[
+    //                     "8#103001"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"risk_price_pd_el",
+    //                 "index":60272,
+    //                 "type":3,
+    //                 "key":"3#60272",
+    //                 "target":[
+    //                     "8#111663"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"spark订单宽表",
+    //                 "index":698,
+    //                 "type":8,
+    //                 "key":"8#698",
+    //                 "target":[
+    //                     "3#43402",
+    //                     "3#43472",
+    //                     "3#43078"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"风控授信宽表(dp_edw->dp_fk_mart)",
+    //                 "index":1073,
+    //                 "type":8,
+    //                 "key":"8#1073",
+    //                 "target":[
+    //                     "3#50924"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"风控征信宽表(dp_edw->dp_fk_mart)",
+    //                 "index":1074,
+    //                 "type":8,
+    //                 "key":"8#1074",
+    //                 "target":[
+    //                     "3#50961"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"dp_snap.risk_db_t_credit_limit脱敏数据入Hive",
+    //                 "index":91078,
+    //                 "type":8,
+    //                 "key":"8#91078",
+    //                 "target":[
+    //                     "3#60127"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"普惠用户基础信息表",
+    //                 "index":91341,
+    //                 "type":8,
+    //                 "key":"8#91341",
+    //                 "target":[
+    //                     "3#65877",
+    //                     "3#40950",
+    //                     "3#64327",
+    //                     "3#65825",
+    //                     "3#39617",
+    //                     "3#43322",
+    //                     "3#64342",
+    //                     "3#41961",
+    //                     "3#69139",
+    //                     "3#64324",
+    //                     "3#69144",
+    //                     "3#68980",
+    //                     "3#54402",
+    //                     "3#59205"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"【基础】用户基础信息表（常用报表统计纬度）",
+    //                 "index":95008,
+    //                 "type":8,
+    //                 "key":"8#95008",
+    //                 "target":[
+    //                     "7#1001"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"用户数据入电商库",
+    //                 "index":96758,
+    //                 "type":8,
+    //                 "key":"8#96758",
+    //                 "target":[
+    //                     "7#1854"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"乐黑卡用户生效时间明细",
+    //                 "index":98676,
+    //                 "type":8,
+    //                 "key":"8#98676",
+    //                 "target":[
+    //                     "7#2097"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"dp_dict.yhfx_dict_user_tag_new全量SNAP数据入Hive",
+    //                 "index":103001,
+    //                 "type":8,
+    //                 "key":"8#103001",
+    //                 "target":[
+    //                     "9#4442"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"risk_price_pd_el",
+    //                 "index":111663,
+    //                 "type":8,
+    //                 "key":"8#111663",
+    //                 "target":[
+    //                     "7#6827"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"自动ETL_AUTO_NULL任务",
+    //                 "index":93478,
+    //                 "type":8,
+    //                 "key":"8#93478"
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"【基础】用户基础信息表（常用报表统计纬度）",
+    //                 "index":1001,
+    //                 "type":7,
+    //                 "key":"7#1001",
+    //                 "target":[
+    //                     "3#64996",
+    //                     "3#64824",
+    //                     "3#46568",
+    //                     "3#50925",
+    //                     "3#46566",
+    //                     "3#50931",
+    //                     "3#50767",
+    //                     "3#65350",
+    //                     "3#39740",
+    //                     "3#50760",
+    //                     "3#39752",
+    //                     "3#59205",
+    //                     "3#54378"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"用户数据入电商库",
+    //                 "index":1854,
+    //                 "type":7,
+    //                 "key":"7#1854",
+    //                 "target":[
+    //                     "3#69144"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"乐黑卡用户生效时间明细",
+    //                 "index":2097,
+    //                 "type":7,
+    //                 "key":"7#2097",
+    //                 "target":[
+    //                     "3#65350",
+    //                     "3#65353",
+    //                     "3#65346"
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"yhfx_dict_user_tag_new",
+    //                 "index":4442,
+    //                 "type":9,
+    //                 "key":"9#4442",
+    //                 "target":[
+    //
+    //                 ]
+    //             },
+    //             {
+    //                 "name":"risk_price_pd_el",
+    //                 "index":6827,
+    //                 "type":7,
+    //                 "key":"7#6827",
+    //                 "target":[
+    //                     "3#50925",
+    //                     "3#57734",
+    //                     "3#63036"
+    //                 ]
+    //             }
+    //         ],
+    //         [
+    //             {
+    //                 "name":"ddfx_order_first_state_time",
+    //                 "index":43402,
+    //                 "type":3,
+    //                 "key":"3#43402"
+    //             },
+    //             {
+    //                 "name":"ddfx_credit_order_detail",
+    //                 "index":43078,
+    //                 "type":3,
+    //                 "key":"3#43078"
+    //             },
+    //             {
+    //                 "name":"ddfx_trans_order_detail_business",
+    //                 "index":43472,
+    //                 "type":3,
+    //                 "key":"3#43472"
+    //             },
+    //             {
+    //                 "name":"fkfx_user_credit_limit",
+    //                 "index":50924,
+    //                 "type":3,
+    //                 "key":"3#50924"
+    //             },
+    //             {
+    //                 "name":"fkfx_user_verify",
+    //                 "index":50961,
+    //                 "type":3,
+    //                 "key":"3#50961"
+    //             },
+    //             {
+    //                 "name":"risk_db_t_credit_limit",
+    //                 "index":60127,
+    //                 "type":3,
+    //                 "key":"3#60127"
+    //             },
+    //             {
+    //                 "name":"yhfx_user_credit_limit",
+    //                 "index":69139,
+    //                 "type":3,
+    //                 "key":"3#69139"
+    //             },
+    //             {
+    //                 "name":"yhfx_user_detail",
+    //                 "index":69144,
+    //                 "type":3,
+    //                 "key":"3#69144"
+    //             },
+    //             {
+    //                 "name":"work_loan_db_t_work_move_uid_map",
+    //                 "index":65877,
+    //                 "type":3,
+    //                 "key":"3#65877"
+    //             },
+    //             {
+    //                 "name":"rc_order_db_t_rc_order",
+    //                 "index":59205,
+    //                 "type":3,
+    //                 "key":"3#59205"
+    //             },
+    //             {
+    //                 "name":"admin_db_t_admin_user",
+    //                 "index":39617,
+    //                 "type":3,
+    //                 "key":"3#39617"
+    //             },
+    //             {
+    //                 "name":"work_agent_db_t_user_survey_code",
+    //                 "index":65825,
+    //                 "type":3,
+    //                 "key":"3#65825"
+    //             },
+    //             {
+    //                 "name":"block_user_code_db_t_block_user_code",
+    //                 "index":40950,
+    //                 "type":3,
+    //                 "key":"3#40950"
+    //             },
+    //             {
+    //                 "name":"manager_db_t_manager_discount_detail",
+    //                 "index":54402,
+    //                 "type":3,
+    //                 "key":"3#54402"
+    //             },
+    //             {
+    //                 "name":"tql_auth_db_t_auth_order_info",
+    //                 "index":64327,
+    //                 "type":3,
+    //                 "key":"3#64327"
+    //             },
+    //             {
+    //                 "name":"yhfx_channel_info",
+    //                 "index":68980,
+    //                 "type":3,
+    //                 "key":"3#68980"
+    //             },
+    //             {
+    //                 "name":"tql_business_db_t_tql_business_agent",
+    //                 "index":64342,
+    //                 "type":3,
+    //                 "key":"3#64342"
+    //             },
+    //             {
+    //                 "name":"cooper_db_t_ad_launch",
+    //                 "index":41961,
+    //                 "type":3,
+    //                 "key":"3#41961"
+    //             },
+    //             {
+    //                 "name":"tql_auth_db_t_auth_oa_config_item",
+    //                 "index":64324,
+    //                 "type":3,
+    //                 "key":"3#64324"
+    //             },
+    //             {
+    //                 "name":"fkfx_user_detail",
+    //                 "index":50931,
+    //                 "type":3,
+    //                 "key":"3#50931"
+    //             },
+    //             {
+    //                 "name":"fkfx_order_backtrack_day",
+    //                 "index":50760,
+    //                 "type":3,
+    //                 "key":"3#50760"
+    //             },
+    //             {
+    //                 "name":"user_source_channel_db_t_user_source_channel",
+    //                 "index":64996,
+    //                 "type":3,
+    //                 "key":"3#64996"
+    //             },
+    //             {
+    //                 "name":"user_info_extra_db_t_user_info_extra",
+    //                 "index":64824,
+    //                 "type":3,
+    //                 "key":"3#64824"
+    //             },
+    //             {
+    //                 "name":"vip_base_db_t_vip_profile_water",
+    //                 "index":65350,
+    //                 "type":3,
+    //                 "key":"3#65350"
+    //             },
+    //             {
+    //                 "name":"manager_db_t_agent_property",
+    //                 "index":54378,
+    //                 "type":3,
+    //                 "key":"3#54378"
+    //             },
+    //             {
+    //                 "name":"agency_db_t_reg_uid_agent_water",
+    //                 "index":39752,
+    //                 "type":3,
+    //                 "key":"3#39752"
+    //             },
+    //             {
+    //                 "name":"agency_db_t_channel_info",
+    //                 "index":39740,
+    //                 "type":3,
+    //                 "key":"3#39740"
+    //             },
+    //             {
+    //                 "name":"dragonxu_user_day_click_log",
+    //                 "index":46568,
+    //                 "type":3,
+    //                 "key":"3#46568"
+    //             },
+    //             {
+    //                 "name":"dragonxu_user_day_app_login_log",
+    //                 "index":46566,
+    //                 "type":3,
+    //                 "key":"3#46566"
+    //             },
+    //             {
+    //                 "name":"vip_base_db_t_vip_open_order",
+    //                 "index":65346,
+    //                 "type":3,
+    //                 "key":"3#65346"
+    //             },
+    //             {
+    //                 "name":"vip_base_db_t_vip_sku",
+    //                 "index":65353,
+    //                 "type":3,
+    //                 "key":"3#65353"
+    //             },
+    //             {
+    //                 "name":"pd_el_adj_pred",
+    //                 "index":57734,
+    //                 "type":3,
+    //                 "key":"3#57734"
+    //             },
+    //             {
+    //                 "name":"tian_pre_loan_pd_score_final",
+    //                 "index":63036,
+    //                 "type":3,
+    //                 "key":"3#63036"
+    //             }
+    //         ]
+    //     ],
+    //     "right_list":[
+    //         [
+    //             {
+    //                 "name":"eco_user_active_type_info_detail",
+    //                 "index":47656,
+    //                 "type":3,
+    //                 "key":"3#47656"
+    //             }
+    //         ],
+    //         [
+    //
+    //         ]
+    //     ]
+    // };
+
+    export default class Diagram {
         constructor(ctx, canvas, data) {
             this.ctx = ctx;
             this.canvas = canvas;
@@ -126,9 +919,11 @@
             this.width = this.canvas.width;
             this.height = this.canvas.height;
             this.interval = {
-                x: 160,
+                x: 290,
                 y: 50,
             };
+
+            this.half_p_w =  10;
 
             // {
             //      key: [x, y]
@@ -141,31 +936,38 @@
             this.target_key_source_postions = {};
 
             this.emun_type = {
-                table: 1,
-                schema: 2,
-                task: 3,
+                table: 3,
+                schema: 8,
+                task: 7,
             };
 
             this._draw();
         }
 
         _draw() {
-            let right_data = this.data.right;
-            let left_data = this.data.left;
+            let right_data = this.data.right_list;
+            let left_data = this.data.left_list;
+            let level_offset = (right_data.length - left_data.length) / 2;
 
-            // this._drawLeft(left_data);
-            this._drawRight(right_data);
+            this._drawLeft(left_data, level_offset);
+            this._drawRight(right_data, level_offset);
         }
 
-        _drawLeft(lst) {
+        _drawLeft(lst, level_offset) {
+            let start_point = {
+                x: this.width / 2 - (~~(level_offset * this.interval.x)),
+                y: this.height / 2,
+            };
+
             for (var arr of lst) {
-                this._drawLay(arr);
+                this._drawLay(arr, start_point, false);
+                start_point.x -= this.interval.x;
             }
         }
 
-        _drawRight(lst) {
+        _drawRight(lst, level_offset) {
             let start_point = {
-                x: this.width / 2,
+                x: this.width / 2 - (~~(level_offset * this.interval.x)),
                 y: this.height / 2,
             };
 
@@ -175,19 +977,22 @@
             }
         }
 
-         _drawLay(lst, start_point) {
-             let count = lst.length;
-             let x = start_point.x;
-             let y = start_point.y - (count - 1) * this.interval.y / 2;
+        _drawLay(lst, start_point, is_right = true) {
+            let count = lst.length;
+            let x = start_point.x;
+            let y = start_point.y - (count - 1) * this.interval.y / 2;
 
-             for (var i = 0; i < count; i++) {
-                 let obj = lst[i];
-                 y += this.interval.y;
-                 this._drawPoint(x, y, obj);
-             }
+            for (var i = 0; i < count; i++) {
+                let obj = lst[i];
+
+                if (Object.keys(obj).length !== 0) {
+                    y += this.interval.y;
+                    this._drawPoint(x, y, obj, is_right);
+                }
+            }
         }
 
-        _drawPoint(x, y, obj) {
+        _drawPoint(x, y, obj, is_right) {
             let type = obj.type;
 
             // this.emun_type = {
@@ -195,22 +1000,24 @@
             //     schema: 2,
             //     task: 3,
 
-
-
             switch(type) {
                 case this.emun_type.table:
-                    this._drawRectangle(x, y);
+                    // this._drawRectangle(x, y);
+                    this._drawCircle(x, y, '#005344');
                     break;
                 case this.emun_type.schema:
-                    this._drawSquare(x, y);
+                    // this._drawSquare(x, y);
+                    this._drawCircle(x, y, '#411445');
                     break;
                 case this.emun_type.task:
                 default:
-                    this._drawCircle(x, y);
+                    this._drawCircle(x, y, '#1d953f');
+                    // this._drawFont(x, y, obj.name);
                     break;
             }
 
             this._drawFont(x, y, obj.name);
+
 
             //  name: 'table4',
             //  type: 1,
@@ -218,8 +1025,28 @@
             //  target: [1, 2]
             this.key_position[obj.key] = [x, y];
 
-            if (this.target_key_source_postions[obj.key]) {
-                // todo 绘制连线，
+            if (this.target_key_source_postions[obj.key] && this.target_key_source_postions[obj.key].length !== 0) {
+                if (is_right) {
+                    for (var s_p of this.target_key_source_postions[obj.key]) {
+                        this._drawArrowLine(
+                            s_p[0] + this.half_p_w,
+                            s_p[1],
+                            x - this.half_p_w,
+                            y,
+                        );
+                    }
+                }
+                else {
+                    for (var s_p of this.target_key_source_postions[obj.key]) {
+                        this._drawArrowLine(
+                            x + this.half_p_w,
+                            y,
+                            s_p[0] - this.half_p_w,
+                            s_p[1]
+                        );
+                    }
+                }
+
             }
 
             // {
@@ -236,9 +1063,9 @@
             }
         }
 
-        _drawRectangle(x, y, color='#fcf16e') {
-            let w = 80;
-            let h = 60;
+        _drawRectangle(x, y, color='#f15a22') {
+            let w = this.half_p_w * 2;
+            let h = 10;
             let _x = x - w / 2;
             let _y = y - h / 2;
 
@@ -247,7 +1074,7 @@
         }
 
         _drawSquare(x, y, color='#90d7ec') {
-            let i = 80;
+            let i = this.half_p_w * 2;
             let _x = x - i / 2;
             let _y = y - i / 2;
 
@@ -256,46 +1083,76 @@
         }
 
         _drawCircle(x, y, color='#d5c59f') {
-            let r = 80;
+
+            let r = this.half_p_w;
+            this.ctx.beginPath();
             this.ctx.fillStyle = color;
-            this.ctx.arc(x, y, r/2, 0, 2 * Math.PI, true);
+            this.ctx.arc(x, y, r, 0, 2 * Math.PI, true);
             this.ctx.fill();
+            this.ctx.closePath();
         }
 
         _drawFont(x, y, text) {
-            let size = '20px';
+            let size = '12px';
             this.ctx.fillStyle = 'black';
-            this.ctx.font =  size + ' serif';
-            let tmp = this._convertStr2Px(text, size);
-            this.ctx.fillText(text, x - tmp[0] / 2, y + tmp[1]);
+            this.ctx.font =  size + ' Microsoft YaHei';
+
+            let width = this.ctx.measureText(text).width;
+
+            // let s_index = 0;
+            // let interval = 100;
+
+            // let text_lst = text.split('');
+            // let txt_length = text_lst.length;
+            //
+            // if (txt_length < 50) {
+            //     this.ctx.fillText(text, x - width / 2, y - this.half_p_w - 6);
+            // }
+            // else {
+            //     let tmp = "";
+            //     let count = Math.floor(txt_length / 50);
+            //
+            //     for (var i = 0; i < txt_length; i++) {
+            //         tmp += text_lst[0];
+            //
+            //         if (i % 50 === 0) {
+            //             this.ctx.fillText(tmp, x - width / 2, y - this.half_p_w - 6 - (--count) * 10);
+            //             tmp = "";
+            //         }
+            //     }
+            // }
+
+
+            // if (width < interval) {
+            this.ctx.fillText(text, x - width / 2, y - this.half_p_w - 6);
+            // }
+            // else {
+            //     while (s_index * interval < width) {
+            //         let sub = text.substring(s_index * interval, interval);
+            //         this.ctx.fillText(sub, x - interval / 2, y - this.half_p_w * 2 + s_index * 10);
+            //         s_index++;
+            //     }
+            // }
         }
 
-        _drawArrowLine(s_pos, e_pos) {
-            drawArrow(this.ctx, s_pos, e_pos);
+        _drawArrowLine(s_x, s_y, e_x, e_y) {
+            drawArrow(
+                this.ctx,
+                {
+                    x: s_x,
+                    y: s_y,
+                },
+                {
+                    x: e_x,
+                    y: e_y,
+                },
+                {
+                    line_color: 'rgba(1, 1, 1, 0.25)',
+                    arrow_line_color: 'rgba(1, 1, 1, 0.25)',
+                }
+            );
         }
 
-        _convertStr2Px(value, size) {
-            let span = document.querySelector('#strpx');
-
-            if (span === null) {
-                span = document.createElement('span');
-                span.id = 'strpx';
-                span.style.visibility = 'hidden';
-                span.style. whiteSpace = 'nowrap';
-                span.style.height = '0px';
-                span.style.position = 'fixed';
-                span.style.fontSize = size;
-                span.style.lineSize = size;
-                span.style.left = 0;
-                span.style.bottom = 0;
-                document.body.appendChild(span);
-            }
-
-            span.innerText = value;
-            let tmp = span.getBoundingClientRect();
-
-            return [tmp.width, tmp.height];
-        }
     }
 
     let diagram = new Diagram(ctx, canvas, data);

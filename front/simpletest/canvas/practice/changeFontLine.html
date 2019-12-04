@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas width="800" height="600" style="border: 1px solid black;"></canvas>
+    </div>
+</body>
+<script>
+    let canvas = document.querySelector('canvas');
+    let ctx = canvas.getContext('2d');
+    let text = '1234567890987654321yiuyiuyuiyui中国好哦啊是哦度奥司U盾按时打算都按时';
+
+    ctx.fillStyle = 'black';
+    ctx.font =  '14px Microsoft YaHei';
+    // ctx.fillText(text, 100, 100);
+
+    let start = 0;
+    let interval = 10;
+    let length = text.length;
+    let y = 100;
+
+    while (start < length) {
+        let tmp = text.substring(start, start + interval > length ? length : start + interval);
+        ctx.fillText(tmp, 100,  y);
+        y += 20;
+        console.log(tmp);
+        start = start + interval;
+    }
+
+</script>
+</html>

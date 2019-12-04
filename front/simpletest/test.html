@@ -31,21 +31,9 @@
     </div>
 </body>
 <script>
-    function test(evt) {
-        console.log('target is');
-        console.log(evt.target);
-        console.log('currentTarget is');
-        console.log(evt.currentTarget);
-    }
+    let str = 'dashdkjsahdjksahdjk';
 
-    let obj = {
-        a: 'bbb',
-        b: (function() {
-           return  'ccc' + obj.a;
-        })()
-    };
 
-    console.log(obj);
-
+    str.substring(0, 10);
 </script>
 </html>
