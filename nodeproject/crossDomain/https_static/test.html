@@ -36,11 +36,13 @@
 </head>
 <body>
     <div class="container">
+        <!--img标签是无法用来jsonp的，因为对返回的结果无法当js执行-->
+        <!--<img src="http://127.0.0.1:9000/jsonptest?cb=printValue" alt="error">-->
     </div>
 </body>
 <script src="./axios.js"></script>
 <script src="./test.js"></script>
-<!--<script src="http://127.0.0.1:9000/jsonptest?cb=printValue"></script>-->
+<script src="http://127.0.0.1:9000/jsonptest?cb=printValue"></script>
 </html>
 
 

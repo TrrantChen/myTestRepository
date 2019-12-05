@@ -1,5 +1,5 @@
 function printValue(value) {
-    alert(value);
+    alert('这是跨域的 ' + value);
 }
 
 function getData() {
@@ -14,8 +14,8 @@ function getData() {
         timeout: 5000
     })
         .then((value) => {
-            alert(value);
+            alert('这是跨域的 ' + value.data);
         })
 }
 
-getData();
+// getData();
