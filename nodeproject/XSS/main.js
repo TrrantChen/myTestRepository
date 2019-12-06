@@ -30,6 +30,13 @@ app.get('/getxss', function (req, res) {
     setCookie(res);
     // res.send(escapeHTML(req.query.a));
     // res.send(req.query.a);
+    // res.sendStatus(200);
+
+    let result = {
+        value: req.query.a
+    };
+
+    res.send(JSON.stringify(result));
 });
 
 // 对get的值进行过滤
