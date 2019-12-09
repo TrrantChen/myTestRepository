@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script>
+    window.addEventListener("unhandledrejection", function(e){
+        e.preventDefault();
+        console.log(e.reason);
+        return true;
+    });
+
+    window.addEventListener('error', (...res) => {
+        console.log(res);
+    }, true);
+</script>
+<body>
+<img src=".sdsdsd" alt="">
+</body>
+<script src="../axios.js"></script>
+<script>
+    axios.get('//127.0.0.1:222', {
+        params: {
+            a: 1,
+        }
+    })
+    //     .catch((error) => {
+    //     console.log(error);
+    // })
+</script>
+</html>

@@ -60,11 +60,15 @@ let count = 0;
 http_app.get('/setCookie', function (req, res) {
     res.cookie('cookie', 'http' + (++count), {
         maxAge: 1000000,
-        // sameSite: true,
-        sameSite: 'Strict',
-        
+        sameSite: true,
+        // sameSite: 'Strict',
+
     })
         .send('cookie set');
+});
+
+http_app.get('/getCookie', function (req, res) {
+    res.send(req.headers.cookie);
 });
 
 function setHeadersFunc(res, path, stat) {
