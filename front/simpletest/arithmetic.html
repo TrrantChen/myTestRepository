@@ -28,58 +28,71 @@
 </body>
 <script>
 
-    let index = 0;
-
+    // 快速排序
     function quickSort(arr, s, e) {
+        // if (s === 4) {
+        //     debugger
+        // }
+        if (s < e) {
+            let s_next = s;
+            let e_next = e;
+            let m = ~~((s + e) / 2);
+            let s_start = true;
 
-        if (s >= e) {
-            return;
-        }
-
-        if (index++ > 10) {
-            console.log(index);
-            return;
-        }
-
-        let m = ~~((s + e) / 2);
-        let s_next = s;
-        let e_next = e;
-        let s_start = true;
-        while (s !== e) {
-            if (s_start) {
-                if (arr[m] <= arr[s]) {
-                    let tmp = arr[m];
-                    arr[m] = arr[s];
-                    arr[s] = tmp;
-                    m = s;
-                    s_start = false;
+            while (s !== e) {
+                if (s_start) {
+                    if (arr[m] <= arr[s]) {
+                        let tmp = arr[m];
+                        arr[m] = arr[s];
+                        arr[s] = tmp;
+                        m = s;
+                        s_start = false;
+                    }
+                    else  {
+                        ++s;
+                    }
                 }
                 else {
-                    ++s;
+                    if (arr[m] >= arr[e]) {
+                        let tmp = arr[m];
+                        arr[m] = arr[e];
+                        arr[e] = tmp;
+                        m = e;
+                        s_start = true;
+                    }
+                    else  {
+                        --e;
+                    }
                 }
             }
-            else {
-                if (arr[m] > arr[e]) {
-                    let tmp = arr[m];
-                    arr[m] = arr[e];
-                    arr[e] = tmp;
-                    m = e;
-                    s_start = true;
-                }
-                else {
-                    --e;
-                }
-            }
+
+            quickSort(arr, s_next, m - 1);
+            quickSort(arr, m + 1, e_next);
         }
-
-        quickSort(arr, s_next, m);
-        quickSort(arr, m, e_next);
-
     }
 
-    let arr = [3, 1];
-    quickSort(arr, 0, arr.length - 1);
+    // 冒泡排序
+    function bubbleSort(arr) {
+        let n = arr.length;
+
+        for (var i = 0; i < n; i++) {
+            for (var j = 0; j < n -i; j++) {
+                if (arr[j] > arr[j+1]) {
+                    let tmp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = tmp;
+                }
+            }
+        }
+    }
+
+    function
+
+    let arr = [12, 3434, 3242, 76, 766345, 346, 478989, 6435];
+
+
 
     console.log(arr);
+
 </script>
 </html>

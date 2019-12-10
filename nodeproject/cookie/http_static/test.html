@@ -31,7 +31,6 @@
         }
 
     </style>
-    <!--<meta http-equiv="Content-Security-Policy" content="script-src 'self'">-->
     <link rel="stylesheet" href="./test.css">
 </head>
 <body>
@@ -40,6 +39,8 @@
         <button id="set_cookie">set cookie</button>
         <button id="get_data">getData</button>
         <button onclick="getCookie()">get cookie</button>
+        <button onclick="getCORSCookie()">get CORS cookie</button>
+        <button onclick="getCORSCookiePost()">get CORS cookie post</button>
     </div>
 </body>
 <script src="./axios.js"></script>

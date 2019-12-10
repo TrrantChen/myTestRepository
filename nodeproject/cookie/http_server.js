@@ -8,12 +8,8 @@ const http_app = express();
 
 
 const http_server = http_app.listen(9000, function() {
-    console.log('http://127.0.0.1:9000/web/test.html')
+    console.log('http://test2.com/web/test.html')
 });
-
-
-
-
 
 http_app.all('*',function (req, res, next) {
     // if (/\.html/.test(req.url)) {
@@ -59,10 +55,10 @@ http_app.get('/getData', function (req, res) {
 let count = 0;
 http_app.get('/setCookie', function (req, res) {
     res.cookie('cookie', 'http' + (++count), {
-        maxAge: 1000000,
-        sameSite: true,
+        // maxAge: 1000000,
+        // sameSite: true,
+        // path: '/getData',
         // sameSite: 'Strict',
-
     })
         .send('cookie set');
 });
@@ -72,9 +68,6 @@ http_app.get('/getCookie', function (req, res) {
 });
 
 function setHeadersFunc(res, path, stat) {
-    // res.cookie('cookie', 'https' + new Date().getTime(), {
-    //     maxAge: 10800
-    // });
 
 }
 

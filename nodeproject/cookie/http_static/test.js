@@ -26,13 +26,6 @@ function setCookie() {
 }
 
 function getData() {
-    const instance = axios.create({
-        baseURL: 'http://127.0.0.1:9000',
-        withCredentials: true,
-        timeout: 1000,
-        headers: {'X-Custom-Header': 'foobar'}
-    });
-
     instance.get('/getData', {
         timeout: 5000
     })
@@ -50,3 +43,32 @@ function getCookie() {
         });
 }
 
+function getCORSCookie() {
+    const cors_instance = axios.create({
+        baseURL: 'https://test1.com',
+        withCredentials: true,
+        timeout: 1000,
+    });
+
+    cors_instance.get('/getCookieCORS', {
+        timeout: 5000
+    })
+        .then((value) => {
+            console.log(value.data);
+        })
+}
+
+function getCORSCookiePost() {
+    const cors_instance = axios.create({
+        baseURL: 'https://test1.com',
+        withCredentials: true,
+        timeout: 1000,
+    });
+
+    cors_instance.post('/getCookieCORSPOST', {
+        timeout: 5000
+    })
+        .then((value) => {
+            console.log(value.data);
+        })
+}
