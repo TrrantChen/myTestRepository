@@ -30,20 +30,17 @@
         <canvas width="800" height="600"></canvas>
     </div>
 </body>
+<script src="./axios.js"></script>
 <script>
-    let canvas = document.querySelector('canvas');
-    let ctx = canvas.getContext('2d');
+    const instance = axios.create({
+        withCredentials: true,
+        baseURL: '//127.0.0.1:9090',
+    });
 
-    let count = 10000;
-
-    for (var i = 0; i < count; i++) {
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-        ctx.moveTo(100, 100);
-        ctx.lineTo(100, 200);
-        ctx.stroke();
-        ctx.closePath();
-    }
-
+    instance.get('/sockjs-node/info', {
+        params: {
+            t: 1576133876473,
+        }
+    })
 </script>
 </html>
