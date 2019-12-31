@@ -32,15 +32,41 @@
 </body>
 <script src="./axios.js"></script>
 <script>
-    const instance = axios.create({
-        withCredentials: true,
-        baseURL: '//127.0.0.1:9090',
-    });
 
-    instance.get('/sockjs-node/info', {
-        params: {
-            t: 1576133876473,
-        }
-    })
+    // let key_lst = ['a', 'b', 'c'];
+    let key_lst = ['a'];
+
+
+    for (var key of key_lst) {
+        console.log('===============================');
+        let url = '127.0.0.1:8000?a=1&b=9&c=10';
+        // let url = '127.0.0.1:8000?a=1';
+        let result = url.replace(new RegExp(`(\\?|&)${key}=(.*?)(&|#|$)`, 'g'), function(m, $1, $2, $3) {
+            console.log(m);
+            console.log($1);
+            console.log($2);
+            console.log($3);
+
+            let r = '';
+
+            if ($1 === '?') {
+                if ($3 !== '') {
+                    r = $1;
+                }
+            }
+            else if ($3 === '&') {
+                r = $3;
+            }
+            else if ($3 === '') {
+                r = '';
+            }
+
+            return r;
+        });
+
+        console.log(result);
+    }
+
+
 </script>
 </html>
