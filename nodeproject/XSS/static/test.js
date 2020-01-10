@@ -1,4 +1,9 @@
-axios.get('/getxss?a=12345')
+axios.get('/getxss', {
+    params: {
+        a: '12345',
+    },
+    test_para: 'ppp',
+})
     .then(function (response) {
         console.log(response.data);
     })
@@ -23,3 +28,4 @@ function projectXss(v) {
     v = v.replace(/'/g, "&#39;");
     return v;
 }
+

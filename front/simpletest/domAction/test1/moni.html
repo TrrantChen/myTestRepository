@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .div-test {
+            width: 100px;
+            height: 200px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="main" class="div-test">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+    </div>
+</div>
+</body>
+<script>
+    //      // 假设这里模拟一个 ul，其中包含了 5 个 li
+    //      [1, 2, 3, 4, 5]
+    //      // 这里替换上面的 li
+    //      [1, 2, 5, 4]
+    let t0 = window.performance.now();
+    let main = document.querySelector('#main');
+    let span_lst = main.children;
+    let node3 = span_lst[2];
+    let node4 = span_lst[3];
+    let node5 = span_lst[4];
+    let node4_clone = node4.cloneNode(true);
+    let node5_clone = node5.cloneNode(true);
+
+
+    main.replaceChild(node4_clone, node5);
+    main.replaceChild(node5_clone, node4);
+
+    node3.remove();
+
+    window.onload = function() {
+        let t1 = window.performance.now();
+        console.log(t1 - t0);
+    };
+
+</script>
+</html>

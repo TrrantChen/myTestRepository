@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .div-main {
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="main" class="div-main">
+            <span>test</span>
+            <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+    let container = document.querySelector('.container');
+    let main = document.querySelector('#main');
+    main.style.background = 'red';
+    main.addEventListener('click', (evt) => {
+        alert('test');
+    });
+
+    // true会连子元素一起复制，false只会复制元素本身
+    let clone = main.cloneNode(true);
+    // clone.style.background = 'green';
+    container.appendChild(clone);
+
+    // style 会复制
+    // 事件不会复制
+</script>
+</html>

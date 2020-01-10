@@ -1,0 +1,239 @@
+<!--对snabbdom的一个模拟-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+
+        .div-test {
+            width: 100px;
+            height: 200px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="main" class="div-test">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+    </div>
+</div>
+</body>
+<script>
+    //      // 假设这里模拟一个 ul，其中包含了 5 个 li
+    //      [1, 2, 3, 4, 5]
+    //      // 这里替换上面的 li
+    //      [1, 2, 5, 4]
+    //      简单模拟
+    let main = document.querySelector('#main');
+    let s_lst = [...main.children];
+    let t_lst = [
+        {
+            id: '1',
+            elem: null,
+            // key: '1',
+        },
+        {
+            id: '2',
+            elem: null,
+            // key: '2',
+        },
+        {
+            id: '7',
+            elem: null,
+            // key: '7',
+        },
+        {
+            id: '3',
+            elem: null,
+            // key: '3',
+        },
+        {
+            id: '4',
+            elem: null,
+            // key: '4',
+        },
+    ];
+
+    class MySnabbdom {
+        constructor(s_lst, t_lst) {
+            this.s_lst = this.createVnodeLst(s_lst);
+            this.t_lst = t_lst;
+
+            let parentElem = s_lst[0].parentElement;
+            this.updateChildren(parentElem, this.s_lst, this.t_lst);
+        }
+
+        createVnode(dom) {
+            return {
+                id: dom.innerText,
+                elem: dom,
+                // key: dom.innerText,
+            };
+        }
+
+        pathVnode(oldVnode, vnode) {
+            vnode.elem = oldVnode.elem;
+        }
+
+        createVnodeLst(dom_lst) {
+            return [...dom_lst].map((dom) =>{
+                return {
+                    id: dom.innerText,
+                    elem: dom,
+                }
+            });
+        }
+
+        sameVnode(node1, node2) {
+            return node1.id === node2.id;
+        }
+
+        createElm(vnode) {
+            let span = document.createElement('span');
+            span.innerText = vnode.id;
+            return span;
+        }
+
+        addVnodes(parentElm, before, vnodes, startIdx, endIdx) {
+            for (; startIdx <= endIdx; ++startIdx) {
+                parentElm.insertBefore(this.createElm(vnodes[startIdx]), before);
+            }
+        }
+
+        removeVnodes(parentElm, vnodes, startIdx, endIdx) {
+            for (; startIdx <= endIdx; ++startIdx) {
+                let ch = vnodes[startIdx];
+                parentElm.removeChild(ch.elem);
+            }
+        }
+
+        createKeyToOldIdx(children, beginIdx, endIdx) {
+            let i;
+            let map = {};
+            let key =  undefined;
+            let ch;
+
+            for (i = beginIdx; i <= endIdx; ++i) {
+                ch = children[i];
+                if (ch) {
+                    key = ch.key;
+                    if (key !== undefined) map[key] = i;
+                }
+            }
+            return map;
+        }
+
+        updateChildren(parentElem, oldCh, newCh) {
+            let oldStartIdx = 0, newStartIdx = 0;
+            let oldEndIdx = oldCh.length - 1;
+            let oldStartVnode = oldCh[0];
+            let oldEndVnode = oldCh[oldEndIdx];
+            let newEndIdx = newCh.length - 1;
+            let newStartVnode = newCh[0];
+            let newEndVnode = newCh[newEndIdx];
+            let oldKeyToIdx = void 0;
+            let idxInOld = void 0;
+            let elmToMove = void 0;
+
+            while(oldStartIdx <= oldEndIdx  && newStartIdx <= newEndIdx) {
+                if (oldStartVnode === null) {
+                    oldStartVnode = oldCh[++oldStartIdx];
+                }
+                else if (oldEndVnode === null) {
+                    oldEndVnode = oldCh[--oldEndIdx];
+                }
+                else if (newStartVnode == null) {
+                    newStartVnode = newCh[++newStartIdx];
+                }
+                else if (newEndVnode == null) {
+                    newEndVnode = newCh[--newEndIdx];
+                }
+                else if (this.sameVnode(oldStartVnode, newStartVnode)) {
+                    this.pathVnode(oldStartVnode, newStartVnode);
+                    oldStartVnode = oldCh[++oldStartIdx];
+                    newStartVnode = newCh[++newStartIdx];
+                }
+                else if (this.sameVnode(oldEndVnode, newEndVnode)) {
+                    this.pathVnode(oldEndVnode, newEndVnode);
+                    oldEndVnode = oldCh[--oldEndIdx];
+                    newEndVnode = newCh[--newEndIdx];
+                }
+                // oldstart === newend 说明这个节点的元素在新的队列里已经跑到最后面了，即跑到目前的oldend后面
+                else if (this.sameVnode(oldStartVnode, newEndVnode)) {
+                    this.pathVnode(oldStartVnode, newEndVnode);
+                    parentElem.insertBefore(oldStartVnode.elem, oldEndVnode.elem.nextSibling);
+                    oldStartVnode = oldCh[++oldStartIdx];
+                    newEndVnode = newCh[--newEndIdx];
+                }
+                else  if (this.sameVnode(oldEndVnode, newStartVnode)) {
+                    this.pathVnode(oldEndVnode, newStartVnode);
+                    // oldend === newstart 说明这个节点的元素在新的队列中已经跑到oldstart前面，所以插到将oldend插到oldstart前面
+                    parentElem.insertBefore(oldEndVnode.elem, oldStartVnode.elem);
+                    oldEndVnode = oldCh[--oldEndIdx];
+                    newStartVnode = newCh[++newStartIdx];
+                }
+                else {
+                    if (oldKeyToIdx === undefined) {
+                        oldKeyToIdx = this.createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx);
+                    }
+
+                    idxInOld = oldKeyToIdx[newStartVnode.key];
+
+                    if (idxInOld === void 0) {
+                        // 新的节点，new在old中找不到，直接将new创建插入到oldstart后面
+                        parentElem.insertBefore(this.createElm(newStartVnode), oldStartVnode.elem);
+                        newStartVnode = newCh[++newStartIdx];
+                    }
+                    else {
+                        // 如果节点添加了key的操作
+                        elmToMove = oldCh[idxInOld];
+
+                        if (elmToMove.id !== newStartVnode.id) {
+                            parentElem.insertBefore(this.createElm(newStartVnode), oldStartVnode.elem);
+                        }
+                        else {
+                            oldCh[idxInOld] = void 0;
+                            parentElem.insertBefore(elmToMove.elem, oldStartVnode.elem);
+                        }
+                    }
+                }
+            }
+
+            // 不会执行的情况为oldStartIdx > oldEndIdx && newStartIdx > newEndIdx 即两个dom结构一模一样的情况
+            if (oldStartIdx <= oldEndIdx || newStartIdx <= newEndIdx) {
+                if (oldStartIdx > oldEndIdx) {
+                    // old的先遍历完 说明new中的节点在old中是不存在的，直接插入到old中就可以了
+                    let before = newCh[newEndIdx + 1] === void 0 ? null : newCh[newEndIdx + 1].elem;
+                    // beofore的作用未知，十有八九为null，也就是直接插在parentElem后面
+                    this.addVnodes(parentElem, before, newCh, newStartIdx, newEndIdx);
+                } else if (newStartIdx > newEndIdx) {
+                    // new 先遍历完，说明new的节点已经都更新过了，剩下的在old中的都是可以删除掉的
+                    this.removeVnodes(parentElem, oldCh, oldStartIdx, oldEndIdx);
+                }
+            }
+        }
+    }
+
+    let mySnabbdom = new MySnabbdom(s_lst, t_lst);
+</script>
+</html>
