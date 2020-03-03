@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            background: #FFEFD5;
+            display: flex;
+            flex-direction: row;
+            overflow: visible;
+        }
+
+        aside {
+            background: #8aff60;
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+        }
+
+        main {
+            background: #FFA07A;
+            display: flex;
+            flex-direction: column;
+            width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <button id="show1">show</button>
+            <div id="div1" style="display:none;width:100%;height:1800px;background:#F5F5F5;"></div>
+        </aside>
+        <main>
+            <button id="show2">show</button>
+            <div id="div2" style="display:none;width:100%;height:1800px;background:#F5F5F5;"></div>
+        </main>
+    </div>
+    <!--<div style="height: 100%;">-->
+        <!--<div style="display: flex;-->
+    <!--flex-direction: column;-->
+    <!--width: 100%;-->
+    <!--min-height: 100%;">-->
+            <!--<section style="flex-direction: row;min-height: 100%;display: flex;-->
+    <!--flex: auto;">-->
+                <!--<aside style="    flex: 0 0 256px;-->
+    <!--max-width: 256px;-->
+    <!--min-width: 256px;-->
+    <!--width: 256px;-->
+    <!--position: relative;-->
+    <!--z-index: 10;-->
+    <!--min-height: 100%;">-->
+                    <!--<button id="show1">show</button>-->
+                    <!--<div id="div1" style="display:none;width:100%;height:1800px;background:#F5F5F5;"></div>-->
+                <!--</aside>-->
+                <!--<main style="position: relative;overflow-x: hidden;min-height: 100vh;    display: flex;-->
+    <!--flex: auto;-->
+    <!--flex-direction: column;">-->
+                    <!--<button id="show2">show</button>-->
+                    <!--<div id="div2" style="display:none;width:100%;height:1800px;background:#F5F5F5;"></div>-->
+                <!--</main>-->
+            <!--</section>-->
+        <!--</div>-->
+
+    <!--</div>-->
+</body>
+<script>
+    let show1 = document.querySelector('#show1');
+    let show2 = document.querySelector('#show2');
+    let div1 =  document.querySelector('#div1');
+    let div2 = document.querySelector('#div2');
+
+    show1.addEventListener('click', () => {
+        if (div1.style.display === 'block') {
+            div1.style.display = 'none';
+        }
+        else {
+            div1.style.display = 'block';
+        }
+    });
+
+    show2.addEventListener('click', () => {
+        if (div2.style.display === 'block') {
+            div2.style.display = 'none';
+        }
+        else {
+            div2.style.display = 'block';
+        }
+    });
+</script>
+</html>

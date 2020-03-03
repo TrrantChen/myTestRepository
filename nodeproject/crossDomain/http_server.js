@@ -50,10 +50,11 @@ http_app.use(function(req, res, next) {
 
 http_app.get('/jsonptest', function (req, res) {
     let cb = escapeHTML(req.query.cb);
+    let data = escapeHTML((req.query.data === void 0) ? '20' : req.query.data) ;
     // let value = 10;
     // res.send(cb + "(" + value + ")");
     // 如果是对象需要转为json
-    let value = { a: 10 };
+    let value = { a: data };
     res.send(cb + "(" + JSON.stringify(value) + ")");
 });
 

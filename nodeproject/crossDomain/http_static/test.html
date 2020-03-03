@@ -38,9 +38,103 @@
     <div class="container">
     </div>
 </body>
-<script src="./axios.js"></script>
-<script src="./test.js"></script>
+<script src="./jquery1.8.2.js"></script>
+<script src="./jsonpAop.js"></script>
+<script src="./jsonpTest.js"></script>
+<!--<script src="./test.js"></script>-->
 <!--<script src="http://127.0.0.1:9000/jsonptest?cb=printValue"></script>-->
+<script>
+    // (function(){
+    //     let open = true;
+    //     function setAjax(dom) {
+    //         let src = '';
+    //         let jsonp = 'cb';
+    //
+    //         Object.defineProperty(dom, 'src',{
+    //             get : function(){
+    //                 return src
+    //             },
+    //             set : function(s){
+    //                 src = s;
+    //
+    //                 if (open) {
+    //                     let result = new RegExp(jsonp + '=(.*)', 'g').exec(s);
+    //                     getAjax(s, result[1], jsonp);
+    //                     open = false;
+    //                 }
+    //
+    //                 dom.setAttribute('src', src);
+    //             }
+    //         });
+    //     }
+    //
+    //     let _create = document.createElement;
+    //
+    //     document.createElement = function(tag) {
+    //         let dom = _create.call(document, tag);
+    //
+    //         if (tag === 'script') {
+    //             setAjax(dom);
+    //         }
+    //
+    //         return dom;
+    //     };
+    //
+    //     function getAjax(url, jsonpCallback, jsonp) {
+    //         let new_callback = 'test';
+    //
+    //         // window[new_callback] = function(data) {
+    //         //     console.log(data);
+    //         // };
+    //
+    //
+    //         setTimeout(() => {
+    //             let reg = new RegExp('(\\?|\\&)' + jsonp + '=' + jsonpCallback);
+    //             let str = url.replace(reg, '');
+    //
+    //             debugger
+    //
+    //             $.ajax({
+    //                 url: str,
+    //                 type: 'GET',
+    //                 dataType: 'jsonp',
+    //                 jsonp: jsonp,
+    //                 jsonpCallback: new_callback,
+    //                 success: function(data) {
+    //                     console.log('success');
+    //                     console.log(data);
+    //                 }
+    //             });
+    //         });
+    //     }
+    // }());
+
+    // let script = document.createElement('script');
+    //
+    // script.src = 'http://127.0.0.1:9000/jsonptest?cb=print';
+    // document.body.appendChild(script);
+    // document.body.removeChild(script);
+    //
+    //
+    // function print(v) {
+    //     console.log(v);
+    // }
+    //
+    // $.ajax({
+    //     url: 'http://127.0.0.1:9000/jsonptest',
+    //     type: 'GET',
+    //     dataType: 'jsonp',
+    //     jsonp: 'cb',
+    //     jsonpCallback: 'print',
+    //     success: function(data) {
+    //         console.log('success');
+    //         console.log(data);
+    //     }
+    // });
+
+    jsonpTest();
+
+</script>
 </html>
 
 

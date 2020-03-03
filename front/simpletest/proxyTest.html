@@ -105,6 +105,20 @@
         document.body.appendChild(el);
     }
 
+    function setTest() {
+        let obj = {};
+
+        let handle = {
+            set: function(target, propKey, value, receiver) {
+                console.log('set');
+                return Reflect.set(target, propKey, value, receiver);
+            }
+        };
+
+        let proxy = new Proxy(obj, handle);
+        proxy.name = 'aaa';
+    }
+
     function applyTest() {
         let twice = {
             apply(target, ctx, args) {
@@ -303,6 +317,47 @@
         console.log(proxy_func.call_count);
     }
 
-    spyTest();
+    function domTest() {
+        // let script = document.createElement('script');
+        //
+        // let handle = {
+        //     set: function(target, key, value) {
+        //         target[key] = value;
+        //     },
+        //     get: function(target, key, value) {
+        //         return target[key];
+        //     }
+        // };
+        //
+        // let proxy = new Proxy(script, handle);
+        //
+        // proxy.src = 'http://fkjef.hjkhkjhkjhkj.com';
+        // console.log(proxy.src);
+
+        function watchPropsOn(el) {
+            return new Proxy(el, {
+                get(target, propKey, receiver) {
+                    //return Reflect.get(target, propKey, receiver);
+                    // console.log('get', propKey);
+                    console.log('get');
+                    return el[propKey];
+                },
+                set(target, propKey, value, receiver) {
+                    // console.log('set', propKey, value);
+                    console.log('set');
+                    target[propKey] = value;
+                }
+            });
+        }
+
+        let el = document.createElement('script');
+
+        let elProxy = watchPropsOn(el);
+        elProxy.src = 'http://fkjef.fsa.com';
+        console.log(el.src);
+
+    }
+
+    domTest();
 </script>
 </html>

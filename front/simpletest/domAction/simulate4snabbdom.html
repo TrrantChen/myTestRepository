@@ -34,7 +34,7 @@
         <span>1</span>
         <span>2</span>
         <span>3</span>
-        <span>4</span>
+        <!--<span>4</span>-->
     </div>
 </div>
 </body>
@@ -48,30 +48,30 @@
     let s_lst = [...main.children];
     let t_lst = [
         {
-            id: '1',
-            elem: null,
-            // key: '1',
-        },
-        {
             id: '2',
             elem: null,
-            // key: '2',
-        },
-        {
-            id: '7',
-            elem: null,
-            // key: '7',
+            key: '2',
         },
         {
             id: '3',
             elem: null,
-            // key: '3',
+            key: '3',
         },
         {
             id: '4',
             elem: null,
-            // key: '4',
+            key: '4',
         },
+        // {
+        //     id: '3',
+        //     elem: null,
+        //     // key: '3',
+        // },
+        // {
+        //     id: '4',
+        //     elem: null,
+        //     // key: '4',
+        // },
     ];
 
     class MySnabbdom {
@@ -87,7 +87,7 @@
             return {
                 id: dom.innerText,
                 elem: dom,
-                // key: dom.innerText,
+                key: dom.innerText,
             };
         }
 
@@ -97,15 +97,12 @@
 
         createVnodeLst(dom_lst) {
             return [...dom_lst].map((dom) =>{
-                return {
-                    id: dom.innerText,
-                    elem: dom,
-                }
+                return this.createVnode(dom);
             });
         }
 
         sameVnode(node1, node2) {
-            return node1.id === node2.id;
+            return node1.id === node2.id && node1.key === node2.key;
         }
 
         createElm(vnode) {
@@ -123,7 +120,9 @@
         removeVnodes(parentElm, vnodes, startIdx, endIdx) {
             for (; startIdx <= endIdx; ++startIdx) {
                 let ch = vnodes[startIdx];
-                parentElm.removeChild(ch.elem);
+                if (ch) {
+                    parentElm.removeChild(ch.elem);
+                }
             }
         }
 
@@ -155,7 +154,10 @@
             let idxInOld = void 0;
             let elmToMove = void 0;
 
+            debugger
+
             while(oldStartIdx <= oldEndIdx  && newStartIdx <= newEndIdx) {
+
                 if (oldStartVnode === null) {
                     oldStartVnode = oldCh[++oldStartIdx];
                 }
@@ -205,15 +207,22 @@
                         newStartVnode = newCh[++newStartIdx];
                     }
                     else {
-                        // 如果节点添加了key的操作
+                        // key的demo
+                        // old 1 2 3 new 4 2 5
+                        // 如果new的key值在old中可以找到，把old的dom更新，并在oldch中赋值为空，将dom进行移位。复用老的key
+                        // 以上面的例子来说，如果节点没有添加key值
+                        // 则会先将2当做新值插入到dom中，然后再将2从dom中移除
+                        // 如果有key值的话，会将dom的节点进行更新移动位置复用
                         elmToMove = oldCh[idxInOld];
 
                         if (elmToMove.id !== newStartVnode.id) {
                             parentElem.insertBefore(this.createElm(newStartVnode), oldStartVnode.elem);
+                            newStartVnode = newCh[++newStartIdx];
                         }
                         else {
                             oldCh[idxInOld] = void 0;
                             parentElem.insertBefore(elmToMove.elem, oldStartVnode.elem);
+                            newStartVnode = newCh[++newStartIdx];
                         }
                     }
                 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <select name="test">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <button>choose</button>
+    </div>
+</body>
+<script src="./module1.js" type="module"></script>
+<script src="./module2.js" type="module"></script>
+<script src="./module3.js" type="module"></script>
+<!--<script>-->
+<!--    let select = document.querySelector('select');-->
+<!--    let button = document.querySelector('button');-->
+
+
+<!--    button.addEventListener('click', (evt) => {-->
+<!--        let value = select.value;-->
+<!--        import(`./module${value}.js`)-->
+<!--            .then((obj) => {-->
+<!--                console.log(obj.value);-->
+<!--            })-->
+
+<!--    })-->
+<!--</script>-->
+</html>
