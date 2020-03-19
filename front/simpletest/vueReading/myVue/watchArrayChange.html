@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<button onclick="add()">add</button>
+<button onclick="modify()">modify</button>
+<div class="container">
+    <span>{{ a }}</span>
+</div>
+</body>
+<script>
+    let data = {
+        a: [1, 2 ,3],
+    };
+
+    const arrayProto = Array.prototype;
+    const arrayMethods = Object.create(arrayProto);
+
+    const methodsToPatch = [
+        'push',
+        'pop',
+        'shift',
+        'unshift',
+        'splice',
+        'sort',
+        'reverse'
+    ];
+
+    class Observer {
+        constructor(obj) {
+            let dep = new Dep();
+            let keys = Object.keys(obj);
+
+            for (var key of keys) {
+                let value = obj[key];
+
+                Object.defineProperty(obj, key, {
+                    get() {
+                        if (Dep.target) {
+                            dep.addWatcher(Dep.target);
+                        }
+
+                        return value;
+                    },
+                    set(val) {
+                        value = val;
+                    },
+                });
+
+                if (Array.isArray(value)) {
+                    methodsToPatch.forEach((method) => {
+                        let origin = arrayMethods[method];
+
+                        arrayMethods[method] = function() {
+                            let result = origin.apply(this, arguments);
+                            dep.notify();
+                            return result
+                        };
+                    });
+
+                    value.__proto__ = arrayMethods;
+                }
+            }
+        }
+    }
+
+    class Dep {
+        constructor() {
+            this.lst = [];
+        }
+        addWatcher(watcher) {
+            this.lst.push(watcher);
+        }
+        notify() {
+            for (var watcher of this.lst) {
+                watcher.update();
+            }
+        }
+    }
+
+    class Watcher {
+        constructor(obj, key, cb) {
+            this.cb = cb;
+            this.obj = obj;
+            this.key = key;
+
+            Dep.target = this;
+            this.old_value = obj[key] ;
+            Dep.target = null;
+        }
+
+        update() {
+            if (Array.isArray(this.obj[this.key]) || (!Array.isArray(this.obj[this.key]) && this.old_value !== this.obj[this.key])) {
+                this.old_value = this.obj[this.key];
+                this.cb.call(null, this.obj[this.key])
+            }
+        }
+    }
+
+    function viewer() {
+        let key = document.querySelector('span').innerText.replace(/\{|\}| /g, '');
+        new Observer(data);
+
+        new Watcher(data, key, (value) => {
+            document.querySelector('span').innerText = value;
+        });
+
+        document.querySelector('span').innerText = data[key];
+    }
+
+    viewer();
+
+    function add() {
+        data.a.push(Math.random() * 100000);
+    }
+
+    function modify() {
+        data.a.splice(1, 1, Math.random() * 1000);
+    }
+</script>
+</html>

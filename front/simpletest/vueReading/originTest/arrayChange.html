@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="app">
+            <button @click="add">add</button>
+            <button @click="printInfo">printInfo</button>
+            <span>
+                {{ lst }}
+            </span>
+        </div>
+    </div>
+</body>
+<script src="./vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            lst: [1, 2, 3],
+        },
+        methods: {
+            add() {
+                this.lst.push(10);
+            },
+            printInfo() {
+                console.log(this.lst);
+            }
+        }
+    })
+</script>
+</html>

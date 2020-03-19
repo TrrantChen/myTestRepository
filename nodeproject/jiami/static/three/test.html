@@ -26,31 +26,106 @@
 
     </div>
 </body>
+<script>
+    window.UA_Opt = {
+        LogVal: '_n',
+        Token: '1583393109472:FFFF00000000016C3934:1583393109309:0.902095825749428',
+        SendInterval: 5,
+        SendMethod: 8,
+        MaxMCLog: 12,
+        MaxKSLog: 14,
+        MaxMPLog: 5,
+        MaxGPLog: 1,
+        MaxTCLog: 12,
+        GPInterval: 50,
+        MPInterval: 4,
+        MaxFocusLog: 6,
+        isSendError: 1,
+        Flag: 2980046,
+        _LogVal: "_n",
+        _LogVals: {_n: 1},
+        reload: function(){},
+        getStatus: function(){return 0},
+        resetSA: function(){e(19)},
+        isReadyForSC: function(){var o="m";o+="I",o+="Ds";var n=E[o],r=!n;r&&(n=[]);var t=n,a=e(25,t);return a},
+        decryptJSON: function(o){var n=e(15,o);return n},
+        setUM: function(o){e(9,o)},
+    };
+</script>
+<script src="./awsc.js"></script>
 <script src="./test.js"></script>
-<!--<script src="test2.js"></script>-->
-<!--<script>-->
-<!--    let obj = {-->
-<!--        SendInterval: 5,-->
-<!--        SendMethod: 8,-->
-<!--        isSendError: 1,-->
-<!--        MaxMCLog: 12,-->
-<!--        MaxKSLog: 14,-->
-<!--        MaxMPLog: 5,-->
-<!--        MaxGPLog: 1,-->
-<!--        MaxTCLog: 12,-->
-<!--        GPInterval: 50,-->
-<!--        MPInterval: 4,-->
-<!--        MaxFocusLog: 6,-->
-<!--        Flag: 2980046,-->
-<!--        OnlyHost: 1,-->
-<!--        MaxMTLog: 500,-->
-<!--        MinMTDwnLog: 30,-->
-<!--        MaxNGPLog: 1,-->
-<!--        sIDs: ["_n1t|_n1z|nocaptcha|-stage-1"],-->
-<!--        mIDs: ["nc-canvas", "click2slide-btn"],-->
-<!--        hook: 1,-->
-<!--        font: 1,-->
-<!--        api: 1,-->
-<!--    }-->
-<!--</script>-->
+<script>
+
+    let obj = {
+        SendInterval: 5,
+        SendMethod: 8,
+        isSendError: 1,
+        MaxMCLog: 12,
+        MaxKSLog: 14,
+        MaxMPLog: 5,
+        MaxGPLog: 1,
+        MaxTCLog: 12,
+        GPInterval: 50,
+        MPInterval: 4,
+        MaxFocusLog: 6,
+        Flag: 2980046,
+        OnlyHost: 1,
+        MaxMTLog: 500,
+        MinMTDwnLog: 30,
+        MaxNGPLog: 1,
+        sIDs: ["_n1t|_n1z|nocaptcha|-stage-1"],
+        mIDs: ["nc-canvas", "click2slide-btn"],
+        hook: 1,
+        font: 1,
+        api: 1,
+    };
+
+
+    AWSC.use("uab", function(t, n) {
+        debugger
+        console.log(n.getUA(obj));
+    });
+
+
+    let data = {
+        a: "FFFF00000000016C3934",
+        t: "FFFF00000000016C3934:1583393109309:0.902095825749428",
+        n: "122#gFmNuE5REExUZ4pZR4paEJponDJE7SNEEP7ZpJRBuDPpJFQLpCGwoHZDpJEL7SwBEy7Hr+JMfDEP+oQLpoGUEELWn4yP7SQEpyGZpJRBuDPE+BNPpC7UEJponDJL7gNpEstrpaN9xk8PEAG2YlDcSr+ouL2W1cGuWLZhVDrG4tc7lGLt0AXRuhDr38GSyG3/VXhDqgf2HJLxnSp4OPbEDtVZ8CL6JDEEyBfDqWv2EEpadBZ9kxgbELVrtFp6+B050UGm7Mt2E5pangL4ul0EDLVr8C+UJDEEyBfDqMfbDEpxngp1uOIEELXZ8oWyJ4bEMFXmqWfbEEXRAWWtJoJpZv7YGf4basCWKSR8+l6JhLxJcGPk6MQMH5DoqLJp8IqBzUym8Sm01gDjKiXFpEX+VrnqbvAU5ulH2U1ooXLTy9By3uJ5MrIdtgyflviCwGgQhZCicMS5iyeMD+7Y8dK0UAsonK3ixCez8i9Fy4sifYXpIb3UUMnop9CuimBsEdSVcLaJMcuGZsZxuuh5hxGRP5EngTYseL1DHSEoGOKbjCvJThQmSTDNBZrtMjHCcuIx/+qQo98NkQvfAJcZrgsGud6BeCHiFofUG4ax7z+IfTdF7GKWZqZ8k94s7lZxz+eRIOVmJGyEmmyasQkzLVIfbL6+t7DGbvbWvyZPI666olQcv/wq1thv2vhIPDrhzFQEvmwAi0uwGdCsb/DgTFtjXRN=",
+        p: "{'ncSessionID':'5e701f17ff36','umidToken':'T23FE3454FB9FD4E2688EDC392046033413533C573D8A50BBD494A08703'}",
+        scene: "login",
+        asyn: 0,
+        lang: "cn",
+        v: 1000,
+    };
+
+    function test(data) {
+        $.ajax({
+            url: 'https://cf.aliyun.com/nocaptcha/analyze.jsonp',
+            type: 'GET',
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            data: data,
+            jsonpCallback: 'testfun',
+            success: function(data) {
+                console.log('success');
+                console.log(data);
+            }
+        });
+
+        function testfun(data) {
+            console.log('testfun');
+            console.log(data);
+        }
+    }
+
+    window.getObj = function(obj) {
+        let keys = Object.keys(obj);
+
+        for (var key of keys) {
+            console.log(`${key}: ${obj[key]},`);
+        }
+    }
+
+    // n: "122#rSbMcE+dEE+Vn4pZCEpMEJponDJE7SNEEP7rEJ+/f9t/2oQLpo7iEDpWnDEeK51HpyGZp9hBu4CSRmULpCVfEJponDJL7gNpEP7ZpER/uDEE+FQLpoGUEELWn4JP7SQEEyGrpJ+gtJPEsET60DnTtBOty/z4tam6plx2AA+/5u56BGCRl7Ik5pVENPNl04RUjfwmRh1PnKNB8oL6JB2uRB3mqW6KgNVxdgL1ulIEDLGrGsTa0aMEyF3D7MtbEEpCGGTCLPqEELjX8opifED4FFftqSfbDEpxnSp1uOIEELXZGoLUJDbEyF3mqW32E5pxngL4ul0EDLVr88A6JNbPMofDqW3bD4x0nURuCy2U4tRcgEeaFDpUGRmoaf2yRX2VOaj6zKDydZS6BLng78WAxbzjtcTFegOBLKVksKH6pQUpUfpyau5o/SqB33ciDQHPPcKb8ahSWkp4QHS6HiHxJC3sRfEyPw/0CFIDTALBdHprftD6PnJT3yNNWskLX40io5x8KRwCYwXmm3bv2DzbOKuM1EuQMau2nPOmUq3A1TkxnzzND6gqr5R0mjTmvw3MmTENKQSj3Mk8y7E7T3LrV4OCcg0oVwYt2Mfowf2HII5yQoZaEe0M8PIGG8TruPgFqPKmov3jcikqakjMVUBwlc0wiwWp7OlrAh7CHzpCtCi4630kLHNrN9AGlVphBOhtr57drogbXA9IkTUS2lXqK75O4TAyR2310Ngnh/BVwPz7D+tvYvZZIdwSTaZdmXHWSvy+qyEx6fgzUNIpu1lLlG9EwqYlLSjNFPfrSn5563xWklvJpQbWLBLXyiB6tQ9cCcy0tQch/WjViXiJfPFruJwONPqUpZiIMfGpV1+IT1CBd/rgGwfg7YfksPZaFhiQdCQuJHYreNYwBgpiPSg9jOfbVZ8gmF4vuomEmhWTQEYIubfDQaNqiNXEYCjpBP4dx8DbTN0UdNvDat0hqPQ/IXPuMf8hnyhnHPS7padh9jk1OJitSdhKcm7Se0+zjnOuS7fsbqgaihj6GKlaoVWyTF2fOzvFFWDNvn/7hg5Tjxcxy6WKf3TMXKWluvZrYLKgGa/jviVByALJvvP0wgKPC2+DYRGqYZpMZpgSdjJRs12nMnGjD0rfllWQGUhxz2wVgzDTbCk/opKT7TmPHVEuE3eFbhoV0qrkCqbkqazcZ0mjeGNJmokxUenSQns5iVqQD18rmbPLTDpEJpRAwdIeCOlPTf+cjRKlcQjg0EX0gxemEYebolKaVcycxEDkkd4qqfK8PkSnUOd0eJkKZmkXM+5Lo/jRzo7py1FtGnfcOgVS1tcRIShajktDg4eiXAxmHnPyUTYCkNtsznDJoZ+BcOoN5UhCc2NGt02cpgaH3lVmGqUyat79rFu1ifEr7WIAV+P0hMQmTvGSB7mT0mBPBUW5x4V0Em32qz0NeLG8wEOx1ZURq3PI7EuBm09Atthf/kqLHbr99AZ8QqAVLBXvRzyP5JP5FVR6CAXe"
+</script>
 </html>

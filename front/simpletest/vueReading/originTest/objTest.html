@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="app">
+        <button @click="change">change</button>
+        <span>
+                {{ obj }}
+        </span>
+    </div>
+</div>
+</body>
+<script src="./vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            obj: {
+                a: 10,
+            },
+        },
+        methods: {
+            change() {
+                this.obj.a = Math.random();
+            }
+        }
+    })
+</script>
+</html>
+

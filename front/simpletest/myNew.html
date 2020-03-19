@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+    </div>
+</body>
+<script>
+    var F = function() {
+        this.a = 1;
+        this.b = 2;
+        this.printA = function() {
+            console.log(this.a);
+        }
+    };
+
+    F.prototype.printB = function() {
+        console.log(this.b);
+    };
+
+    var f = new F();
+
+    f.printA();
+    f.printB();
+
+    function myNew() {
+        let instance = {};
+        instance.__proto__ = F.prototype;
+        F.call(instance);
+
+        return instance;
+    }
+
+    var b = myNew();
+</script>
+</html>

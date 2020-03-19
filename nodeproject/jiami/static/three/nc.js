@@ -4180,6 +4180,7 @@
                             t && e && e.style && (e.style.width = t + "px")
                         },
                         loadJS: function() {
+                            // todo
                             var e = this;
                             // https://g.alicdn.com/AWSC/AWSC/awsc.js
                             window.AWSC ?
@@ -4197,12 +4198,14 @@
                                     100)
                         },
                         jsReady: function() {
+                            // todo
                             var e = this;
                             !e.ready && e.__uab && e.__um && (e.ready = !0,
                                 e.reload(),
                                 onNCEvent(event_names.ready))
                         },
                         loadUAB: function() {
+                            // todo
                             var e = this;
                             UA_Opt.Token = (new Date).getTime() + ":" + opt.token,
                                 e.__uab ? e.jsReady() : (e.initUaParam(),
@@ -4286,6 +4289,7 @@
                                 n.__uaoption.Flag |= 2097152
                         },
                         loadUM: function() {
+                            // todo
                             var e = this;
                             window._umopt_npfp = .05,
                                 window._umopt_cris = .2,
