@@ -3494,10 +3494,14 @@
         // so that we get proper render context inside it.
         // args order: tag, data, children, normalizationType, alwaysNormalize
         // internal version is used by render functions compiled from templates
-        vm._c = function (a, b, c, d) { return createElement(vm, a, b, c, d, false); };
+        vm._c = function (a, b, c, d) {
+            return createElement(vm, a, b, c, d, false);
+        };
         // normalization is always applied for the public version, used in
         // user-written render functions.
-        vm.$createElement = function (a, b, c, d) { return createElement(vm, a, b, c, d, true); };
+        vm.$createElement = function (a, b, c, d) {
+            return createElement(vm, a, b, c, d, true);
+        };
 
         // $attrs & $listeners are exposed for easier HOC creation.
         // they need to be reactive so that HOCs using them are always updated
@@ -9284,6 +9288,7 @@
     }
 
     function parseHTML (html, options) {
+        debugger
         var stack = [];
         var expectHTML = options.expectHTML;
         var isUnaryTag$$1 = options.isUnaryTag || no;
@@ -9334,6 +9339,7 @@
                         parseEndTag(endTagMatch[1], curIndex, index);
                         continue
                     }
+
 
                     // Start tag:
                     var startTagMatch = parseStartTag();

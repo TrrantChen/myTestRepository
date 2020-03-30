@@ -22,29 +22,16 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div id="app">
-        <button @click="change">change</button>
-        <span>
-                {{ value }}
-        </span>
+    <div class="container">
+
     </div>
-</div>
 </body>
-<script src="./vue.js"></script>
+<script src="./simpleHtmlParse.js"></script>
 <script>
-    debugger;
-    var app = new Vue({
-        el: '#app',
-        data: {
-            value: 10,
-        },
-        methods: {
-            change() {
-                this.value = Math.random();
-            }
-        }
+    let simpleHtmlParser = new SimpleHtmlParser();
+
+    simpleHtmlParser.parse('<div>test</div>', function(...res) {
+        console.log(res);
     })
 </script>
 </html>
-

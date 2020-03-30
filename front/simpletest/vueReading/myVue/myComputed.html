@@ -26,11 +26,18 @@
 <div class="container">
     <span>{{ a }}</span>
     <span>{{ a }}</span>
+    <span>{{ get_data }}</span>
 </div>
 </body>
 <script>
     let data = {
         a: 2,
+    };
+
+    let computed = {
+        get_data: function() {
+            return data.a + 3;
+        }
     };
 
     class Observer {
@@ -73,44 +80,56 @@
     }
 
     class Watcher {
-        constructor(obj, key, cb) {
+        constructor(cb, is_computed = false) {
             this.cb = cb;
-            this.obj = obj;
-            this.key = key;
 
-            Dep.target = this;
-            this.old_value = obj[key] ;
-            Dep.target = null;
+            if (!is_computed) {
+                Dep.target = this;
+                // this.old_value = obj[key] ;
+                this.cb();
+                Dep.target = null;
+            }
         }
 
         update() {
-            if (this.old_value !== this.obj[this.key]) {
-                this.old_value = this.obj[this.key];
-                this.cb.call(null, this.obj[this.key])
-            }
+            this.cb();
         }
     }
 
-    function viewer() {
+
+    function render() {
+
+        let obj = {};
+
+        [...document.querySelectorAll('span')].forEach((dom) => {
+            let key = dom.innerText.replace(/\{|\}| /g, '');
+
+            if (obj[key]) {
+                obj[key].push(dom);
+            }
+            else {
+                obj[key] = [];
+                obj[key].push(dom);
+            }
+        });
+
         let key = document.querySelector('span').innerText.replace(/\{|\}| /g, '');
-        new Observer(data);
 
-        [...document.querySelectorAll('span')].forEach((dom) => {
-            new Watcher(data, key, (value) => {
-                dom.innerText = value;
-            });
-        });
 
-        [...document.querySelectorAll('span')].forEach((dom) => {
-            dom.innerText = data[key];
-        });
+        // [...document.querySelectorAll('span')].forEach((dom) => {
+        //     new Watcher(data, key, (value) => {
+        //         dom.innerText = value;
+        //     });
+        // });
 
     }
 
-    viewer();
+    new Observer(data);
+    let watcher = new Watcher(render);
 
     function add() {
         data.a++
     }
+
 </script>
 </html>

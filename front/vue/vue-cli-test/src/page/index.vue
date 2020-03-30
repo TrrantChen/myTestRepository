@@ -48,11 +48,14 @@
     import dragAndDropControl from '@/components/dragAndDropControl/index';
     import checkBoxTest from '@/components/checkBoxTest/index';
     import tableActiveRow from '@/components/tableActiveRow/index';
-
+    import shouldComponentUpdate from '@/components/shouldComponentUpdate/main';
+    import shouldComponentUpdateFromWeb from '@/components/shouldComponentUpdate/fromWeb/main';
 
     export default {
         that: this,
         components: {
+            shouldComponentUpdateFromWeb,
+            shouldComponentUpdate,
             dragAndChange,
             tableActiveRow,
             checkBoxTest,

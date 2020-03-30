@@ -1,0 +1,163 @@
+<!--正则表达式-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="test">
+            <div class="lost">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // let reg = /^<([^>\s\/]+)((\s+[^=>\s]+(\s*=\s*((\"[^"]*\")|(\'[^']*\')|[^>\s]+))?)*)\s*\/?\s*>/m;
+    // let s = '<div>test</div>>';
+    // reg.test(s);
+    // let lc = RegExp.leftContext;
+    // let lm = RegExp.lastMatch;
+    // let rc = RegExp.rightContext;
+    //
+    // console.log(lc);
+    // console.log(lm);
+    // console.log(rc);
+
+    // 主要逻辑有
+    // 1、包含集合中的任意单个  abc 命中 1a 1b 不命中 1ab
+    // 2、包含集合中的任意组合  abc 命中 1a 1b 1ab
+    // 3、不包含集合中的任意单个 abc 命中 1a 1b 1ab
+    // 4、不包含集合中的任意组合 abc 命中 1ab 1ac 不命中 1a
+
+    function test1() {
+        let regex = /a[123]b/g;
+        let string = "a0b a1b a2b a3b a4b a12b a123b";
+        console.log(string.match(regex));
+    }
+
+    function test2() {
+        let regex = /a((123)|(12)|(23)|(13))b/g;
+        let string = "a0b a1b a2b a3b a4b a12b a123b";
+        console.log(string.match(regex));
+    }
+
+    // []内的括号会被过滤掉。
+    function test3() {
+        // let regex = /1[^(a)(b)(c)]3/g;
+        let regex = /1[^abc]3/g;
+        let string = "1a3 1b3 1c3 1ab23 1234";
+        console.log(string.match(regex));
+    }
+
+    function test4() {
+        // let regex = /1([^(ab)(ac)(bc)])3/g;
+        let regex = /1([^(ab)]|[^(ac)]|[^(bc)])3/g;
+        let string = "1a3 1b3 1c3 1ab23 1ac23 1bc23 1234";
+        console.log(string.match(regex));
+    }
+
+    function test5() {
+        let div = document.querySelector('#test');
+        let html = div.innerHTML;
+
+        console.log(html.replace(/\s/g, ''));
+        console.log(html.replace(/[ \t\v\n\r\f]/g, ''));
+        console.log(html.replace(/[\t\v\n\r\f]/g, ''));
+        console.log(html.replace(/[\t\v\n\r]/g, ''));
+        console.log(html.replace(/[\t\v\n]/g, ''));
+        console.log(html.replace(/[\t\v]/g, ''));
+        console.log(html.replace(/[\t]/g, ''));
+    }
+
+    // 贪婪匹配
+    function test6() {
+        let reg1 = /\d{2,3}/g;
+        let reg2 = /\d{2,4}/g;
+        let reg3 = /\d{2,5}/g;
+        let str =  "1 12 123 1234 12345 123456";
+        console.log(str.match(reg1));
+        console.log(str.match(reg2));
+        console.log(str.match(reg3));
+    }
+
+    // 惰性匹配
+    // {m,n}?
+    // {m,}?
+    // ??
+    // +?
+    // *?
+    function test7() {
+        let reg1 = /\d{2,3}?/g;
+        let reg2 = /\d{2,4}?/g;
+        let reg3 = /\d{2,5}?/g;
+        let str =  "1 12 123 1234 12345 123456";
+        console.log(str.match(reg1));
+        console.log(str.match(reg2));
+        console.log(str.match(reg3));
+    }
+
+    // 分支选择也是惰性的
+    function test8() {
+        let reg1 = /good|goodbye/g;
+        let reg2 = /goodbye|good/g;
+        let str =  "goodbye boy";
+        console.log(str.match(reg1));
+        console.log(str.match(reg2));
+    }
+
+
+    function test9() {
+        let str = '<div id="main" class="test"></div>';
+
+        // *默认会是贪婪的
+        let reg1 = /id=".*"/g;
+        console.log(str.match(reg1));
+
+        // 去除贪婪，但是会带来回溯的性能问题
+        let reg2 = /id=".*?"/g;
+        console.log(str.match(reg2));
+
+        let reg3 = /id="(.*)?"/g;
+        console.log(str.match(reg3));
+
+        let reg4 = /id="[.*]?"/g;
+        console.log(str.match(reg4));
+
+        // 正解
+        let reg5 = /id="[^"]*"/g;
+        console.log(str.match(reg5));
+    }
+
+    // let str = 'llhjhj'; // 1,234,567,890
+    // let reg1 = /(?=ll)/g;
+    // console.log(str.match(reg1));
+
+    // var result = "hello".replace(/(?<=l)/g, '#');
+    // console.log(result);
+    console.log("012345678".replace(/^[0-9A-Za-z]{6,12}$/g, ','));
+    console.log("012345678".match(/^[0-9A-Za-z]{6,12}$/g));
+
+</script>
+</html>
