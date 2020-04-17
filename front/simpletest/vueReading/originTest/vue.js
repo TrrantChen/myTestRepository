@@ -11700,6 +11700,8 @@
             // compile
             var compiled = compile(template, options);
 
+            debugger
+
             // check compilation errors/tips
             {
                 if (compiled.errors && compiled.errors.length) {
@@ -11833,6 +11835,7 @@
 
     /*  */
 
+    debugger
     // `createCompilerCreator` allows creating compilers that use alternative
     // parser/optimizer/codegen, e.g the SSR optimizing compiler.
     // Here we just export a default compiler using the default parts.

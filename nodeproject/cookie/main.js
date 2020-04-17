@@ -89,5 +89,7 @@
 //
 
 require('./http_server');
+require('./http_server2');
 require('./https_server');
+require('./https_server2');
 

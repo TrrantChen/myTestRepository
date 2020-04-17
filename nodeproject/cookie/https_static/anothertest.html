@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="setCookieBrower">setCookieBrower</button>
+        <span>cookie</span><input id="cookieInput" style="width:600px;" type="text">
+        <button id="send">send</button>
+        <button id="getCoookieFromAnotherServer">getCoookieFromAnotherServer</button>
+        <button id="modifyThirdCookie">modifyThirdCookie</button>
+    </div>
+</body>
+<script>
+    let setCookieBrower = document.querySelector('#setCookieBrower');
+    let cookieInput = document.querySelector('#cookieInput');
+    let send = document.querySelector('#send');
+    let getCoookieFromAnotherServer = document.querySelector('#getCoookieFromAnotherServer');
+    let modifyThirdCookie = document.querySelector('#modifyThirdCookie');
+
+    setCookieBrower.addEventListener('click', function(evt) {
+        document.cookie = cookieInput.value;
+    })
+
+    var xhr = new XMLHttpRequest();
+
+    send.addEventListener('click', function(evt) {
+
+        xhr.open("get", "https://www.anothertest1.com/sendCookieByBrower");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+                alert(xhr.response + ' ' + xhr.responseText);
+            }
+        }
+        xhr.send(null);
+    })
+
+    modifyThirdCookie.addEventListener('click', function(evt) {
+        document.cookie = "cookie=1;domain=.test1.com;path=/;";
+        // document.cookie = 'cookie=esds;path=/;';
+        document.createElement('img').src = 'https://www.test1.com/setCookieByClient'
+    })
+
+
+
+    getCoookieFromAnotherServer.addEventListener('click', function(evt) {
+        document.createElement('img').src = 'https://www.test1.com/getCookieFromServer'
+    })
+
+</script>
+</html>

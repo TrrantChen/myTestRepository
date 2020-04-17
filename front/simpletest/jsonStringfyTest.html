@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+    </div>
+</body>
+<script>
+
+    function test1() {
+        console.log('-----------');
+        function replacer(k, v) {
+            console.log('key--------------');
+            console.log(k);
+            console.log('value-----------------------');
+            console.log(v);
+            return v;
+        }
+
+        let a = { name: 'yc' , num: 1, test: 'tddd'};
+        let str = JSON.stringify(a, replacer);
+
+        console.log('======================');
+        console.log(str);
+    }
+
+    function test2() {
+        console.log('-----------');
+        function replacer(key, value) {
+            console.log('key--------------');
+            console.log(key);
+            console.log('value-----------------------');
+            console.log(value);
+            if (typeof value === "string") {
+                return undefined;
+            }
+            return value;
+        }
+
+        let foo = {foundation: "Mozilla", model: "box", week: 45, transport: "car", month: 7};
+        let jsonString = JSON.stringify(foo, replacer);
+
+        console.log('======================');
+        console.log(jsonString);
+    }
+
+    // 为了解决对象循环的问题
+    function simpleCirculation() {
+        let a = { name: 'yc' };
+        let b = { next: a };
+        a.next = b;
+
+        let result = JSON.stringify(a, (k, v) => {
+            if (k === 'next') {
+                return 'circle';
+            }
+            else {
+                return v;
+            }
+        });
+
+        console.log(result);
+    }
+
+    // 比较安全的stringfy方式
+    function safeStringfy(obj) {
+        let lst = [];
+
+        function replacer(k, v) {
+            if (lst.indexOf(v) !== -1) {
+                return 'circle';
+            }
+            else {
+                lst.push(v);
+                return v;
+            }
+        }
+
+        let result = JSON.stringify(obj, replacer);
+        lst = null;
+
+        return result
+    }
+
+    function testSaveStringfy() {
+        let a = { name: 'yc' };
+        let b = { next: a };
+        a.next = b;
+
+        console.log(safeStringfy(a));
+
+    }
+
+    testSaveStringfy();
+
+</script>
+</html>

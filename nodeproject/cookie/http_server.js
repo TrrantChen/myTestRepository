@@ -58,7 +58,8 @@ http_app.get('/setCookie', function (req, res) {
         // maxAge: 1000000,
         // sameSite: true,
         // path: '/getData',
-        // sameSite: 'Strict',
+        // secure: false,
+        // sameSite: 'None',
     })
         .send('cookie set');
 });

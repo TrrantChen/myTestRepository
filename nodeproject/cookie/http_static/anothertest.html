@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="setCookieBrower">setCookieBrower</button>
+        <span>cookie</span><input id="cookieInput" style="width:600px;" type="text">
+        <button id="send">send</button>
+        <button id="getCoookieFromAnotherServer">getCoookieFromAnotherServer</button>
+        <button id="showCookie">show cookie</button>
+    </div>
+</body>
+<script>
+    let setCookieBrower = document.querySelector('#setCookieBrower');
+    let cookieInput = document.querySelector('#cookieInput');
+    let send = document.querySelector('#send');
+    let getCoookieFromAnotherServer = document.querySelector('#getCoookieFromAnotherServer');
+    let showCookie = document.querySelector('#showCookie');
+
+
+    setCookieBrower.addEventListener('click', function() {
+        document.cookie = cookieInput.value;
+    })
+
+    var xhr = new XMLHttpRequest();
+
+    send.addEventListener('click', function(evt) {
+        xhr.open("get", "http://www.anothertest2.com/sendCookieByBrower");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState.toString() == "4" && xhr.status.toString() == "200") {
+                alert(xhr.response + ' ' + xhr.responseText);
+            }
+        }
+        xhr.send(null);
+    })
+
+
+
+    getCoookieFromAnotherServer.addEventListener('click', function(evt)  {
+        var img = document.createElement('img');
+        img.src = 'http://www.test2.com/setCookie'
+        img = null;
+    })
+
+    showCookie.addEventListener('click', function(evt)  {
+        alert(document.cookie);
+    })
+
+
+</script>
+</html>

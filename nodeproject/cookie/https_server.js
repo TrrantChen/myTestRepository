@@ -54,7 +54,8 @@ https_app.get('/sendCookie2Server', function (req, res) {
 
 https_app.get('/getCookieFromServer', function (req, res) {
     res.cookie('cookie', 'https' + new Date().getTime(), {
-        // secure: true,
+        secure: true,
+        sameSite: 'none',
         // httpOnly: true,
     });
     console.log(req.headers.cookie);

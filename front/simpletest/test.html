@@ -31,60 +31,90 @@
     </div>
     <script src="./axios.js"></script>
     <script>
-//         let str = `dailyBalanceId,自增主键,
-// bookkeepDate,记账日期,
-// subjectId,科目主键id,
-// lendingDirection,借贷方向,
-// subjectName,科目名称,
-// organizationId,做账主体id,
-// subItem,子目,
-// subItemName,子目名称,
-// productLine,产品线,
-// productLineName,产品线名称,
-// concat,往来,
-// concatName,往来名称,
-// lendBalanceStart,期初借方余额,
-// loanBalanceStart,期初贷方余额,
-// lendAmount,当日借方发生额,
-// loanAmount,当日贷方发生额,
-// lendBalanceEnd,期末借方余额,
-// lendBalanceEnd,期末贷方余额,
-// status,状态,
-// version,版本,
-// createTime,创建时间,
-// modifyTime,修改时间`;
-//
-//         let lst = str.split(',').map((value, i) => {
-//             if (i % 2 === 0) {
-//                 return value.replace(/[A-Z]/g, function(m){return '_' + m.toLowerCase()});
-//             } else {
-//                 return value;
-//             }
-//         });
-//
-//         let result = '';
-//         let tmp = '';
-//
-//         for (var i = 0; i < lst.length; i++) {
-//             let v = lst[i];
-//
-//             if (i % 2 === 0) {
-//                 tmp = '';
-//                 tmp = `<el-table-column prop="${v}" label="`
-//             }
-//             else {
-//                 tmp = tmp + v + `" width="200px"></el-table-column>\n\r`;
-//                 result += tmp;
-//             }
-//         }
-//
-//         console.log(result);
+        var cookie_lst = [
+            "_cc_"
+        ,"_fbp"
+        ,"_gcl_aw"
+        ,"_m_h5_tk"
+        ,"_m_h5_tk_enc"
+        ,"_tb_token_"
+        ,"_uab_collina"
+        ,"_umdata"
+        ,"aimx"
+        ,"atpsida"
+        ,"atpsidas"
+        ,"aui"
+        ,"cdpid"
+        ,"cna"
+        ,"cna"
+        ,"cnaui"
+        ,"csg"
+        ,"dnk"
+        ,"existShop"
+        ,"hng"
+        ,"isg"
+        ,"l"
+        ,"lgc"
+        ,"miid"
+        ,"mt"
+        ,"sca"
+        ,"t"
+        ,"tbsa"
+        ,"tfstk"
+        ,"tg"
+        ,"thw"
+        ,"tk_trace"
+        ,"tracknick"
+        ,"uc1"
+        ,"v"];
 
-    let arr = ['\u0020','\u0009','\u000B','\u000C','\u00A0','\uFEFF','\u000A','\u000D','\u2028','\u2029'] ;
+        var str_lst = [
+            "cna"
+         ,"v"
+         ,"_tb_token_"
+         ,"miid"
+         ,"tk_trace"
+         ,"dnk"
+         ,"tracknick"
+         ,"tg"
+         ,"t"
+         ,"hng"
+         ,"thw"
+         ,"_fbp"
+         ,"csg"
+         ,"lgc"
+         ,"existShop"
+         ,"_cc_"
+         ,"tfstk"
+         ,"mt"
+         ,"_m_h5_tk"
+         ,"_m_h5_tk_enc"
+         ,"_gcl_aw"
+         ,"uc1"
+         ,"l"
+         ,"isg"];
 
-    for (var str of arr) {
-        console.log(`a${str}b`);
-    }
+        let same = [];
+        let not_same = [];
+        let tmp_obj = {};
+
+        for (var value of  str_lst) {
+            tmp_obj[value] = true;
+        }
+
+        for (var value of cookie_lst) {
+            if (tmp_obj[value] === true) {
+                same.push(value);
+            }
+            else {
+                not_same.push(value);
+            }
+        }
+
+        console.log('=====================================');
+        console.log(same);
+        console.log('=======================================');
+        console.log(not_same);
 
     </script>
 </body>

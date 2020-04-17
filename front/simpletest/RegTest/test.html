@@ -50,7 +50,7 @@
     // 2、包含集合中的任意组合  abc 命中 1a 1b 1ab
     // 3、不包含集合中的任意单个 abc 命中 1a 1b 1ab
     // 4、不包含集合中的任意组合 abc 命中 1ab 1ac 不命中 1a
-
+    // [123] 其实相当于(1|2|3)
     function test1() {
         let regex = /a[123]b/g;
         let string = "a0b a1b a2b a3b a4b a12b a123b";
@@ -150,14 +150,69 @@
         console.log(str.match(reg5));
     }
 
-    // let str = 'llhjhj'; // 1,234,567,890
-    // let reg1 = /(?=ll)/g;
-    // console.log(str.match(reg1));
+    function test10() {
+        // console.log("1231231233".match(/^((\d)(\d(\d)))\1\2\3\4$/));
+        console.log("1231231233".match(/((\d)(\d(\d)))\1\2\3\4$/));
+        console.log(RegExp.$1);
+        console.log(RegExp.$2);
+        console.log(RegExp.$3);
+        console.log(RegExp.$4);
+    }
 
-    // var result = "hello".replace(/(?<=l)/g, '#');
-    // console.log(result);
-    console.log("012345678".replace(/^[0-9A-Za-z]{6,12}$/g, ','));
-    console.log("012345678".match(/^[0-9A-Za-z]{6,12}$/g));
+    // let str = "my name is epeli";
+    // console.log(str.replace(/(^\w|\s\w)/g, function(str) {
+    //     return str.toLocaleUpperCase();
+    // }));
+
+    // let str = '<jkjk>wro<  ng?</jkjk>';
+    //
+    // console.log(/^<([\w\s-_]*?)>.*?<\/\1>$/.test(str));
+
+    // var regex = /<([^>]+)>[\d\D]*<\/\1>/;
+    // var string1 = "<title>regular expr>ession</title>";
+    // console.log( regex.test(string1) );
+
+    function test11() {
+        let reg = /([^>\s]+)/;
+        let str = ' ';
+        str.match()
+    }
+
+    function test12() {
+
+        console.log('=================exec g=================');
+        let str1 = "2017.06.27";
+        let regex1 = /\b(\d+)\b/g;
+        console.log(regex1.exec(str1));
+        console.log(regex1.lastIndex);
+        console.log(regex1.exec(str1));
+        console.log(regex1.lastIndex);
+        console.log(regex1.exec(str1));
+        console.log(regex1.lastIndex);
+        console.log(regex1.exec(str1));
+        console.log(regex1.lastIndex);
+
+        console.log('===============match g================');
+        let str2 =  "2017.06.27";
+        let regex2 = /\b(\d+)\b/g;
+        console.log(str2.match(regex2));
+        console.log(regex2.lastIndex);
+
+        console.log('===============exec ================');
+
+        let str3 =  "2017.06.27";
+        let regex3 = /\b(\d+)\b/;
+        console.log(regex3.exec(str3));
+        console.log(regex3.lastIndex);
+
+        console.log('==================match===================');
+        let str4 =  "2017.06.27";
+        let regex4 = /\b(\d+)\b/;
+        console.log(str4.match(regex4));
+        console.log(regex4.lastIndex);
+    }
+
+    test12();
 
 </script>
 </html>
