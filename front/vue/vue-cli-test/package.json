@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@antv/g6": "^2.1.0",
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "codemirror": "^5.34.0",
     "echarts": "^4.1.0",
     "js-beautify": "^1.7.5",
